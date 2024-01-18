@@ -1,0 +1,152 @@
+<!-- Google fonts-->
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+body, * {
+    font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+.nav-link {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #000;
+    min-width: 88px;
+    line-height: 36px;
+    padding: 0 16px;
+    border-radius: 2px;
+    text-align: center;
+}
+
+.nav-link:hover {
+    box-sizing: border-box;
+    position: relative;
+    color: #0d6efd;
+    cursor: pointer;
+    border: none;
+}
+
+.navbar-brand {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: #f4f4f4;
+    padding: 0 16px;
+}
+
+#searchForm {
+    margin-top : 10rem;
+}
+
+.top-header {
+    background-color: #fff;
+}
+
+.navbar {
+    justify-content: space-between;
+}
+
+.navbar-collapse {
+    padding: 20px;
+}
+
+.nav-right {
+    margin-left: auto;
+}
+.navbar-nav {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.navbar-nav {
+    gap: 2rem !important;
+}
+
+@media (min-width : 300px) {
+    .navbar-collapse {
+        flex-basis: 0;
+    }
+}
+
+.features-icons {
+    padding-top: 4rem !important;
+}
+
+.link-body-emphasis {
+    font-size: 30px !important;
+}
+/*메인 이미지 swiper*/
+.swiper-wrapper {
+    height: inherit !important;
+}
+.swiper-container
+{
+    width: 100%;
+    margin: 0 auto;
+}
+.swiper-slide{
+    width: 100%;
+    height: 40rem;
+}
+.swiper-cards {
+    overflow: hidden;
+}
+.cards{
+    padding:250px 0;/*remove this i just used it cuz i wanted to show the full view*/
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 50px;
+}
+.cards-1{
+    background-image: url("../../../proj/resources/assets/img/mainimg/chun.jpg");
+    background-color: rgba(50,50,125,0.2);
+    background-blend-mode: multiply;
+    object-fit: cover;
+}
+.cards-2{
+    background-image: url("../../../proj/resources/assets/img/mainimg/gangwon.jpg");
+    background-color: rgba(50,50,125,0.2);
+    background-blend-mode: multiply;
+    object-fit: cover;
+}
+.cards-3{
+    background-image: url("../../../proj/resources/assets/img/mainimg/chu.jpg");
+    background-color: rgba(50,50,125,0.2);
+    background-blend-mode: multiply;
+    object-fit: cover;
+}
+.cards-4{
+    background-image: url("../../../proj/resources/assets/img/mainimg/dong.jpg");
+    background-color: rgba(50,50,125,0.2);
+    background-blend-mode: multiply;
+    object-fit: cover;
+}
+.cards-5{
+    background-image: url("../../../proj/resources/assets/img/mainimg/daejeon.jpg");
+    background-color: rgba(50,50,125,0.2);
+    background-blend-mode: multiply;
+    object-fit: cover;
+}
+.cards-6{
+    background-image: url("../../../proj/resources/assets/img/mainimg/daejeon2.jpg");
+    background-color: rgba(50,50,125,0.2);
+    background-blend-mode: multiply;
+    object-fit: cover;
+}
+#swiper-1 .swiper-pagination{
+    bottom: 2rem;
+}
+
+#swiper-1 .swiper-pagination-bullet {
+    opacity: 1;
+    background-color: white;
+    width: 0.5rem;
+    height: 0.5rem;
+}
+#swiper-1 .swiper-pagination-bullet-active {
+    background-color: aqua;
+}
