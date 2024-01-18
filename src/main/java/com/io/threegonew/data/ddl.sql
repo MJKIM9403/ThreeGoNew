@@ -1,7 +1,8 @@
 -- READ --
+-- 먼저 test 데이터베이스의 charset 을 utf-8로 변경합니다 --
 -- 기존 테이블을 삭제하거나 컬럼명을 동일하게 맞춰주세요 --
 -- TOURITEM 테이블은 데이터가 NULL인 컬럼이 많으므로 contentid를 제외하고는 모두 NULL로 설정하였습니다 --
-
+ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 테이블 생성 --
 -- 추천 테이블 추가 --
@@ -99,15 +100,15 @@ CREATE TABLE `T_CAT3` (
 
 -- 지역
 CREATE TABLE `T_AREA` (
-                          j_areacode   decimal(38,0)      NOT NULL,
+                          j_areacode   INT      NOT NULL,
                           j_area_name   varchar(200)      NOT NULL
 );
 
 
 -- 시군구
 CREATE TABLE `T_SIGUNGU` (
-                             s_sigungucode   decimal(38,0)      NOT NULL,
-                             s_areacode   decimal(38,0)      NOT NULL,
+                             s_sigungucode   INT      NOT NULL,
+                             s_areacode   INT      NOT NULL,
                              sigungu_name   varchar(200)      NOT NULL
 );
 
