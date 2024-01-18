@@ -2,7 +2,6 @@
 -- 먼저 test 데이터베이스의 charset 을 utf-8로 변경합니다 --
 -- 기존 테이블을 삭제하거나 컬럼명을 동일하게 맞춰주세요 --
 -- TOURITEM 테이블은 데이터가 NULL인 컬럼이 많으므로 contentid를 제외하고는 모두 NULL로 설정하였습니다 --
-
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 테이블 생성 --
