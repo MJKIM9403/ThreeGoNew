@@ -99,15 +99,15 @@ CREATE TABLE `T_CAT3` (
 
 -- 지역
 CREATE TABLE `T_AREA` (
-                          j_areacode   decimal(38,0)      NOT NULL,
+                          j_areacode   INT      NOT NULL,
                           j_area_name   varchar(200)      NOT NULL
 );
 
 
 -- 시군구
 CREATE TABLE `T_SIGUNGU` (
-                             s_sigungucode   decimal(38,0)      NOT NULL,
-                             s_areacode   decimal(38,0)      NOT NULL,
+                             s_sigungucode   INT      NOT NULL,
+                             s_areacode   INT      NOT NULL,
                              sigungu_name   varchar(200)      NOT NULL
 );
 
