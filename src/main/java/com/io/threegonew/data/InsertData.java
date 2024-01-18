@@ -1,5 +1,6 @@
 package com.io.threegonew.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.io.threegonew.ApiKey;
@@ -18,10 +19,10 @@ import java.util.Map;
 public class InsertData {
 
     //TOURITEM 데이터 추가
-    public void insertTourItem() {
+    public void insertTourItem() throws JsonProcessingException {
 
         String searchType = "areaBasedList1";
-        Map<String, Object> result = new HashMap<>();
+        //Map<String, Object> result = new HashMap<>();
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders header = new HttpHeaders();
@@ -44,7 +45,10 @@ public class InsertData {
 
         ResponseEntity<Object> resultMap = restTemplate.exchange(url.toUriString(), HttpMethod.GET, entity, Object.class);
 
-        JSONPObject body = (JSONPObject) resultMap.getBody();
+//        ObjectMapper mapper = new ObjectMapper();
+//        String result = mapper.writeValueAsString(resultMap.getBody());
+//
+//        System.out.println(result);
 
     }
 }
