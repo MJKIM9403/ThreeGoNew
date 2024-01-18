@@ -1,0 +1,275 @@
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/*main card*/
+.card {
+    transition: 0.2s ease-in-out;
+}
+.card:hover {
+    transform: scale(1.03);
+    cursor: pointer;
+}
+.card img {
+    width: 100%;
+    height: 12em;
+    object-fit: cover;
+}
+
+.main_text{
+    margin-top: 5em;
+}
+
+.cardgradient {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+}
+
+.sec2h2{
+    text-align: left !important;
+    line-height: 120%;
+    color: #222222;
+}
+
+/*메뉴 카드 접기*/
+
+.btn-primary2 {
+    width: 100px;
+    --bs-btn-color: #0d6efd;
+    --bs-btn-bg: #fff;
+    --bs-btn-border-color: #0d6efd;
+    --bs-btn-hover-color: #0a53be;
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #0a58ca;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #0d6efd;
+    --bs-btn-active-bg: #fff;
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #0a53be;
+    --bs-btn-disabled-bg: #fff;
+    --bs-btn-disabled-border-color: #0d6efd;
+}
+
+.invisiblecard {
+    display: none;
+}
+
+/*nav*/
+.navbar > ul {
+    list-style: none;
+}
+
+.nav-link {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    min-width: 88px;
+    line-height: 36px;
+    padding: 0 16px;
+    border-radius: 2px;
+    text-align: center;
+}
+
+.nav-link:hover {
+    box-sizing: border-box;
+    position: relative;
+    color: #0d6efd;
+    cursor: pointer;
+    border: none;
+}
+
+.navbar-brand {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: #f4f4f4;
+    padding: 0 16px;
+}
+
+#searchForm {
+    margin-top : 10rem;
+}
+
+.navbar {
+    justify-content: space-between;
+}
+
+.navbar-collapse {
+    padding: 20px;
+}
+
+.nav-right {
+    margin-left: auto;
+}
+
+.text-white {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.navbar-nav {
+    justify-content: space-between;
+    width: 100%;
+}
+
+@media (min-width : 300px) {
+    .navbar-collapse {
+        flex-basis: 0;
+    }
+}
+
+/*커뮤니티 게시판 list */
+.card-text, .card-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+}
+.card-footer .text-muted {
+    display: block;
+}
+
+/*헤더의 로그인 회원가입 모달창 띄우는 버튼*/
+#start-btn {
+    border: none;
+    background: none;
+}
+
+/*회원가입, 로그인 버튼*/
+.btn-join {
+    background: #0a53be;
+    color: #fff;
+}
+.btn-join:hover {
+    background: #0c4ead;
+    color: #fff;
+}
+.btn-login {
+    background: #2F3545;
+    color: #fff;
+}
+.btn-login:hover {
+    background: #282d38;
+    color: #fff;
+}
+
+/*sub-header*/
+.sub-header {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    background-image: url("../../../../proj/resources/assets/img/mainimg/daejeon.jpg");
+}
+
+/*마이페이지*/
+.my-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1a283d;
+    border-radius: 10px;
+}
+
+.prof-img {
+    width: 150px;
+    height: 150px;
+}
+
+.my-prof-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    background-color: #fff;
+}
+
+#my-page{
+    display: flex;
+    align-items: flex-start;
+}
+.post-text{
+    border-left: 1px solid #EEEEEE;
+}
+.post-img{
+    object-fit: cover;
+}
+.myboard-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.myboard-card {
+    width: calc((100% / 2) - 0.5rem);
+}
+
+
+
+.myreply-list{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.my-reply-box{
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+}
+.my-reply-text{
+    display: flex;
+    gap: 20px;
+}
+.my-reply-content{
+    display: flex;
+    gap: 5px;
+}
+.my-reply-btitle{
+    font-weight: 700;
+}
+.my-reply-level, .my-reply-deleted{
+    color: #999999;
+}
+
+
+/*헤더의 내 정보*/
+#start-btn2 {
+    border: none;
+    background: none;
+}
+
+.header-prof-img {
+    width: 40px;
+    height: 40px;
+}
+
+.header-my-prof-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+/*페이지네이션 아이콘 위치 조정*/
+.tui-pagination > a > span {
+    margin-top: 8px;
+}
+.tui-pagination > .tui-is-disabled > span {
+    margin-top: 8px;
+}
+
+.pw_box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.pw_info{
+    font-size: 12px;
+}
+/*게시판 용 페이지네이션*/
+.page-link {
+    display: inline !important;
+}
