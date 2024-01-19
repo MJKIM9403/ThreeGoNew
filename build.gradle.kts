@@ -40,8 +40,17 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3")
+    testImplementation("org.projectlombok:lombok:1.18.28")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
+
     /* 메일 발송 */
     implementation("javax.mail:mail:1.4.7")
+
+    // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+    implementation("com.googlecode.json-simple:json-simple:1.1.1")
+
+
+
 
 }
 
