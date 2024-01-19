@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default_layout">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <!-- Font Awesome icons (free version)-->
@@ -24,7 +24,7 @@
 <body>
 <!-- header-->
 
-    <th:block layout:fragment="searchheader"></th:block>
+    <th:block th:replace="fragments/searchheader"></th:block>
 
 
 
@@ -274,9 +274,7 @@
 </section>
 
 <!--footer-->
-
-
-<!--<jsp:include page="common/footer.jsp"/>-->
+<th:block th:replace="fragments/footer"></th:block>
 
 
 <!-- Bootstrap core JS-->

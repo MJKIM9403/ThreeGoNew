@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/default_layout">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 </head>
 <body>
-<th:block layout:fragment="searchheader">
 <header class="p-3">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -35,7 +34,7 @@
                         <ul class="dropdown-menu text-small" style="">
                             <li><a class="dropdown-item" href="../../login.do">로그인</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="../../join/join.do">회원가입</a></li>
+                            <li><a class="dropdown-item" href="/join">회원가입</a></li>
                         </ul>
 <!--                    </c:when>-->
 
