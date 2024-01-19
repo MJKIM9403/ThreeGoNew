@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html>
 <head>
     <!-- Bootstrap icons-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
@@ -701,7 +700,7 @@
     <div><img src="../../../proj/resources/assets/img/loading.gif" /></div>
 </div>
 <!-- header-->
-<jsp:include page="../common/header.jsp"/>
+<th:block th:replace="fragments/header"></th:block>
 <div id="wrap">
     <div class="container-fluid">
         <div class="row">
@@ -776,7 +775,7 @@
     </div>
 </div>
 <!--footer-->
-<jsp:include page="../common/footer.jsp"/>
+<th:block th:replace="fragments/footer"></th:block>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6a523b773771c7b31ef741ad7e52ee9c"></script>
 <script>
