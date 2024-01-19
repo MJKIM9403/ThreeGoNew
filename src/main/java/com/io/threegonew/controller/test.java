@@ -24,4 +24,9 @@ public class test {
     public String getMypage() {
         return "mypage";
     }
+
+    @GetMapping("/area")
+    public String getArea() {
+        return "tourinfo/area";
+    }
 }
