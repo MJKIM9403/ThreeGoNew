@@ -15,5 +15,6 @@ public class insertDataController {
         //insertData.insertMainTable("TourItem");
         insertData.insertMainTable("Area");
         insertData.insertMainTable("Category");
+
     }
 }
