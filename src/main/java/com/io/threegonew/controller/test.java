@@ -29,4 +29,11 @@ public class test {
     public String getArea() {
         return "tourinfo/area";
     }
+
+    @GetMapping("/bbs")
+    public String getBbs() {
+        return "bbs";
+    }
+
+
 }
