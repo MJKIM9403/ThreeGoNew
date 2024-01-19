@@ -102,37 +102,37 @@ body, * {
     font-size: 50px;
 }
 .cards-1{
-    background-image: url("../../../proj/resources/assets/img/mainimg/chun.jpg");
+    background-image: url("../img/mainimg/chun.jpg");
     background-color: rgba(50,50,125,0.2);
     background-blend-mode: multiply;
     object-fit: cover;
 }
 .cards-2{
-    background-image: url("../../../proj/resources/assets/img/mainimg/gangwon.jpg");
+    background-image: url("../img/mainimg/gangwon.jpg");
     background-color: rgba(50,50,125,0.2);
     background-blend-mode: multiply;
     object-fit: cover;
 }
 .cards-3{
-    background-image: url("../../../proj/resources/assets/img/mainimg/chu.jpg");
+    background-image: url("../img/mainimg/chu.jpg");
     background-color: rgba(50,50,125,0.2);
     background-blend-mode: multiply;
     object-fit: cover;
 }
 .cards-4{
-    background-image: url("../../../proj/resources/assets/img/mainimg/dong.jpg");
+    background-image: url("../img/mainimg/dong.jpg");
     background-color: rgba(50,50,125,0.2);
     background-blend-mode: multiply;
     object-fit: cover;
 }
 .cards-5{
-    background-image: url("../../../proj/resources/assets/img/mainimg/daejeon.jpg");
+    background-image: url("../img/mainimg/daejeon.jpg");
     background-color: rgba(50,50,125,0.2);
     background-blend-mode: multiply;
     object-fit: cover;
 }
 .cards-6{
-    background-image: url("../../../proj/resources/assets/img/mainimg/daejeon2.jpg");
+    background-image: url("../img/mainimg/daejeon2.jpg");
     background-color: rgba(50,50,125,0.2);
     background-blend-mode: multiply;
     object-fit: cover;
