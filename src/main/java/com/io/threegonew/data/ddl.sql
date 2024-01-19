@@ -14,7 +14,7 @@ CREATE TABLE `LIKES` (
                          CONSTRAINT like_uq UNIQUE (b_id, u_id)
 );
 
---댓글 테이블 추가 --
+-- 댓글 테이블 추가 --
 CREATE TABLE `REPLY`
 (
     b_id DOUBLE,

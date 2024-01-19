@@ -22,7 +22,7 @@ public class User implements UserDetails {
 
     @Id
     @Column(name = "u_id", updatable = false)
-    private String u_id;
+    private String id;
 
     @Column(name = "u_pw")
     private String u_pw;
@@ -43,8 +43,8 @@ public class User implements UserDetails {
     private String u_about;
 
     @Builder
-    public User(String u_id, String u_pw, String u_name, String u_email, String u_ofile, String u_sfile, String u_about){
-        this.u_id = u_id;
+    public User(String id, String u_pw, String u_name, String u_email, String u_ofile, String u_sfile, String u_about){
+        this.id = id;
         this.u_pw = u_pw;
         this.u_name = u_name;
         this.u_email = u_email;
@@ -65,7 +65,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return u_id;
+        return id;
     }
 
     @Override

@@ -16,7 +16,7 @@ public class UserService {
 
     public String save(AddUserRequest dto){
         return userRepository.save(User.builder()
-                .u_id(dto.getU_id())
+                .id(dto.getId())
                 .u_pw(bCryptPasswordEncoder.encode(dto.getU_pw()))
                 .u_name(dto.getU_name())
                 .u_email(dto.getU_email())
@@ -24,7 +24,7 @@ public class UserService {
                 .u_sfile(dto.getU_sfile())
                 .u_about(dto.getU_about())
                 .build()
-        ).getU_id();
+        ).getId();
     }
 
 
