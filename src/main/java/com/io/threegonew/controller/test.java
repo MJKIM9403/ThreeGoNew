@@ -14,4 +14,9 @@ public class test {
     public String getJoin() {
         return "join";
     }
+
+    @GetMapping("/login")
+    public String getLogin() {
+        return "login";
+    }
 }
