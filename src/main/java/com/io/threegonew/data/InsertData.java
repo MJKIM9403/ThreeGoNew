@@ -85,16 +85,6 @@ public class InsertData {
 
         int totalData = 100000;
 
-//        UriComponents uri = UriComponentsBuilder
-//                .fromHttpUrl("https://apis.data.go.kr/B551011/KorService1/")
-//                .path(searchType)
-//                .queryParam("numOfRows",totalData)
-//                .queryParam("pageNo", 1)
-//                .queryParam("MobileOS","ETC")
-//                .queryParam("MobileApp","THREEGO")
-//                .queryParam("serviceKey",ApiKey.TOURAPI_KEY_1)
-//                .queryParam("_type","json")
-//                .build();
 
         String result = "";
 
