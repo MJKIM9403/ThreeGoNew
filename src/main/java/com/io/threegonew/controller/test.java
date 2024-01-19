@@ -19,4 +19,9 @@ public class test {
     public String getLogin() {
         return "login";
     }
+
+    @GetMapping("/mypage")
+    public String getMypage() {
+        return "mypage";
+    }
 }

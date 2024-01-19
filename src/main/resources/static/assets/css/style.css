@@ -160,7 +160,7 @@ a {
     height: 200px;
     position: relative;
     overflow: hidden;
-    background-image: url("../../../../proj/resources/assets/img/mainimg/daejeon.jpg");
+    background-image: url("../img/mainimg/daejeon.jpg");
 }
 
 /*마이페이지*/
