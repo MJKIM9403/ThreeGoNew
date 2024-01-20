@@ -29,8 +29,7 @@ CREATE TABLE `REPLY`
     re_ref DOUBLE NOT NULL,
     re_order DOUBLE DEFAULT 0 NOT NULL,
     re_level DOUBLE DEFAULT 0 NOT NULL,
-    CONSTRAINT reply_pk PRIMARY KEY(b_id, re_num),
-    unique key REPLY_IDX01(RE_NUM)
+    CONSTRAINT reply_pk PRIMARY KEY (re_num)
 );
 
 -- 게시판 테이블 --
@@ -109,7 +108,8 @@ CREATE TABLE `T_AREA` (
 CREATE TABLE `T_SIGUNGU` (
                              s_sigungucode   INT      NOT NULL,
                              s_areacode   INT      NOT NULL,
-                             sigungu_name   varchar(200)      NOT NULL
+                             sigungu_name   varchar(200)      NOT NULL,
+                             CONSTRAINT sigungu_pk PRIMARY KEY(s_sigungucode, s_areacode)
 );
 
 -- 관광타입

@@ -3,11 +3,13 @@ package com.io.threegonew.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.io.threegonew.ApiKey;
 import com.io.threegonew.domain.*;
+import com.io.threegonew.domain.pk.SigunguPk;
 import com.io.threegonew.repository.*;
 import lombok.AllArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,10 +17,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
+@Component
 @AllArgsConstructor
 public class InsertData {
 
@@ -54,7 +57,7 @@ public class InsertData {
         if(params.containsKey("Cat1")){
             uriBuilder.queryParam("cat1", params.get("Cat1"));
         }
-        if(params.containsKey("Cat2")){
+        if(params.containsKey("Cat2") && ((String)params.get("Cat2")).startsWith((String)params.get("Cat1"))){
             uriBuilder.queryParam("cat2",params.get("Cat2"));
         }
         if(params.containsKey("Area")){
@@ -90,9 +93,10 @@ public class InsertData {
 
         try {
             URL url = new URL(makeUri(table,params));
+            System.out.println(url);
             BufferedReader bf;
 
-            bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+            bf = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
 
             result = bf.readLine();
 
@@ -104,17 +108,24 @@ public class InsertData {
             JSONArray item = (JSONArray) items.get("item");
 
             for(Object itemObj : item){
+                JSONObject itemJson = (JSONObject) itemObj;
                 String itemStr = itemObj.toString();
                 if(table.equals("TourItem")){
                     TourItem tourItem = objectMapper.readValue(itemStr, TourItem.class);
                     tourItemRepository.save(tourItem);
                 }else if(table.equals("Area")){
-                    Area area = objectMapper.readValue(itemStr, Area.class);
+                    Area area = Area.builder()
+                            .areaCode(Integer.parseInt(itemJson.get("code").toString()))
+                            .areaName(itemJson.get("name").toString())
+                            .build();
                     areaRepository.save(area);
-                    params.put("Area", area.getJ_areacode());
-                    insertSigungu(makeUri(table,params));
+                    params.put("Area", area.getAreaCode());
+                    insertSigungu(makeUri(table,params), params);
                 }else if(table.equals("Category")){
-                    Cat1 cat1 = objectMapper.readValue(itemStr, Cat1.class);
+                    Cat1 cat1 = Cat1.builder()
+                                    .cat1(itemJson.get("code").toString())
+                                    .cat1Name(itemJson.get("name").toString())
+                                    .build();
                     cat1Repository.save(cat1);
                     params.put("Cat1",cat1.getCat1());
                     insertCat2(makeUri(table,params), params);
@@ -125,13 +136,13 @@ public class InsertData {
         }
     }
 
-    public void insertSigungu(String url){
+    public void insertSigungu(String url, Map<String,Object> params){
         String result = "";
         try {
             URL newUrl = new URL(url);
             BufferedReader bf;
 
-            bf = new BufferedReader(new InputStreamReader(newUrl.openStream(), "UTF-8"));
+            bf = new BufferedReader(new InputStreamReader(newUrl.openStream(), StandardCharsets.UTF_8));
 
             result = bf.readLine();
 
@@ -143,8 +154,16 @@ public class InsertData {
             JSONArray item = (JSONArray) items.get("item");
 
             for(Object itemObj : item){
-                String itemStr = itemObj.toString();
-                Sigungu sigungu = objectMapper.readValue(itemStr, Sigungu.class);
+                JSONObject itemJson = (JSONObject) itemObj;
+                SigunguPk sigunguPk = SigunguPk.builder()
+                                        .sigunguCode(Integer.parseInt(itemJson.get("code").toString()))
+                                        .areaCode(Integer.parseInt(params.get("Area").toString()))
+                                        .build();
+                Sigungu sigungu = Sigungu.builder()
+                                .sigunguPk(sigunguPk)
+                                .sigunguName(itemJson.get("name").toString())
+                                .build();
+
                 sigunguRepository.save(sigungu);
             }
         }catch(Exception e) {
@@ -158,7 +177,7 @@ public class InsertData {
             URL newUrl = new URL(url);
             BufferedReader bf;
 
-            bf = new BufferedReader(new InputStreamReader(newUrl.openStream(), "UTF-8"));
+            bf = new BufferedReader(new InputStreamReader(newUrl.openStream(), StandardCharsets.UTF_8));
 
             result = bf.readLine();
 
@@ -170,25 +189,29 @@ public class InsertData {
             JSONArray item = (JSONArray) items.get("item");
 
             for(Object itemObj : item){
-                String itemStr = itemObj.toString();
-                Cat2 cat2 = objectMapper.readValue(itemStr, Cat2.class);
+                JSONObject itemJson = (JSONObject) itemObj;
+                Cat2 cat2 = Cat2.builder()
+                                .cat2(itemJson.get("code").toString())
+                                .cat2Name(itemJson.get("name").toString())
+                                .cat1(params.get("Cat1").toString())
+                                .build();
                 cat2Repository.save(cat2);
 
                 params.put("Cat2",cat2.getCat2());
-                insertCat3(makeUri("Category",params));
+                insertCat3(makeUri("Category",params), params);
             }
         }catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void insertCat3(String url){
+    public void insertCat3(String url, Map<String, Object> params){
         String result = "";
         try {
             URL newUrl = new URL(url);
             BufferedReader bf;
 
-            bf = new BufferedReader(new InputStreamReader(newUrl.openStream(), "UTF-8"));
+            bf = new BufferedReader(new InputStreamReader(newUrl.openStream(), StandardCharsets.UTF_8));
 
             result = bf.readLine();
 
@@ -200,8 +223,13 @@ public class InsertData {
             JSONArray item = (JSONArray) items.get("item");
 
             for(Object itemObj : item){
-                String itemStr = itemObj.toString();
-                Cat3 cat3 = objectMapper.readValue(itemStr, Cat3.class);
+                JSONObject itemJson = (JSONObject) itemObj;
+                Cat3 cat3 = Cat3.builder()
+                        .cat3(itemJson.get("code").toString())
+                        .cat3Name(itemJson.get("name").toString())
+                        .cat1(params.get("Cat1").toString())
+                        .cat2(params.get("Cat2").toString())
+                        .build();
                 cat3Repository.save(cat3);
             }
         }catch(Exception e) {

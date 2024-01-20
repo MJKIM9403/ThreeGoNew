@@ -4,11 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "t_cat2")
 public class Cat2 {
@@ -18,5 +22,5 @@ public class Cat2 {
     @Column(name = "cat1")
     private String cat1;
     @Column(name = "cat2_name")
-    private String cat2_name;
+    private String cat2Name;
 }

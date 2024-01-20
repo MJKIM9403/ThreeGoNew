@@ -12,9 +12,8 @@ public class insertDataController {
 
     @GetMapping("/insertData")
     public void insert(){
-        //insertData.insertMainTable("TourItem");
         insertData.insertMainTable("Area");
         insertData.insertMainTable("Category");
-
+        insertData.insertMainTable("TourItem");
     }
 }
