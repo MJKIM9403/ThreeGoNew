@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class test {
+public class ViewController {
     @GetMapping("/index")
     public String getIndex() {
         return "index";
@@ -30,10 +30,8 @@ public class test {
 //        return "tourinfo/area";
 //    }
 
-    @GetMapping("/bbs")
-    public String getBbs() {
-        return "bbs";
-    }
-
-
+//    @GetMapping("/bbs")
+//    public String getBoard() {
+//        return "board/bbs";
+//    }
 }

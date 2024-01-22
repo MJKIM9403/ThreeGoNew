@@ -1,4 +1,14 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 105243604114-hj3rjnlk4r6um1tnidhdcdhhk0i0fkup.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
   datasource:
     url: jdbc:mariadb://localhost:3306/test
     driver-class-name: org.mariadb.jdbc.Driver
