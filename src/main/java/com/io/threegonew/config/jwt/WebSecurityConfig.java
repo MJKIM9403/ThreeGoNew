@@ -21,20 +21,20 @@ public class WebSecurityConfig {
     //스프링 시큐리티 관련 설정파일
     private final UserDetailService userDetailService;
 
-//    //스프링 기능 비활성화
-//    @Bean
-//    public WebSecurityCustomizer configure(){
-//        return web -> web.ignoring()
-//                .requestMatchers(toH2Console())
-//                .requestMatchers("/static/**");
-//    }
+    //스프링 기능 비활성화
+    @Bean
+    public WebSecurityCustomizer configure(){
+        return web -> web.ignoring()
+                .requestMatchers("/img/**", "/css/**", "/js/**");
+    }
 
     //특정 HTTP 요청에 대한 웹 기반 보안 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
                 .authorizeRequests()
-                .requestMatchers("/login", "/signup", "/user", "/error", "/index", "/insertData").permitAll()
+                //.requestMatchers("/login", "/signup", "/user", "/error", "/index", "/insertData").permitAll()
+                .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(formLogin -> formLogin

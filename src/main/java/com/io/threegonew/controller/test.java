@@ -25,10 +25,10 @@ public class test {
         return "mypage";
     }
 
-    @GetMapping("/area")
-    public String getArea() {
-        return "tourinfo/area";
-    }
+//    @GetMapping("/area")
+//    public String getArea() {
+//        return "tourinfo/area";
+//    }
 
     @GetMapping("/bbs")
     public String getBbs() {
