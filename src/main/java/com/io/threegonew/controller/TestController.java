@@ -4,10 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 public class TestController {
-    package com.io.threegonew.controller;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 
     @Controller
     public class test {
@@ -29,6 +25,16 @@ import org.springframework.web.bind.annotation.GetMapping;
         @GetMapping("/mypage")
         public String getMypage() {
             return "mypage";
+        }
+
+        @GetMapping("/calendar")
+        public String getMyCalendar() {
+            return "plan/calendar";
+        }
+
+        @GetMapping("/plan")
+        public String getMyPlan() {
+            return "plan/plan";
         }
 
 //    @GetMapping("/area")
