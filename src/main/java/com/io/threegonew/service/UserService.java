@@ -14,10 +14,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public String save(AddUserRequest dto){
+    public String save(AddUserRequest dto) {
         return userRepository.save(User.builder()
                 .id(dto.getId())
-                .u_pw(bCryptPasswordEncoder.encode(dto.getU_pw()))
+                .u_pw(bCryptPasswordEncoder.encode(dto.getU_pw())) // 비밀번호 해싱
                 .u_name(dto.getU_name())
                 .u_email(dto.getU_email())
                 .u_ofile(dto.getU_ofile())
@@ -26,6 +26,8 @@ public class UserService {
                 .build()
         ).getId();
     }
+
+
 
 
 }

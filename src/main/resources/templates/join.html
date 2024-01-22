@@ -31,8 +31,9 @@
     </div>
 </div>
 <div id="wrap" class="container position-relative pt-5 pb-5">
-    <form action="/join/join.do" method ="post" name="joinForm" onsubmit="return joinUser(this)">
-        <!-- 회원가입 타이틀부분 -->
+    <form th:action="@{/api/users/register}" th:method="post" name="joinForm" onsubmit="return joinUser(this)">
+
+    <!-- 회원가입 타이틀부분 -->
         <div id="header">
             <h1 class="text-center">
                 <!--<span><img alt="프로젝트 메인 제목" src="#"></span>-->
@@ -101,7 +102,7 @@
     let emailCheck = false;
     let idCheck = false;
 
-    document.getElementById('joinBtn').addEventListener('click', function() {
+    document.getElementById('joinBtn').addEventListener('click', function(event) {
         // 간단한 유효성 검사
         let reg_pw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
         let id = document.getElementsByName('id')[0].value;
@@ -110,82 +111,110 @@
         let name = document.getElementsByName('name')[0].value;
         let email = document.getElementsByName('email')[0].value;
 
-        if(id === ""){
+        if (id === "") {
             alert('아이디를 입력해주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('id')[0].focus();
-        }else if(pw === ""){
+        } else if (pw === "") {
             alert('비밀번호를 입력해주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('pw')[0].focus();
-        }else if(pwconfirm === ""){
+        } else if (pwconfirm === "") {
             alert('비밀번호 재확인을 입력해주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('pwconfirm')[0].focus();
-        }else if(name === ""){
+        } else if (name === "") {
             alert('성명을 입력해주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('name')[0].focus();
-        }else if(email === ""){
+        } else if (email === "") {
             alert('이메일을 입력해주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('email')[0].focus();
-        }else if(!idCheck){
+        } else if (!idCheck) {
             alert('아이디 중복을 확인하여 주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('id')[0].focus();
-        }else if(!reg_pw.test(pw)){
+        } else if (!reg_pw.test(pw)) {
             alert('비밀번호 양식을 다시 확인하여 주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('pw')[0].focus();
-        }else if(pw != null && pwconfirm != null && pw !== pwconfirm) {
+        } else if (pw != null && pwconfirm != null && pw !== pwconfirm) {
             alert('비밀번호와 비밀번호 재입력 값이 같아야 합니다.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('pw')[0].focus();
-        }else if(!emailCheck){
+        } else if (!emailCheck) {
             alert('이메일을 인증하여 주십시오.');
             event.preventDefault(); // 폼 제출 막기
             document.getElementsByName('email')[0].focus();
         }
+
+        // 데이터를 JSON 형식으로 구성
+        let userData = {
+            id: id,
+            u_pw: pw,
+            u_name: name,
+            u_email: email
+        };
+
+        // 서버로 데이터 전송
+        $.ajax({
+            url: '/api/users/register',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(userData),
+            success: function(response) {
+                // Ajax 요청 성공 시 처리
+                alert(response); // "가입을 환영합니다: 사용자ID"가 표시됩니다.
+
+                // 페이지 이동
+                window.location.href = '/index'; // 원하는 페이지 URL로 수정하세요.
+            },
+            error: function(error) {
+                // Ajax 요청 실패 시 처리
+                console.error(error);
+            }
+        });
     });
 
-    document.getElementById('emailCheckBtn').addEventListener('click',function() {
+
+    document.getElementById('emailCheckBtn').addEventListener('click', function () {
         let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
         let testEmails = document.getElementsByName('email')[0].value;
 
-        if(!regExp.test(testEmails)) {
+        if (!regExp.test(testEmails)) {
             emailCheck = false;
             alert('이메일 형식이 올바르지 않습니다.');
         } else {
             emailCheck = true;
             alert('적절한 이메일 주소 입니다.');
         }
-    })
+    });
 
-    document.getElementById('idCheckBtn').addEventListener('click',function() {
+    document.getElementById('idCheckBtn').addEventListener('click', function () {
         $.ajax({
             url: '/checkDuplicateId',
             type: 'GET',
-            data : {
-                inputId : $('input[name=id]').val(),
-                mode : 'id'
+            data: {
+                inputId: $('input[name=id]').val(),
+                mode: 'id'
             },
-            success(data){
+            success(data) {
                 console.log(data)
                 let check = data == 'true' ? true : false;
-                if(check){
+                if (check) {
                     alert('이미 사용중인 아이디 입니다.');
                     idCheck = false;
                     $('input[name=id]').focus();
-                }else {
+                } else {
                     alert('사용할 수 있는 아이디 입니다.');
                     idCheck = true;
                 }
             }
         })
-    })
-
+    });
 </script>
+
 
 
 </body>

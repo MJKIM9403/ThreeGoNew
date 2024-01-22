@@ -149,3 +149,7 @@ INSERT INTO `T_C_TYPE` (contenttypeid, ctype_name) VALUES ('32', '숙박');
 INSERT INTO `T_C_TYPE` (contenttypeid, ctype_name) VALUES ('38', '쇼핑');
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 INSERT INTO `T_C_TYPE` (contenttypeid, ctype_name) VALUES ('39', '음식점');
+
+--패스워드 varchar40은 너무 작아서 암호화된 암호가 들어가지 않습니다.
+--이걸로 수정해주세요
+ALTER TABLE test.users MODIFY COLUMN U_PW varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
