@@ -30,10 +30,8 @@ public class test {
         return "tourinfo/area";
     }
 
-    @GetMapping("/bbs")
-    public String getBbs() {
-        return "bbs";
-    }
-
-
+//    @GetMapping("/bbs")
+//    public String getBoard() {
+//        return "board/bbs";
+//    }
 }
