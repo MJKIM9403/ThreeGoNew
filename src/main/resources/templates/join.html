@@ -164,7 +164,7 @@
 
     document.getElementById('idCheckBtn').addEventListener('click',function() {
         $.ajax({
-            url: '/validation.do',
+            url: '/checkDuplicateId',
             type: 'GET',
             data : {
                 inputId : $('input[name=id]').val(),
