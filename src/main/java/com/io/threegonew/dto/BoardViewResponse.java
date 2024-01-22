@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class BoardViewResponse {
     private String userId;
     private String userName;
-    private int bId;
+    private Integer bId;
     private String bTitle;
     private String bContent;
     private LocalDate bPostdate;

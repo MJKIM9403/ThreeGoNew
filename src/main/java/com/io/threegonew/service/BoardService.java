@@ -26,18 +26,24 @@ public class BoardService {
         return boardRepository.findAll(Sort.by("bPostdate").descending());
     }
 
+    // 게시판 글 추천순 조회
+
+    // 게시판 글 최신순 조회
+
+    // 게시판 글 조회순 조회
+
     public Board findById(Integer bId) {
         return boardRepository.findById(bId)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + bId));
     }
 
     // 게시판 글 삭제
-    public void delete(int bId) {
+    public void delete(Integer bId) {
         boardRepository.deleteById(bId);
     }
 
     @Transactional
-    public Board update(int bId, UpdateBoardRequest request) {
+    public Board update(Integer bId, UpdateBoardRequest request) {
         Board board = boardRepository.findById(bId).orElseThrow(() ->
                 new IllegalArgumentException("not found : " + bId));
 

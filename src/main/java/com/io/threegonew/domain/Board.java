@@ -17,7 +17,7 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_id", updatable = false)
-    private int bId;
+    private Integer bId;
 
     @Column(name = "u_id", nullable = false)
     private String userId;

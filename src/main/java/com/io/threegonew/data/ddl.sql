@@ -33,7 +33,7 @@ CREATE TABLE `REPLY`
 );
 
 -- 게시판 테이블 --
-create table `BOARDTABLE` (
+create table `BOARD` (
                               b_id int AUTO_INCREMENT PRIMARY KEY,
                               u_id varchar(50) not null,
                               u_name varchar(50) not null,

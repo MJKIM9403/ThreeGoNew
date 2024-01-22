@@ -29,7 +29,7 @@ public class BoardViewController {
         return "board/bbs";
     }
 
-    @GetMapping("/view/b_id={bId}")
+    @GetMapping("/board/b_id={bId}")
     public String getBoard(@PathVariable Integer bId, Model model){
         Board board = boardService.findById(bId);
         model.addAttribute("board", new BoardViewResponse(board));

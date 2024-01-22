@@ -121,7 +121,7 @@
             </div>
 
 
-            <a th:each="item : ${boards}" th:href="@{/view/b_id={bId}(bId=${item.BId})}">
+            <a th:each="item : ${boards}" th:href="@{/board/b_id={bId}(bId=${item.BId})}">
                 <div class="col">
                     <div class="card card-item">
                         <div class="card-img-item">
@@ -157,7 +157,7 @@
             <c:if test="${not empty sessionScope.u_id}">
                 <!--로그인이 되어있다면-->
                 <div class="d-flex justify-content-end">
-                    <button type="button" onclick="location.href='/write';" class="btn btn-primary btn-sm">글쓰기</button>
+                    <button type="button" class="btn btn-primary btn-sm" th:onclick="|location.href='@{/write}'|">글쓰기</button>
                 </div>
             </c:if>
             <c:if test="${empty sessionScope.u_id}">
