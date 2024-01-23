@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable
+//@Embeddable
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SigunguPk implements Serializable {
     @Column(name = "s_sigungucode")
-    private int sigunguCode;
+    private Integer sigunguCode;
     @Column(name = "s_areacode")
-    private int areaCode;
+    private Integer areaCode;
 
     @Override
     public boolean equals(Object o) {

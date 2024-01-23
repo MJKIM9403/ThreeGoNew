@@ -42,7 +42,7 @@ public class Board {
     private String savedFile;
 
     @Column(name = "b_visitcount")
-    private double visitCount;
+    private Double visitCount;
 
     @Builder
     public Board(String userId, String userName, String bTitle, String bContent) {

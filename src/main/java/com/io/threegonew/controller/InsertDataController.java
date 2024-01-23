@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequiredArgsConstructor
-public class insertDataController {
+public class InsertDataController {
     private final InsertData insertData;
 
     @GetMapping("/insertData")

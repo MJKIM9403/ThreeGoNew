@@ -127,7 +127,7 @@ public class InsertData {
                                     .cat1Name(itemJson.get("name").toString())
                                     .build();
                     cat1Repository.save(cat1);
-                    params.put("Cat1",cat1.getCat1());
+                    params.put("Cat1",cat1);
                     insertCat2(makeUri(table,params), params);
                 }
             }
@@ -155,12 +155,14 @@ public class InsertData {
 
             for(Object itemObj : item){
                 JSONObject itemJson = (JSONObject) itemObj;
-                SigunguPk sigunguPk = SigunguPk.builder()
-                                        .sigunguCode(Integer.parseInt(itemJson.get("code").toString()))
-                                        .areaCode(Integer.parseInt(params.get("Area").toString()))
-                                        .build();
+//                SigunguPk sigunguPk = SigunguPk.builder()
+//                                        .sigunguCode(Integer.parseInt(itemJson.get("code").toString()))
+//                                        .areaCode(Integer.parseInt(params.get("Area").toString()))
+//                                        .build();
                 Sigungu sigungu = Sigungu.builder()
-                                .sigunguPk(sigunguPk)
+                                //.sigunguPk(sigunguPk)
+                                .sigunguCode(Integer.parseInt(itemJson.get("code").toString()))
+                                .areaCode(Integer.parseInt(params.get("Area").toString()))
                                 .sigunguName(itemJson.get("name").toString())
                                 .build();
 
@@ -193,11 +195,11 @@ public class InsertData {
                 Cat2 cat2 = Cat2.builder()
                                 .cat2(itemJson.get("code").toString())
                                 .cat2Name(itemJson.get("name").toString())
-                                .cat1(params.get("Cat1").toString())
+                                .cat1((Cat1) params.get("Cat1"))
                                 .build();
                 cat2Repository.save(cat2);
 
-                params.put("Cat2",cat2.getCat2());
+                params.put("Cat2",cat2);
                 insertCat3(makeUri("Category",params), params);
             }
         }catch(Exception e) {
@@ -227,8 +229,8 @@ public class InsertData {
                 Cat3 cat3 = Cat3.builder()
                         .cat3(itemJson.get("code").toString())
                         .cat3Name(itemJson.get("name").toString())
-                        .cat1(params.get("Cat1").toString())
-                        .cat2(params.get("Cat2").toString())
+                        /*.cat1((Cat1) params.get("Cat1"))*/
+                        .cat2((Cat2) params.get("Cat2"))
                         .build();
                 cat3Repository.save(cat3);
             }
