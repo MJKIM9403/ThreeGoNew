@@ -55,10 +55,11 @@ public class InsertData {
                 .queryParam("MobileApp","THREEGO");
 
         if(params.containsKey("Cat1")){
-            uriBuilder.queryParam("cat1", params.get("Cat1"));
+            uriBuilder.queryParam("cat1", ((Cat1) params.get("Cat1")).getCat1());
         }
-        if(params.containsKey("Cat2") && ((String)params.get("Cat2")).startsWith((String)params.get("Cat1"))){
-            uriBuilder.queryParam("cat2",params.get("Cat2"));
+        if(params.containsKey("Cat2")
+                && ((((Cat2)params.get("Cat2")).getCat2()).startsWith(((Cat1) params.get("Cat1")).getCat1()))){
+            uriBuilder.queryParam("cat2",((Cat2)params.get("Cat2")).getCat2());
         }
         if(params.containsKey("Area")){
             uriBuilder.queryParam("areaCode",params.get("Area"));
@@ -174,6 +175,7 @@ public class InsertData {
     }
 
     public void insertCat2(String url, Map<String, Object> params){
+        System.out.println(url);
         String result = "";
         try {
             URL newUrl = new URL(url);
@@ -209,6 +211,7 @@ public class InsertData {
 
     public void insertCat3(String url, Map<String, Object> params){
         String result = "";
+        System.out.println(url);
         try {
             URL newUrl = new URL(url);
             BufferedReader bf;
@@ -229,7 +232,7 @@ public class InsertData {
                 Cat3 cat3 = Cat3.builder()
                         .cat3(itemJson.get("code").toString())
                         .cat3Name(itemJson.get("name").toString())
-                        /*.cat1((Cat1) params.get("Cat1"))*/
+                        .cat1((Cat1) params.get("Cat1"))
                         .cat2((Cat2) params.get("Cat2"))
                         .build();
                 cat3Repository.save(cat3);
