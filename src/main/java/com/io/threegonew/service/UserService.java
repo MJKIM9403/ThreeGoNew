@@ -3,8 +3,10 @@ package com.io.threegonew.service;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
 import com.io.threegonew.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class UserService {
     }
 
 
+    public boolean isIdDuplicate(String userId) {
+        return userRepository.existsById(userId);
+    }
 
 
 }

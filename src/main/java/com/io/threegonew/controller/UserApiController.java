@@ -5,11 +5,14 @@ import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,4 +31,16 @@ public class UserApiController {
                 .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/login";
     }
+
+//    @GetMapping("/id/check")
+//    public ResponseEntity<?> checkIdDuplication(@RequestParam(value = "userId") String userId ) throws BadRequestException{
+//        System.out.println(userId);
+//
+//        if(userService.existsById(userId) == true){
+//            throw new BadRequestException("이미 사용 중인 아이디입니다.");
+//        }else {
+//            return ResponseEntity.ok("사용 가능한 아이디입니다.");
+//        }
+//
+//    }
 }

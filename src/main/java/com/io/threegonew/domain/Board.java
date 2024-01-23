@@ -19,7 +19,7 @@ public class Board {
     @Column(name = "b_id", updatable = false)
     private Integer bId;
 
-    @Column(name = "u_id", nullable = false)
+    @Column(name = "u_id", nullable = true)
     private String userId;
 
     @Column(name = "u_name", nullable = false)

@@ -34,7 +34,7 @@
   if(deleteBtn){
     deleteBtn.addEventListener('click', function () {
       let id = document.getElementById('board-id').value;
-      fetch(`/api/view/b_id=${id}`, {
+      fetch(`/api/view/${id}`, {
         method: 'DELETE'
       }).then(()=>{
         alert("삭제 완료");
@@ -446,10 +446,10 @@
 
     <div class="text-center">
       <div class="btn-group pt-5" role="group" aria-label="Basic example">
-        <c:if test="${not empty sessionScope.u_id and sessionScope.u_id eq dto.u_id}">
+<!--        <c:if test="${not empty sessionScope.u_id and sessionScope.u_id eq dto.u_id}">-->
           <button type="button" id="modify-btn" class="btn btn-primary btn-sm" th:onclick="|location.href='@{/write?b_id={bId}(bId=${board.BId})}'|">수정</button>
           <button type="button" id="delete-btn" class="btn btn-primary btn-sm">삭제</button>
-        </c:if>
+<!--        </c:if>-->
 
         <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='/board';">목록보기</button>
       </div>
@@ -535,6 +535,6 @@
 <th:block th:replace="~{fragments/footer}"></th:block>
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="../../assets/js/board.js"></script>
 </body>
 </html>

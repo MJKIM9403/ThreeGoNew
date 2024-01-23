@@ -1,5 +1,8 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.repository.UserRepository;
+import com.io.threegonew.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -7,17 +10,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ValidationController {
-    @GetMapping("/checkDuplicateId")
-    public ResponseEntity<Boolean> checkDuplicateId(@RequestParam String inputId) {
-        // 실제로는 DB 등에서 중복 여부를 확인하는 로직이 들어가야 합니다.
-        boolean isDuplicate = checkIfIdIsDuplicate(inputId);
-        return ResponseEntity.ok(isDuplicate);
+
+    private final UserRepository userRepository;
+    private final UserService userService;
+
+    @Autowired
+    public ValidationController(UserRepository userRepository, UserService userService) {
+        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    // 실제로는 DB 등에서 중복 여부를 확인하는 메서드
-    private boolean checkIfIdIsDuplicate(String inputId) {
-        // 여기에 실제 중복 확인 로직을 구현합니다.
-        // 예: 임시로 inputId가 "admin"이면 중복으로 간주하도록 설정
-        return "admin".equals(inputId);
+    @GetMapping("/checkDuplicateId")
+    public ResponseEntity<String> checkDuplicateId(@RequestParam String userId) {
+        System.out.println("userId에 대한 요청이 수신되었습니다: " + userId); // 콘솔 출력 추가
+        boolean isDuplicate = userService.isIdDuplicate(userId);
+
+        if (isDuplicate) {
+            System.out.println("중복된 아이디가 감지되었습니다: " + userId); // 콘솔 출력 추가
+            return ResponseEntity.badRequest().body("true");
+        }
+        else {
+            System.out.println("사용 가능한 아이디입니다: " + userId); // 콘솔 출력 추가
+            return ResponseEntity.ok("false");
+        }
     }
 }

@@ -21,15 +21,15 @@ public class BoardViewController {
 
     @GetMapping("/board")
     public String getBoards(Model model) {
-        List<BoardViewResponse> boards = boardService.findAll().stream()
+        List<BoardViewResponse> board = boardService.findAll().stream()
                 .map(BoardViewResponse::new)
                 .toList();
-        model.addAttribute("boards", boards);
+        model.addAttribute("board", board);
 
         return "board/bbs";
     }
 
-    @GetMapping("/board/b_id={bId}")
+    @GetMapping("/board/{bId}")
     public String getBoard(@PathVariable Integer bId, Model model){
         Board board = boardService.findById(bId);
         model.addAttribute("board", new BoardViewResponse(board));
@@ -40,7 +40,7 @@ public class BoardViewController {
     @GetMapping("/write")
     public String newBoard(@RequestParam(required = false) Integer bId, Model model) {
         if(bId == null) {
-            model.addAttribute("board", new BoardViewResponse());
+            model.addAttribute("board",new BoardViewResponse());
         } else {
             Board board = boardService.findById(bId);
             model.addAttribute("board",new BoardViewResponse(board));

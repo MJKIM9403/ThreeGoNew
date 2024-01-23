@@ -3,10 +3,9 @@ package com.io.threegonew.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Controller
 public class TestController {
 
-    @Controller
-    public class test {
         @GetMapping("/index")
         public String getIndex() {
             return "index";
@@ -22,11 +21,6 @@ public class TestController {
             return "login";
         }
 
-        @GetMapping("/mypage")
-        public String getMypage() {
-            return "mypage";
-        }
-
         @GetMapping("/calendar")
         public String getMyCalendar() {
             return "plan/calendar";
@@ -35,6 +29,16 @@ public class TestController {
         @GetMapping("/plan")
         public String getMyPlan() {
             return "plan/plan";
+        }
+
+        @GetMapping("detail")
+        public String getDetail() {
+            return "plan/detail";
+        }
+
+        @GetMapping("mypage")
+        public String getMyPage() {
+            return "mypage/mypage";
         }
 
 //    @GetMapping("/area")
@@ -48,4 +52,3 @@ public class TestController {
 //    }
     }
 
-}

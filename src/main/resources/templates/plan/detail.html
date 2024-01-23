@@ -292,6 +292,10 @@
         return num.toString().replace(regexp, ',');
     }
 
+    // 지도 너비 100%로 고정하기
+    $('#map_div').children('div:eq(0)').css('width','100%');
+    $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
+
 
     // 아이콘 누르면 장소 담기에 추가하는 함수
     $(document).ready(function() {
@@ -312,9 +316,6 @@
     function toggleDay() {
         $('#your_item').toggleClass('d-flex');
         $('#your_item').toggle();
-        // 지도 너비 100%로 고정하기
-        $('#map_div').children('div:eq(0)').css('width','100%');
-        $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
         $('#map').toggleClass('wide');
     }
 </script>
@@ -336,7 +337,7 @@
         overflow-y: auto;
         height: calc(100vh - 79px);
     }
-    .slim {
+    .show {
         width: calc(100% - 872px);
         /* 담은 장소를 못보게 하면 이 너비여야함 width: calc(100% - 492px); */
     }
@@ -368,12 +369,6 @@
     }
     .wide {
         width: calc(100% - 492px) !important;
-    }
-    .search-bar {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        margin: 8px;
     }
 </style>
 
@@ -436,13 +431,13 @@
         <!--장소찾기-->
         <div id="select_item" class="d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
             <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                <span class="fs-5 fw-semibold">도시명</span>
-                <span class="fx-6">이전화면에서 선택한 날짜</span>
+                <p class="fs-5 fw-semibold">도시명</p>
+                <p class="fx-6">이전화면에서 선택한 날짜</p>
             </a>
-            <input class="search-bar">
+            <div>
                 <label>장소를 검색하세요.</label>
                 <i class="bi bi-search"></i>
-
+            </div>
             <div class="scroll list-group list-group-flush border-bottom scrollarea">
                 <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
                     <div class="d-flex w-100 align-items-center justify-content-between">
@@ -562,23 +557,23 @@
         <!--장소담기-->
         <div id="your_item" class="d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
             <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                <span class="fs-5 fw-semibold">DAY1</span>
+                <p class="fs-5 fw-semibold">DAY1</p>
             </a>
 
             <!--버튼눌러서 담으면 이렇게 됩니다.-->
-<!--            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">-->
-<!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
-<!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
-<!--                        <strong class="mb-1">장소1</strong>-->
-<!--                        <small>-->
-                        <!--아이콘 눌러서 담기-->
-<!--                            <button id="deleteBtn" type="button" onclick="deleteRow(this);">-->
-<!--                                <i class='bi bi-x-circle'></i>-->
-<!--                            </button>-->
-<!--                        </small>-->
-<!--                    </div>-->
-<!--                </a>-->
-<!--            </div>-->
+            <!--            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">-->
+            <!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
+            <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+            <!--                        <strong class="mb-1">장소1</strong>-->
+            <!--                        <small>-->
+            <!--아이콘 눌러서 담기-->
+            <!--                            <button id="deleteBtn" type="button" onclick="deleteRow(this);">-->
+            <!--                                <i class='bi bi-x-circle'></i>-->
+            <!--                            </button>-->
+            <!--                        </small>-->
+            <!--                    </div>-->
+            <!--                </a>-->
+            <!--            </div>-->
 
             <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">
                 <div class="position-absolute bottom-0 end-0 mb-2 mx-2">
@@ -590,29 +585,29 @@
 
 
         <!--지도가 들어갑니다. 영역 알아보기 쉬우라고 bg-dark 클래스를 줬습니다. 실제로 쓸 땐 빼면 됩니다.-->
-        <div id="map" class="d-flex slim">
+        <div id="map" class="d-flex show">
             <button id="toggle-btn" class="bg-white text-center" type="button" onclick="toggleDay();">
                 <i class="bi bi-caret-left-fill"></i>
             </button>
 
 
             <p id="result"></p>
-<!--            <select id="selectLevel">-->
-<!--                <option value="0" selected="selected">교통최적+추천</option>-->
-<!--                <option value="1" >교통최적+무료우선</option>-->
-<!--                <option value="2" >교통최적+최소시간</option>-->
-<!--                <option value="3" >교통최적+초보</option>-->
-<!--            </select>-->
-<!--            <button id="btn_select">적용하기</button>-->
+            <!--            <select id="selectLevel">-->
+            <!--                <option value="0" selected="selected">교통최적+추천</option>-->
+            <!--                <option value="1" >교통최적+무료우선</option>-->
+            <!--                <option value="2" >교통최적+최소시간</option>-->
+            <!--                <option value="3" >교통최적+초보</option>-->
+            <!--            </select>-->
+            <!--            <button id="btn_select">적용하기</button>-->
 
-<!--            <p class="text-white">여기는 지도가? 들어가겟죵?</p>-->
+            <!--            <p class="text-white">여기는 지도가? 들어가겟죵?</p>-->
             <div id="map_div">
             </div>
 
 
-<!--            <div id="map_wrap" class="map_wrap">-->
-<!--                <div id="map_div"></div>-->
-<!--            </div>-->
+            <!--            <div id="map_wrap" class="map_wrap">-->
+            <!--                <div id="map_div"></div>-->
+            <!--            </div>-->
         </div>
     </div>
 
