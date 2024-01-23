@@ -12,18 +12,19 @@ if(deleteBtn){
 }
 
 
-document.addEventListener('DOMContentLoaded', function () {
+
     const modifyBtn = document.getElementById('modify-btn');
     if (modifyBtn) {
         modifyBtn.addEventListener('click', function () {
-            let id = new URLSearchParams(location.search).get('bId');
+            let params = new URLSearchParams(location.search)
+            let id = params.get('id');
 
             console.log("Clicked modify button. bId:", id);
 
-            if (!id) {
-                alert("수정할 글을 찾을 수 없습니다.");
-                return;
-            }
+            // if (!id) {
+            //     alert("수정할 글을 찾을 수 없습니다.");
+            //     return;
+            // }
 
             fetch(`/api/board/${id}`, {
                 method: 'PUT',
@@ -40,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
         });
     }
-});
 
 const createBtn =  document.getElementById('create-btn');
 
@@ -53,7 +53,7 @@ if(createBtn){
                 "Content-Type" : "application/json",
             },
             body : JSON.stringify({
-
+                userId: document.getElementById('u_id').value,
                 userName: document.getElementById('u_name').value,
                 bTitle : document.getElementById('b_title').value,
                 bContent : document.getElementById('b_content').value
@@ -63,8 +63,4 @@ if(createBtn){
             location.replace("/board");
         })
     });
-}
-
-window.onload = function (){
-
 }
