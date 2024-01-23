@@ -22,4 +22,8 @@ public class Cat3 {
     @ManyToOne
     @JoinColumn(name = "cat2")
     private Cat2 cat2;
+
+    @ManyToOne
+    @JoinColumn(name = "cat1")
+    private Cat1 cat1;
 }
