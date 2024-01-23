@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modifyBtn = document.getElementById('modify-btn');
     if (modifyBtn) {
         modifyBtn.addEventListener('click', function () {
-            let id = new URLSearchParams(location.search).get('b_id');
+            let id = new URLSearchParams(location.search).get('bId');
 
             console.log("Clicked modify button. bId:", id);
 
@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    title: document.getElementById('b_title').value,
-                    content: document.getElementById('b_content').value
+                    bTitle: document.getElementById('b_title').value,
+                    bContent: document.getElementById('b_content').value
                 })
             }).then(() => {
                 alert("수정 완료");
@@ -53,12 +53,18 @@ if(createBtn){
                 "Content-Type" : "application/json",
             },
             body : JSON.stringify({
-                title : document.getElementById('b_title').value,
-                content : document.getElementById('b_content').value
+
+                userName: document.getElementById('u_name').value,
+                bTitle : document.getElementById('b_title').value,
+                bContent : document.getElementById('b_content').value
             })
         }).then(()=>{
             alert("등록 완료");
             location.replace("/board");
         })
     });
+}
+
+window.onload = function (){
+
 }
