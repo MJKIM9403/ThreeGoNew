@@ -50,6 +50,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
+    // Spring Boot Starter Validation
+    implementation ("org.springframework.boot:spring-boot-starter-validation")
 
 
 
