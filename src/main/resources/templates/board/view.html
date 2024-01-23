@@ -34,7 +34,7 @@
   if(deleteBtn){
     deleteBtn.addEventListener('click', function () {
       let id = document.getElementById('board-id').value;
-      fetch(`/api/view/b_id=${id}`, {
+      fetch(`/api/view/${id}`, {
         method: 'DELETE'
       }).then(()=>{
         alert("삭제 완료");
@@ -535,6 +535,6 @@
 <th:block th:replace="~{fragments/footer}"></th:block>
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="../../assets/js/board.js"></script>
 </body>
 </html>

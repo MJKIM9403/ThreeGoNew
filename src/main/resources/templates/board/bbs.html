@@ -116,12 +116,12 @@
 
         <div class="card-deck row row-cols-1 row-cols-md-3 g-4 pt-5 pb-5" >
             <!-- 게시물이 없을 때 -->
-            <div class="col" th:if="${boards == null} or ${boards.size() == 0}">
+            <div class="col" th:if="${board == null} or ${board.size() == 0}">
                 <p class="card-text">등록된 게시물이 없습니다.</p>
             </div>
 
 
-            <a th:each="item : ${boards}" th:href="@{/board/b_id={bId}(bId=${item.BId})}">
+            <a th:each="item : ${board}" th:href="@{/board/{bId}(bId=${item.BId})}">
                 <div class="col">
                     <div class="card card-item">
                         <div class="card-img-item">
@@ -175,7 +175,7 @@
 
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="../assets/js/board.js"></script>
 
 </body>
 </html>

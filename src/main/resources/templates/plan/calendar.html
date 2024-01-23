@@ -163,21 +163,25 @@
     </div>
 
     <div class="container px-1 px-sm-5 mx-auto">
-        <form autocomplete="off">
-            <div class="flex-sm-row flex-column d-flex">
-                <div class="col-sm-9 col-12 px-0 mb-2">
-                    <div class="input-group input-daterange">
-                        <input id="start" type="text" class="form-control" placeholder="Arriving Date" onchange="test()" readonly>
-                        <i class="bi bi-calendar" id="fa-1"></i>
-                        <input id="end" type="text" class="form-control" placeholder="Leaving Date" onchange="test()" readonly>
-                        <i class="bi bi-calendar" id="fa-2"></i>
+        <div class="pt-5 pb-5">
+            <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
+            <form autocomplete="off">
+                <div class="flex-sm-row flex-column d-flex">
+                    <div class="col-sm-9 col-12 px-0 mb-2">
+                        <div class="input-group input-daterange">
+                            <input id="start" type="text" class="form-control" placeholder="Arriving Date" onchange="test()" readonly>
+                            <i class="bi bi-calendar" id="fa-1"></i>
+                            <input id="end" type="text" class="form-control" placeholder="Leaving Date" onchange="test()" readonly>
+                            <i class="bi bi-calendar" id="fa-2"></i>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-12 px-0">
+                        <button type="button" class="btn btn-black" onclick="location.href='/plan'">Search</button>
                     </div>
                 </div>
-                <div class="col-sm-3 col-12 px-0">
-                    <button type="submit" class="btn btn-black">Search</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
+
     </div>
     <div class="result"></div>
     <script>
