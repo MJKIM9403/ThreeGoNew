@@ -328,17 +328,46 @@
 <!--day1을 클릭하면 그 날짜의 장소를 검색하고 선택해서 가져오면, 빈칸에는 장소에 해당하는 지도가 출력됩니다.-->
 
 <style>
+    *::-webkit-scrollbar {
+        width: 5px !important;
+    }
+    *::-webkit-scrollbar-thumb {
+        height: 30%; /* 스크롤바의 길이 */
+        background: #ddd; /* 스크롤바의 색상 */
+        border-radius: 10px;
+    }
+    *::-webkit-scrollbar-track {
+        background: #fff;  /*스크롤바 뒷 배경 색상*/
+    }
+
+    .container-fluid {
+        overflow-y: hidden !important;
+    }
+    body {
+        scrollbar-width: none;
+    }
+    ul {
+        padding-left: 0 !important;
+        margin-bottom: 0 !important;
+    }
     .row > * {
         padding-right: 0 !important;
         padding-left: 0 !important;
     }
+    .search-scroll {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: calc(100vh - 112px);
+    }
     .scroll {
         overflow-y: auto;
+        overflow-x: hidden;
         height: calc(100vh - 79px);
+        /*height: calc(100vh - 114px);*/
     }
-    .slim {
+    .default {
         width: calc(100% - 872px);
-        /* 담은 장소를 못보게 하면 이 너비여야함 width: calc(100% - 492px); */
+        /* 기본 너비 상태 */
     }
     .plus, .delete {
         background: #fff;
@@ -346,6 +375,9 @@
         width: 30px;
         height: 30px;
         border-radius: 100%;
+    }
+    .list-group-item {
+        border-width: 0 0 1px 0 !important;
     }
 
     #toggle-btn {
@@ -374,6 +406,33 @@
         border: 1px solid #ddd;
         border-radius: 10px;
         margin: 8px;
+        align-items: center;
+        justify-content: center;
+    }
+    .search-bar__input {
+        width: 313px;
+        border: none;
+        outline: none;
+    }
+    .search-btn {
+        width: 20px;
+        height: 20px;
+        background: none;
+        border: none;
+    }
+    #your_item {
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100vh;
+        max-height: 100vh;
+    }
+    .overflow-y-auto {
+        overflow-y: auto;
+    }
+
+    .overflow-x-hidden {
+        overflow-x: hidden;
     }
 </style>
 
@@ -416,6 +475,9 @@
                     </a>
                 </li>
             </ul>
+            <div class="btn_con text-center">
+                <button type="button" id="next-btn" class="btn btn-primary" onclick="location.href='/datil'">다음</button>
+            </div>
             <div class="dropdown border-top">
                 <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
@@ -434,133 +496,137 @@
 
 
         <!--장소찾기-->
-        <div id="select_item" class="d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-            <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+        <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
+            <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
                 <span class="fs-5 fw-semibold">도시명</span>
                 <span class="fx-6">이전화면에서 선택한 날짜</span>
             </a>
-            <input class="search-bar">
-                <label>장소를 검색하세요.</label>
-                <i class="bi bi-search"></i>
+            <div class="search-bar">
+                <input class="search-bar__input" placeholder="장소를 검색하세요.">
+                <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
+            </div>
 
-            <div class="scroll list-group list-group-flush border-bottom scrollarea">
-                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소1</strong>
-                        <button class="plus">
-                            <!--아이콘 눌러서 담기-->
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
+            <div class="search-scroll list-group list-group-flush border-bottom scrollarea">
+                <ul class="flex overflow-x-hidden">
+                    <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소1</strong>
+                            <button class="plus">
+                                <!--아이콘 눌러서 담기-->
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
 
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소2</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소3</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소2</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소3</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
 
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소4</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소5</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소6</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소7</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소8</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소9</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소10</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소11</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">장소12</strong>
-                        <button class="plus">
-                            <i class="bi bi-bookmark-plus"></i>
-                        </button>
-                    </div>
-                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소4</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소5</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소6</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소7</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소8</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소9</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소10</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소11</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">장소12</strong>
+                            <button class="plus">
+                                <i class="bi bi-bookmark-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
+                    </a>
+                </ul>
+
             </div>
         </div>
 
 
         <!--장소담기-->
-        <div id="your_item" class="d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
+        <div id="your_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
             <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
                 <span class="fs-5 fw-semibold">DAY1</span>
             </a>
@@ -580,17 +646,14 @@
 <!--                </a>-->
 <!--            </div>-->
 
-            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">
-                <div class="position-absolute bottom-0 end-0 mb-2 mx-2">
-                    <button type="button" id="next-btn" class="btn btn-primary" onclick="location.href='/datil'">다음</button>
-                </div>
-
+            <div id="areabox" class="scroll list-group list-group-flush scrollarea">
             </div>
+
         </div>
 
 
-        <!--지도가 들어갑니다. 영역 알아보기 쉬우라고 bg-dark 클래스를 줬습니다. 실제로 쓸 땐 빼면 됩니다.-->
-        <div id="map" class="d-flex slim">
+        <!--지도가 들어갑니다.-->
+        <div id="map" class="d-flex default">
             <button id="toggle-btn" class="bg-white text-center" type="button" onclick="toggleDay();">
                 <i class="bi bi-caret-left-fill"></i>
             </button>

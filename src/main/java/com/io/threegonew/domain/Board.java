@@ -13,11 +13,12 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "board")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_id", updatable = false)
-    private Integer bId;
+    private Long bId;
 
     @Column(name = "u_id", nullable = true)
     private String userId;

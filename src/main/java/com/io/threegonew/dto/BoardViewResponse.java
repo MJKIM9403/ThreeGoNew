@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class BoardViewResponse {
     private String userId;
     private String userName;
-    private Integer bId;
+    private Long bId;
     private String bTitle;
     private String bContent;
     private LocalDate bPostdate;
@@ -29,6 +29,5 @@ public class BoardViewResponse {
         this.originalFile = board.getOriginalFile();
         this.savedFile = board.getSavedFile();
         this.visitCount = board.getVisitCount();
-
     }
 }

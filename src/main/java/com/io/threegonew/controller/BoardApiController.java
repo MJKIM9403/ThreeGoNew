@@ -35,21 +35,21 @@ public class BoardApiController {
     }
 
     @GetMapping("/api/board/{bId}")
-    public ResponseEntity<BoardResponse> findPost(@PathVariable Integer bId) {
+    public ResponseEntity<BoardResponse> findPost(@PathVariable Long bId) {
         Board board  = boardService.findById(bId);
 
         return ResponseEntity.ok().body(new BoardResponse(board));
     }
 
     @DeleteMapping("/api/board/{bId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Integer bId) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long bId) {
         boardService.delete(bId);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/api/board/{bId}")
-    public ResponseEntity<Board> updatePost(@PathVariable Integer bId, @RequestBody UpdateBoardRequest request) {
+    public ResponseEntity<Board> updatePost(@PathVariable Long bId, @RequestBody UpdateBoardRequest request) {
         Board updateBoard = boardService.update(bId, request);
 
         return ResponseEntity.ok().body(updateBoard);
