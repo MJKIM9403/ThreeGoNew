@@ -31,10 +31,11 @@
         })
 
         function checkCategory(){
-            let cat1 = $("input[name='cat1']:checked").val();
-            let url = `/info/cat/{${cat1}}`;
+
 
             $('.catSelect').click(function (){
+                let cat1 = $("input[name=cat1]:checked").val();
+                let url = `/info/cat/{${cat1}}`;
                 console.log("cat1: " + cat1);
                 console.log("url: " + url);
             })
@@ -314,13 +315,11 @@
         <button type="button" class="btn btn-2 btn-primary2 btn-select-area " id="morebtn" >지역선택</button>
     </div>
     <div id="area-list-box" class = "invisiblecard">
-        <div class="d-flex flex-wrap">
-            <div th:each="area, idx : ${areaList}">
+            <th:block th:each="area, idx : ${areaList}">
                 <input type="radio" class="areaSelect btn-check" name="areaSelect" th:id="|area${idx.count}|" autocomplete="off"
                        th:value="${area.areaCode}" th:checked="${selectedArea.areaCode == area.areaCode}">
                 <label class="btn btn-3 btn-area" th:for="|area${idx.count}|"><a th:href="@{/info/city/{areaCode}(areaCode = ${area.areaCode})}" th:text="|${area.areaName}|"></a></label>
-            </div>
-        </div>
+            </th:block>
     </div>
     <div id="content_container">
         <!--리스트-->
@@ -329,30 +328,22 @@
         <div id="tagSelector">
             <div id="content_type">
                 <h5>- 관광 타입 -</h5>
-                <div class="d-flex flex-wrap">
-                    <div>
-                        <input type="radio" class="typeSelect btn-check" name="type" id="type0" autocomplete="off" value="" checked>
-                        <label class="btn btn-2" for="type0" th:text="전체"></label>
-                    </div>
-                    <div th:each="type, idx : ${contentTypeList}">
-                        <input type="radio" class="typeSelect btn-check" name="type" th:id="|type${idx.count}|" autocomplete="off" th:value="${type.contentTypeId}">
-                        <label class="btn btn-2" th:for="|type${idx.count}|" th:text="${type.contentTypeName}"></label>
-                    </div>
-                </div>
+                <input type="radio" class="typeSelect btn-check" name="type" id="type0" autocomplete="off" value="" checked>
+                <label class="btn btn-2" for="type0" th:text="전체"></label>
+                <th:block th:each="type, idx : ${contentTypeList}">
+                    <input type="radio" class="typeSelect btn-check" name="type" th:id="|type${idx.count}|" autocomplete="off" th:value="${type.contentTypeId}">
+                    <label class="btn btn-2" th:for="|type${idx.count}|" th:text="${type.contentTypeName}"></label>
+                </th:block>
             </div>
             <div id="category">
 <!--                <input type="hidden" name="area" value="${param.area}">-->
                 <h5>- 대분류 -</h5>
-                <div class="d-flex flex-wrap">
-                    <div>
-                        <input type="radio" class="catSelect btn-check" name="cat1" id="cat10" autocomplete="off" value="" checked>
-                        <label class="btn btn-2" for="cat10" th:text="전체"></label>
-                    </div>
-                    <div th:each="cat1, idx : ${cat1List}">
-                        <input type="radio" class="catSelect btn-check" name="cat1" th:id="|cat1${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
-                        <label class="btn btn-2" th:for="|cat1${idx.count}|" th:text="${cat1.cat1Name}"></label>
-                    </div>
-                </div>
+                <input type="radio" class="catSelect btn-check" name="cat1" id="cat10" autocomplete="off" value="" checked>
+                <label class="btn btn-2" for="cat10" th:text="전체"></label>
+                <th:block th:each="cat1, idx : ${cat1List}">
+                    <input type="radio" class="catSelect btn-check" name="cat1" th:id="|cat1${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
+                    <label class="btn btn-2" th:for="|cat1${idx.count}|" th:text="${cat1.cat1Name}"></label>
+                </th:block>
                 <br/>
                 <div id="cat2Label"></div>
                 <div id="cat2"></div>
@@ -361,16 +352,12 @@
             </div>
             <div id="sigungu">
                 <h5>- 상세 지역 -</h5>
-                <div class="d-flex flex-wrap">
-                    <div>
-                        <input type="radio" class="areaSelect btn-check" name="sigungu" id="sigungu0" autocomplete="off" value="" checked>
-                        <label class="btn btn-2" for="sigungu0" th:text="전체"></label>
-                    </div>
-                    <div th:each="sigungu, idx : ${sigunguList}">
-                        <input type="radio" class="areaSelect btn-check" name="sigungu" th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
-                        <label class="btn btn-2" th:for="|sigungu${idx.count}|" th:text="${sigungu.sigunguName}"></label>
-                    </div>
-                </div>
+                <input type="radio" class="areaSelect btn-check" name="sigungu" id="sigungu0" autocomplete="off" value="" checked>
+                <label class="btn btn-2" for="sigungu0" th:text="전체"></label>
+                <th:block th:each="sigungu, idx : ${sigunguList}">
+                    <input type="radio" class="areaSelect btn-check" name="sigungu" th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
+                    <label class="btn btn-2" th:for="|sigungu${idx.count}|" th:text="${sigungu.sigunguName}"></label>
+                </th:block>
             </div>
             <div class="d-grid">
                 <button class="btn btn-2 search-btn" type="button" name="searchBtn">검색</button>
