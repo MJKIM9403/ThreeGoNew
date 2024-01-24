@@ -29,20 +29,6 @@
     clickEdit();
   })
 
-
-  const deleteBtn = document.getElementById('delete-btn');
-  if(deleteBtn){
-    deleteBtn.addEventListener('click', function () {
-      let id = document.getElementById('board-id').value;
-      fetch(`/api/view/${id}`, {
-        method: 'DELETE'
-      }).then(()=>{
-        alert("삭제 완료");
-        location.replace('/board');
-      })
-    });
-  }
-
   // function clickReply(){
   //   $('.btn-reply').click(function (e) {
   //     if(${sessionScope.u_id == null}){

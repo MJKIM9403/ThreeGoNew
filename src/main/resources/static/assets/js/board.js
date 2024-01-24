@@ -16,7 +16,7 @@ if(deleteBtn){
     const modifyBtn = document.getElementById('modify-btn');
     if (modifyBtn) {
         modifyBtn.addEventListener('click', function () {
-            let params = new URLSearchParams(location.search)
+            let params = new URLSearchParams(window.location.search)
             let id = params.get('bid');
 
             console.log("Clicked modify button. bid:", id);
@@ -32,8 +32,8 @@ if(deleteBtn){
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    btitle: document.getElementById('b_title').value,
-                    bcontent: document.getElementById('b_content').value
+                    title: document.getElementById('b_title').value,
+                    content: document.getElementById('b_content').value
                 })
             }).then(() => {
                 alert("수정 완료");

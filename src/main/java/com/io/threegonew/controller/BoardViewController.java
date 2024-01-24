@@ -2,7 +2,6 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.Board;
 import com.io.threegonew.dto.BoardViewResponse;
-import com.io.threegonew.dto.UpdateBoardRequest;
 import com.io.threegonew.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,11 +40,11 @@ public class BoardViewController {
     }
 
     @GetMapping("/write")
-    public String newBoard(@RequestParam(required = false) Long bId, Model model) {
-        if(bId == null) {
+    public String newBoard(@RequestParam(required = false) Long bid, Model model) {
+        if(bid == null) {
             model.addAttribute("board",new BoardViewResponse());
         } else {
-            Board board = boardService.findById(bId);
+            Board board = boardService.findById(bid);
             model.addAttribute("board",new BoardViewResponse(board));
         }
         return "board/write";
