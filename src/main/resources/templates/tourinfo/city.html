@@ -23,8 +23,8 @@
 
         $(document).ready(function (){
             checkCategory();
-            // showList();
-            // search();
+            showList();
+            search();
             $("#morebtn").click(function() {
                 $(".invisiblecard").slideToggle(300);
             });
@@ -32,170 +32,125 @@
 
         function checkCategory(){
 
-
+            // 카테고리(분류) 선택
             $('.catSelect').click(function (){
-                let cat1 = $("input[name=cat1]:checked").val();
-                let url = `/info/cat/{${cat1}}`;
-                console.log("cat1: " + cat1);
-                console.log("url: " + url);
-            })
-
-            /*// 카테고리(분류) 선택
-            $('.catSelect').click(function (){
+                const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 $.ajax({
-                    url : url,
+                    url : '/info/api/cat2',
                     type: 'POST',
                     contentType : 'application/json; charset=UTF-8',
-                    dataType: 'json',
                     data : JSON.stringify({
-                        sigungu : $('input[name=sigungu]:checked').val(),
-                        cat1 : $('input[name=cat1]:checked').val(),
-                        cat2 : $('input[name=cat2]:checked').val(),
-                        cat3 : $('input[name=cat3]:checked').val(),
-                        type : $('input[name=type]:checked').val()
+                        cat1 : cat1
                     }),
                     success : function(data){
-                        let cat2List = data.cat2List;
-                        $('#cat2Label').html("<br/><h5>- 중분류 -</h5>")
-                        $('#cat2').html("")
-
-                        $('#cat2').append(
-                            '<input type="radio" class="cat2Select btn-check" name="cat2" id="cat20" autocomplete="off" value="" checked>'
-                            + '<label class="btn btn-2" for="cat20">#전체</label>'
-                        )
-                        cat2List.forEach(function (cat2, idx){
-                            $('#cat2').append(
-                                '<input type="radio" class="cat2Select btn-check" name="cat2" id="cat2'+ (idx+1) +'" autocomplete="off" value="' + cat2.cat2 + '">'
-                                + '<label class="btn btn-2" for="cat2' + (idx+1) + '">' + cat2.cat2_name + '</label>'
-                            )
-                        })
-                        if($('input[name=cat1]:checked').val() == ""){
-                            $('#cat2Label').html("")
-                            $('#cat2').html("")
-                        }
-                        $('#cat3Label').html("")
-                        $('#cat3').html("")
+                        $('#category-cat2').replaceWith(data);
+                    },
+                    error : function (err){
+                        console.log(err)
                     }
                 })
             })
 
-            $(document).on('click','.cat2Select',function (){
+            $(document).on('click','.cat2Select',function () {
+                const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
                 $.ajax({
-                    url : url,
+                    url: '/info/api/cat3',
                     type: 'POST',
-                    contentType : 'application/json; charset=UTF-8',
-                    dataType: 'json',
-                    data : JSON.stringify({
-                        sigungu : $('input[name=sigungu]:checked').val(),
-                        cat1 : $('input[name=cat1]:checked').val(),
-                        cat2 : $('input[name=cat2]:checked').val(),
-                        cat3 : $('input[name=cat3]:checked').val(),
-                        type : $('input[name=type]:checked').val()
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify({
+                        cat2: cat2
                     }),
-                    success : function(data){
-                        let cat3List = data.cat3List;
-                        $('#cat3Label').html("<br/><h5>- 소분류 -</h5>")
-                        $('#cat3').html("")
-                        $('#cat3').append(
-                            '<input type="radio" class="cat3Select btn-check" name="cat3" id="cat30" autocomplete="off" value="" checked>'
-                            + '<label class="btn btn-2" for="cat30">#전체</label>'
-                        )
-                        cat3List.forEach(function (cat3, idx){
-                            $('#cat3').append(
-                                '<input type="radio" class="cat3Select btn-check" name="cat3" id="cat3'+ (idx+1) +'" autocomplete="off" value="' + cat3.cat3 + '">'
-                                + '<label class="btn btn-2" for="cat3' + (idx+1) + '">' + cat3.cat3_name + '</label>'
-                            )
-                        })
-                        if($('input[name=cat2]:checked').val() == ""){
-                            $('#cat3Label').html("")
-                            $('#cat3').html("")
-                        }
+                    success: function (data) {
+                        $('#category-cat3').replaceWith(data);
+                    },
+                    error: function (err) {
+                        console.log(err)
                     }
                 })
-            })*/
+            })
         }
 
-        // function showList(){
-        //     $('#gridDiv').html("");
-        //
-        //     const dataSource = {
-        //         contentType: 'application/json; charset=UTF-8',
-        //         api: {
-        //             readData: {
-        //                 url: '/tour_list.do',
-        //                 method: 'GET',
-        //                 initParams: {
-        //                     area : $('input[name=area]').val(),
-        //                     sigungu : $('input[name=sigungu]:checked').val(),
-        //                     cat1 : $('input[name=cat1]:checked').val(),
-        //                     cat2 : $('input[name=cat2]:checked').val(),
-        //                     cat3 : $('input[name=cat3]:checked').val(),
-        //                     type : $('input[name=type]:checked').val()
-        //                 }
-        //             }
-        //         }
-        //     };
-        //
-        //     const Grid = tui.Grid;
-        //     Grid.applyTheme('clean',{
-        //         cell: {
-        //             normal: {
-        //                 background: '#fff',
-        //                 border: '#e0e0e0',
-        //                 showVerticalBorder: false,
-        //                 showHorizontalBorder: true
-        //             },
-        //             header: {
-        //                 background: '#fff',
-        //                 border: '#e0e0e0',
-        //                 showVerticalBorder: false,
-        //                 showHorizontalBorder: true
-        //             },
-        //             selectedHeader: {
-        //                 background: '#e0e0e0'
-        //             }
-        //         }
-        //     });
-        //
-        //     var grid = new Grid({
-        //         el : document.getElementById('gridDiv'),
-        //         data : dataSource,
-        //         scrollX : false,
-        //         scrollY : false,
-        //         rowHeight : 120,
-        //         rowHeaders: [{type: 'rowNum', width: 50}],
-        //
-        //         columns : [
-        //             {
-        //                 header : '사진',
-        //                 name : 'firstimage',
-        //                 renderer: {
-        //                     styles: {
-        //                         textAlign: 'center'
-        //                     },
-        //                 },
-        //                 width : 200
-        //             },
-        //             {
-        //                 header : '관광정보',
-        //                 name : 'content',
-        //             }
-        //         ],
-        //
-        //         pageOptions: {
-        //             useClient: true,	// front에서만 페이징 하는 속성
-        //             perPage: 10
-        //         }
-        //
-        //     });
-        // }
-        //
-        // function search(){
-        //     // 조회
-        //     $('button[name=searchBtn]').click(function (){
-        //         showList();
-        //     })
-        // }
+        function showList(){
+            $('#gridDiv').html("");
+
+            const dataSource = {
+                contentType: 'application/json; charset=UTF-8',
+                api: {
+                    readData: {
+                        url: '/info/api/touritems',
+                        method: 'GET',
+                        initParams: {
+                            cat1 : $('input[name=cat1]:checked').val(),
+                            cat2 : $('input[name=cat2]:checked').val(),
+                            cat3 : $('input[name=cat3]:checked').val(),
+                            areaCode : $('input[name=area]').val(),
+                            sigunguCode : $('input[name=sigungu]:checked').val(),
+                            contentTypeId : $('input[name=type]:checked').val()
+                        }
+                    }
+                }
+            };
+
+            const Grid = tui.Grid;
+            Grid.applyTheme('clean',{
+                cell: {
+                    normal: {
+                        background: '#fff',
+                        border: '#e0e0e0',
+                        showVerticalBorder: false,
+                        showHorizontalBorder: true
+                    },
+                    header: {
+                        background: '#fff',
+                        border: '#e0e0e0',
+                        showVerticalBorder: false,
+                        showHorizontalBorder: true
+                    },
+                    selectedHeader: {
+                        background: '#e0e0e0'
+                    }
+                }
+            });
+
+            var grid = new tui.Grid({
+                el : document.getElementById('gridDiv'),
+                data : dataSource,
+                scrollX : false,
+                scrollY : false,
+                rowHeight : 120,
+                rowHeaders: [{type: 'rowNum', width: 50}],
+
+                columns : [
+                    {
+                        header : '사진',
+                        name : 'firstimage',
+                        renderer: {
+                            styles: {
+                                textAlign: 'center'
+                            },
+                        },
+                        width : 200
+                    },
+                    {
+                        header : '관광정보',
+                        name : 'title',
+                    }
+                ],
+
+                pageOptions: {
+                    useClient: true,	// front에서만 페이징 하는 속성
+                    perPage: 10
+                }
+
+            });
+        }
+
+        function search(){
+            // 조회
+            $('button[name=searchBtn]').click(function (){
+                showList();
+            })
+        }
 
     </script>
     <style>
@@ -323,9 +278,10 @@
     </div>
     <div id="content_container">
         <!--리스트-->
-<!--        <div id="gridDiv"></div>-->
+        <div id="gridDiv"></div>
         <!--카테고리 셀렉터-->
         <div id="tagSelector">
+            <input type="hidden" name="area" th:value="${selectedArea.areaCode}">
             <div id="content_type">
                 <h5>- 관광 타입 -</h5>
                 <input type="radio" class="typeSelect btn-check" name="type" id="type0" autocomplete="off" value="" checked>
@@ -336,19 +292,38 @@
                 </th:block>
             </div>
             <div id="category">
-<!--                <input type="hidden" name="area" value="${param.area}">-->
-                <h5>- 대분류 -</h5>
-                <input type="radio" class="catSelect btn-check" name="cat1" id="cat10" autocomplete="off" value="" checked>
-                <label class="btn btn-2" for="cat10" th:text="전체"></label>
-                <th:block th:each="cat1, idx : ${cat1List}">
-                    <input type="radio" class="catSelect btn-check" name="cat1" th:id="|cat1${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
-                    <label class="btn btn-2" th:for="|cat1${idx.count}|" th:text="${cat1.cat1Name}"></label>
-                </th:block>
-                <br/>
-                <div id="cat2Label"></div>
-                <div id="cat2"></div>
-                <div id="cat3Label"></div>
-                <div id="cat3"></div>
+                <div id="cat1Selector">
+                    <h5>- 대분류 -</h5>
+                    <input type="radio" class="catSelect btn-check" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
+                    <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
+                    <th:block th:each="cat1, idx : ${cat1List}">
+                        <input type="radio" class="catSelect btn-check" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
+                        <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
+                    </th:block>
+                </div>
+
+                <div id="category-cat2">
+                    <div id="cat2Selector" th:if="${cat2List.size() > 0}">
+                        <h5>- 중분류 -</h5>
+                        <input type="radio" class="cat2Select btn-check" name="cat2" id="cat2-0" autocomplete="off" value="" checked>
+                        <label class="btn btn-2" for="cat2-0" th:text="전체"></label>
+                        <th:block th:each="cat2, idx : ${cat2List}">
+                            <input type="radio" class="cat2Select btn-check" name="cat2" th:id="|cat2-${idx.count}|" autocomplete="off" th:value="${cat2.cat2}">
+                            <label class="btn btn-2" th:for="|cat2-${idx.count}|" th:text="${cat2.cat2Name}"></label>
+                        </th:block>
+                    </div>
+                </div>
+                <div id="category-cat3">
+                    <div id="cat3Selector" th:if="${cat3List.size() > 0}">
+                        <h5>- 소분류 -</h5>
+                        <input type="radio" class="cat3Select btn-check" name="cat3" id="cat3-0" autocomplete="off" value="" checked>
+                        <label class="btn btn-2" for="cat3-0" th:text="전체"></label>
+                        <th:block th:each="cat3, idx : ${cat3List}">
+                            <input type="radio" class="cat3Select btn-check" name="cat3" th:id="|cat3-${idx.count}|" autocomplete="off" th:value="${cat3.cat3}">
+                            <label class="btn btn-2" th:for="|cat3-${idx.count}|" th:text="${cat3.cat3Name}"></label>
+                        </th:block>
+                    </div>
+                </div>
             </div>
             <div id="sigungu">
                 <h5>- 상세 지역 -</h5>

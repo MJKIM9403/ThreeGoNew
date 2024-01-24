@@ -2,6 +2,9 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
+import com.io.threegonew.domain.TourItem;
+import com.io.threegonew.dto.CategoryResponse;
+import com.io.threegonew.dto.TourItemSelectRequest;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/info")
@@ -27,6 +33,8 @@ public class TourItemController {
     public String getSelectList(@PathVariable(name = "areaCode") Integer areaCode, Model model){
         model.addAttribute("areaList", tourItemService.findAreaList());
         model.addAttribute("cat1List", tourItemService.findCat1List());
+        model.addAttribute("cat2List", new ArrayList<Cat2>());
+        model.addAttribute("cat3List", new ArrayList<Cat3>());
         model.addAttribute("sigunguList", tourItemService.findSigunguList(areaCode));
         model.addAttribute("contentTypeList", tourItemService.findContentTypeList());
         model.addAttribute("selectedArea", tourItemService.findArea(areaCode));
@@ -34,18 +42,48 @@ public class TourItemController {
         return "tourinfo/city";
     }
 
-    @PostMapping("/api/cat/{cat1}")
-    @ResponseBody
-    public ResponseEntity<List<Cat2>> getCat2List(@PathVariable(name = "cat1") String cat1){
-        List<Cat2> cat2List = tourItemService.findCat2List(cat1);
-        return ResponseEntity.ok().body(cat2List);
+    @PostMapping("/api/cat2")
+    public String getCat2List(@RequestBody TourItemSelectRequest request, Model model){
+        if(request.getCat1() != null){
+            model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
+        }else {
+            model.addAttribute("cat2List", new ArrayList<>());
+        }
+
+        return "tourinfo/city :: #category-cat2";
+    }
+    @PostMapping("/api/cat3")
+    public String getCat3List(@RequestBody TourItemSelectRequest request, Model model){
+        if(request.getCat2() != null){
+            model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
+        }else {
+            model.addAttribute("cat3List", new ArrayList<>());
+        }
+
+        return "tourinfo/city :: #category-cat3";
     }
 
-    @PostMapping("/api/cat/{cat1}/{cat2}")
+    @GetMapping("/api/touritems")
     @ResponseBody
-    public ResponseEntity<List<Cat3>> getCat3List(@PathVariable(name = "cat1") String cat1, @PathVariable(name = "cat2") String cat2){
-        List<Cat3> cat3List = tourItemService.findCat3List(cat2);
-        return ResponseEntity.ok().body(cat3List);
+    public ResponseEntity<Map<String,Object>> getTourItemList(@RequestParam Map<String, String> params) {
+        Map<String,Object> returnData = new HashMap<>();
+        Map<String,Object> data = new HashMap<>();
+        TourItemSelectRequest request = TourItemSelectRequest.builder()
+                .areaCode(params.get("areaCode"))
+                .sigunguCode(params.get("sigunguCode"))
+                .cat1(params.get("cat1"))
+                .cat2(params.get("cat2"))
+                .cat3(params.get("cat3"))
+                .contentTypeId(params.get("contentTypeId"))
+                .build();
+        List<TourItem> tourItemList = tourItemService.findSelectedTourItemList(request);
+        data.put("contents", tourItemList);
+
+        returnData.put("result", true);
+        returnData.put("data", data);
+
+
+        return ResponseEntity.ok().body(returnData);
     }
 
 
