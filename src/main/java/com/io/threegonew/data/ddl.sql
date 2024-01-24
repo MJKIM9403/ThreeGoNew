@@ -121,7 +121,7 @@ CREATE TABLE `T_C_TYPE` (
 -- maria db에서 한글입력이 가능하게 utf-8로 바꿔줍니다.
 alter table `LIKES` convert to CHARSET UTF8;
 alter table `REPLY` convert to CHARSET UTF8;
-alter table `BOARDTABLE` convert to CHARSET UTF8;
+alter table `BOARD` convert to CHARSET UTF8;
 alter table `USERS` convert to CHARSET UTF8;
 alter table `TOURITEM` convert to CHARSET UTF8;
 alter table `T_CAT1` convert to CHARSET UTF8;
