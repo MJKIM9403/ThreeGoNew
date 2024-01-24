@@ -37,6 +37,20 @@
             return false;
         }
     }
+
+    // 로그인 성공 시 동작
+    function handleLoginSuccess() {
+        // 로그인 성공 시 알림 창 띄우기
+        alert("로그인 성공!");
+        // 로그인 성공시 index로
+        window.open('/index');
+    }
+
+    // 로그인 실패 시 동작
+    function handleLoginFailure() {
+        // 로그인 실패 시 콘솔에 메시지 출력
+        console.error("로그인 실패!");
+    }
 </script>
 <style>
     #find-info{
@@ -66,7 +80,18 @@
         <h3 class="display-6 text-white">로그인</h3>
     </div>
 </div>
-<form action="/login.do" method="post" name="loginFrm" onsubmit="return validateForm(this)">
+
+
+
+<form th:action="@{/user/login}" th:method="post" name="loginFrm" onsubmit="return validateForm(this)">
+    <!-- 오류 확인 -->
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">
+            사용자ID 또는 비밀번호를 확인해 주세요.
+            <!-- 로그인 실패 시 handleLoginFailure 함수 호출 -->
+            <script>handleLoginFailure();</script>
+        </div>
+    </div>
     <div class="container position-relative pt-5 pb-5">
         <h1 class="text-center">로그인</h1>
         <div id="header">
@@ -87,7 +112,7 @@
         <!--로그인 버튼-->
         <div class="col text-center">
             <input type="hidden" name="prevUrl" value="">
-            <input type="submit" value="로그인" class="btn btn-primary btn-md"><br/>
+            <input type="submit" value="로그인" class="btn btn-primary btn-md" onclick="handleLoginSuccess()"><br/>
         </div>
         <div id="find-info" class="text-center">
             <a href="/findId.do">아이디 찾기</a>

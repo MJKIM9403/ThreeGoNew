@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private String u_name;
 
     @Column(name = "u_email", nullable = false, unique = true)
-    private String u_email;
+    private String email;
 
     @Column(name = "u_ofile")
     private String u_ofile;
@@ -45,11 +45,11 @@ public class User implements UserDetails {
     private String u_about;
 
     @Builder
-    public User(String id, String u_pw, String u_name, String u_email, String u_ofile, String u_sfile, String u_about){
+    public User(String id, String u_pw, String u_name, String email, String u_ofile, String u_sfile, String u_about){
         this.id = id;
         this.u_pw = u_pw;
         this.u_name = u_name;
-        this.u_email = u_email;
+        this.email = email;
         this.u_ofile = u_ofile;
         this.u_sfile = u_sfile;
         this.u_about = u_about;
