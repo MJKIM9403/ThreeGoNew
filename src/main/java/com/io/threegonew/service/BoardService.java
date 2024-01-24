@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -47,10 +48,21 @@ public class BoardService {
         boardRepository.deleteById(bid);
     }
 
+    // 조회수 증가시키기
+    @Transactional
+    public void updateVisit(Long bid) {
+        Board board = boardRepository.findById(bid).orElseThrow(() ->
+                new IllegalArgumentException("not found : " + bid));
+        board.updateVisitCount(board.getBvisitcount() + 1);
+    }
+
+
+    // 게시글 업데이트
     @Transactional
     public Board update(Long bid, UpdateBoardRequest request) {
         Board board = boardRepository.findById(bid).orElseThrow(() ->
                 new IllegalArgumentException("not found : " + bid));
+
 
         board.update(request.getBtitle(), request.getBcontent());
 

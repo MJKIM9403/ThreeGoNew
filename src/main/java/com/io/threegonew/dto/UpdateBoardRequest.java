@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class UpdateBoardRequest {
     private String btitle;
     private String bcontent;
+    private Integer bvisitcount;
 }

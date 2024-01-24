@@ -2,6 +2,7 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.Board;
 import com.io.threegonew.dto.BoardViewResponse;
+import com.io.threegonew.dto.UpdateBoardRequest;
 import com.io.threegonew.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +33,8 @@ public class BoardViewController {
     @GetMapping("/board/{bid}")
     public String getBoard(@PathVariable Long bid, Model model){
         Board board = boardService.findById(bid);
+        boardService.updateVisit(board.getBid());
+
         model.addAttribute("board", new BoardViewResponse(board));
 
         return "board/view";

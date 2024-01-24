@@ -49,7 +49,7 @@ public class BoardApiController {
     }
 
     @PutMapping("/api/board/{bid}")
-    public ResponseEntity<Board> updatePost(@PathVariable Long bid, @RequestBody UpdateBoardRequest request) {
+    public ResponseEntity<Board> updateBoard(@PathVariable Long bid, @RequestBody UpdateBoardRequest request) {
         Board updateBoard = boardService.update(bid, request);
 
         return ResponseEntity.ok().body(updateBoard);

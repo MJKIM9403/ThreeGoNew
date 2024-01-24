@@ -58,4 +58,8 @@ public class Board {
         this.btitle = btitle;
         this.bcontent = bcontent;
     }
+
+    public void updateVisitCount(Integer bvisitcount) {
+        this.bvisitcount = bvisitcount;
+    }
 }
