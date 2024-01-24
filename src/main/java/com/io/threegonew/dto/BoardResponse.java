@@ -5,15 +5,15 @@ import lombok.Getter;
 
 @Getter
 public class BoardResponse {
-    private String userId;
-    private String userName;
-    private String bTitle;
-    private String bContent;
+    private String userid;
+    private String username;
+    private String btitle;
+    private String bcontent;
 
     public BoardResponse(Board board) {
-        this.userId = board.getUserId();
-        this.userName = board.getUserName();
-        this.bTitle = board.getBTitle();
-        this.bContent = board.getBContent();
+        this.userid = board.getUserid();
+        this.username = board.getUsername();
+        this.btitle = board.getBtitle();
+        this.bcontent = board.getBcontent();
     }
 }

@@ -29,20 +29,22 @@ public class BoardViewController {
         return "board/bbs";
     }
 
-    @GetMapping("/board/{bId}")
-    public String getBoard(@PathVariable(name = "bId") Long bId, Model model){
-        Board board = boardService.findById(bId);
+    @GetMapping("/board/{bid}")
+    public String getBoard(@PathVariable Long bid, Model model){
+        Board board = boardService.findById(bid);
+        boardService.updateVisit(board.getBid());
+
         model.addAttribute("board", new BoardViewResponse(board));
 
         return "board/view";
     }
 
     @GetMapping("/write")
-    public String newBoard(@RequestParam(required = false, name = "bId") Long bId, Model model) {
-        if(bId == null) {
+    public String newBoard(@RequestParam(required = false) Long bid, Model model) {
+        if(bid == null) {
             model.addAttribute("board",new BoardViewResponse());
         } else {
-            Board board = boardService.findById(bId);
+            Board board = boardService.findById(bid);
             model.addAttribute("board",new BoardViewResponse(board));
         }
         return "board/write";

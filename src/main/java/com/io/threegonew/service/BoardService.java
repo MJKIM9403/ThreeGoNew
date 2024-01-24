@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -23,7 +24,7 @@ public class BoardService {
 
     // 게시판 글 전체 조회(최신순 조회)
     public List<Board> findAll() {
-        return boardRepository.findAll(Sort.by("bPostdate").descending());
+        return boardRepository.findAll(Sort.by("bpostdate").descending());
     }
 
 //    // 게시판 글 추천순 조회
@@ -37,22 +38,33 @@ public class BoardService {
 //    }
 
     // 글 아이디로 조회하기
-    public Board findById(Long bId) {
-        return boardRepository.findById(bId)
-                .orElseThrow(() -> new IllegalArgumentException("not found : " + bId));
+    public Board findById(Long bid) {
+        return boardRepository.findById(bid)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + bid));
     }
 
     // 게시판 글 삭제
-    public void delete(Long bId) {
-        boardRepository.deleteById(bId);
+    public void delete(Long bid) {
+        boardRepository.deleteById(bid);
     }
 
+    // 조회수 증가시키기
     @Transactional
-    public Board update(Long bId, UpdateBoardRequest request) {
-        Board board = boardRepository.findById(bId).orElseThrow(() ->
-                new IllegalArgumentException("not found : " + bId));
+    public void updateVisit(Long bid) {
+        Board board = boardRepository.findById(bid).orElseThrow(() ->
+                new IllegalArgumentException("not found : " + bid));
+        board.updateVisitCount(board.getBvisitcount() + 1);
+    }
 
-        board.update(request.getBTitle(), request.getBContent());
+
+    // 게시글 업데이트
+    @Transactional
+    public Board update(Long bid, UpdateBoardRequest request) {
+        Board board = boardRepository.findById(bid).orElseThrow(() ->
+                new IllegalArgumentException("not found : " + bid));
+
+
+        board.update(request.getBtitle(), request.getBcontent());
 
         return board;
     }

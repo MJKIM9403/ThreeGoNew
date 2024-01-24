@@ -13,5 +13,4 @@ public class AddUserRequest {
     private String u_ofile;
     private String u_sfile;
     private String u_about;
-
 }

@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class AddBoardRequest {
-    private String userId;
-    private String userName;
-    private String bTitle;
-    private String bContent;
+    private String userid;
+    private String username;
+    private String btitle;
+    private String bcontent;
 
     public Board toEntity() {
         return Board.builder()
-                .userId(userId)
-                .userName(userName)
-                .bTitle(bTitle)
-                .bContent(bContent)
+                .userid(userid)
+                .username(username)
+                .btitle(btitle)
+                .bcontent(bcontent)
                 .build();
     }
 }

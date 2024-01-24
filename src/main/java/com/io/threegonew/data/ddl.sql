@@ -42,7 +42,7 @@ create table `BOARD` (
                               b_postdate datetime default sysdate() not null,
                               b_ofile varchar(200),
                               b_sfile varchar(30),
-                              b_visitcount double default 0 not NULL
+                              b_visitcount int default 0 not NULL
 );
 
 -- 유저테이블 --

@@ -72,25 +72,25 @@
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="resetKeyword()">검색 설정 초기화</button>
             <div class="d-flex justify-content-center">
                 <select name="searchField">
-                    <option value="b_title"<c:if test="${param.searchField ne 'b_content'}"> selected="selected"</c:if>>제목</option>
-                    <option value="b_content"<c:if test="${param.searchField eq 'b_content'}"> selected="selected"</c:if>>내용</option>
+<!--                    <option value="b_title"<c:if test="${param.searchField ne 'b_content'}"> selected="selected"</c:if>>제목</option>-->
+<!--                    <option value="b_content"<c:if test="${param.searchField eq 'b_content'}"> selected="selected"</c:if>>내용</option>-->
                 </select>
                 <input type="text" name="searchWord" value="${param.searchWord}">
                 <input type="submit" value="검색" class="btn btn-primary btn-sm">
             </div>
             <select id="sort-select" onchange="window.open(value,'_self');">
-                <c:choose>
-                    <c:when test="${empty param.searchWord}">
+<!--                <c:choose>-->
+<!--                    <c:when test="${empty param.searchWord}">-->
                         <option name="time" value="../community/list.do?sort=time">최신순</option>
                         <option name="like" value="../community/list.do?sort=like">추천순</option>
                         <option name="visit" value="../community/list.do?sort=visit">조회순</option>
-                    </c:when>
-                    <c:otherwise>
+<!--                    </c:when>-->
+<!--                    <c:otherwise>-->
                         <option name="time" value="../community/list.do?sort=time&searchField=${param.searchField}&searchWord=${param.searchWord}">최신순</option>
                         <option name="like" value="../community/list.do?sort=like&searchField=${param.searchField}&searchWord=${param.searchWord}">추천순</option>
                         <option name="visit" value="../community/list.do?sort=visit&searchField=${param.searchField}&searchWord=${param.searchWord}">조회순</option>
-                    </c:otherwise>
-                </c:choose>
+<!--                    </c:otherwise>-->
+<!--                </c:choose>-->
             </select>
         </div>
 
@@ -121,27 +121,27 @@
             </div>
 
 
-            <a th:each="item : ${board}" th:href="@{/board/{bId}(bId=${item.BId})}">
+            <a th:each="item : ${board}" th:href="@{/board/{bid}(bid=${item.bid})}">
                 <div class="col">
                     <div class="card card-item">
                         <div class="card-img-item">
                             <!--첨부된 이미지가 있을 경우-->
-                            <img class="card-img-top" th:if="${item.originalFile != null}" src="../../../upload/${dto.b_sfile}" alt="Card image cap">
+                            <img class="card-img-top" th:if="${item.bofile != null}" src="../../../upload/${dto.b_sfile}" alt="Card image cap">
                             <!--첨부된 이미지가 없을 경우-->
-                            <img class="card-img-top" th:if="${item.originalFile == null}" src="assets/img/no_image.png" alt="Card image cap">
+                            <img class="card-img-top" th:if="${item.bofile == null}" src="assets/img/no_image.png" alt="Card image cap">
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${item.BTitle}"></h5>
-                            <p class="card-text" th:text="${item.BContent}"></p>
+                            <h5 class="card-title" th:text="${item.btitle}"></h5>
+                            <p class="card-text" th:text="${item.bcontent}"></p>
                         </div>
                         <div class="card-footer d-flex justify-content-between align-items-center">
                             <div>
-                                <small class="text-muted" th:text="${item.userName}"></small>
-                                <small class="text-muted" th:text="${item.BPostdate}"></small>
+                                <small class="text-muted" th:text="${item.username}"></small>
+                                <small class="text-muted" th:text="${#temporals.format(item.bpostdate, 'yyyy-MM-dd HH:mm')}"></small>
                             </div>
                             <div class="d-flex gap-2">
-                                <small class="text-muted"><i class="bi bi-eye"></i> ${dto.b_visitcount}</small>
-                                <small class="text-muted"><i class="bi bi-heart"></i> ${dto.b_likescount}</small>
+                                <small class="text-muted"><i class="bi bi-eye" th:text="${item.bvisitcount}"></i></small>
+                                <small class="text-muted"><i class="bi bi-heart"></i></small>
                             </div>
                         </div>
                     </div>
@@ -154,18 +154,18 @@
                 ${map.pagingImg}
             </div>
 
-            <c:if test="${not empty sessionScope.u_id}">
+<!--            <c:if test="${not empty sessionScope.u_id}">-->
                 <!--로그인이 되어있다면-->
                 <div class="d-flex justify-content-end">
                     <button type="button" class="btn btn-primary btn-sm" th:onclick="|location.href='@{/write}'|">글쓰기</button>
                 </div>
-            </c:if>
-            <c:if test="${empty sessionScope.u_id}">
+<!--            </c:if>-->
+<!--            <c:if test="${empty sessionScope.u_id}">-->
                 <!--로그인이 안되었으면-->
                 <div class="d-flex justify-content-end">
                     <button type="button" onclick="PostToLogin();" class="btn btn-primary btn-sm">글쓰기</button>
                 </div>
-            </c:if>
+<!--            </c:if>-->
         </div>
     </div>
 </form>
