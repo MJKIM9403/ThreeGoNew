@@ -29,9 +29,9 @@ public class BoardViewController {
         return "board/bbs";
     }
 
-    @GetMapping("/board/{bId}")
-    public String getBoard(@PathVariable Long bId, Model model){
-        Board board = boardService.findById(bId);
+    @GetMapping("/board/{bid}")
+    public String getBoard(@PathVariable Long bid, Model model){
+        Board board = boardService.findById(bid);
         model.addAttribute("board", new BoardViewResponse(board));
 
         return "board/view";

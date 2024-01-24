@@ -34,23 +34,23 @@ public class BoardApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBoard);
     }
 
-    @GetMapping("/api/board/{bId}")
-    public ResponseEntity<BoardResponse> findPost(@PathVariable Long bId) {
-        Board board  = boardService.findById(bId);
+    @GetMapping("/api/board/{bid}")
+    public ResponseEntity<BoardResponse> findPost(@PathVariable Long bid) {
+        Board board  = boardService.findById(bid);
 
         return ResponseEntity.ok().body(new BoardResponse(board));
     }
 
-    @DeleteMapping("/api/board/{bId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long bId) {
-        boardService.delete(bId);
+    @DeleteMapping("/api/board/{bid}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long bid) {
+        boardService.delete(bid);
 
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/api/board/{bId}")
-    public ResponseEntity<Board> updatePost(@PathVariable Long bId, @RequestBody UpdateBoardRequest request) {
-        Board updateBoard = boardService.update(bId, request);
+    @PutMapping("/api/board/{bid}")
+    public ResponseEntity<Board> updatePost(@PathVariable Long bid, @RequestBody UpdateBoardRequest request) {
+        Board updateBoard = boardService.update(bid, request);
 
         return ResponseEntity.ok().body(updateBoard);
     }

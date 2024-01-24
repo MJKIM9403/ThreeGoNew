@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class UpdateBoardRequest {
-    private String bTitle;
-    private String bContent;
+    private String btitle;
+    private String bcontent;
 }

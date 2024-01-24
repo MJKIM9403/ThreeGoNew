@@ -17,9 +17,9 @@ if(deleteBtn){
     if (modifyBtn) {
         modifyBtn.addEventListener('click', function () {
             let params = new URLSearchParams(location.search)
-            let id = params.get('id');
+            let id = params.get('bid');
 
-            console.log("Clicked modify button. bId:", id);
+            console.log("Clicked modify button. bid:", id);
 
             // if (!id) {
             //     alert("수정할 글을 찾을 수 없습니다.");
@@ -32,8 +32,8 @@ if(deleteBtn){
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    bTitle: document.getElementById('b_title').value,
-                    bContent: document.getElementById('b_content').value
+                    btitle: document.getElementById('b_title').value,
+                    bcontent: document.getElementById('b_content').value
                 })
             }).then(() => {
                 alert("수정 완료");
@@ -53,10 +53,10 @@ if(createBtn){
                 "Content-Type" : "application/json",
             },
             body : JSON.stringify({
-                userId: document.getElementById('u_id').value,
-                userName: document.getElementById('u_name').value,
-                bTitle : document.getElementById('b_title').value,
-                bContent : document.getElementById('b_content').value
+                userid: document.getElementById('u_id').value,
+                username: document.getElementById('u_name').value,
+                btitle : document.getElementById('b_title').value,
+                bcontent : document.getElementById('b_content').value
             })
         }).then(()=>{
             alert("등록 완료");

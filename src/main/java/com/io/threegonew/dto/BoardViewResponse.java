@@ -5,29 +5,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 public class BoardViewResponse {
-    private String userId;
-    private String userName;
-    private Long bId;
-    private String bTitle;
-    private String bContent;
-    private LocalDate bPostdate;
-    private String originalFile;
-    private String savedFile;
-    private double visitCount;
+    private String userid;
+    private String username;
+    private Long bid;
+    private String btitle;
+    private String bcontent;
+    private LocalDateTime bpostdate;
+    private String bofile;
+    private String bsfile;
+    private Integer bvisitcount;
 
     public BoardViewResponse(Board board) {
-        this.userId = board.getUserId();
-        this.userName = board.getUserName();
-        this.bId = board.getBId();
-        this.bTitle = board.getBTitle();
-        this.bContent = board.getBContent();
-        this.bPostdate = board.getBPostdate();
-        this.originalFile = board.getOriginalFile();
-        this.savedFile = board.getSavedFile();
-        this.visitCount = board.getVisitCount();
+        this.userid = board.getUserid();
+        this.username = board.getUsername();
+        this.bid = board.getBid();
+        this.btitle = board.getBtitle();
+        this.bcontent = board.getBcontent();
+        this.bpostdate = board.getBpostdate();
+        this.bofile = board.getBofile();
+        this.bsfile = board.getBsfile();
+        this.bvisitcount = board.getBvisitcount();
     }
 }

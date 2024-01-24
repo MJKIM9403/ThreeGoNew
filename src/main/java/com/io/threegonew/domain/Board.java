@@ -8,53 +8,54 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "board")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_id", updatable = false)
-    private Long bId;
+    private Long bid;
 
     @Column(name = "u_id", nullable = true)
-    private String userId;
+    private String userid;
 
     @Column(name = "u_name", nullable = false)
-    private String userName;
+    private String username;
 
     @Column(name = "b_title", nullable = false)
-    private String bTitle;
+    private String btitle;
 
     @Column(name = "b_content", nullable = false)
-    private String bContent;
+    private String bcontent;
 
     @Column(name = "b_postdate")
     @CreatedDate
-    private LocalDate bPostdate;
+    private LocalDateTime bpostdate;
 
     @Column(name = "b_ofile")
-    private String originalFile;
+    private String bofile;
 
     @Column(name = "b_sfile")
-    private String savedFile;
+    private String bsfile;
 
-    @Column(name = "b_visitcount")
-    private Double visitCount;
+    @Column(name = "b_visitcount",nullable = false)
+    private Integer bvisitcount = 0;
 
     @Builder
-    public Board(String userId, String userName, String bTitle, String bContent) {
-        this.userId = userId;
-        this.userName = userName;
-        this.bTitle = bTitle;
-        this.bContent = bContent;
+    public Board(String userid, String username, String btitle, String bcontent) {
+        this.userid = userid;
+        this.username = username;
+        this.btitle = btitle;
+        this.bcontent = bcontent;
+        this.bpostdate = LocalDateTime.now();
     }
 
-    public void update(String bTitle, String bContent) {
-        this.bTitle = bTitle;
-        this.bContent = bContent;
+    public void update(String btitle, String bcontent) {
+        this.btitle = btitle;
+        this.bcontent = bcontent;
     }
 }

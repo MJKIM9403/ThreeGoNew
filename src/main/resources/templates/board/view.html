@@ -43,23 +43,23 @@
     });
   }
 
-  function clickReply(){
-    $('.btn-reply').click(function (e) {
-      if(${sessionScope.u_id == null}){
-        alert("댓글은 로그인 후 작성할 수 있습니다.")
-        location.href = "/login.do"
-      }else{
-        const num = e.target.value;
-        const selectedReply = '#reply-box' + num;
-        if($(selectedReply).hasClass('hide')){
-          $('.reply-box').addClass('hide');
-          $(selectedReply).toggleClass('hide');
-        }else {
-          $(selectedReply).addClass('hide');
-        }
-      }
-    })
-  }
+  // function clickReply(){
+  //   $('.btn-reply').click(function (e) {
+  //     if(${sessionScope.u_id == null}){
+  //       alert("댓글은 로그인 후 작성할 수 있습니다.")
+  //       location.href = "/login.do"
+  //     }else{
+  //       const num = e.target.value;
+  //       const selectedReply = '#reply-box' + num;
+  //       if($(selectedReply).hasClass('hide')){
+  //         $('.reply-box').addClass('hide');
+  //         $(selectedReply).toggleClass('hide');
+  //       }else {
+  //         $(selectedReply).addClass('hide');
+  //       }
+  //     }
+  //   })
+  // }
 
   function clickDelete(){
     let url = '/community/reply_del.do'
@@ -238,41 +238,41 @@
       }
     })
   }
-  function clickLike(){
-    const loginedId = '${sessionScope.u_id}'
-    if(loginedId === ""){
-      alert('로그인 후 이용하실 수 있습니다.');
-      location.href = "/login.do";
-    }else {
-      $.ajax({
-        url: '/like.do',
-        type: 'GET',
-        contentType: 'application/json; charset=UTF-8',
-        data: {
-          b_id: ${dto.b_id},
-          check: $('input[name=like-check]').val()
-        },
-        success: function (data){
-          const like_check = data.like_check;
-          const like_count = data.like_count;
-          if(like_check){
-            $('#like-heart').html(
-                    '<i class="bi bi-heart-fill">'
-                    + '<input type="hidden" name="like-check" value="true">'
-            )
-            alert('추천하였습니다.')
-          }else {
-            $('#like-heart').html(
-                    '<i class="bi bi-heart">'
-                    + '<input type="hidden" name="like-check" value="false">'
-            )
-            alert('추천을 취소하였습니다.')
-          }
-          $('#like-counter').html(like_count)
-        }
-      })
-    }
-  }
+  // function clickLike(){
+  //   const loginedId = '${sessionScope.u_id}'
+  //   if(loginedId === ""){
+  //     alert('로그인 후 이용하실 수 있습니다.');
+  //     location.href = "/login.do";
+  //   }else {
+  //     $.ajax({
+  //       url: '/like.do',
+  //       type: 'GET',
+  //       contentType: 'application/json; charset=UTF-8',
+  //       data: {
+  //         b_id: ${dto.b_id},
+  //         check: $('input[name=like-check]').val()
+  //       },
+  //       success: function (data){
+  //         const like_check = data.like_check;
+  //         const like_count = data.like_count;
+  //         if(like_check){
+  //           $('#like-heart').html(
+  //                   '<i class="bi bi-heart-fill">'
+  //                   + '<input type="hidden" name="like-check" value="true">'
+  //           )
+  //           alert('추천하였습니다.')
+  //         }else {
+  //           $('#like-heart').html(
+  //                   '<i class="bi bi-heart">'
+  //                   + '<input type="hidden" name="like-check" value="false">'
+  //           )
+  //           alert('추천을 취소하였습니다.')
+  //         }
+  //         $('#like-counter').html(like_count)
+  //       }
+  //     })
+  //   }
+  // }
 
 </script>
 <style>
@@ -380,10 +380,10 @@
 
 <form name="writeFrm">
   <div class="container position-relative pt-5 pb-5">
-    <input type="hidden" id="board-id" th:value="${board.BId}">
+    <input type="hidden" id="board-id" th:value="${board.bid}">
     <!--글 제목-->
     <div class="jumbotron">
-      <h3 class="display-4" th:text="${board.BTitle}"></h3>
+      <h3 class="display-4" th:text="${board.btitle}"></h3>
     </div>
 
     <!--글 정보-->
@@ -392,14 +392,14 @@
         <div class="row">
           <div class="col">
           </div>
-          <div class="col-md-auto" th:text="${board.userName}">
-            <i class="bi bi-person"></i> &nbsp;&nbsp; ${dto.u_name}
+          <div class="col-md-auto" th:text="${board.username}">
+            <i class="bi bi-person"></i>
           </div>
-          <div class="col-md-auto" th:text="${board.BPostdate}">
-            <i class="bi bi-calendar"></i> &nbsp;&nbsp; ${dto.b_postdate}
+          <div class="col-md-auto" th:text="${board.bpostdate}">
+            <i class="bi bi-calendar"></i>
           </div>
-          <div class="col-md-auto" th:text="${board.visitCount}">
-            <i class="bi bi-eye"></i> &nbsp;&nbsp; ${dto.b_visitcount}
+          <div class="col-md-auto" th:text="${board.bvisitcount}">
+            <i class="bi bi-eye"></i>
           </div>
         </div>
       </div>
@@ -408,35 +408,35 @@
 
 
       <!--글 내용-->
-      <p th:text="${board.BContent}">
-        <c:if test="${not empty dto.b_ofile and isImage == true}">
-          <img src="../../../upload/${dto.b_sfile}" style="max-width: 100%"/>
-        </c:if>
+      <p th:text="${board.bcontent}">
+<!--        <c:if test="${not empty dto.b_ofile and isImage == true}">-->
+<!--          <img src="../../../upload/${dto.b_sfile}" style="max-width: 100%"/>-->
+<!--        </c:if>-->
         <br>
-        ${dto.b_content}
+
       </p>
 
       <!--첨부파일 표시-->
-      <c:if test="${not empty dto.b_ofile}">
+<!--      <c:if test="${not empty dto.b_ofile}">-->
         <hr class="my-4">
         첨부파일 &nbsp;&nbsp; <i class="bi bi-file-earmark-image"></i> ${dto.b_ofile}
-      </c:if>
+<!--      </c:if>-->
     </div>
 
     <div class="text-center pt-5">
       <button type="button" class="btn btn-secondary btn-sm" id="like-btn" onclick="clickLike()">
         <div id="like-wrap">
           <div id="like-heart">
-            <c:choose>
-              <c:when test="${like_check}">
+<!--            <c:choose>-->
+<!--              <c:when test="${like_check}">-->
                 <i class="bi bi-heart-fill"></i>
                 <input type="hidden" name="like-check" value="true">
-              </c:when>
-              <c:otherwise>
+<!--              </c:when>-->
+<!--              <c:otherwise>-->
                 <i class="bi bi-heart"></i>
                 <input type="hidden" name="like-check" value="false">
-              </c:otherwise>
-            </c:choose>
+<!--              </c:otherwise>-->
+<!--            </c:choose>-->
           </div>
           <div id="like-counter">${like_count}</div>
         </div>
@@ -447,7 +447,7 @@
     <div class="text-center">
       <div class="btn-group pt-5" role="group" aria-label="Basic example">
 <!--        <c:if test="${not empty sessionScope.u_id and sessionScope.u_id eq dto.u_id}">-->
-          <button type="button" id="modify-btn" class="btn btn-primary btn-sm" th:onclick="|location.href='@{/write(id=${board.BId})}'|">수정</button>
+          <button type="button" id="modify-btn" class="btn btn-primary btn-sm" th:onclick="|location.href='@{/write(bid=${board.bid})}'|">수정</button>
           <button type="button" id="delete-btn" class="btn btn-primary btn-sm">삭제</button>
 <!--        </c:if>-->
 
@@ -468,46 +468,47 @@
       </div>
 
       <div id="reply-list">
-        <c:forEach items="${replyList}" var="reply" varStatus="no">
-          <div class="reply" id="reply${no.count}" style="padding-left: ${reply.re_level * 50 - 30}px">
-            <c:if test="${reply.re_level > 0}">
+<!--        <c:forEach items="${replyList}" var="reply" varStatus="no">-->
+<!--          <div class="reply" id="reply${no.count}" style="padding-left: ${reply.re_level * 50 - 30}px">-->
+        <div class="reply" id="reply${no.count}" style="padding-left: 20px">
+<!--            <c:if test="${reply.re_level > 0}">-->
               <i class="bi bi-arrow-return-right"></i>
-            </c:if>
+<!--            </c:if>-->
             <input type="hidden" id="re_num${no.count}" value="${reply.re_num}">
             <input type="hidden" id="re_ref${no.count}" value="${reply.re_ref}">
             <input type="hidden" id="re_order${no.count}" value="${reply.re_order}">
             <input type="hidden" id="re_level${no.count}" value="${reply.re_level}">
             <div id="reply-wrap${no.count}" class="reply-wrap">
-              <c:if test="${reply.re_del eq 'N'}">
+<!--              <c:if test="${reply.re_del eq 'N'}">-->
                 <div class="reply-img">
-                  <c:choose>
-                    <c:when test="${empty reply.u_sfile}"><img src="../proj/resources/assets/img/no_profimg.png"></c:when>
-                    <c:otherwise><img src="../../../upload/${reply.u_sfile}"></c:otherwise>
-                  </c:choose>
+<!--                  <c:choose>-->
+<!--                    <c:when test="${empty reply.u_sfile}"><img src="../proj/resources/assets/img/no_profimg.png"></c:when>-->
+<!--                    <c:otherwise><img src="../../../upload/${reply.u_sfile}"></c:otherwise>-->
+<!--                  </c:choose>-->
                 </div>
                 <div class="reply-content">
                   <div class="reply-profile">
                     <p class="reply-nickname">${reply.u_name}</p>
                     <p class="reply-date">
-                      <c:choose>
-                        <c:when test="${empty reply.re_modifydate}">${reply.re_regdate}</c:when>
-                        <c:otherwise>${reply.re_modifydate} 수정됨</c:otherwise>
-                      </c:choose>
+<!--                      <c:choose>-->
+<!--                        <c:when test="${empty reply.re_modifydate}">${reply.re_regdate}</c:when>-->
+<!--                        <c:otherwise>${reply.re_modifydate} 수정됨</c:otherwise>-->
+<!--                      </c:choose>-->
                     </p>
                     <div class="reply-btn-grop">
-                      <c:if test="${reply.re_level < 2}">
+<!--                      <c:if test="${reply.re_level < 2}">-->
                         <button type="button" class="btn btn-reply" value="${no.count}">답글</button>
-                      </c:if>
-                      <c:if test="${sessionScope.u_id eq reply.u_id}">
+<!--                      </c:if>-->
+<!--                      <c:if test="${sessionScope.u_id eq reply.u_id}">-->
                         <button type="button" class="btn btn-edit" value="${no.count}">수정</button>
                         <button type="button" class="btn btn-delete" value="${no.count}">삭제</button>
-                      </c:if>
+<!--                      </c:if>-->
                     </div>
                   </div>
                   <div id="reply-content${no.count}" class="reply-text">${reply.re_content}</div>
                 </div>
-              </c:if>
-              <c:if test="${reply.re_del eq 'Y'}">
+<!--              </c:if>-->
+<!--              <c:if test="${reply.re_del eq 'Y'}">-->
                 <div class="deleted-reply">
                   <p>삭제된 댓글 입니다.</p>
                 </div>
@@ -515,7 +516,8 @@
             </div>
           </div>
           <div class="input-group mb-3 reply-box hide" id="reply-box${no.count}">
-            <div class="form-floating" style="margin-left: ${reply.re_level * 50}px; margin-top: 10px">
+            <div class="form-floating" style="margin-left: 50px; margin-top: 10px">
+<!--            <div class="form-floating" style="margin-left: ${reply.re_level * 50}px; margin-top: 10px">-->
               <textarea class="form-control" placeholder="Leave a comment here" id="reply-text${no.count}" style="height: 100px"></textarea>
               <label class="reply-label" for="reply-text${no.count}">${reply.u_name} 님 에게.</label>
             </div>

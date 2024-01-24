@@ -66,13 +66,13 @@
     <div class="container position-relative pt-5 pb-5">
         <article>
         <!--    <form id="writeFrm" name="writeFrm" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">-->
-        <input type="hidden" id="board-id" th:value="${board.BId}">
+        <input type="hidden" id="board-id" th:value="${board.getBid}">
 
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">작성자</label>
             <div class="col-sm-10">
-                <input type="text" id="u_id" name="u_id" class="form-control form-control-sm" th:value="${board.userId}" />
-                <input type="text" id="u_name" name="u_name" class="form-control form-control-sm" th:value="${board.userName}" />
+                <input type="text" id="u_id" name="u_id" class="form-control form-control-sm" th:value="${board.getUserid}" />
+                <input type="text" id="u_name" name="u_name" class="form-control form-control-sm" th:value="${board.getUsername}" />
             </div>
         </div>
 
@@ -80,14 +80,14 @@
             <label class="col-sm-2 col-form-label">제목</label>
             <div class="col-sm-10">
                 <div id="alert-text"></div>
-                <input type="text" id="b_title" name="b_title" class="form-control form-control-sm" maxlength="20" placeholder="제목을 입력하세요." oninput="checkTitleLength()" th:value="${board.BTitle}"/>
+                <input type="text" id="b_title" name="b_title" class="form-control form-control-sm" maxlength="20" placeholder="제목을 입력하세요." oninput="checkTitleLength()" th:value="${board.getBtitle}"/>
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">내용</label>
             <div class="col-sm-10">
-                <textarea id="b_content" name="b_content" class="form-control" placeholder="내용을 입력하세요" rows="5" th:text="${board.BContent}"></textarea>
+                <textarea id="b_content" name="b_content" class="form-control" placeholder="내용을 입력하세요" rows="5" th:text="${board.getBcontent}"></textarea>
             </div>
         </div>
 
@@ -101,8 +101,8 @@
         <div class="text-center">
             <div class="btn-group pt-5" role="group" aria-label="Basic example">
 
-                <button th:if="${board.BId} != null" id="modify-btn" type="button" class="btn btn-primary btn-sm">수정</button>
-                <button th:if="${board.BId} == null" id="create-btn" type="button" class="btn btn-primary btn-sm">등록</button>
+                <button th:if="${board.getBid} != null" id="modify-btn" type="button" class="btn btn-primary btn-sm">수정</button>
+                <button th:if="${board.getBid} == null" id="create-btn" type="button" class="btn btn-primary btn-sm">등록</button>
                 <button type="reset" class="btn btn-secondary btn-sm">다시입력</button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='/board';">목록보기</button>
             </div>
