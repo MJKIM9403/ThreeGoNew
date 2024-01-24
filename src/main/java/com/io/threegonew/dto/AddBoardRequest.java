@@ -13,6 +13,9 @@ public class AddBoardRequest {
     private String username;
     private String btitle;
     private String bcontent;
+    private String bofile;
+    private String bsfile;
+
 
     public Board toEntity() {
         return Board.builder()
@@ -20,6 +23,8 @@ public class AddBoardRequest {
                 .username(username)
                 .btitle(btitle)
                 .bcontent(bcontent)
+                .bofile(bofile)
+                .bsfile(bsfile)
                 .build();
     }
 }

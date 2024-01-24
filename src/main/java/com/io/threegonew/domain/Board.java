@@ -46,12 +46,14 @@ public class Board {
     private Integer bvisitcount = 0;
 
     @Builder
-    public Board(String userid, String username, String btitle, String bcontent) {
+    public Board(String userid, String username, String btitle, String bcontent, String bofile, String bsfile) {
         this.userid = userid;
         this.username = username;
         this.btitle = btitle;
         this.bcontent = bcontent;
         this.bpostdate = LocalDateTime.now();
+        this.bofile = bofile;
+        this.bsfile = bsfile;
     }
 
     public void update(String btitle, String bcontent) {
@@ -59,7 +61,13 @@ public class Board {
         this.bcontent = bcontent;
     }
 
+    // 조회수 증가
     public void updateVisitCount(Integer bvisitcount) {
         this.bvisitcount = bvisitcount;
     }
+
+    // 파일 첨부
+//    public void updateBofile(String bofile) {
+//        this.bofile = bofile;
+//    }
 }

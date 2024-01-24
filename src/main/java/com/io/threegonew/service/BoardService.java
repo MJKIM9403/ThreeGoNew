@@ -8,9 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +24,21 @@ public class BoardService {
     public Board save(AddBoardRequest request) {
         return boardRepository.save(request.toEntity());
     }
+//    public Board save(AddBoardRequest request, MultipartFile file) throws Exception {
+//        // 파일 업로드 처리 시작
+//        String projectPath = System.getProperty("user.dir") // 현재 디렉토리 경로
+//            + "\\src\\main\\resources\\static\\files"; // 파일이 저장될 폴더의 경로
+//
+//        UUID uuid = UUID.randomUUID(); // 랜덤으로 식별자를 생성
+//        String fileName = uuid + "_" + file.getOriginalFilename(); // UUID와 파일이름을 포함된 파일 이름으로 저장
+//        File saveFile = new File(projectPath, fileName); // projectPath는 위에서 작성한 경로, name은 전달받을 이름
+//
+//        file.transferTo(saveFile);
+//
+//
+//
+//        return boardRepository.save(request.toEntity());
+//    }
 
     // 게시판 글 전체 조회(최신순 조회)
     public List<Board> findAll() {
@@ -68,4 +86,7 @@ public class BoardService {
 
         return board;
     }
+
+    // 파일 첨부
+
 }

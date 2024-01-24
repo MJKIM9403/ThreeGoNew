@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class UpdateBoardRequest {
     private String btitle;
     private String bcontent;
+    private String bofile;
+    private String bsfile;
 }
