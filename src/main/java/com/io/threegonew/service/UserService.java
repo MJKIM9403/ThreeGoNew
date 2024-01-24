@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -21,7 +22,7 @@ public class UserService {
                 .id(dto.getId())
                 .u_pw(bCryptPasswordEncoder.encode(dto.getU_pw())) // 비밀번호 해싱
                 .u_name(dto.getU_name())
-                .u_email(dto.getU_email())
+                .email(dto.getEmail())
                 .u_ofile(dto.getU_ofile())
                 .u_sfile(dto.getU_sfile())
                 .u_about(dto.getU_about())
@@ -34,5 +35,8 @@ public class UserService {
         return userRepository.existsById(userId);
     }
 
+    public boolean isEmailDuplicate(String email) {
+        return userRepository.existsByEmail(email);
+    }
 
 }
