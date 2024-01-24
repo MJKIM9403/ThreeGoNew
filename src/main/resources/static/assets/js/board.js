@@ -32,8 +32,8 @@ if(deleteBtn){
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    title: document.getElementById('b_title').value,
-                    content: document.getElementById('b_content').value
+                    btitle: document.getElementById('b_title').value,
+                    bcontent: document.getElementById('b_content').value
                 })
             }).then(() => {
                 alert("수정 완료");
