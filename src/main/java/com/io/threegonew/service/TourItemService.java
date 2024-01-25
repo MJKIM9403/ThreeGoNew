@@ -1,14 +1,20 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
+import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.dto.TourItemSelectRequest;
 import com.io.threegonew.repository.*;
 import com.io.threegonew.repository.spec.TourItemSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +51,18 @@ public class TourItemService {
         return cat3.getCat2().getCat1().getCat1Name() + " > " + cat3.getCat2().getCat2Name() + " > " + cat3.getCat3Name();
     }
 
+    private String getAddress(TourItem tourItem){
+        StringBuilder address = new StringBuilder();
+        if(tourItem.getAddr1() != null){
+            address.append(tourItem.getAddr1());
+        }
+        if(tourItem.getAddr2() != null){
+            address.append(" ");
+            address.append(tourItem.getAddr2());
+        }
+        return address.toString();
+    }
+
     public List<Sigungu> findSigunguList(Integer areaCode){
         return sigunguRepository.findByAreaCode(areaCode);
     }
@@ -62,7 +80,10 @@ public class TourItemService {
                 .orElseThrow(()-> new IllegalArgumentException("not found : Area"));
     }
 
-    public List<TourItem> findSelectedTourItemList(TourItemSelectRequest request){
+    @Transactional(readOnly = true)
+    public Page<TourItemResponse> findSelectedTourItemList(TourItemSelectRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
         Specification<TourItem> spec = (root, query, criteriaBuilder) -> null;
 
         if(request.getAreaCode() != null && !request.getAreaCode().isEmpty()){
@@ -90,6 +111,26 @@ public class TourItemService {
             System.out.println("contentTypeId: " + request.getContentTypeId());
         }
 
-        return tourItemRepository.findAll(spec);
+        Page<TourItemResponse> tourItemResponseList = tourItemRepository.findAll(spec, pageable)
+                .map(tourItem -> TourItemResponse.builder()
+                                .contentid(tourItem.getContentid())
+                                .cat1(tourItem.getCat1())
+                                .cat2(tourItem.getCat2())
+                                .cat3(tourItem.getCat3())
+                                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
+                                .areacode(tourItem.getAreacode())
+                                .contenttypeid(tourItem.getContenttypeid())
+                                .address(getAddress(tourItem))
+                                .firstimage(tourItem.getFirstimage())
+                                .mapx(tourItem.getMapx())
+                                .mapy(tourItem.getMapy())
+                                .mlevel(tourItem.getMlevel())
+                                .sigungucode(tourItem.getSigungucode())
+                                .tel(tourItem.getTel())
+                                .title(tourItem.getTitle())
+                                .build()
+                        );
+
+        return tourItemResponseList;
     }
 }

@@ -156,12 +156,7 @@ public class InsertData {
 
             for(Object itemObj : item){
                 JSONObject itemJson = (JSONObject) itemObj;
-//                SigunguPk sigunguPk = SigunguPk.builder()
-//                                        .sigunguCode(Integer.parseInt(itemJson.get("code").toString()))
-//                                        .areaCode(Integer.parseInt(params.get("Area").toString()))
-//                                        .build();
                 Sigungu sigungu = Sigungu.builder()
-                                //.sigunguPk(sigunguPk)
                                 .sigunguCode(Integer.parseInt(itemJson.get("code").toString()))
                                 .areaCode(Integer.parseInt(params.get("Area").toString()))
                                 .sigunguName(itemJson.get("name").toString())

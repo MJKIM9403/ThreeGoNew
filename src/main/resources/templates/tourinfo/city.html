@@ -23,12 +23,46 @@
 
         $(document).ready(function (){
             checkCategory();
-            showList();
-            search();
+            showTourItems();
+            // showList();
+            // search();
             $("#morebtn").click(function() {
                 $(".invisiblecard").slideToggle(300);
             });
         })
+
+        function search(){
+            // 조회
+            $('button[name=searchBtn]').click(function (){
+                showList();
+            })
+        }
+        function showTourItems(){
+            $('.page-item').click(function (e){
+                const target = e.target;
+                $.ajax({
+                    url : '/info/api/touritems',
+                    type: 'POST',
+                    contentType : 'application/json; charset=UTF-8',
+                    data : JSON.stringify({
+                        page : target.getAttribute('data-num'),
+                        cat1 : $('input[name=cat1]:checked').val(),
+                        cat2 : $('input[name=cat2]:checked').val(),
+                        cat3 : $('input[name=cat3]:checked').val(),
+                        areaCode : $('input[name=area]').val(),
+                        sigunguCode : $('input[name=sigungu]:checked').val(),
+                        contentTypeId : $('input[name=type]:checked').val()
+                    }),
+                    success : function(data){
+                        $("html").scrollTop(0);
+                        $('#touritems').replaceWith(data);
+                    },
+                    error : function (err){
+                        console.log(err)
+                    }
+                })
+            })
+        }
 
         function checkCategory(){
 
@@ -70,87 +104,82 @@
             })
         }
 
-        function showList(){
-            $('#gridDiv').html("");
+        // function showList(){
+        //     $('#gridDiv').html("");
+        //
+        //     const dataSource = {
+        //         contentType: 'application/json; charset=UTF-8',
+        //         api: {
+        //             readData: {
+        //                 url: '/info/api/touritems',
+        //                 method: 'GET',
+        //                 initParams: {
+        //                     cat1 : $('input[name=cat1]:checked').val(),
+        //                     cat2 : $('input[name=cat2]:checked').val(),
+        //                     cat3 : $('input[name=cat3]:checked').val(),
+        //                     areaCode : $('input[name=area]').val(),
+        //                     sigunguCode : $('input[name=sigungu]:checked').val(),
+        //                     contentTypeId : $('input[name=type]:checked').val()
+        //                 }
+        //             }
+        //         }
+        //     };
+        //
+        //     const Grid = tui.Grid;
+        //     Grid.applyTheme('clean',{
+        //         cell: {
+        //             normal: {
+        //                 background: '#fff',
+        //                 border: '#e0e0e0',
+        //                 showVerticalBorder: false,
+        //                 showHorizontalBorder: true
+        //             },
+        //             header: {
+        //                 background: '#fff',
+        //                 border: '#e0e0e0',
+        //                 showVerticalBorder: false,
+        //                 showHorizontalBorder: true
+        //             },
+        //             selectedHeader: {
+        //                 background: '#e0e0e0'
+        //             }
+        //         }
+        //     });
+        //
+        //     var grid = new tui.Grid({
+        //         el : document.getElementById('gridDiv'),
+        //         data : dataSource,
+        //         scrollX : false,
+        //         scrollY : false,
+        //         rowHeight : 120,
+        //         rowHeaders: [{type: 'rowNum', width: 50}],
+        //
+        //         columns : [
+        //             {
+        //                 header : '사진',
+        //                 name : 'firstimage',
+        //                 renderer: {
+        //                     styles: {
+        //                         textAlign: 'center'
+        //                     },
+        //                 },
+        //                 width : 200
+        //             },
+        //             {
+        //                 header : '관광정보',
+        //                 name : 'title',
+        //             }
+        //         ],
+        //
+        //         pageOptions: {
+        //             useClient: true,	// front에서만 페이징 하는 속성
+        //             perPage: 10
+        //         }
+        //
+        //     });
+        // }
+        //
 
-            const dataSource = {
-                contentType: 'application/json; charset=UTF-8',
-                api: {
-                    readData: {
-                        url: '/info/api/touritems',
-                        method: 'GET',
-                        initParams: {
-                            cat1 : $('input[name=cat1]:checked').val(),
-                            cat2 : $('input[name=cat2]:checked').val(),
-                            cat3 : $('input[name=cat3]:checked').val(),
-                            areaCode : $('input[name=area]').val(),
-                            sigunguCode : $('input[name=sigungu]:checked').val(),
-                            contentTypeId : $('input[name=type]:checked').val()
-                        }
-                    }
-                }
-            };
-
-            const Grid = tui.Grid;
-            Grid.applyTheme('clean',{
-                cell: {
-                    normal: {
-                        background: '#fff',
-                        border: '#e0e0e0',
-                        showVerticalBorder: false,
-                        showHorizontalBorder: true
-                    },
-                    header: {
-                        background: '#fff',
-                        border: '#e0e0e0',
-                        showVerticalBorder: false,
-                        showHorizontalBorder: true
-                    },
-                    selectedHeader: {
-                        background: '#e0e0e0'
-                    }
-                }
-            });
-
-            var grid = new tui.Grid({
-                el : document.getElementById('gridDiv'),
-                data : dataSource,
-                scrollX : false,
-                scrollY : false,
-                rowHeight : 120,
-                rowHeaders: [{type: 'rowNum', width: 50}],
-
-                columns : [
-                    {
-                        header : '사진',
-                        name : 'firstimage',
-                        renderer: {
-                            styles: {
-                                textAlign: 'center'
-                            },
-                        },
-                        width : 200
-                    },
-                    {
-                        header : '관광정보',
-                        name : 'title',
-                    }
-                ],
-
-                pageOptions: {
-                    useClient: true,	// front에서만 페이징 하는 속성
-                    perPage: 10
-                }
-
-            });
-        }
-
-        function search(){
-            // 조회
-            $('button[name=searchBtn]').click(function (){
-                showList();
-            })
-        }
 
     </script>
     <style>
@@ -278,7 +307,44 @@
     </div>
     <div id="content_container">
         <!--리스트-->
-        <div id="gridDiv"></div>
+        <!--<div id="gridDiv"></div>-->
+        <div id="touritems">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">대표이미지</th>
+                        <th scope="col">관광정보</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="item : ${tourItemList}">
+                        <tr>
+                            <td rowspan="3">
+                                <a th:href="@{/info/content(contentid=${item.contentid})}">
+                                    <img class="thumbnail" th:if="${item.firstimage == null || item.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
+                                    <img class="thumbnail" th:unless="${item.firstimage == null || item.firstimage.isEmpty()}" th:src="${item.firstimage}">
+                                </a>
+                            </td>
+                            <td>
+                                <a th:href="@{/info/content(contentid=${item.contentid})}">
+                                    <h5 th:text="${item.title}"></h5>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p th:text="${item.address}"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p th:text="${item.fullCategoryName}"></p>
+                            </td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+        </div>
         <!--카테고리 셀렉터-->
         <div id="tagSelector">
             <input type="hidden" name="area" th:value="${selectedArea.areaCode}">
@@ -339,6 +405,19 @@
             </div>
         </div>
     </div>
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <a class="page-link">Previous</a>
+            </li>
+            <th:block th:each="pageNo : ${#numbers.sequence(1,5)}">
+                <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" href="#" th:text="${pageNo}"></span></li>
+            </th:block>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 <!--footer-->
 <th:block th:replace="~{fragments/footer}"></th:block>
