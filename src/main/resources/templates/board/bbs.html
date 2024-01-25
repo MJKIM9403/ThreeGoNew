@@ -125,10 +125,10 @@
                 <div class="col">
                     <div class="card card-item">
                         <div class="card-img-item">
-                            <!--첨부된 이미지가 있을 경우-->
-                            <img class="card-img-top" th:if="${item.bofile != null}" src="../../../upload/${dto.b_sfile}" alt="Card image cap">
-                            <!--첨부된 이미지가 없을 경우-->
-                            <img class="card-img-top" th:if="${item.bofile == null}" src="assets/img/no_image.png" alt="Card image cap">
+<!--                            &lt;!&ndash;첨부된 이미지가 있을 경우&ndash;&gt;-->
+<!--                            <img class="card-img-top" th:if="${item.bofile != null}" src="../../../upload/${dto.b_sfile}" alt="Card image cap">-->
+<!--                            &lt;!&ndash;첨부된 이미지가 없을 경우&ndash;&gt;-->
+<!--                            <img class="card-img-top" th:if="${item.bofile == null}" src="assets/img/no_image.png" alt="Card image cap">-->
                         </div>
                         <div class="card-body">
                             <h5 class="card-title" th:text="${item.btitle}"></h5>

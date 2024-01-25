@@ -30,7 +30,7 @@ public class BoardViewController {
     }
 
     @GetMapping("/board/{bid}")
-    public String getBoard(@PathVariable Long bid, Model model){
+    public String getBoard(@PathVariable Integer bid, Model model){
         Board board = boardService.findById(bid);
         boardService.updateVisit(board.getBid());
 
@@ -40,7 +40,7 @@ public class BoardViewController {
     }
 
     @GetMapping("/write")
-    public String newBoard(@RequestParam(required = false) Long bid, Model model) {
+    public String newBoard(@RequestParam(required = false) Integer bid, Model model) {
         if(bid == null) {
             model.addAttribute("board",new BoardViewResponse());
         } else {

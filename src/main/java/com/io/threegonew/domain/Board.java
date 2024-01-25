@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -18,7 +20,7 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "b_id", updatable = false)
-    private Long bid;
+    private Integer bid;
 
     @Column(name = "u_id", nullable = true)
     private String userid;
@@ -36,24 +38,23 @@ public class Board {
     @CreatedDate
     private LocalDateTime bpostdate;
 
-    @Column(name = "b_ofile")
-    private String bofile;
-
-    @Column(name = "b_sfile")
-    private String bsfile;
+//    @Column(name = "b_ofile")
+//    private String bofile;
+//
+//    @Column(name = "b_sfile")
+//    private String bsfile;
 
     @Column(name = "b_visitcount",nullable = false)
     private Integer bvisitcount = 0;
 
+
     @Builder
-    public Board(String userid, String username, String btitle, String bcontent, String bofile, String bsfile) {
+    public Board(String userid, String username, String btitle, String bcontent) {
         this.userid = userid;
         this.username = username;
         this.btitle = btitle;
         this.bcontent = bcontent;
         this.bpostdate = LocalDateTime.now();
-        this.bofile = bofile;
-        this.bsfile = bsfile;
     }
 
     public void update(String btitle, String bcontent) {
@@ -66,8 +67,8 @@ public class Board {
         this.bvisitcount = bvisitcount;
     }
 
-    // 파일 첨부
-//    public void updateBofile(String bofile) {
-//        this.bofile = bofile;
+    // 파일 첨부 관련
+//    public void addFile(BoardFile boardFile) {
+//        this.boardFile.a
 //    }
 }

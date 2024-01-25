@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ import java.util.List;
 @RestController
 public class BoardApiController {
     private final BoardService boardService;
+
+
 
     @GetMapping("/api/board")
     public ResponseEntity<List<BoardResponse>> findAllPost() {
@@ -35,21 +38,21 @@ public class BoardApiController {
     }
 
     @GetMapping("/api/board/{bid}")
-    public ResponseEntity<BoardResponse> findPost(@PathVariable Long bid) {
+    public ResponseEntity<BoardResponse> findPost(@PathVariable Integer bid) {
         Board board  = boardService.findById(bid);
 
         return ResponseEntity.ok().body(new BoardResponse(board));
     }
 
     @DeleteMapping("/api/board/{bid}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long bid) {
+    public ResponseEntity<Void> deletePost(@PathVariable Integer bid) {
         boardService.delete(bid);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/api/board/{bid}")
-    public ResponseEntity<Board> updateBoard(@PathVariable Long bid, @RequestBody UpdateBoardRequest request) {
+    public ResponseEntity<Board> updateBoard(@PathVariable Integer bid, @RequestBody UpdateBoardRequest request) {
         Board updateBoard = boardService.update(bid, request);
 
         return ResponseEntity.ok().body(updateBoard);

@@ -45,6 +45,11 @@ dependencies {
     testImplementation("org.projectlombok:lombok:1.18.28")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
 
+    // 파일 업로드
+    implementation ("commons-io:commons-io:2.7")
+    // 저장될 파일명을 랜덤 문자열로 만들기 위해 사용
+    implementation ("org.apache.commons:commons-lang3")
+
     /* 메일 발송 */
     implementation("javax.mail:mail:1.4.7")
 
