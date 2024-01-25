@@ -12,12 +12,10 @@ import java.time.LocalDateTime;
 public class BoardViewResponse {
     private String userid;
     private String username;
-    private Long bid;
+    private Integer bid;
     private String btitle;
     private String bcontent;
     private LocalDateTime bpostdate;
-    private String bofile;
-    private String bsfile;
     private Integer bvisitcount;
 
     public BoardViewResponse(Board board) {
@@ -27,8 +25,6 @@ public class BoardViewResponse {
         this.btitle = board.getBtitle();
         this.bcontent = board.getBcontent();
         this.bpostdate = board.getBpostdate();
-        this.bofile = board.getBofile();
-        this.bsfile = board.getBsfile();
         this.bvisitcount = board.getBvisitcount();
     }
 }

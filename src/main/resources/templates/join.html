@@ -172,8 +172,8 @@
         // 데이터를 JSON 형식으로 구성
         let userData = {
             id: id,
-            u_pw: pw,
-            u_name: name,
+            pw: pw,
+            name: name,
             email: email
         };
 
@@ -198,49 +198,8 @@
     });
 
 
-    // 이메일 체크
-
-    document.getElementById('emailCheckBtn').addEventListener('click', function () {
-        let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-        let testEmails = document.getElementsByName('email')[0].value;
-
-        if (!regExp.test(testEmails)) {
-            emailCheck = false;
-            alert('이메일 형식이 올바르지 않습니다.');
-        } else {
-            // 서버로 이메일 중복 확인 요청
-            $.ajax({
-                url: '/checkDuplicateEmail',
-                type: 'GET',
-                data: {
-                    userEmail: testEmails
-                },
-                success: function (result) {
-                    // 메시지 초기화
-                    $('#emailAvailable').hide().text('');
-                    $('#emailNotAvailable').hide().text('');
-
-                    if (result === true) {
-                        // 중복된 이메일이 존재할 경우
-                        $('#emailNotAvailable').show().text('이미 사용 중인 이메일입니다.');
-                        emailCheck = false;
-                        console.log(result);
-                    } else {
-                        // 사용 가능한 이메일일 경우
-                        $('#emailAvailable').show().text('사용 가능한 이메일입니다.');
-                        emailCheck = true;
-                        console.log(result);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // 에러 메시지 출력
-                    console.error("Error:", error);
-                }
-            });
-        }
-    });
-
-    //원본
+    // TODO : 이메일 체크
+    //
     // document.getElementById('emailCheckBtn').addEventListener('click', function () {
     //     let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     //     let testEmails = document.getElementsByName('email')[0].value;
@@ -249,10 +208,51 @@
     //         emailCheck = false;
     //         alert('이메일 형식이 올바르지 않습니다.');
     //     } else {
-    //         emailCheck = true;
-    //         alert('적절한 이메일 주소 입니다.');
+    //         // 서버로 이메일 중복 확인 요청
+    //         $.ajax({
+    //             url: '/checkDuplicateEmail',
+    //             type: 'GET',
+    //             data: {
+    //                 userEmail: testEmails
+    //             },
+    //             success: function (result) {
+    //                 // 메시지 초기화
+    //                 $('#emailAvailable').hide().text('');
+    //                 $('#emailNotAvailable').hide().text('');
+    //
+    //                 if (result === true) {
+    //                     // 중복된 이메일이 존재할 경우
+    //                     $('#emailNotAvailable').show().text('이미 사용 중인 이메일입니다.');
+    //                     emailCheck = false;
+    //                     console.log(result);
+    //                 } else {
+    //                     // 사용 가능한 이메일일 경우
+    //                     $('#emailAvailable').show().text('사용 가능한 이메일입니다.');
+    //                     emailCheck = true;
+    //                     console.log(result);
+    //                 }
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 // 에러 메시지 출력
+    //                 console.error("Error:", error);
+    //             }
+    //         });
     //     }
     // });
+
+    //원본
+    document.getElementById('emailCheckBtn').addEventListener('click', function () {
+        let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+        let testEmails = document.getElementsByName('email')[0].value;
+
+        if (!regExp.test(testEmails)) {
+            emailCheck = false;
+            alert('이메일 형식이 올바르지 않습니다.');
+        } else {
+            emailCheck = true;
+            alert('적절한 이메일 주소 입니다.');
+        }
+    });
 
 
 

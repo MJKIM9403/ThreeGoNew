@@ -1,11 +1,15 @@
 package com.io.threegonew.controller;
 
 import com.io.threegonew.dto.AddUserRequest;
+import com.io.threegonew.dto.LoginRequest;
 import com.io.threegonew.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.io.threegonew.service.UserDetailService;
@@ -39,19 +43,28 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String u_id, @RequestParam String u_pw, Model model) {
-        // 로그인 처리 메서드
-        UserDetails userDetails = userDetailService.loadUserByUsername(u_id);
+    public String login(Model model,
+                        @RequestParam(value="error", required = false) String error,
+                        @RequestParam(value="exception", required = false) String exception,
+                        @RequestParam(value="id", required = false) String id) {
+        model.addAttribute("error", error);
+        model.addAttribute("exception", exception);
 
-        // 실제로는 비밀번호를 검증하는 등의 로직이 들어가야 합니다.
-        // 여기서는 간단히 예제로만 작성하였습니다.
-        if (userDetails.getPassword().equals(u_pw)) {
-            return "redirect:/index"; // 로그인 성공 시 이동할 페이지
-        } else {
-            model.addAttribute("error", true);
-            return "login"; // 로그인 실패 시 다시 로그인 페이지로
-        }
+        // id 값 로깅
+        System.out.println("Received id: " + id);
+
+        return "/login";
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response){
+        new SecurityContextLogoutHandler()
+                .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        return "redirect:/login";
+    }
+
 }
+
+
 
 

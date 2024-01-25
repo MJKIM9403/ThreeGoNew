@@ -27,30 +27,16 @@
         $('input[name=prevUrl]').val(prevUrl);
     })
 
-    function validateForm(form){
-        if(!form.u_id.value){
-            alert("아이디 입력 하세요");
-            return false;
-        }
-        if(!form.u_pw.value){
-            alert("패스워드 입력 하세요");
-            return false;
-        }
-    }
-
-    // 로그인 성공 시 동작
-    function handleLoginSuccess() {
-        // 로그인 성공 시 알림 창 띄우기
-        alert("로그인 성공!");
-        // 로그인 성공시 index로
-        window.open('/index');
-    }
-
-    // 로그인 실패 시 동작
-    function handleLoginFailure() {
-        // 로그인 실패 시 콘솔에 메시지 출력
-        console.error("로그인 실패!");
-    }
+    // function validateForm(form){
+    //     if(!form.id.value){
+    //         alert("아이디 입력 하세요");
+    //         return false;
+    //     }
+    //     if(!form.pw.value){
+    //         alert("패스워드 입력 하세요");
+    //         return false;
+    //     }
+    // }
 </script>
 <style>
     #find-info{
@@ -83,7 +69,7 @@
 
 
 
-<form th:action="@{/user/login}" th:method="post" name="loginFrm" onsubmit="return validateForm(this)">
+<form th:action="@{/login}" th:method="post" name="loginFrm" onsubmit="return validateForm(this)">
     <!-- 오류 확인 -->
     <div th:if="${param.error}">
         <div class="alert alert-danger">
@@ -102,12 +88,12 @@
         <!--아이디-->
         <div class="userInput mb-5">
             <h4 class="list">아이디</h4>
-            <input type="text" name="u_id" class="form-control form-control-sm" maxlength="20" placeholder="아이디를 입력하세요."><br/>
+            <input type="text" name="id" class="form-control form-control-sm" maxlength="20" placeholder="아이디를 입력하세요."><br/>
         </div>
         <!--비밀번호-->
         <div class="userInput mb-5">
             <h4 class="list">비밀번호</h4>
-            <input type="password" name="u_pw" class="form-control form-control-sm" maxlength="20" placeholder="비밀번호를 입력하세요."><br/>
+            <input type="password" name="pw" class="form-control form-control-sm" maxlength="20" placeholder="비밀번호를 입력하세요."><br/>
         </div>
         <!--로그인 버튼-->
         <div class="col text-center">

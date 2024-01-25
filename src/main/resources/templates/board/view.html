@@ -31,7 +31,7 @@
 
   // function clickReply(){
   //   $('.btn-reply').click(function (e) {
-  //     if(${sessionScope.u_id == null}){
+  //     if(${sessionScope.id == null}){
   //       alert("댓글은 로그인 후 작성할 수 있습니다.")
   //       location.href = "/login.do"
   //     }else{
@@ -405,7 +405,9 @@
       <!--첨부파일 표시-->
 <!--      <c:if test="${not empty dto.b_ofile}">-->
         <hr class="my-4">
-        첨부파일 &nbsp;&nbsp; <i class="bi bi-file-earmark-image"></i> ${dto.b_ofile}
+        첨부파일
+        <i class="bi bi-file-earmark-image"></i>
+<!--        <img th:if="${board.bofile} != null" th:src="@{${board.bsfile}}"/>-->
 <!--      </c:if>-->
     </div>
 
