@@ -14,10 +14,10 @@ public class AddUserRequest {
     private String id;
 
     @NotEmpty(message = "비밀번호는 필수항목입니다.")
-    private String u_pw;
+    private String pw;
 
     @NotEmpty(message = "이름은 필수항목입니다.")
-    private String u_name;
+    private String name;
 
     @NotEmpty(message = "이메일은 필수항목입니다.")
     @Email

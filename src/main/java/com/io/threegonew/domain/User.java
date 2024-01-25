@@ -23,14 +23,14 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @Column(name = "u_id", updatable = false)
+    @Column(name = "u_id", updatable = false, unique = true)
     private String id;
 
     @Column(name = "u_pw")
-    private String u_pw;
+    private String pw;
 
     @Column(name = "u_name")
-    private String u_name;
+    private String name;
 
     @Column(name = "u_email", nullable = false, unique = true)
     private String email;
@@ -45,16 +45,17 @@ public class User implements UserDetails {
     private String u_about;
 
     @Builder
-    public User(String id, String u_pw, String u_name, String email, String u_ofile, String u_sfile, String u_about){
+    public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String u_about){
         this.id = id;
-        this.u_pw = u_pw;
-        this.u_name = u_name;
+        this.pw = pw;
+        this.name = name;
         this.email = email;
         this.u_ofile = u_ofile;
         this.u_sfile = u_sfile;
         this.u_about = u_about;
     }
 
+    //권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));
@@ -62,7 +63,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return u_pw;
+        return pw;
     }
 
     @Override

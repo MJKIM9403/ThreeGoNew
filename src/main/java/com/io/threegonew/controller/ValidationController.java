@@ -35,19 +35,20 @@ public class ValidationController {
         }
     }
 
-
-    @GetMapping("/checkDuplicateEmail")
-    public ResponseEntity<String> checkDuplicateEmail(@RequestParam String email) {
-        System.out.println("email에 대한 요청이 수신되었습니다: " + email); // 콘솔 출력 추가
-        boolean isDuplicate = userService.isEmailDuplicate(email);
-
-        if (isDuplicate) {
-            System.out.println("중복된 이메일이 감지되었습니다: " + email); // 콘솔 출력 추가
-            return ResponseEntity.badRequest().body("true");
-        } else {
-            System.out.println("사용 가능한 이메일입니다: " + email); // 콘솔 출력 추가
-            return ResponseEntity.ok("false");
-        }
-    }
+// TODO : 이메일 중복 검사
+    //
+//    @GetMapping("/checkDuplicateEmail")
+//    public ResponseEntity<String> checkDuplicateEmail(@RequestParam String email) {
+//        System.out.println("email에 대한 요청이 수신되었습니다: " + email); // 콘솔 출력 추가
+//        boolean isDuplicate = userService.isEmailDuplicate(email);
+//
+//        if (isDuplicate) {
+//            System.out.println("중복된 이메일이 감지되었습니다: " + email); // 콘솔 출력 추가
+//            return ResponseEntity.badRequest().body("true");
+//        } else {
+//            System.out.println("사용 가능한 이메일입니다: " + email); // 콘솔 출력 추가
+//            return ResponseEntity.ok("false");
+//        }
+//    }
 
 }
