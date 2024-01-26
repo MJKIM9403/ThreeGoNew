@@ -391,7 +391,7 @@
             <nav aria-label="page-bar">
                 <ul class="pagination">
                     <li class="page-item">
-                        <span class="page-link" data-num="1" th:text="처음으로"></span>
+                        <span class="page-link" data-num="0" th:text="처음으로"></span>
                     </li>
                     <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
                         <span class="page-link" th:attr="data-num=${pageResponse.start -1}" th:text="이전"></span>
