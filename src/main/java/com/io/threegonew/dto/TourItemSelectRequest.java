@@ -20,9 +20,9 @@ public class TourItemSelectRequest {
     private String contentTypeId;
 
     @Builder.Default
-    @Min(value = 1)
+    @Min(value = 0)
     @Positive
-    private int page = 1;
+    private int page = 0;
 
     @Builder.Default
     @Min(value = 10)

@@ -23,44 +23,75 @@
 
         $(document).ready(function (){
             checkCategory();
+            selectAndShow();
             showTourItems();
-            // showList();
-            // search();
             $("#morebtn").click(function() {
                 $(".invisiblecard").slideToggle(300);
             });
         })
 
-        function search(){
-            // 조회
-            $('button[name=searchBtn]').click(function (){
-                showList();
-            })
-        }
-        function showTourItems(){
-            $('.page-item').click(function (e){
-                const target = e.target;
+        function selectAndShow(){
+            $(document).on('click','.select-btn',function () {
+                const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
+                let cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
+                let cat3 = $('input[name=cat3]:checked').val() === '' ? null : $('input[name=cat3]:checked').val();
+                if(cat1 == null){
+                    cat2 = null;
+                    cat3 = null;
+                }
+                if(cat2 == null){
+                    cat3 = null;
+                }
+
                 $.ajax({
                     url : '/info/api/touritems',
                     type: 'POST',
                     contentType : 'application/json; charset=UTF-8',
                     data : JSON.stringify({
-                        page : target.getAttribute('data-num'),
-                        cat1 : $('input[name=cat1]:checked').val(),
-                        cat2 : $('input[name=cat2]:checked').val(),
-                        cat3 : $('input[name=cat3]:checked').val(),
+                        page : 0,
+                        cat1 : cat1,
+                        cat2 : cat2,
+                        cat3 : cat3,
                         areaCode : $('input[name=area]').val(),
                         sigunguCode : $('input[name=sigungu]:checked').val(),
                         contentTypeId : $('input[name=type]:checked').val()
                     }),
                     success : function(data){
-                        $("html").scrollTop(0);
+                        //$("html").scrollTop(0);
                         $('#touritems').replaceWith(data);
                     },
                     error : function (err){
                         console.log(err)
                     }
                 })
+            })
+        }
+        function showTourItems(){
+            $(document).on('click','.page-item',function (e) {
+                const target = e.target;
+                if(!target.classList.contains('disabled')){
+                    $.ajax({
+                        url : '/info/api/touritems',
+                        type: 'POST',
+                        contentType : 'application/json; charset=UTF-8',
+                        data : JSON.stringify({
+                            page : target.getAttribute('data-num'),
+                            cat1 : $('input[name=cat1]:checked').val(),
+                            cat2 : $('input[name=cat2]:checked').val(),
+                            cat3 : $('input[name=cat3]:checked').val(),
+                            areaCode : $('input[name=area]').val(),
+                            sigunguCode : $('input[name=sigungu]:checked').val(),
+                            contentTypeId : $('input[name=type]:checked').val()
+                        }),
+                        success : function(data){
+                            $("html").scrollTop(0);
+                            $('#touritems').replaceWith(data);
+                        },
+                        error : function (err){
+                            console.log(err)
+                        }
+                    })
+                }
             })
         }
 
@@ -77,7 +108,7 @@
                         cat1 : cat1
                     }),
                     success : function(data){
-                        $('#category-cat2').replaceWith(data);
+                        $('#category-middle').replaceWith(data);
                     },
                     error : function (err){
                         console.log(err)
@@ -86,16 +117,18 @@
             })
 
             $(document).on('click','.cat2Select',function () {
+                const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
                 $.ajax({
                     url: '/info/api/cat3',
                     type: 'POST',
                     contentType: 'application/json; charset=UTF-8',
                     data: JSON.stringify({
+                        cat1: cat1,
                         cat2: cat2
                     }),
                     success: function (data) {
-                        $('#category-cat3').replaceWith(data);
+                        $('#category-row').replaceWith(data);
                     },
                     error: function (err) {
                         console.log(err)
@@ -216,8 +249,23 @@
             width: 150px;
             height: 100px;
         }
-        #gridDiv{
+        #touritems{
             width: 70%;
+        }
+
+        /*.touritem-contents{*/
+        /*    border: transparent;*/
+        /*}*/
+
+        .touritem-no-contents > p {
+            margin: 0;
+            text-align: center;
+        }
+        .touritem-contents > p {
+            margin: 0;
+        }
+        .touritem-img {
+            width: 150px;
         }
 
         .list_title{
@@ -237,22 +285,6 @@
         .btn-3 {
             font-size: 13px !important;
             border-radius: 15px !important;
-        }
-
-
-        .d-grid{
-            padding: 0 10px 20px;
-        }
-
-        .search-btn{
-            font-weight: 700;
-            border: 1px solid #AAAAAA;
-            border-radius: 20px;
-        }
-
-        .search-btn:hover{
-            background-color: #AAAAAA;
-            color: #FFFFFF;
         }
 
         #areaName{
@@ -286,6 +318,7 @@
         #area-list-box{
             margin-bottom: 10px;
         }
+
     </style>
     <title>관광지 정보 | 3GO</title>
 </head>
@@ -305,10 +338,14 @@
                 <label class="btn btn-3 btn-area" th:for="|area${idx.count}|"><a th:href="@{/info/city/{areaCode}(areaCode = ${area.areaCode})}" th:text="|${area.areaName}|"></a></label>
             </th:block>
     </div>
+
     <div id="content_container">
         <!--리스트-->
         <!--<div id="gridDiv"></div>-->
         <div id="touritems">
+            <div>
+                <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
+            </div>
             <table class="table">
                 <thead>
                     <tr>
@@ -317,107 +354,117 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <th:block th:each="item : ${tourItemList}">
+                    <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
                         <tr>
-                            <td rowspan="3">
-                                <a th:href="@{/info/content(contentid=${item.contentid})}">
-                                    <img class="thumbnail" th:if="${item.firstimage == null || item.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
-                                    <img class="thumbnail" th:unless="${item.firstimage == null || item.firstimage.isEmpty()}" th:src="${item.firstimage}">
+                            <td rowspan="3" class="touritem-img">
+                                <a th:href="@{/info/content(contentid=${touritem.contentid})}">
+                                    <img class="thumbnail" th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
+                                    <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
                                 </a>
                             </td>
-                            <td>
-                                <a th:href="@{/info/content(contentid=${item.contentid})}">
-                                    <h5 th:text="${item.title}"></h5>
+                            <td class="touritem-contents">
+                                <a th:href="@{/info/content(contentid=${touritem.contentid})}">
+                                    <h5 th:text="${touritem.title}"></h5>
                                 </a>
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                <p th:text="${item.address}"></p>
+                            <td class="touritem-contents">
+                                <p th:text="${touritem.address}"></p>
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                <p th:text="${item.fullCategoryName}"></p>
+                            <td class="touritem-contents">
+                                <p th:text="${touritem.fullCategoryName}"></p>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:unless="${pageResponse.total > 0}">
+                        <tr>
+                            <td colspan="2" class="touritem-no-contents">
+                                <p>검색된 관광지 정보가 없습니다.</p>
                             </td>
                         </tr>
                     </th:block>
                 </tbody>
             </table>
+            <nav aria-label="page-bar">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <span class="page-link" data-num="1" th:text="처음으로"></span>
+                    </li>
+                    <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
+                        <span class="page-link" th:attr="data-num=${pageResponse.start -1}" th:text="이전"></span>
+                    </li>
+                    <th:block th:each="pageNo : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                        <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" th:classappend="${pageResponse.page == pageNo} ? 'active' : ''" th:text="${pageNo + 1}"></span></li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${pageResponse.next} ? '' : 'disabled'">
+                        <span class="page-link" th:attr="data-num=${pageResponse.end +1}" th:text="다음"></span>
+                    </li>
+                    <li class="page-item">
+                        <span class="page-link" th:attr="data-num=${pageResponse.last}" th:text="끝으로"></span>
+                    </li>
+                </ul>
+            </nav>
         </div>
         <!--카테고리 셀렉터-->
         <div id="tagSelector">
             <input type="hidden" name="area" th:value="${selectedArea.areaCode}">
             <div id="content_type">
                 <h5>- 관광 타입 -</h5>
-                <input type="radio" class="typeSelect btn-check" name="type" id="type0" autocomplete="off" value="" checked>
+                <input type="radio" class="typeSelect btn-check select-btn" name="type" id="type0" autocomplete="off" value="" checked>
                 <label class="btn btn-2" for="type0" th:text="전체"></label>
                 <th:block th:each="type, idx : ${contentTypeList}">
-                    <input type="radio" class="typeSelect btn-check" name="type" th:id="|type${idx.count}|" autocomplete="off" th:value="${type.contentTypeId}">
+                    <input type="radio" class="typeSelect btn-check select-btn" name="type" th:id="|type${idx.count}|" autocomplete="off" th:value="${type.contentTypeId}">
                     <label class="btn btn-2" th:for="|type${idx.count}|" th:text="${type.contentTypeName}"></label>
                 </th:block>
             </div>
             <div id="category">
                 <div id="cat1Selector">
                     <h5>- 대분류 -</h5>
-                    <input type="radio" class="catSelect btn-check" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
+                    <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
                     <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
                     <th:block th:each="cat1, idx : ${cat1List}">
-                        <input type="radio" class="catSelect btn-check" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
+                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
                         <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
                     </th:block>
                 </div>
 
-                <div id="category-cat2">
+                <div id="category-middle">
                     <div id="cat2Selector" th:if="${cat2List.size() > 0}">
                         <h5>- 중분류 -</h5>
-                        <input type="radio" class="cat2Select btn-check" name="cat2" id="cat2-0" autocomplete="off" value="" checked>
+                        <input type="radio" class="cat2Select btn-check select-btn" name="cat2" id="cat2-0" autocomplete="off" value="" checked>
                         <label class="btn btn-2" for="cat2-0" th:text="전체"></label>
                         <th:block th:each="cat2, idx : ${cat2List}">
-                            <input type="radio" class="cat2Select btn-check" name="cat2" th:id="|cat2-${idx.count}|" autocomplete="off" th:value="${cat2.cat2}">
+                            <input type="radio" class="cat2Select btn-check select-btn" name="cat2" th:id="|cat2-${idx.count}|" autocomplete="off" th:value="${cat2.cat2}">
                             <label class="btn btn-2" th:for="|cat2-${idx.count}|" th:text="${cat2.cat2Name}"></label>
                         </th:block>
                     </div>
-                </div>
-                <div id="category-cat3">
-                    <div id="cat3Selector" th:if="${cat3List.size() > 0}">
-                        <h5>- 소분류 -</h5>
-                        <input type="radio" class="cat3Select btn-check" name="cat3" id="cat3-0" autocomplete="off" value="" checked>
-                        <label class="btn btn-2" for="cat3-0" th:text="전체"></label>
-                        <th:block th:each="cat3, idx : ${cat3List}">
-                            <input type="radio" class="cat3Select btn-check" name="cat3" th:id="|cat3-${idx.count}|" autocomplete="off" th:value="${cat3.cat3}">
-                            <label class="btn btn-2" th:for="|cat3-${idx.count}|" th:text="${cat3.cat3Name}"></label>
-                        </th:block>
+                    <div id="category-row">
+                        <div id="cat3Selector" th:if="${cat3List.size() > 0}">
+                            <h5>- 소분류 -</h5>
+                            <input type="radio" class="cat3Select btn-check select-btn" name="cat3" id="cat3-0" autocomplete="off" value="" checked>
+                            <label class="btn btn-2" for="cat3-0" th:text="전체"></label>
+                            <th:block th:each="cat3, idx : ${cat3List}">
+                                <input type="radio" class="cat3Select btn-check select-btn" name="cat3" th:id="|cat3-${idx.count}|" autocomplete="off" th:value="${cat3.cat3}">
+                                <label class="btn btn-2" th:for="|cat3-${idx.count}|" th:text="${cat3.cat3Name}"></label>
+                            </th:block>
+                        </div>
                     </div>
                 </div>
             </div>
             <div id="sigungu">
                 <h5>- 상세 지역 -</h5>
-                <input type="radio" class="areaSelect btn-check" name="sigungu" id="sigungu0" autocomplete="off" value="" checked>
+                <input type="radio" class="areaSelect btn-check select-btn" name="sigungu" id="sigungu0" autocomplete="off" value="" checked>
                 <label class="btn btn-2" for="sigungu0" th:text="전체"></label>
                 <th:block th:each="sigungu, idx : ${sigunguList}">
-                    <input type="radio" class="areaSelect btn-check" name="sigungu" th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
+                    <input type="radio" class="areaSelect btn-check select-btn" name="sigungu" th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
                     <label class="btn btn-2" th:for="|sigungu${idx.count}|" th:text="${sigungu.sigunguName}"></label>
                 </th:block>
             </div>
-            <div class="d-grid">
-                <button class="btn btn-2 search-btn" type="button" name="searchBtn">검색</button>
-            </div>
         </div>
     </div>
-    <nav aria-label="...">
-        <ul class="pagination">
-            <li class="page-item disabled">
-                <a class="page-link">Previous</a>
-            </li>
-            <th:block th:each="pageNo : ${#numbers.sequence(1,5)}">
-                <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" href="#" th:text="${pageNo}"></span></li>
-            </th:block>
-            <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-            </li>
-        </ul>
-    </nav>
 </div>
 <!--footer-->
 <th:block th:replace="~{fragments/footer}"></th:block>
