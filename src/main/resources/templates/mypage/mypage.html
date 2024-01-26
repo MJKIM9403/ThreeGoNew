@@ -63,6 +63,11 @@
         clip: rect(1px, 1px, 1px, 1px);
     }
 
+    .nav-item {
+        padding: 0 40px !important;
+        text-align: left !important;
+    }
+
     /* Profile Section */
 
     .profile {
@@ -101,12 +106,12 @@
 
     .profile-user-name {
         display: inline-block;
-        font-size: 1.2rem;
+        font-size: 2.2rem;
         font-weight: 300;
     }
 
     .profile-edit-btn {
-        font-size: 1rem;
+        font-size: 1.5rem;
         line-height: 1.8;
         border: 0.1rem solid #dbdbdb;
         border-radius: 0.3rem;
@@ -115,7 +120,7 @@
     }
 
     .profile-settings-btn {
-        font-size: 1rem;
+        font-size: 1.4rem;
         margin-left: 1rem;
     }
 
@@ -378,6 +383,9 @@
             .profile-stats {
                 margin: 0;
             }
+            i.icon {
+                padding-right: 10px !important;
+            }
         }
     }
 
@@ -385,39 +393,38 @@
 <div class="d-flex flex-nowrap">
     <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-            <span class="fs-4">Sidebar</span>
+            <span class="fs-4 text-center">ThreeGo</span>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
                 <a href="#" class="nav-link py-2 border-bottom active" aria-current="page">
-                    <i class="bi bi-house-door-fill"></i>
-                    Home
+                    <i class="bi bi-house-door-fill icon"></i>
+                    메인화면
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-speedometer2"></i>
-                    Dashboard
+                    <i class="bi bi-speedometer2 icon"></i>
+                    여행정보
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-file-earmark-spreadsheet"></i>
-                    Orders
+                    <i class="bi bi-card-checklist icon"></i>
+                    여행일정
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-columns"></i>
-                    Products
+                    <i class="bi bi-columns icon"></i>
+                    커뮤니티
                 </a>
             </li>
             <li>
                 <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-people-fill"></i>
-                    Customers
+                    <i class="bi bi-people-fill icon"></i>
+                    마이페이지
                 </a>
             </li>
         </ul>
@@ -629,7 +636,9 @@
     <!-- End of container -->
 </div>
 
+<script>
 
+</script>
 
 </body>
 </html>

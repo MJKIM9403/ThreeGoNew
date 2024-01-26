@@ -65,7 +65,7 @@
 
 <div class="container position-relative pt-5 pb-5">
     <article>
-        <form id="writeFrm" name="writeFrm" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+        <form id="writeFrm" name="writeFrm" method="post" enctype="multipart/form-data" th:action="@{'/api/board/' + *{bid}}" th:object=>
 
             <!--            <form id="writeFrm" name="writeFrm" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">-->
             <input type="hidden" id="board-id" th:value="${board.bid}">
@@ -103,8 +103,8 @@
             <div class="text-center">
                 <div class="btn-group pt-5" role="group" aria-label="Basic example">
 
-                    <button th:if="${board.bid} != null" id="modify-btn" type="button" class="btn btn-primary btn-sm">수정</button>
-                    <button th:if="${board.bid} == null" id="create-btn" type="button" class="btn btn-primary btn-sm">등록</button>
+                    <button th:if="${board.bid} != null" id="modify-btn" type="submit" class="btn btn-primary btn-sm">수정</button>
+                    <button th:if="${board.bid} == null" id="create-btn" type="submit" class="btn btn-primary btn-sm">등록</button>
                     <button type="reset" class="btn btn-secondary btn-sm">다시입력</button>
                     <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='/board';">목록보기</button>
                 </div>

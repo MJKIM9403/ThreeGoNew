@@ -60,18 +60,6 @@ a {
     list-style: none;
 }
 
-.nav-link {
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    min-width: 88px;
-    line-height: 36px;
-    padding: 0 16px;
-    border-radius: 2px;
-    text-align: center;
-}
-
 .nav-link:hover {
     box-sizing: border-box;
     position: relative;

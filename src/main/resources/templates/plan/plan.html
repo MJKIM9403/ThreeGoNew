@@ -312,6 +312,8 @@
     function toggleDay() {
         $('#your_item').toggleClass('d-flex');
         $('#your_item').toggle();
+        $('#toggle-btn-icon').toggleClass('bi-caret-right-fill');
+        $('#toggle-btn-icon').toggleClass('bi-caret-left-fill');
         // 지도 너비 100%로 고정하기
         $('#map_div').children('div:eq(0)').css('width','100%');
         $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
@@ -655,7 +657,7 @@
         <!--지도가 들어갑니다.-->
         <div id="map" class="d-flex default">
             <button id="toggle-btn" class="bg-white text-center" type="button" onclick="toggleDay();">
-                <i class="bi bi-caret-left-fill"></i>
+                <i id="toggle-btn-icon" class="bi bi-caret-left-fill"></i>
             </button>
 
 

@@ -165,7 +165,7 @@
     <div class="container px-1 px-sm-5 mx-auto">
         <div class="pt-5 pb-5">
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
-            <form autocomplete="off">
+            <form autocomplete="off" th:action="/calendar/create" method="post">
                 <div class="flex-sm-row flex-column d-flex">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-group input-daterange">
@@ -176,7 +176,7 @@
                         </div>
                     </div>
                     <div class="col-sm-3 col-12 px-0">
-                        <button type="button" class="btn btn-black" onclick="location.href='/plan'">Search</button>
+                        <button type="submit" class="btn btn-black" onclick="location.href='/plan'">Search</button>
                     </div>
                 </div>
             </form>
