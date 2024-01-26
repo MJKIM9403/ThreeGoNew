@@ -29,12 +29,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
 
-    //    security 추가
+    // security 추가
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
     // mariaDB
-// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+    // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
     implementation("org.mariadb.jdbc:mariadb-java-client:3.2.0")
 
     compileOnly("org.projectlombok:lombok")
@@ -53,10 +53,17 @@ dependencies {
     /* 메일 발송 */
     implementation("javax.mail:mail:1.4.7")
 
+    // json 데이터 처리
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
+
     // Spring Boot Starter Validation
     implementation ("org.springframework.boot:spring-boot-starter-validation")
+
+    // model mapper
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    implementation("org.modelmapper:modelmapper:3.0.0")
+
 
 
 }

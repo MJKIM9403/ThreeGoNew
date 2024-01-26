@@ -1,11 +1,11 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
-import com.io.threegonew.dto.TourItemResponse;
-import com.io.threegonew.dto.TourItemSelectRequest;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.*;
 import com.io.threegonew.repository.spec.TourItemSpecification;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,25 +26,124 @@ public class TourItemService {
     private final ContentTypeRepository contentTypeRepository;
     private final AreaRepository areaRepository;
     private final TourItemRepository tourItemRepository;
-    public List<Cat1> findCat1List(){
-        return cat1Repository.findAll();
+    private final ModelMapper modelMapper;
+    public List<Cat1Response> findCat1List(){
+        List<Cat1Response> cat1List = cat1Repository.findAll().stream()
+                .map(cat1 -> modelMapper.map(cat1, Cat1Response.class))
+                .collect(Collectors.toList());
+
+        return cat1List;
     }
 
-    public List<Cat2> findCat2List(String cat1Code){
+    public List<Cat2Response> findCat2List(String cat1Code){
         Cat1 cat1 = cat1Repository.findById(cat1Code)
                 .orElseThrow(()-> new IllegalArgumentException("not found : cat1"));
 
-        return cat1.getCat2List();
+        List<Cat2Response> cat2List = cat1.getCat2List().stream()
+                .map(cat2 -> modelMapper.map(cat2, Cat2Response.class))
+                .collect(Collectors.toList());
+
+        return cat2List;
     }
 
-    public List<Cat3> findCat3List(String cat2Code){
+    public List<Cat3Response> findCat3List(String cat2Code){
         Cat2 cat2 = cat2Repository.findById(cat2Code)
                 .orElseThrow(()-> new IllegalArgumentException("not found : cat2"));
 
-        return cat2.getCat3List();
+        List<Cat3Response> cat3List = cat2.getCat3List().stream()
+                .map(cat3 -> modelMapper.map(cat3, Cat3Response.class))
+                .collect(Collectors.toList());
+
+        return cat3List;
     }
 
-    public String getFullCategoryName(String cat3Code){
+    public List<SigunguResponse> findSigunguList(Integer areaCode){
+        List<SigunguResponse> sigunguList = sigunguRepository.findByAreaCode(areaCode).stream()
+                .map(sigungu -> modelMapper.map(sigungu, SigunguResponse.class))
+                .collect(Collectors.toList());
+        return sigunguList;
+    }
+
+    public List<ContentTypeResponse> findContentTypeList(){
+        List<ContentTypeResponse> contentTypeList = contentTypeRepository.findAll().stream()
+                .map(contentType -> modelMapper.map(contentType, ContentTypeResponse.class))
+                .collect(Collectors.toList());
+        return contentTypeList;
+    }
+
+    public List<AreaResponse> findAreaList(){
+        List<AreaResponse> areaList = areaRepository.findAll().stream()
+                .map(area -> modelMapper.map(area, AreaResponse.class))
+                .collect(Collectors.toList());
+        return areaList;
+    }
+
+    public AreaResponse findArea(Integer areaCode){
+        Area area = areaRepository.findById(areaCode)
+                .orElseThrow(()-> new IllegalArgumentException("not found : Area"));
+
+        return new AreaResponse(area);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse findSelectedTourItemList(TourItemSelectRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        Specification<TourItem> spec = (root, query, criteriaBuilder) -> null;
+
+        if(request.getAreaCode() != null && !request.getAreaCode().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalAreacode(request.getAreaCode()));
+        }
+        if(request.getSigunguCode() != null && !request.getSigunguCode().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalSigungucode(request.getSigunguCode()));
+        }
+        if(request.getCat1() != null && !request.getCat1().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalCat1(request.getCat1()));
+        }
+        if(request.getCat2() != null && !request.getCat2().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalCat2(request.getCat2()));
+        }
+        if(request.getCat3() != null && !request.getCat3().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalCat3(request.getCat3()));
+        }
+        if(request.getContentTypeId() != null && !request.getContentTypeId().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalContenttypeid(request.getContentTypeId()));
+        }
+
+        Page<TourItemResponse> page = tourItemRepository.findAll(spec, pageable)
+                .map(tourItem -> TourItemResponse.builder()
+                                .contentid(tourItem.getContentid())
+                                .cat1(tourItem.getCat1())
+                                .cat2(tourItem.getCat2())
+                                .cat3(tourItem.getCat3())
+                                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
+                                .areacode(tourItem.getAreacode())
+                                .contenttypeid(tourItem.getContenttypeid())
+                                .address(getAddress(tourItem))
+                                .firstimage(tourItem.getFirstimage())
+                                .mapx(tourItem.getMapx())
+                                .mapy(tourItem.getMapy())
+                                .mlevel(tourItem.getMlevel())
+                                .sigungucode(tourItem.getSigungucode())
+                                .tel(tourItem.getTel())
+                                .title(cropTitle(tourItem.getTitle()))
+                                .build()
+                        );
+
+        PageResponse<TourItemResponse> pageResponse = PageResponse.<TourItemResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+    /* TourItemResponse 매핑을 위한 메소드*/
+
+    private String getFullCategoryName(String cat3Code){
         Cat3 cat3 = cat3Repository.findById(cat3Code)
                 .orElseThrow(()-> new IllegalArgumentException("not found : cat3"));
 
@@ -63,74 +162,10 @@ public class TourItemService {
         return address.toString();
     }
 
-    public List<Sigungu> findSigunguList(Integer areaCode){
-        return sigunguRepository.findByAreaCode(areaCode);
-    }
-
-    public List<ContentType> findContentTypeList(){
-        return contentTypeRepository.findAll();
-    }
-
-    public List<Area> findAreaList(){
-        return areaRepository.findAll();
-    }
-
-    public Area findArea(Integer areaCode){
-        return areaRepository.findById(areaCode)
-                .orElseThrow(()-> new IllegalArgumentException("not found : Area"));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<TourItemResponse> findSelectedTourItemList(TourItemSelectRequest request){
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-
-        Specification<TourItem> spec = (root, query, criteriaBuilder) -> null;
-
-        if(request.getAreaCode() != null && !request.getAreaCode().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalAreacode(request.getAreaCode()));
-            System.out.println("area: " + request.getAreaCode());
+    private String cropTitle(String title){
+        if(title.contains("[한국")){
+            title = title.substring(0,title.lastIndexOf("[한국"));
         }
-        if(request.getSigunguCode() != null && !request.getSigunguCode().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalSigungucode(request.getSigunguCode()));
-            System.out.println("sigungu: " + request.getSigunguCode());
-        }
-        if(request.getCat1() != null && !request.getCat1().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalCat1(request.getCat1()));
-            System.out.println("cat1: " + request.getCat1());
-        }
-        if(request.getCat2() != null && !request.getCat2().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalCat2(request.getCat2()));
-            System.out.println("cat2: " + request.getCat2());
-        }
-        if(request.getCat3() != null && !request.getCat3().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalCat3(request.getCat3()));
-            System.out.println("cat3: " + request.getCat3());
-        }
-        if(request.getContentTypeId() != null && !request.getContentTypeId().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalContenttypeid(request.getContentTypeId()));
-            System.out.println("contentTypeId: " + request.getContentTypeId());
-        }
-
-        Page<TourItemResponse> tourItemResponseList = tourItemRepository.findAll(spec, pageable)
-                .map(tourItem -> TourItemResponse.builder()
-                                .contentid(tourItem.getContentid())
-                                .cat1(tourItem.getCat1())
-                                .cat2(tourItem.getCat2())
-                                .cat3(tourItem.getCat3())
-                                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
-                                .areacode(tourItem.getAreacode())
-                                .contenttypeid(tourItem.getContenttypeid())
-                                .address(getAddress(tourItem))
-                                .firstimage(tourItem.getFirstimage())
-                                .mapx(tourItem.getMapx())
-                                .mapy(tourItem.getMapy())
-                                .mlevel(tourItem.getMlevel())
-                                .sigungucode(tourItem.getSigungucode())
-                                .tel(tourItem.getTel())
-                                .title(tourItem.getTitle())
-                                .build()
-                        );
-
-        return tourItemResponseList;
+        return title;
     }
 }
