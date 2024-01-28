@@ -3,14 +3,12 @@ package com.io.threegonew.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.io.threegonew.ApiKey;
 import com.io.threegonew.domain.*;
-import com.io.threegonew.domain.pk.SigunguPk;
 import com.io.threegonew.repository.*;
 import lombok.AllArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -34,7 +32,7 @@ public class InsertData {
     SigunguRepository sigunguRepository;
 
 
-    private String makeUri(String table, Map<String, Object> params){
+    private String makeURI(String table, Map<String, Object> params){
         String searchType = "";
         if(table.equals("TourItem")){
             searchType = "areaBasedList1";
@@ -93,7 +91,7 @@ public class InsertData {
         String result = "";
 
         try {
-            URL url = new URL(makeUri(table,params));
+            URL url = new URL(makeURI(table,params));
             System.out.println(url);
             BufferedReader bf;
 
@@ -121,7 +119,7 @@ public class InsertData {
                             .build();
                     areaRepository.save(area);
                     params.put("Area", area.getAreaCode());
-                    insertSigungu(makeUri(table,params), params);
+                    insertSigungu(makeURI(table,params), params);
                 }else if(table.equals("Category")){
                     Cat1 cat1 = Cat1.builder()
                                     .cat1(itemJson.get("code").toString())
@@ -129,7 +127,7 @@ public class InsertData {
                                     .build();
                     cat1Repository.save(cat1);
                     params.put("Cat1",cat1);
-                    insertCat2(makeUri(table,params), params);
+                    insertCat2(makeURI(table,params), params);
                 }
             }
         }catch(Exception e) {
@@ -197,7 +195,7 @@ public class InsertData {
                 cat2Repository.save(cat2);
 
                 params.put("Cat2",cat2);
-                insertCat3(makeUri("Category",params), params);
+                insertCat3(makeURI("Category",params), params);
             }
         }catch(Exception e) {
             e.printStackTrace();

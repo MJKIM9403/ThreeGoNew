@@ -19,11 +19,11 @@ public class Cat3 {
     @Column(name = "cat3_name")
     private String cat3Name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat2")
     private Cat2 cat2;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat1")
     private Cat1 cat1;
 }

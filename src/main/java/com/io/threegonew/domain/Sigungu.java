@@ -12,8 +12,6 @@ import lombok.*;
 @Table(name = "t_sigungu")
 @IdClass(SigunguPk.class)
 public class Sigungu {
-    /*@EmbeddedId
-    private SigunguPk sigunguPk;*/
     @Id
     @Column(name = "s_sigungucode")
     private Integer sigunguCode;

@@ -153,3 +153,25 @@ INSERT INTO `T_C_TYPE` (contenttypeid, ctype_name) VALUES ('39', '음식점');
 --패스워드 varchar40은 너무 작아서 암호화된 암호가 들어가지 않습니다.
 --이걸로 수정해주세요
 ALTER TABLE test.users MODIFY COLUMN U_PW varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+
+
+
+--users pk 추가
+ALTER TABLE test.users ADD CONSTRAINT users_pk PRIMARY KEY (U_ID);
+--touritem pk 추가
+ALTER TABLE test.touritem ADD CONSTRAINT touritem_pk PRIMARY KEY (contentid);
+
+--북마크 테이블 추가
+CREATE TABLE test.bookmark (
+                                bookmark_id BIGINT auto_increment NOT NULL,
+                                content_id varchar(40) NOT NULL,
+                                u_id varchar(40) NOT NULL,
+                                CONSTRAINT bookmarks_pk PRIMARY KEY (bookmark_id),
+                                CONSTRAINT bookmarks_un UNIQUE KEY (content_id,u_id)
+)
+    ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb3
+COLLATE=utf8mb3_general_ci;
+-- 북마크 외래키 추가
+ALTER TABLE test.bookmark ADD CONSTRAINT bookmarks_FK FOREIGN KEY (content_id) REFERENCES test.touritem(contentid);
+ALTER TABLE test.bookmark ADD CONSTRAINT bookmarks_FK_1 FOREIGN KEY (u_id) REFERENCES test.users(U_ID);

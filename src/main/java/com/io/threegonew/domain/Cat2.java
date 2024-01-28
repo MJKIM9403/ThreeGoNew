@@ -22,7 +22,7 @@ public class Cat2 {
     @Column(name = "cat2_name")
     private String cat2Name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat1")
     private Cat1 cat1;
 

@@ -357,13 +357,13 @@
                     <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
                         <tr>
                             <td rowspan="3" class="touritem-img">
-                                <a th:href="@{/info/content(contentid=${touritem.contentid})}">
+                                <a th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
                                     <img class="thumbnail" th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
                                     <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
                                 </a>
                             </td>
                             <td class="touritem-contents">
-                                <a th:href="@{/info/content(contentid=${touritem.contentid})}">
+                                <a th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
                                     <h5 th:text="${touritem.title}"></h5>
                                 </a>
                             </td>

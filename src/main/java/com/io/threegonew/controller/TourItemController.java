@@ -3,6 +3,7 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
 import com.io.threegonew.dto.PageResponse;
+import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.dto.TourItemSelectRequest;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,21 @@ public class TourItemController {
         return "tourinfo/city :: #category-row";
     }
 
+    @GetMapping("/content/{contentid}")
+    public String getContentInfo(@PathVariable(name = "contentid") String contentid,  Model model){
+        TourItemResponse tourItemResponse = tourItemService.findTourItem(contentid);
+        //contentResponse 생성 후 전달
+        return "tourinfo/content";
+    }
+
+
+    @PostMapping("/api/touritems")
+    public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+        model.addAttribute("pageResponse", pageResponse);
+        return "tourinfo/city :: #touritems";
+    }
+
 //    @GetMapping("/api/touritems")
 //    @ResponseBody
 //    public ResponseEntity<Map<String,Object>> getTourItemList(@RequestParam Map<String, String> params) {
@@ -85,12 +101,5 @@ public class TourItemController {
 //
 //        return ResponseEntity.ok().body(returnData);
 //    }
-    @PostMapping("/api/touritems")
-    public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
-        model.addAttribute("pageResponse", pageResponse);
-        return "tourinfo/city :: #touritems";
-    }
-
 
 }

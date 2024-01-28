@@ -27,6 +27,13 @@ public class TourItemService {
     private final AreaRepository areaRepository;
     private final TourItemRepository tourItemRepository;
     private final ModelMapper modelMapper;
+
+    public TourItemResponse findTourItem(String contentid){
+        TourItem selectedTourItem = tourItemRepository.findById(contentid)
+                .orElseThrow(()-> new IllegalArgumentException("not found : touritem"));
+
+        return tourItemMapper(selectedTourItem);
+    }
     public List<Cat1Response> findCat1List(){
         List<Cat1Response> cat1List = cat1Repository.findAll().stream()
                 .map(cat1 -> modelMapper.map(cat1, Cat1Response.class))
@@ -111,24 +118,7 @@ public class TourItemService {
         }
 
         Page<TourItemResponse> page = tourItemRepository.findAll(spec, pageable)
-                .map(tourItem -> TourItemResponse.builder()
-                                .contentid(tourItem.getContentid())
-                                .cat1(tourItem.getCat1())
-                                .cat2(tourItem.getCat2())
-                                .cat3(tourItem.getCat3())
-                                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
-                                .areacode(tourItem.getAreacode())
-                                .contenttypeid(tourItem.getContenttypeid())
-                                .address(getAddress(tourItem))
-                                .firstimage(tourItem.getFirstimage())
-                                .mapx(tourItem.getMapx())
-                                .mapy(tourItem.getMapy())
-                                .mlevel(tourItem.getMlevel())
-                                .sigungucode(tourItem.getSigungucode())
-                                .tel(tourItem.getTel())
-                                .title(cropTitle(tourItem.getTitle()))
-                                .build()
-                        );
+                .map(this::tourItemMapper);
 
         PageResponse<TourItemResponse> pageResponse = PageResponse.<TourItemResponse>withAll()
                 .dtoList(page.getContent())
@@ -142,6 +132,26 @@ public class TourItemService {
     }
 
     /* TourItemResponse 매핑을 위한 메소드*/
+
+    private TourItemResponse tourItemMapper(TourItem tourItem){
+        return TourItemResponse.builder()
+                .contentid(tourItem.getContentid())
+                .cat1(tourItem.getCat1())
+                .cat2(tourItem.getCat2())
+                .cat3(tourItem.getCat3())
+                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
+                .areacode(tourItem.getAreacode())
+                .contenttypeid(tourItem.getContenttypeid())
+                .address(getAddress(tourItem))
+                .firstimage(tourItem.getFirstimage())
+                .mapx(tourItem.getMapx())
+                .mapy(tourItem.getMapy())
+                .mlevel(tourItem.getMlevel())
+                .sigungucode(tourItem.getSigungucode())
+                .tel(tourItem.getTel())
+                .title(cropTitle(tourItem.getTitle()))
+                .build();
+    }
 
     private String getFullCategoryName(String cat3Code){
         Cat3 cat3 = cat3Repository.findById(cat3Code)
