@@ -41,6 +41,11 @@ public class TestController {
             return "mypage/mypage";
         }
 
+        @GetMapping("home")
+        public String getHome() {
+            return "index2";
+        }
+
 //    @GetMapping("/area")
 //    public String getArea() {
 //        return "tourinfo/area";
