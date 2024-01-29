@@ -152,7 +152,7 @@
             background-color: #000 !important;
         }
     </style>
-
+</head>
 
     <!--header-->
     <th:block th:replace="fragments/header"></th:block>
@@ -164,8 +164,18 @@
 
     <div class="container px-1 px-sm-5 mx-auto">
         <div class="pt-5 pb-5">
+
+            <select name="area">
+                <option value="">여행장소 선택 ㄱ</option>
+                <option value="../plan/city/1">서울</option>
+                <option value="../plan/city/2">인천</option>
+                <option value="../plan/city/3">대전</option>
+                <option value="../plan/city/4">대구</option>
+            </select>
+
+
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
-            <form autocomplete="off" th:action="/calendar/create" method="post">
+            <form autocomplete="off" th:action method="post">
                 <div class="flex-sm-row flex-column d-flex">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-group input-daterange">
@@ -205,6 +215,12 @@
             document.querySelector('.result').innerText = endday;
         }
 
+        // 장소 가져오기 테스트
+        $(document).ready(function() {
+            $("#area").change(function() {
+                location.href = $("#area").val();
+            })
+        })
 
     </script>
 

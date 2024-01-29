@@ -7,7 +7,9 @@
 //@NoArgsConstructor
 //
 //public class BoardFileRequest {
-//    private Integer id;
-//    private Integer[] idArr;
-//    private String fileId;
+//    private String ofile;
+//    private String sfile;
+//    private String filepath;
 //}
+//
+//public BoardFileRequest toEntity(File file)

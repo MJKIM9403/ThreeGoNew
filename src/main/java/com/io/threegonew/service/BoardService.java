@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,19 +24,20 @@ import java.util.UUID;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardFileService boardFileService;
 
     // 게시판 글 추가
-    public Board save(AddBoardRequest request) {
-
-        return boardRepository.save(request.toEntity());
-    }
+//    public Board save(AddBoardRequest request) {
+//
+//        return boardRepository.save(request.toEntity());
+//    }
     // 파일 첨부 시 경로 받아오기
-//
-//    public Board save(AddBoardRequest request, MultipartFile file) throws Exception {
-//
+
+    public Board save(AddBoardRequest request, MultipartHttpServletRequest multiRequest) throws Exception {
+
 //        // 파일 업로드 처리 시작
 //        String projectPath = System.getProperty("user.dir") // 현재 디렉토리 경로
-//            + "/src/main/resources/static/files"; // 파일이 저장될 폴더의 경로
+//                + "/src/main/resources/static/files"; // 파일이 저장될 폴더의 경로
 //
 //        UUID uuid = UUID.randomUUID(); // 랜덤으로 식별자를 생성
 //        String fileName = uuid + "_" + file.getOriginalFilename(); // UUID와 파일이름을 포함된 파일 이름으로 저장
@@ -44,10 +46,20 @@ public class BoardService {
 //        file.transferTo(saveFile);
 //        request.toEntity().updateBofile(String.valueOf(saveFile)); // DB에 파일 이름 저장
 //        request.toEntity().updateBsfile("/files/"+fileName); // DB에 파일 경로 저장
-//
-//
-//        return boardRepository.save(request.toEntity());
-//    }
+
+        Board result = boardRepository.save(request.toEntity());
+        boolean resultFlag = false;
+
+        if(result != null) {
+            boardFileService.uploadFile(multiRequest, result.getBid());
+            resultFlag = true;
+        }
+
+        System.out.println(resultFlag);
+        return result;
+
+
+    }
 
 
 

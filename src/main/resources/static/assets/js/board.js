@@ -43,6 +43,7 @@ if (modifyBtn) {
 }
 
 const createBtn =  document.getElementById('create-btn');
+const files = this.fileList;
 
 if(createBtn){
     createBtn.addEventListener('click', function (){

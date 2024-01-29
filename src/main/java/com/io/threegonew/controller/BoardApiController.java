@@ -4,12 +4,15 @@ import com.io.threegonew.domain.Board;
 import com.io.threegonew.dto.AddBoardRequest;
 import com.io.threegonew.dto.BoardResponse;
 import com.io.threegonew.dto.UpdateBoardRequest;
+import com.io.threegonew.service.BoardFileService;
 import com.io.threegonew.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -30,9 +33,9 @@ public class BoardApiController {
         return ResponseEntity.ok().body(board);
     }
 
-    @PostMapping("/api/board")
-    public ResponseEntity<Board> addPost(@RequestBody AddBoardRequest request) {
-        Board savedBoard = boardService.save(request);
+    @PostMapping(value = "/api/board", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Board> addPost(@RequestBody AddBoardRequest request, MultipartHttpServletRequest multiRequest) throws Exception {
+        Board savedBoard = boardService.save(request, multiRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBoard);
     }

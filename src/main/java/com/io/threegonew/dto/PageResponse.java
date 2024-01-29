@@ -37,8 +37,8 @@ public class PageResponse<E> {
         this.dtoList = dtoList;
 
         /* 마지막 페이지, 시작 페이지 번호 계산*/
-        this.end = (int)(Math.ceil((this.page + 1) / 10.0))*10 -1;
-        this.start = this.end - 9;
+        this.end = (int)(Math.ceil((this.page + 1) / 5.0))*5 -1;
+        this.start = this.end - 4;
 
         this.last = totalPages == 0 ? 0 : totalPages - 1;
 

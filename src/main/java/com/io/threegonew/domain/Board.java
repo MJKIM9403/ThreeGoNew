@@ -48,6 +48,9 @@ public class Board {
     private Integer bvisitcount = 0;
 
 
+
+
+
     @Builder
     public Board(String userid, String username, String btitle, String bcontent) {
         this.userid = userid;

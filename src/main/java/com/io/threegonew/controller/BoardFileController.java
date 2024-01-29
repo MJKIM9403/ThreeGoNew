@@ -1,23 +1,23 @@
-package com.io.threegonew.controller;
-
+//package com.io.threegonew.controller;
+//
 //import com.io.threegonew.dto.BoardFileRequest;
 //import com.io.threegonew.dto.BoardFileResponse;
 //import com.io.threegonew.service.BoardFileService;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.net.URLEncoder;
-
-@Controller
-@RequiredArgsConstructor
-public class BoardFileController {
+//import jakarta.servlet.http.HttpServletResponse;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.stereotype.Controller;
+//import org.springframework.ui.Model;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
+//import org.springframework.web.multipart.MultipartFile;
+//
+//import java.io.*;
+//import java.net.URLEncoder;
+//
+//@Controller
+//@RequiredArgsConstructor
+//public class BoardFileController {
 //
 //    private final BoardFileService boardFileService;
 //
@@ -103,18 +103,18 @@ public class BoardFileController {
 //    }
 //
 //
-     // 포스트맨 테스트
-    private final String fileDir = System.getProperty("user.dir") // 현재 디렉토리 경로
-            + "/src/main/resources/static/files/"; // 파일이 저장될 폴더의 경로
-
-
-    @PostMapping("/upload")
-    public String saveFile(@RequestParam("files") MultipartFile file) throws IOException {
-        String fullPath = "";
-        if(!file.isEmpty()) {
-            fullPath = fileDir + file.getOriginalFilename();
-            file.transferTo(new File(fullPath));
-        }
-        return fullPath;
-    }
-}
+////     // 포스트맨 테스트
+////    private final String fileDir = System.getProperty("user.dir") // 현재 디렉토리 경로
+////            + "/src/main/resources/static/files/"; // 파일이 저장될 폴더의 경로
+////
+////
+////    @PostMapping("/upload")
+////    public String saveFile(@RequestParam("files") MultipartFile file) throws IOException {
+////        String fullPath = "";
+////        if(!file.isEmpty()) {
+////            fullPath = fileDir + file.getOriginalFilename();
+////            file.transferTo(new File(fullPath));
+////        }
+////        return fullPath;
+////    }
+//}

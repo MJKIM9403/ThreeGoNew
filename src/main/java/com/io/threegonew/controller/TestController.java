@@ -26,10 +26,10 @@ public class TestController {
             return "plan/calendar";
         }
 
-        @GetMapping("/plan")
-        public String getMyPlan() {
-            return "plan/plan";
-        }
+//        @GetMapping("/plan")
+//        public String getMyPlan() {
+//            return "plan/plan";
+//        }
 
         @GetMapping("detail")
         public String getDetail() {
