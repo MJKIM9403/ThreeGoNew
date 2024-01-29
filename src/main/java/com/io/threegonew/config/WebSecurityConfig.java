@@ -28,7 +28,7 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer configure(){
         return web -> web.ignoring()
-                .requestMatchers("/static/**");
+                .requestMatchers("/assets/**");
     }
 
     //특정 HTTP 요청에 대한 웹 기반 보안 구성
@@ -36,16 +36,17 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
                 .authorizeRequests()
-                //.requestMatchers("/login", "/signup", "/user", "/error", "/index", "/insertData").permitAll()
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/login", "/signup", "/user", "/error", "/index", "/insertData").permitAll()
+                //.requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        //.loginProcessingUrl("/login")
                         .defaultSuccessUrl("/index")
                         .usernameParameter("id")
-                        .permitAll()
+                        .passwordParameter("pw")
+                    //    .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login")
