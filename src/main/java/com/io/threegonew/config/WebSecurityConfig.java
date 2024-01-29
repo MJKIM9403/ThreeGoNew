@@ -42,7 +42,10 @@ public class WebSecurityConfig {
                 .and()
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/index")
+                        .usernameParameter("id")
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login")
