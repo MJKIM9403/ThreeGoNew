@@ -5,6 +5,7 @@ import com.io.threegonew.dto.LoginRequest;
 import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,17 +44,26 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(Model model,
-                        @RequestParam(value="error", required = false) String error,
-                        @RequestParam(value="exception", required = false) String exception,
-                        @RequestParam(value="id", required = false) String id) {
-        model.addAttribute("error", error);
-        model.addAttribute("exception", exception);
+    public String login(@ModelAttribute
+                            Model model,
+//                        @RequestParam(value="error", required = false) String error,
+//                        @RequestParam(value="exception", required = false) String exception,
+                        @RequestParam(value="id", required = false) String id,
+                        HttpServletRequest request) {
 
-        // id 값 로깅
-        System.out.println("Received id: " + id);
+//        model.addAttribute("error", error);
+//        model.addAttribute("exception", exception);
+        System.out.println("usercontroller : " + id);
+        // 추가: 로그인 실패 시 이유를 출력
+//        if (error != null) {
+//            System.out.println("Login failed. Error: " + error);
+//        }
+        //세션
+        HttpSession session = request.getSession();
+        session.setAttribute("loginUser", userDetailService.getClass().getName());
 
         return "/index";
+
     }
 
     @GetMapping("/logout")
