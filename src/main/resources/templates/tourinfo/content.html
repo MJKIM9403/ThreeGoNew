@@ -151,6 +151,7 @@
             <div class="col-md-12">
                 <div class="title-box">
                     <h3 th:text="${response.tourItemResponse.title}" id="title"></h3>
+                    <h5 id="period" th:if='${response.tourItemResponse.contenttypeid.equals("15")}' th:text='${response.detailInfo.get("진행상태")}'></h5>
                 </div>
                 <div id="category" th:text="${response.tourItemResponse.fullCategoryName}"></div>
                 <div class="row" id="row1">
@@ -208,7 +209,7 @@
                         <h4 class="sub-title"> 소개 </h4>
                         <div id="overview">
                             <p th:if='${response.overview.equals("-")}'>관련 소개글이 없습니다.</p>
-                            <p th:unless='${response.overview.equals("-")}' th:text="${response.overview}"></p>
+                            <p th:unless='${response.overview.equals("-")}' th:utext="${response.overview}"></p>
                         </div>
                     </div>
                 </div>
@@ -222,25 +223,25 @@
                                        <th>주소</th>
                                        <td th:text="${response.tourItemResponse.address}"></td>
                                        <th>관광안내원</th>
-                                       <td th:text='${response.detailInfo.get("관광안내원")}'></td>
+                                       <td th:utext='${response.detailInfo.get("관광안내원")}'></td>
                                     </tr>
                                     <tr>
                                         <th>이용문의</th>
-                                        <td th:text='${response.detailInfo.get("이용문의")}'></td>
+                                        <td th:utext='${response.detailInfo.get("이용문의")}'></td>
                                         <th>입장제한연령</th>
-                                        <td th:text='${response.detailInfo.get("입장제한연령")}'></td>
+                                        <td th:utext='${response.detailInfo.get("입장제한연령")}'></td>
                                     </tr>
                                     <tr>
                                         <th>이용시간</th>
-                                        <td th:text='${response.detailInfo.get("이용시간")}'></td>
+                                        <td th:utext='${response.detailInfo.get("이용시간")}'></td>
                                         <th>수용인원</th>
-                                        <td th:text='${response.detailInfo.get("수용인원")}'></td>
+                                        <td th:utext='${response.detailInfo.get("수용인원")}'></td>
                                     </tr>
                                     <tr>
                                         <th>휴무일</th>
-                                        <td th:text='${response.detailInfo.get("휴무일")}'></td>
+                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
                                         <th>주차여부</th>
-                                        <td th:text='${response.detailInfo.get("주차여부")}'></td>
+                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
                                     </tr>
                                     <tr>
                                         <th>홈페이지</th>
@@ -252,25 +253,25 @@
                                         <th>주소</th>
                                         <td th:text="${response.tourItemResponse.address}"></td>
                                         <th>이용요금</th>
-                                        <td th:text='${response.detailInfo.get("이용요금")}'></td>
+                                        <td th:utext='${response.detailInfo.get("이용요금")}'></td>
                                     </tr>
                                     <tr>
                                         <th>이용문의</th>
-                                        <td th:text='${response.detailInfo.get("이용문의")}'></td>
+                                        <td th:utext='${response.detailInfo.get("이용문의")}'></td>
                                         <th>관람소요시간</th>
-                                        <td th:text='${response.detailInfo.get("관람소요시간")}'></td>
+                                        <td th:utext='${response.detailInfo.get("관람소요시간")}'></td>
                                     </tr>
                                     <tr>
                                         <th>이용시간</th>
-                                        <td th:text='${response.detailInfo.get("이용시간")}'></td>
+                                        <td th:utext='${response.detailInfo.get("이용시간")}'></td>
                                         <th>수용인원</th>
-                                        <td th:text='${response.detailInfo.get("수용인원")}'></td>
+                                        <td th:utext='${response.detailInfo.get("수용인원")}'></td>
                                     </tr>
                                     <tr>
                                         <th>휴무일</th>
-                                        <td th:text='${response.detailInfo.get("휴무일")}'></td>
+                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
                                         <th>주차여부</th>
-                                        <td th:text='${response.detailInfo.get("주차여부")}'></td>
+                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
                                     </tr>
                                     <tr>
                                         <th>홈페이지</th>
@@ -279,152 +280,134 @@
                                 </th:block>
                                 <th:block th:case="15">
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>행사기간</th>
+                                        <td th:utext='${response.detailInfo.get("행사기간")}'></td>
+                                        <th>공연시간</th>
+                                        <td th:utext='${response.detailInfo.get("공연시간")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>장소</th>
+                                        <td th:utext='${response.detailInfo.get("장소")}'></td>
+                                        <th>이용요금</th>
+                                        <td th:utext='${response.detailInfo.get("이용요금")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>주관</th>
+                                        <td th:utext='${response.detailInfo.get("주관")}'></td>
+                                        <th>입장제한연령</th>
+                                        <td th:utext='${response.detailInfo.get("입장제한연령")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>주최</th>
+                                        <td th:utext='${response.detailInfo.get("주최")}'></td>
+                                        <th>예매</th>
+                                        <td th:utext='${response.detailInfo.get("예매")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td colspan="3"></td>
+                                        <th>이용문의</th>
+                                        <td th:utext='${response.detailInfo.get("이용문의")}'></td>
+                                        <th>위치안내</th>
+                                        <td th:utext='${response.detailInfo.get("위치안내")}'></td>
+                                    </tr>
+                                    <tr>
+                                        <th>홈페이지</th>
+                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
                                     </tr>
                                 </th:block>
                                 <th:block th:case="25">
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>코스 테마</th>
+                                        <td th:utext='${response.tourItemResponse.fullCategoryName}'></td>
+                                        <th>코스 총 거리</th>
+                                        <td th:utext='${response.detailInfo.get("코스 총 거리")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>주소</th>
+                                        <td th:text='${response.tourItemResponse.address}'></td>
+                                        <th>소요시간</th>
+                                        <td th:utext='${response.detailInfo.get("소요시간")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td colspan="3"></td>
+                                        <th>문의 및 안내</th>
+                                        <td colspan="3" th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
                                     </tr>
                                 </th:block>
                                 <th:block th:case="28">
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>주소</th>
+                                        <td th:text="${response.tourItemResponse.address}"></td>
+                                        <th>휴무일</th>
+                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>문의 및 안내</th>
+                                        <td th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
+                                        <th>주차여부</th>
+                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>이용요금</th>
+                                        <td th:utext='${response.detailInfo.get("이용요금")}'></td>
+                                        <th>이용시간</th>
+                                        <td th:utext='${response.detailInfo.get("이용시간")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td colspan="3"></td>
+                                        <th>홈페이지</th>
+                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
                                     </tr>
                                 </th:block>
                                 <th:block th:case="32">
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>주소</th>
+                                        <td th:text="${response.tourItemResponse.address}"></td>
+                                        <th>객실유형</th>
+                                        <td th:utext='${response.detailInfo.get("객실유형")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>문의 및 안내</th>
+                                        <td th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
+                                        <th>체크인</th>
+                                        <td th:utext='${response.detailInfo.get("체크인")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>예약안내</th>
+                                        <td th:utext='${response.detailInfo.get("예약안내")}'></td>
+                                        <th>체크아웃</th>
+                                        <td th:utext='${response.detailInfo.get("체크아웃")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>부대시설</th>
+                                        <td th:utext='${response.detailInfo.get("부대시설")}'></td>
+                                        <th>주차여부</th>
+                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td colspan="3"></td>
+                                        <th>홈페이지</th>
+                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
                                     </tr>
                                 </th:block>
                                 <th:block th:case="38">
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>판매품목</th>
+                                        <td th:utext='${response.detailInfo.get("판매품목")}'></td>
+                                        <th>운영시간</th>
+                                        <td th:utext='${response.detailInfo.get("운영시간")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>주소</th>
+                                        <td th:text="${response.tourItemResponse.address}"></td>
+                                        <th>휴무일</th>
+                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>전화번호</th>
+                                        <td th:utext='${response.detailInfo.get("전화번호")}'></td>
+                                        <th>주차여부</th>
+                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td colspan="3"></td>
+                                        <th>홈페이지</th>
+                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
                                     </tr>
                                 </th:block>
                                 <th:block th:case="39">
@@ -432,29 +415,41 @@
                                         <th></th>
                                         <td></td>
                                         <th></th>
-                                        <td></td>
+                                        <td th:utext='${response.detailInfo.get("")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>분류</th>
+                                        <td th:utext='${response.tourItemResponse.fullCategoryName}'></td>
+                                        <th>포장</th>
+                                        <td th:utext='${response.detailInfo.get("포장")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>대표메뉴</th>
+                                        <td th:utext='${response.detailInfo.get("대표메뉴")}'></td>
+                                        <th>영업시간</th>
+                                        <td th:utext='${response.detailInfo.get("영업시간")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td></td>
+                                        <th>메뉴</th>
+                                        <td th:utext='${response.detailInfo.get("메뉴")}'></td>
+                                        <th>휴무일</th>
+                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
-                                        <td colspan="3"></td>
+                                        <th>주소</th>
+                                        <td th:text="${response.tourItemResponse.address}"></td>
+                                        <th>카드사용여부</th>
+                                        <td th:utext='${response.detailInfo.get("카드사용여부")}'></td>
+                                    </tr>
+                                    <tr>
+                                        <th>전화번호</th>
+                                        <td th:utext='${response.detailInfo.get("전화번호")}'></td>
+                                        <th>주차여부</th>
+                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                    </tr>
+                                    <tr>
+                                        <th>홈페이지</th>
+                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
                                     </tr>
                                 </th:block>
                             </th:block>

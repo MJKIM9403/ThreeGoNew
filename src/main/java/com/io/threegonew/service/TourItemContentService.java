@@ -152,10 +152,6 @@ public class TourItemContentService {
         return overview;
     }
 
-    private String getHompage(JSONObject itemJson){
-        return (String) itemJson.get("homepage");
-    }
-
     private Map<String, String> getDetailInfo(TourItemResponse tourItemResponse){
         Map<String, String> detailInfo = new HashMap<>();
         String result = "";
@@ -199,12 +195,13 @@ public class TourItemContentService {
                     detailInfo.put("홈페이지", homepage);
                     break;
                 case "15" :
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                    SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Date today = new Date();
                     Date startDay = dateFormat.parse((String) itemJson.get("eventstartdate"));
                     Date endDay = dateFormat.parse((String) itemJson.get("eventenddate"));
 
-                    String period = dateFormat.format(startDay) + " ~ " + dateFormat.format(endDay);
+                    String period = newDateFormat.format(startDay) + " ~ " + newDateFormat.format(endDay);
 
                     String state = "";
 
@@ -219,11 +216,12 @@ public class TourItemContentService {
                     String tel = "";
                     if(!((String)itemJson.get("sponsor1tel")).isEmpty()) tel += "[주관] " + itemJson.get("sponsor1tel");
                     if(!((String)itemJson.get("sponsor1tel")).isEmpty() && !((String)itemJson.get("sponsor2tel")).isEmpty()) tel += "<br/>";
-                    if(!((String)itemJson.get("sponsor2tel")).isEmpty()) tel += itemJson.get("sponsor2tel");
+                    if(!((String)itemJson.get("sponsor2tel")).isEmpty()) tel += "[주최] " + itemJson.get("sponsor2tel");
 
+                    detailInfo.put("진행상태",state);
                     detailInfo.put("행사기간", period);
                     detailInfo.put("공연시간",(String) itemJson.get("playtime"));
-                    detailInfo.put("장소",(String) itemJson.get("eventplace") + "<br/>" + tourItemResponse.getAddress());
+                    detailInfo.put("장소",itemJson.get("eventplace") + "<br/>(" + tourItemResponse.getAddress() + ")");
                     detailInfo.put("이용요금",(String) itemJson.get("usetimefestival"));
                     detailInfo.put("주관",(String) itemJson.get("sponsor1"));
                     detailInfo.put("입장제한연령",(String) itemJson.get("agelimit"));
