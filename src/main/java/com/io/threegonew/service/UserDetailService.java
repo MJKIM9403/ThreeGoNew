@@ -30,6 +30,8 @@ public class UserDetailService implements UserDetailsService {
 
 @Override
 public UserDetails loadUserByUsername(String id) {
+    System.out.println(id);
+
     if (id == null || id.trim().isEmpty()) {
         throw new IllegalArgumentException("User ID cannot be null or empty");
 

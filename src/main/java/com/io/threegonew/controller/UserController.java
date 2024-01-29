@@ -53,7 +53,7 @@ public class UserController {
         // id 값 로깅
         System.out.println("Received id: " + id);
 
-        return "/login";
+        return "/index";
     }
 
     @GetMapping("/logout")
