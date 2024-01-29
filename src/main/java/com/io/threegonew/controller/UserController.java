@@ -49,9 +49,11 @@ public class UserController {
                         @RequestParam(value="id", required = false) String id) {
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
-
-        // id 값 로깅
-        System.out.println("Received id: " + id);
+        System.out.println("usercontroller : " + id);
+        // 추가: 로그인 실패 시 이유를 출력
+        if (error != null) {
+            System.out.println("Login failed. Error: " + error);
+        }
 
         return "/index";
     }

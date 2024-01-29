@@ -10,13 +10,13 @@
     <!-- Google fonts-->
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="assets/css/style.css" rel="stylesheet" />
-    <link href="assets/css/commonstyle.css?after" rel="stylesheet"/>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/commonstyle.css?after" rel="stylesheet" type="text/css"/>
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <title>로그인</title>
-    <link rel = "icon" href="image/wave.ico">
+
 
 
 </head>
@@ -69,7 +69,7 @@
 
 
 
-<form th:action="@{/login}" th:method="post" name="loginFrm" onsubmit="return validateForm(this)">
+<form action="/login" method="POST" name="loginFrm" onsubmit="return validateForm(this)">
     <!-- 오류 확인 -->
     <div th:if="${param.error}">
         <div class="alert alert-danger">
@@ -98,7 +98,7 @@
         <!--로그인 버튼-->
         <div class="col text-center">
             <input type="hidden" name="prevUrl" value="">
-            <input type="submit" value="로그인" class="btn btn-primary btn-md" onclick="handleLoginSuccess()"><br/>
+            <input type="submit" value="로그인" class="btn btn-primary btn-md"><br/>
         </div>
         <div id="find-info" class="text-center">
             <a href="/findId.do">아이디 찾기</a>
