@@ -5,6 +5,7 @@ import com.io.threegonew.domain.Cat3;
 import com.io.threegonew.dto.PageResponse;
 import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.dto.TourItemSelectRequest;
+import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 public class TourItemController {
 
     private final TourItemService tourItemService;
+    private final TourItemContentService tourItemContentService;
 
     @GetMapping("/area")
     public String getArea(){
@@ -67,7 +69,7 @@ public class TourItemController {
     @GetMapping("/content/{contentid}")
     public String getContentInfo(@PathVariable(name = "contentid") String contentid,  Model model){
         TourItemResponse tourItemResponse = tourItemService.findTourItem(contentid);
-        //contentResponse 생성 후 전달
+        model.addAttribute("response", tourItemContentService.getContentInfo(tourItemResponse));
         return "tourinfo/content";
     }
 
