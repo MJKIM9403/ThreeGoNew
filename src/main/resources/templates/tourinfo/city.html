@@ -69,6 +69,7 @@
         function showTourItems(){
             $(document).on('click','.page-item',function (e) {
                 const target = e.target;
+                sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
                 if(!target.classList.contains('disabled')){
                     $.ajax({
                         url : '/info/api/touritems',

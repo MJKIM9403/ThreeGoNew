@@ -13,8 +13,10 @@ public class Bookmark {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookmark_id")
     private Long bookmarkId;
-    @Column(name = "content_id")
-    private String contentId;
-    @Column(name = "u_id")
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "content_id")
+    private TourItem tourItem;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "u_id")
+    private User user;
 }

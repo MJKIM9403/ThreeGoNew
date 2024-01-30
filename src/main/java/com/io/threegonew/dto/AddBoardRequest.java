@@ -4,6 +4,9 @@ import com.io.threegonew.domain.Board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -14,6 +17,7 @@ public class AddBoardRequest {
     private String btitle;
     private String bcontent;
 
+    private List<MultipartFile> multipartFiles;
 
     public Board toEntity() {
         return Board.builder()

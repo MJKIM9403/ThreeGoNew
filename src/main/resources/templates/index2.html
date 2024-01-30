@@ -112,23 +112,35 @@
         }
 
 
-
-
+        /*card*/
+        .card {
+            width: 478px;
+        }
+        .card .card-header img {
+            width: 24px;
+            height: 24px;
+        }
+        .card .card-body img {
+            height: 585px;
+        }
+        .card-header {
+            background-color: transparent;
+        }
     </style>
 
 </head>
 <body>
 
-<div class="wrapper d-flex align-items-stretch">
+<div class="d-flex">
     <nav id="sidebar" class="">
         <div class="pt-5">
             <!--유저 프로필 사진을 누르면 마이페이지로 이동-->
             <a href="#" class="mb-5">
-                <img src="https://github.com/mdo.png" class="logo rounded-circle">
+                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" class="logo rounded-circle">
             </a>
 
             <div class="text-center p-5">
-                <span class="fs-5 fw-semibold">유저이름</span>
+                <span class="fs-5 fw-semibold">농담곰</span>
             </div>
 
             <div class="counter d-flex justify-content-center text-center pb-5">
@@ -193,8 +205,29 @@
     </nav>
 
     <div id="content" class="p-4 p-md-5">
+        <div class="card">
+            <!--유저 정보-->
+            <div class="d-flex card-header gap-3">
+                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo" class="rounded-circle">
+                <span>nongdamgom</span>
+                <span>농담곰</span>
+            </div>
+            <div class="card-body">
+                <!--유저가 업로드한 이미지-->
+                <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="Card image cap">
+                <!--좋아요와 댓글 -->
+                <div class="d-flex gap-3">
+                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-chat"></i>
+                </div>
 
+
+                <p class="card-text">좋아요 몇개</p>
+                <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
+            </div>
+        </div>
     </div>
+</div>
 
 
 
