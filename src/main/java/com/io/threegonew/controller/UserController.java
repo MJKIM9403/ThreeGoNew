@@ -1,7 +1,9 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
 import com.io.threegonew.dto.LoginRequest;
+import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,21 +45,17 @@ public class UserController {
         return ResponseEntity.ok("가입을 환영합니다: " + userId);
     }
 
+
+
+//
     @PostMapping("/login")
     public String login(@ModelAttribute
                             Model model,
-//                        @RequestParam(value="error", required = false) String error,
-//                        @RequestParam(value="exception", required = false) String exception,
                         @RequestParam(value="id", required = false) String id,
                         HttpServletRequest request) {
 
-//        model.addAttribute("error", error);
-//        model.addAttribute("exception", exception);
         System.out.println("usercontroller : " + id);
-        // 추가: 로그인 실패 시 이유를 출력
-//        if (error != null) {
-//            System.out.println("Login failed. Error: " + error);
-//        }
+
         //세션
         HttpSession session = request.getSession();
         session.setAttribute("loginUser", userDetailService.getClass().getName());
@@ -72,6 +70,8 @@ public class UserController {
                 .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/login";
     }
+
+
 
 }
 

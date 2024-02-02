@@ -26,15 +26,4 @@ public class UserApiController {
         return"redirect:/login"; //회원가입완료 후 로그인 페이지로 이동
     }
 
-//    @GetMapping("/id/check")
-//    public ResponseEntity<?> checkIdDuplication(@RequestParam(value = "userId") String userId ) throws BadRequestException{
-//        System.out.println(userId);
-//
-//        if(userService.existsById(userId) == true){
-//            throw new BadRequestException("이미 사용 중인 아이디입니다.");
-//        }else {
-//            return ResponseEntity.ok("사용 가능한 아이디입니다.");
-//        }
-//
-//    }
 }

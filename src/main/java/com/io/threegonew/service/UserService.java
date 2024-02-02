@@ -46,6 +46,8 @@ public class UserService {
         return userRepository.existsById(userId);
     }
 
+
+
     // TODO : 이메일 체크
 //    public boolean isEmailDuplicate(String email) {
 //        return userRepository.existsByEmail(email);
