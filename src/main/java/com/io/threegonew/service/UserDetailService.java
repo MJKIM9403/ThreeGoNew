@@ -49,18 +49,5 @@ public UserDetails loadUserByUsername(String id) throws UsernameNotFoundExceptio
             .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 }
 
-//@Override
-//public UserDetails loadUserByUsername(String email){
-//    System.out.println("userdetailservice : " + email);
-////
-////    if (id == null || id.trim().isEmpty()) {
-////        System.out.println("Invalid User ID");
-////        throw new IllegalArgumentException("User ID cannot be null or empty");
-////
-////    }
-//    return userRepository.findByEmail(email)
-//            .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + email));
-//
-//}
 }
 

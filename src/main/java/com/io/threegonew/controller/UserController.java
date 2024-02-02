@@ -1,7 +1,9 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
 import com.io.threegonew.dto.LoginRequest;
+import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +16,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.io.threegonew.service.UserDetailService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,28 +46,34 @@ public class UserController {
         return ResponseEntity.ok("가입을 환영합니다: " + userId);
     }
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute
-                            Model model,
-//                        @RequestParam(value="error", required = false) String error,
-//                        @RequestParam(value="exception", required = false) String exception,
-                        @RequestParam(value="id", required = false) String id,
-                        HttpServletRequest request) {
 
-//        model.addAttribute("error", error);
-//        model.addAttribute("exception", exception);
-        System.out.println("usercontroller : " + id);
-        // 추가: 로그인 실패 시 이유를 출력
-//        if (error != null) {
-//            System.out.println("Login failed. Error: " + error);
-//        }
-        //세션
-        HttpSession session = request.getSession();
-        session.setAttribute("loginUser", userDetailService.getClass().getName());
 
-        return "/index";
+//
+@PostMapping("/login")
+public String login(@ModelAttribute Model model,
+                    @RequestParam(value="id", required = false) String id,
+                    @RequestParam(value="pw", required = false) String pw,
+                    HttpServletRequest request, RedirectAttributes rttr) {
 
+    System.out.println("usercontroller : " + id);
+
+    // 인증 로직을 사용하여 사용자를 인증하려고 시도합니다.
+    User login = userService.authenticateUser(id, pw);
+
+    if (login == null) {
+        // 인증 실패 시 리다이렉트 및 메시지 처리 (선택사항)
+        return "redirect:/login";
     }
+
+    // 세션에 인증된 사용자 설정
+    HttpSession session = request.getSession();
+    session.setAttribute("loginUser", login);
+
+    // 리다이렉트할 때는 return 구문을 여기에 작성합니다.
+    return "redirect:/index";
+}
+
+
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response){
@@ -72,6 +81,8 @@ public class UserController {
                 .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/login";
     }
+
+
 
 }
 
