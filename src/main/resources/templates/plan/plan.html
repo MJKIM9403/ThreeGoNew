@@ -24,7 +24,8 @@
 <body>
 
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
-<script type="text/javascript">
+<script th:inline="javascript">
+    /*<![CDATA[*/
     $(document).ready(function() {
         initTmap();
     })
@@ -106,6 +107,13 @@
             map:map
         });
 
+        // var marker = new Tmapv2.Marker({
+        //     position: new Tmapv2.LatLng([[${touritem.mapx}]], [[${touritem.mapy}]]),
+        //     icon:"https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png",
+        //     iconSize : new Tmapv2.Size(24, 38),
+        //     map:map
+        // })
+
 
         // 최적화 버튼을 누르면 ajax 실행
         $("#btn_optimize").click(function () {
@@ -121,7 +129,7 @@
             $.ajax({
                 type:"POST",
                 headers : headers,
-                url:"https://apis.openapi.sk.com/tmap/routes/routeOptimization30?version=1&format=json",
+                url:"https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
                 async:false,
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -253,6 +261,8 @@
         $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
         $('#map').toggleClass('wide');
     }
+
+    /*]]>*/
 </script>
 
 

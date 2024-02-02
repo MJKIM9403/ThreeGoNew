@@ -3,7 +3,9 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
 import com.io.threegonew.dto.PageResponse;
+import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.dto.TourItemSelectRequest;
+import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,16 +21,21 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class PlannerController {
     private final TourItemService tourItemService;
-
+    private final TourItemContentService tourItemContentService;
 
     @GetMapping(value = {"/city/{areaCode}/{sigunguCode}","/city/{areaCode}"})
     public String getSelectList(@PathVariable(name = "areaCode") Integer areaCode,
+//                                @PathVariable(name = "contentid") String contentid,
                                 @PathVariable(name = "sigunguCode", required = false) Integer sigunguCode,
                                 Model model){
         if(sigunguCode == null) {
             sigunguCode = 0;
             TourItemSelectRequest request = TourItemSelectRequest.builder().areaCode(String.valueOf(areaCode)).build();
             PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+
+//            TourItemResponse tourItemResponse = tourItemService.findTourItem(contentid);
+//            model.addAttribute("response", tourItemContentService.getContentInfo(tourItemResponse));
+
             model.addAttribute("areaList", tourItemService.findAreaList());
             model.addAttribute("cat1List", tourItemService.findCat1List());
             model.addAttribute("cat2List", new ArrayList<Cat2>());
@@ -41,6 +48,10 @@ public class PlannerController {
         } else {
             TourItemSelectRequest request = TourItemSelectRequest.builder().areaCode(String.valueOf(areaCode)).sigunguCode(String.valueOf(sigunguCode)).build();
             PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+
+//            TourItemResponse tourItemResponse = tourItemService.findTourItem(contentid);
+//            model.addAttribute("response", tourItemContentService.getContentInfo(tourItemResponse));
+
             model.addAttribute("areaList", tourItemService.findAreaList());
             model.addAttribute("cat1List", tourItemService.findCat1List());
             model.addAttribute("cat2List", new ArrayList<Cat2>());
