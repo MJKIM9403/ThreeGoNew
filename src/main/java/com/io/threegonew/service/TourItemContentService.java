@@ -1,13 +1,18 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.ApiKey;
+import com.io.threegonew.domain.TourItem;
+import com.io.threegonew.dto.MoreTourItemDTO;
+import com.io.threegonew.dto.MoreTourItemInterface;
 import com.io.threegonew.dto.TourItemContentResponse;
 import com.io.threegonew.dto.TourItemResponse;
+import com.io.threegonew.repository.TourItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,15 +23,20 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TourItemContentService {
 
+    private final TourItemRepository tourItemRepository;
+    private final ModelMapper modelMapper;
+
     /* URI path */
     private final String COMMON = "detailCommon1"; // 공용정보, overview
     private final String IMAGES = "detailImage1"; // 이미지 정보 조회
     private final String INFO = "detailIntro1"; // 상세 정보 조회
+    private final String COURSE = "detailInfo1";
 
     private String homepage;
 
@@ -36,7 +46,7 @@ public class TourItemContentService {
                 .imagesURL(getImagesURL(tourItemResponse))
                 .overview(getOverview(tourItemResponse))
                 .detailInfo(getDetailInfo(tourItemResponse))
-                //moreTourItem;
+                .moreTourItems(getMoreItems(tourItemResponse))
                 //bookmarkCount;
                 .build();
 
@@ -58,7 +68,11 @@ public class TourItemContentService {
                         .queryParam("pageNo", 1)
                         .queryParam("subImageYN","Y");
         }
-        if(path.equals(COMMON) || path.equals(INFO)){
+        if(path.equals(COURSE)){
+            uriBuilder.queryParam("numOfRows",100)
+                    .queryParam("pageNo", 1);
+        }
+        if(path.equals(COMMON) || path.equals(INFO) || path.equals(COURSE)){
             uriBuilder.queryParam("contentTypeId", tourItemResponse.getContenttypeid());
         }
         if(path.equals(COMMON)){
@@ -294,6 +308,50 @@ public class TourItemContentService {
         }
 
         return detailInfo;
+    }
+
+    private List<MoreTourItemDTO> getMoreItems(TourItemResponse tourItemResponse){
+        String type = tourItemResponse.getContenttypeid();
+        List<MoreTourItemDTO> moreItems = new ArrayList<>();
+
+        switch (type){
+            case "25" :
+                String result = "";
+
+                try{
+                    result = convertJsonToStr(tourItemResponse, COURSE);
+
+                    JSONArray item = parseItem(result);
+
+                    for(Object itemObj : item) {
+                        JSONObject itemJson = (JSONObject) itemObj;
+                        String subContentId = (String) itemJson.get("subcontentid");
+                        TourItem subTourItem = tourItemRepository.findById(subContentId)
+                                .orElseThrow(()-> new IllegalArgumentException("not found : SubTourItem"));
+
+                        MoreTourItemDTO dto = MoreTourItemDTO.builder()
+                                                .contentid(subTourItem.getContentid())
+                                                .title(subTourItem.getTitle())
+                                                .firstimage(subTourItem.getFirstimage())
+                                                .mapx(subTourItem.getMapx())
+                                                .mapy(subTourItem.getMapy())
+                                                .build();
+
+                        moreItems.add(dto);
+                    }
+                    return moreItems;
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                return tourItemRepository.findSubItemByCat3OrderByDistance(tourItemResponse).stream()
+                        .map(moreTourItemInterface -> modelMapper.map(moreTourItemInterface, MoreTourItemDTO.class))
+                        .collect(Collectors.toList());
+        }
+
+        return moreItems;
     }
 
     private int calcDay(Date date1, Date date2){
