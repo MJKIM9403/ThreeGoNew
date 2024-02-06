@@ -40,47 +40,29 @@
             padding: 10px;
         }
 
-        #sub-items{
+        swiper-container {
             width: 100%;
-            position: relative;
+            height: 100%;
         }
-        #sub-items-container{
-            width: 100%;
-            overflow: hidden;
-        }
-        #sub-items-wrap{
+
+        swiper-slide {
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
             display: flex;
-            padding: 20px 5px;
-            flex-wrap: nowrap;
-            gap: 10px;
-            transition: 0.3s ease-in-out;
+            justify-content: center;
+            align-items: center;
         }
-        .sub-item{
-            flex-basis: calc((100% - 40px)/5);
-            flex-shrink: 0;
+
+        swiper-slide div a img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        .btn-slide{
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background-color: transparent;
-            border: 0;
-            outline: 0;
-        }
-        .btn-slide-left{
-            top:calc(50% - 40px);
-            left:-60px;
-        }
-        .btn-slide-right{
-            top:calc(50% - 40px);
-            right:-60px;
-        }
-        .icon-arrow{
-            color: #333333;
-            font-size: 50px;
-        }
-        .hide{
-            visibility: hidden;
+
+        .swiper-pagination {
+            position: static;
         }
 
         .title-box{
@@ -456,26 +438,40 @@
                         </table>
                     </div>
                 </div>
-<!--                <div class="row">-->
-<!--                    <div class="col-md-12">-->
-<!--                        <h4 id="sub-title"></h4>-->
-<!--                        <div id="sub-items">-->
-<!--                            <div id="sub-items-container">-->
-<!--                                <div id="sub-items-wrap"></div>-->
-<!--                            </div>-->
-<!--                            <c:if test="${fn:length(moreItem) > 5 or fn:length(subItemList) > 5}">-->
-<!--                                <button class="btn-slide btn-slide-left hide" value="left" onclick="slideItem(this)"><i class="fa-solid fa-chevron-left icon-arrow"></i></button>-->
-<!--                                <button class="btn-slide btn-slide-right" value="right" onclick="slideItem(this)"><i class="fa-solid fa-chevron-right icon-arrow"></i></button>-->
-<!--                            </c:if>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 th:if='${response.tourItemResponse.contenttypeid.equals("25")}'>코스 안내</h4>
+                        <h4 th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>동일 카테고리의 주변 관광지 추천</h4>
+                        <div id="sub-items">
+                            <swiper-container class="mySwiper" pagination="true" pagination-clickable="true" space-between="30"
+                                              slides-per-view="5">
+                                <th:block th:each="moreitem : ${response.moreTourItems}">
+                                    <swiper-slide>
+                                        <div class="card">
+                                            <a th:href="@{/info/content/{contentid}(contentid=${moreitem.contentid})}">
+                                                <img th:if="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
+                                                <img th:unless="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}" th:src="${moreitem.firstimage}"/>
+                                                <div class="card-body">
+                                                    <p class="card-text" th:text="${moreitem.title}"></p>
+                                                    <p class="card-text" th:if="${moreitem.distance != null}" th:text="|${moreitem.distance} km|"></p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </swiper-slide>
+                                </th:block>
+                            </swiper-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
 </div>
 <!--footer-->
 <th:block th:replace="~{fragments/footer}"></th:block>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
 
 <!--<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6a523b773771c7b31ef741ad7e52ee9c"></script>-->
 <!--<script>-->

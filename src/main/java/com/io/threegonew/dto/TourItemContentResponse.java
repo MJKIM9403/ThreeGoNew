@@ -17,6 +17,6 @@ public class TourItemContentResponse {
     private List<String> imagesURL;
     private String overview;
     private Map<String, String> detailInfo;
-    private List<TourItemResponse> moreTourItem;
+    private List<MoreTourItemDTO> moreTourItems;
     private Long bookmarkCount;
 }
