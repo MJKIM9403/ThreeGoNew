@@ -17,8 +17,266 @@
     <!--swiper-->
     <link href="../../assets/swiper/swiper-bundle.min.css" rel="stylesheet"/>
     <script src="../../assets/swiper/swiper-bundle.min.js"></script>
+    <!--Tmap api-->
+    <script src='https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf'></script>
 
-    <script>
+    <script th:inline="javascript">
+        let lon = [[${response.tourItemResponse.mapy}]];
+        let lat = [[${response.tourItemResponse.mapx}]];
+        let contentTypeId = [[${response.tourItemResponse.contenttypeid}]]
+    </script>
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            initTmap(lon, lat)
+        });
+
+        var map;
+        var marker;
+        var marker_s, marekr_e, waypoint;
+        var resultMarkerArr = [];
+        //경로그림정보
+        var drawInfoArr = [];
+        var resultInfoArr = [];
+
+        function initTmap(lon, lat) {
+
+            switch (contentTypeId){
+                case "25":
+                    let maxLon = Number.MIN_VALUE, maxLat = Number.MIN_VALUE;
+                    let minLon = Number.MAX_VALUE, minLat = Number.MAX_VALUE;
+
+                    const moreItems = [[${response.moreTourItems}]]
+
+                    /*let positions = []; //다중 마커 저장 배열
+*/
+                    $.each(moreItems, function(index, item) {
+                        if(Number(item.mapy) > maxLon) maxLon = Number(item.mapy)
+                        if(Number(item.mapy) < minLon) minLon = Number(item.mapy)
+                        if(Number(item.mapx) > maxLat) maxLat = Number(item.mapx)
+                        if(Number(item.mapx) < minLat) minLat = Number(item.mapx)
+
+                        /*let itemInfo = {
+                            title: item.title,
+                            lonlat: new Tmapv2.LatLng(item.mapy, item.mapx)
+                        }
+                        positions.push(itemInfo)*/
+                    })
+
+                    const midLon = (maxLon + minLon)/2
+                    const midLat = (maxLat + minLat)/2
+
+                    const courseCount = moreItems.length
+
+                    const startTitle = moreItems[0].title
+                    const startLon = Number(moreItems[0].mapy)
+                    const startLat = Number(moreItems[0].mapx)
+
+                    const endTitle = moreItems[courseCount-1].title
+                    const endLon = Number(moreItems[courseCount-1].mapy)
+                    const endLat = Number(moreItems[courseCount-1].mapx)
+
+                    // 지도 띄우기
+                    /*map = new Tmapv2.Map("map_div", {
+                        center : new Tmapv2.LatLng(midLon, midLat),
+                        width : "100%",
+                        height : "400px",
+                        zoom : 15,
+                        zoomControl : true,
+                        scrollwheel : true
+
+                    });*/
+
+                    /*for (var i = 0; i< positions.length; i++){//for문을 통하여 배열 안에 있는 값을 마커 생성
+                        var lonlat = positions[i].lonlat;
+                        var title = positions[i].title;
+                        var markerName = i+1;
+                        //Marker 객체 생성.
+                        marker = new Tmapv2.Marker({
+                            position : lonlat, //Marker의 중심좌표 설정.
+                            icon : `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
+                            iconSize : new Tmapv2.Size(24, 38),
+                            map : map, //Marker가 표시될 Map 설정.
+                            title : title //Marker 타이틀.
+                        });
+                    }*/
+                    /**/
+                    resultMarkerArr = [];
+                    viaPoints = [];
+
+                    // 1. 지도 띄우기
+                    map = new Tmapv2.Map("map_div", {
+                        center: new Tmapv2.LatLng(midLon, midLat),
+                        width : "100%",
+                        height : "400px",
+                        zoom : 14,
+                        zoomControl : true,
+                        scrollwheel : true
+
+                    });
+
+                    // 2. 시작, 도착 심볼찍기
+                    $.each(moreItems, function(index, item) {
+                        let markerName = index+1;
+                        marker = new Tmapv2.Marker({
+                            position : new Tmapv2.LatLng(item.mapy, item.mapx),
+                            icon : `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
+                            iconSize : new Tmapv2.Size(24, 38),
+                            map:map
+                        });
+                        resultMarkerArr.push(marker);
+                        if(index > 0 && index < courseCount -1){
+                            let viaPoint = {
+                                "viaPointId" : `course${index}`,
+                                "viaPointName" : item.title,
+                                "viaX" : item.mapx ,
+                                "viaY" : item.mapy
+                            }
+                            console.log(item.title)
+                            viaPoints.push(viaPoint);
+                        }
+                    })
+
+                    // 4. 경로탐색 API 사용요청
+                    var routeLayer;
+
+                    var headers = {};
+                    headers["appKey"] = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
+                    headers["Content-Type"] = "application/json";
+
+                    var param = {
+                        "startName" : startTitle,
+                        "startX" : startLat,
+                        "startY" : startLon,
+                        "startTime" : "201708081103",
+                        "endName" : endTitle,
+                        "endX" : endLat,
+                        "endY" : endLon,
+                        "viaPoints" : viaPoints,
+                        "reqCoordType" : "WGS84GEO",
+                        "resCoordType" : "EPSG3857",
+                        "searchOption": "1"
+                    };
+
+                    $.ajax({
+                        method:"POST",
+                        url:"https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",
+                        headers : headers,
+                        traditional: true,
+                        dataType : 'json',
+                        async:false,
+                        data:JSON.stringify(param),
+                        success:function(response){
+
+                            //var resultData = response.properties;
+                            var resultFeatures = response.features;
+
+                            //기존  라인 초기화
+
+                            if(resultInfoArr.length>0){
+                                for(var i in resultInfoArr){
+                                    resultInfoArr[i].setMap(null);
+                                }
+                                resultInfoArr=[];
+                            }
+
+                            for(var i in resultFeatures) {
+                                var geometry = resultFeatures[i].geometry;
+                                var properties = resultFeatures[i].properties;
+                                var polyline_;
+
+                                drawInfoArr = [];
+
+                                if(geometry.type == "LineString") {
+                                    for(var j in geometry.coordinates){
+                                        // 경로들의 결과값(구간)들을 포인트 객체로 변환
+                                        var latlng = new Tmapv2.Point(geometry.coordinates[j][0], geometry.coordinates[j][1]);
+                                        // 포인트 객체를 받아 좌표값으로 변환
+                                        var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
+                                        // 포인트객체의 정보로 좌표값 변환 객체로 저장
+                                        var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
+
+                                        drawInfoArr.push(convertChange);
+                                    }
+
+                                    polyline_ = new Tmapv2.Polyline({
+                                        path : drawInfoArr,
+                                        strokeColor : "#FF0000",
+                                        strokeWeight: 6,
+                                        map : map
+                                    });
+                                    resultInfoArr.push(polyline_);
+
+                                }else{
+                                    var markerImg = "";
+                                    var size = "";			//아이콘 크기 설정합니다.
+
+                                    if(properties.pointType == "S"){	//출발지 마커
+                                        markerImg = "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png";
+                                        size = new Tmapv2.Size(24, 38);
+                                    }else if(properties.pointType == "E"){	//도착지 마커
+                                        markerImg = `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${courseCount}.png`;
+                                        size = new Tmapv2.Size(24, 38);
+                                    }else{	//각 포인트 마커
+                                        markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
+                                        size = new Tmapv2.Size(8, 8);
+                                    }
+
+                                    // 경로들의 결과값들을 포인트 객체로 변환
+                                    var latlon = new Tmapv2.Point(geometry.coordinates[0], geometry.coordinates[1]);
+                                    // 포인트 객체를 받아 좌표값으로 다시 변환
+                                    var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlon);
+
+                                    marker_p = new Tmapv2.Marker({
+                                        position: new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng),
+                                        icon : markerImg,
+                                        iconSize : size,
+                                        map:map
+                                    });
+
+                                    resultMarkerArr.push(marker_p);
+                                }
+                            }
+                        },
+                        error:function(request,status,error){
+                            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+
+                    break;
+                default:
+                    // 지도 띄우기
+                    map = new Tmapv2.Map("map_div", {
+                        center : new Tmapv2.LatLng(lon, lat),
+                        width : "100%",
+                        height : "400px",
+                        zoom : 17,
+                        zoomControl : true,
+                        scrollwheel : true
+
+                    });
+
+                    // 마커 초기화
+                    marker = new Tmapv2.Marker(
+                        {
+                            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
+                            iconSize : new Tmapv2.Size(24, 38),
+                            map : map
+                        });
+
+                    marker.setMap(null);
+
+                    var markerPosition = new Tmapv2.LatLng(lon, lat);
+                    //마커 올리기
+                    marker = new Tmapv2.Marker(
+                        {
+                            position : markerPosition,
+                            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
+                            iconSize : new Tmapv2.Size(24, 38),
+                            map : map
+                        });
+            }
+        }
+
     </script>
     <style>
         #myCarousel{
@@ -172,18 +430,11 @@
                         </div>
                     </div>
                     <!--지도-->
-                    <!--<div id="map_grid" class="col-md-6">
-                        <div id="container" class="view_map">
-                            <div id="mapWrapper" style="width:100%;height:400px;position:relative;">
-                                <div id="map" style="width:100%;height:100%"></div> &lt;!&ndash; 지도를 표시할 div 입니다 &ndash;&gt;
-                                <input type="button" id="btnRoadview" onclick="toggleMap(false)" title="로드뷰 보기" value="로드뷰">
-                            </div>
-                            <div id="rvWrapper" style="width:100%;height:400px;position:absolute;top:0;left:0;">
-                                <div id="roadview" style="height:100%"></div> &lt;!&ndash; 로드뷰를 표시할 div 입니다 &ndash;&gt;
-                                <input type="button" id="btnMap" onclick="toggleMap(true)" title="지도 보기" value="지도">
-                            </div>
+                    <div id="map_grid" class="col-md-6">
+                        <div id="map_wrap">
+                            <div id="map_div"></div>
                         </div>
-                    </div>-->
+                    </div>
                 </div>
                 <div class="row">
                     <!--소개-->
@@ -453,7 +704,7 @@
                                                 <img th:unless="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}" th:src="${moreitem.firstimage}"/>
                                                 <div class="card-body">
                                                     <p class="card-text" th:text="${moreitem.title}"></p>
-                                                    <p class="card-text" th:if="${moreitem.distance != null}" th:text="|${moreitem.distance} km|"></p>
+                                                    <p class="card-text" th:unless='${response.tourItemResponse.contenttypeid.equals("25")}' th:text="|${moreitem.distance} km|"></p>
                                                 </div>
                                             </a>
                                         </div>
@@ -472,200 +723,5 @@
 <th:block th:replace="~{fragments/footer}"></th:block>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
-
-<!--<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6a523b773771c7b31ef741ad7e52ee9c"></script>-->
-<!--<script>-->
-<!--    var container = document.getElementById('container'), // 지도와 로드뷰를 감싸고 있는 div 입니다-->
-<!--        mapWrapper = document.getElementById('mapWrapper'), // 지도를 감싸고 있는 div 입니다-->
-<!--        btnRoadview = document.getElementById('btnRoadview'), // 지도 위의 로드뷰 버튼, 클릭하면 지도는 감춰지고 로드뷰가 보입니다-->
-<!--        btnMap = document.getElementById('btnMap'), // 로드뷰 위의 지도 버튼, 클릭하면 로드뷰는 감춰지고 지도가 보입니다-->
-<!--        rvContainer = document.getElementById('roadview'), // 로드뷰를 표시할 div 입니다-->
-<!--        mapContainer = document.getElementById('map'); // 지도를 표시할 div 입니다-->
-
-<!--    if(contenttypeid === 25){-->
-<!--        // 마커 배열-->
-<!--        var markers = [];-->
-<!--        // 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다-->
-<!--        var linePath = [];-->
-
-<!--        // 지도와 로드뷰 위에 마커로 표시할 특정 장소의 좌표입니다-->
-<!--        var placePosition = new kakao.maps.LatLng(${content.mapy}, ${content.mapx});-->
-
-<!--        // 지도 옵션입니다-->
-<!--        var mapOption = {-->
-<!--            center: placePosition, // 지도의 중심좌표-->
-<!--            level: 3 // 지도의 확대 레벨-->
-<!--        };-->
-
-<!--        // 인포윈도우를 생성합니다-->
-<!--        var infowindow = new kakao.maps.InfoWindow();-->
-
-<!--        // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다-->
-<!--        var map = new kakao.maps.Map(mapContainer, mapOption);-->
-
-<!--        let positions = ${subItemList};-->
-
-<!--        displayPlaces(positions);-->
-
-<!--        // 지도에 표시할 선을 생성합니다-->
-<!--        var polyline = new kakao.maps.Polyline({-->
-<!--            path: linePath, // 선을 구성하는 좌표배열 입니다-->
-<!--            strokeWeight: 3, // 선의 두께 입니다-->
-<!--            strokeColor: '#ff0000', // 선의 색깔입니다-->
-<!--            strokeOpacity: 0.9, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다-->
-<!--            strokeStyle: 'solid' // 선의 스타일입니다-->
-<!--        });-->
-
-<!--        // 지도에 선을 표시합니다-->
-<!--        polyline.setMap(map);-->
-
-<!--        // 함수-->
-
-<!--        // 검색 결과 목록과 마커를 표출하는 함수입니다-->
-<!--        function displayPlaces(places) {-->
-
-<!--            var bounds = new kakao.maps.LatLngBounds();-->
-
-<!--            // 지도에 표시되고 있는 마커를 제거합니다-->
-<!--            removeMarker();-->
-
-<!--            for ( var i=0; i<places.length; i++ ) {-->
-
-<!--                // 마커를 생성하고 지도에 표시합니다-->
-<!--                var placePosition = new kakao.maps.LatLng(places[i].mapy, places[i].mapx),-->
-<!--                    marker = addMarker(placePosition, i);-->
-
-<!--                linePath.push(placePosition);-->
-
-<!--                // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해-->
-<!--                // LatLngBounds 객체에 좌표를 추가합니다-->
-<!--                bounds.extend(placePosition);-->
-
-<!--                // 마커와 검색결과 항목에 mouseover 했을때-->
-<!--                // 해당 장소에 인포윈도우에 장소명을 표시합니다-->
-<!--                // mouseout 했을 때는 인포윈도우를 닫습니다-->
-<!--                (function(marker, title) {-->
-<!--                    kakao.maps.event.addListener(marker, 'mouseover', function() {-->
-<!--                        displayInfowindow(marker, title);-->
-<!--                    });-->
-
-<!--                    kakao.maps.event.addListener(marker, 'mouseout', function() {-->
-<!--                        infowindow.close();-->
-<!--                    });-->
-
-<!--                })(marker, places[i].title);-->
-<!--            }-->
-<!--            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다-->
-<!--            map.setBounds(bounds);-->
-<!--        }-->
-
-<!--        // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다-->
-<!--        function addMarker(position, idx, title) {-->
-<!--            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다-->
-<!--                imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기-->
-<!--                imgOptions =  {-->
-<!--                    spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기-->
-<!--                    spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표-->
-<!--                    offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표-->
-<!--                },-->
-<!--                markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),-->
-<!--                marker = new kakao.maps.Marker({-->
-<!--                    position: position, // 마커의 위치-->
-<!--                    image: markerImage-->
-<!--                });-->
-
-<!--            marker.setMap(map); // 지도 위에 마커를 표출합니다-->
-<!--            markers.push(marker);  // 배열에 생성된 마커를 추가합니다-->
-
-<!--            return marker;-->
-<!--        }-->
-
-<!--// 지도 위에 표시되고 있는 마커를 모두 제거합니다-->
-<!--        function removeMarker() {-->
-<!--            for ( var i = 0; i < markers.length; i++ ) {-->
-<!--                markers[i].setMap(null);-->
-<!--            }-->
-<!--            markers = [];-->
-<!--        }-->
-
-<!--        // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다-->
-<!--        // 인포윈도우에 장소명을 표시합니다-->
-<!--        function displayInfowindow(marker, title) {-->
-<!--            var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';-->
-
-<!--            infowindow.setContent(content);-->
-<!--            infowindow.open(map, marker);-->
-<!--        }-->
-
-<!--    }else {-->
-<!--        // 지도와 로드뷰 위에 마커로 표시할 특정 장소의 좌표입니다-->
-<!--        var placePosition = new kakao.maps.LatLng(${content.mapy}, ${content.mapx});-->
-
-<!--        // 지도 옵션입니다-->
-<!--        var mapOption = {-->
-<!--            center: placePosition, // 지도의 중심좌표-->
-<!--            level: 3 // 지도의 확대 레벨-->
-<!--        };-->
-
-<!--        // 지도를 표시할 div와 지도 옵션으로 지도를 생성합니다-->
-<!--        var map = new kakao.maps.Map(mapContainer, mapOption);-->
-
-
-<!--        // 지도 중심을 표시할 마커를 생성하고 특정 장소 위에 표시합니다-->
-<!--        var mapMarker = new kakao.maps.Marker({-->
-<!--            position: placePosition,-->
-<!--            map: map-->
-<!--        });-->
-
-<!--        var iwContent = '<div style="padding:5px; font-size:15px">${title}<br><a href="https://map.kakao.com/link/map/${title},${content.mapy},${content.mapx}" style="color:blue" target="_blank">큰지도보기</a> <a href="https://map.kakao.com/link/to/${content.title},${content.mapy},${content.mapx}" style="color:blue" target="_blank">길찾기</a></div>'; // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다-->
-
-<!--        // 인포윈도우를 생성합니다-->
-<!--        var infowindow = new kakao.maps.InfoWindow({-->
-<!--            position : position,-->
-<!--            content : iwContent-->
-<!--        });-->
-
-<!--        // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다-->
-<!--        infowindow.open(map, mapMarker);-->
-<!--    }-->
-
-<!--    // 로드뷰 객체를 생성합니다-->
-<!--    var roadview = new kakao.maps.Roadview(rvContainer);-->
-
-<!--    var roadviewClient = new kakao.maps.RoadviewClient(); //좌표로부터 로드뷰 파노ID를 가져올 로드뷰 helper객체-->
-
-<!--    var position = new kakao.maps.LatLng(${content.mapy}, ${content.mapx});-->
-
-<!--    // 특정 위치의 좌표와 가까운 로드뷰의 panoId를 추출하여 로드뷰를 띄운다.-->
-<!--    roadviewClient.getNearestPanoId(position, 50, function(panoId) {-->
-<!--        if(panoId == null){-->
-<!--            btnRoadview.style.display = 'none';-->
-<!--        }-->
-<!--        roadview.setPanoId(panoId, position); //panoId와 중심좌표를 통해 로드뷰 실행-->
-<!--    });-->
-
-<!--    // 로드뷰 초기화가 완료되면-->
-<!--    kakao.maps.event.addListener(roadview, 'init', function() {-->
-
-<!--        // 로드뷰에 특정 장소를 표시할 마커를 생성하고 로드뷰 위에 표시합니다-->
-<!--        var rvMarker = new kakao.maps.Marker({-->
-<!--            position: placePosition,-->
-<!--            map: roadview-->
-<!--        });-->
-<!--    });-->
-
-<!--    // 지도와 로드뷰를 감싸고 있는 div의 class를 변경하여 지도를 숨기거나 보이게 하는 함수입니다-->
-<!--    function toggleMap(active) {-->
-<!--        if (active) {-->
-
-<!--            // 지도가 보이도록 지도와 로드뷰를 감싸고 있는 div의 class를 변경합니다-->
-<!--            container.className = "view_map"-->
-<!--        } else {-->
-
-<!--            // 지도가 숨겨지도록 지도와 로드뷰를 감싸고 있는 div의 class를 변경합니다-->
-<!--            container.className = "view_roadview"-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
 </body>
 </html>

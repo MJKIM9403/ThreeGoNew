@@ -339,14 +339,13 @@ public class TourItemContentService {
 
                         moreItems.add(dto);
                     }
-                    return moreItems;
 
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 break;
             default:
-                return tourItemRepository.findSubItemByCat3OrderByDistance(tourItemResponse).stream()
+                moreItems = tourItemRepository.findSubItemByCat3OrderByDistance(tourItemResponse).stream()
                         .map(moreTourItemInterface -> modelMapper.map(moreTourItemInterface, MoreTourItemDTO.class))
                         .collect(Collectors.toList());
         }
