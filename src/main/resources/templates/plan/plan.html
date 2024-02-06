@@ -25,6 +25,32 @@
 
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
 <script>
+
+
+
+
+
+    // 담은 아이템 지우는 함수
+    function deleteRow(ths) {
+        var ths = $(ths);
+        ths.closest("a").remove();
+    }
+
+    // 창 토글로 접는 함수
+    function toggleDay() {
+        $('#your_item').toggleClass('d-flex');
+        $('#your_item').toggle();
+        $('#toggle-btn-icon').toggleClass('bi-caret-right-fill');
+        $('#toggle-btn-icon').toggleClass('bi-caret-left-fill');
+        // 지도 너비 100%로 고정하기
+        $('#map_div').children('div:eq(0)').css('width','100%');
+        $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
+        $('#map').toggleClass('wide');
+    }
+
+
+
+
     $(document).ready(function() {
         initTmap();
     })
@@ -33,153 +59,118 @@
     var map;
     var marker_s, marekr_e;
 
+    // 경유지
+    var viaMarkers = new Array();
+
+    // 경유지 최적화 실행 시간
+    var startTime = getRealTime();
+
     //경로그림정보
     var drawInfoArr = [];
 
-    function initTmap(){
+    function getRealTime() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2);
+        var day = ('0' + (date.getDate())).slice(-2);
+        var hour = ('0' + (date.getHours())).slice(-2);
+        var minute = ('0' + (date.getMinutes())).slice(-2);
+
+        var currentDate = year + month + day + hour + minute
+        console.log(currentDate);
+        return currentDate;
+    }
+
+
+    function initTmap() {
         // 1. 지도 띄우기
         map = new Tmapv2.Map("map_div", {
-            center: new Tmapv2.LatLng(37.56701114710962, 126.9973611831669),
-            width : "100%",
-            height : "100%",
-            zoom : 15,
-            zoomControl : true,
-            scrollwheel : true
+            center: new Tmapv2.LatLng(35.8561719, 129.2247477),
+            width: "100%",
+            height: "100%",
+            zoom: 11,
+            zoomControl: true,
+            scrollwheel: true
         });
 
-        // 시작, 도착 심볼찍기
-        // 시작
-        marker_s = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.568085523663385, 126.98605733268329),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
 
-        // 도착
-        marker_e = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.56445848334345, 127.00973587385866),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
+        // 아이콘 누르면 장소 담기에 추가하는 함수
+        $(document).ready(function () {
+            $('.plus').click(function () {
+                // const touritem = 투어아이템하나씩 아이디를 뿌리던가해서 그걸 토대로 정보를 가져와서 클릭할때마다 지도에 x,y좌표 담아주기 해야될듯...?
+                const areaname = $(this).prev('div').children('div').text();
+                console.log(areaname);
+                $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
 
-        marker = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.56626352138058, 126.98735015742581),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
 
-        marker = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.56568310756034, 127.00221495976581),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_2.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
+                // 위치 끌어오기
+                const mapx = $(this).prev('div').children('input').eq(0).val();
+                const mapy = $(this).prev('div').children('input').eq(1).val();
+                console.log(mapx, mapy);
 
-        marker = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.570369, 126.992153),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_3.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
 
-        marker = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.56335290252303, 127.00352387777271),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_4.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
+                marker = new Tmapv2.Marker({
+                    position: new Tmapv2.LatLng(mapy, mapx),
+                    icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
+                    iconSize: new Tmapv2.Size(24, 38),
+                    map: map,
+                    title: areaname
+                })
+                viaMarkers.push(marker);
+                // points에 들어간 marker 값 찾기
+                console.log(viaMarkers[0]._marker_data.options.title)
+                console.log(viaMarkers[0]._marker_data.options.position._lat)
+                console.log(viaMarkers[0]._marker_data.options.position._lng)
+            })
+        })
 
-        marker = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.570721714117965, 127.00186090818215),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_5.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
 
-        marker = new Tmapv2.Marker({
-            position : new Tmapv2.LatLng(37.56515390827723, 126.99066536776698),
-            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_6.png",
-            iconSize : new Tmapv2.Size(24, 38),
-            map:map
-        });
-
-        // var marker = new Tmapv2.Marker({
-        //     position: new Tmapv2.LatLng(mapx, mapy), 이러면될텐데 어떻게 컨텐츠에접근해야될지모르겠음
-        //     icon:"https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png",
-        //     iconSize : new Tmapv2.Size(24, 38),
-        //     map:map
-        // })
 
 
         // 최적화 버튼을 누르면 ajax 실행
         $("#btn_optimize").click(function () {
             var headers = {};
-            headers["appKey"]="aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
+            headers["appKey"] = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
             // 실행되었다면 지도에 표시된 경로를 지우고 다시 실행하기
-            if(drawInfoArr.length != 0) {
+            if (drawInfoArr.length != 0) {
                 line.setMap(null);
+            }
+
+            // 시작 장소와 종료 장소
+            var start_Mapx = viaMarkers[0]._marker_data.options.position._lng;
+            var start_Mapy = viaMarkers[0]._marker_data.options.position._lat;
+            var end_Mapx = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lng;
+            var end_Mapy = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lat;
+
+            // 마커에 찍힌 경유지
+            var viaPoints = new Array();
+            for(var i = 1; i<viaMarkers.length-1; i++) {
+                var viaPoint = {};
+                viaPoint.viaPointId = i+"경유지";
+                viaPoint.viaPointName = viaMarkers[i]._marker_data.options.title;
+                viaPoint.viaX = viaMarkers[i]._marker_data.options.position._lng.toString();
+                viaPoint.viaY = viaMarkers[i]._marker_data.options.position._lat.toString();
+                viaPoints.push(viaPoint);
             }
 
 
             $.ajax({
-                type:"POST",
-                headers : headers,
-                url:"https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
-                async:false,
+                type: "POST",
+                headers: headers,
+                url: "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
+                async: false,
                 contentType: "application/json",
                 data: JSON.stringify({
-                    "reqCoordType": "WGS84GEO",
-                    "resCoordType" : "EPSG3857",
                     "startName": "출발",
-                    "startX": "126.98605733268329",
-                    "startY": "37.568085523663385",
-                    "startTime": "201711121314",
+                    "startX": start_Mapx.toString(),
+                    "startY": start_Mapy.toString(),
+                    "startTime": startTime,
                     "endName": "도착",
-                    "endX": "127.00973587385866",
-                    "endY": "37.56445848334345",
-                    "searchOption" : "0",
-                    "viaPoints": [
-                        {
-                            "viaPointId": "test01",
-                            "viaPointName": "test01",
-                            "viaX": "126.98735015742581",
-                            "viaY": "37.56626352138058",
-                        },
-                        {
-                            "viaPointId": "test02",
-                            "viaPointName": "test02",
-                            "viaX": "127.00221495976581",
-                            "viaY": "37.56568310756034",
-                        },
-                        {
-                            "viaPointId": "test03",
-                            "viaPointName": "test03",
-                            "viaX": "126.992153",
-                            "viaY": "37.570369",
-                        },
-                        {
-                            "viaPointId": "test04",
-                            "viaPointName": "test04",
-                            "viaX": "127.00352387777271",
-                            "viaY": "37.56335290252303",
-                        },
-                        {
-                            "viaPointId": "test05",
-                            "viaPointName": "test05",
-                            "viaX": "127.00186090818215",
-                            "viaY": "37.570721714117965",
-                        },
-                        {
-                            "viaPointId": "test06",
-                            "viaPointName": "test06",
-                            "viaX": "126.99066536776698",
-                            "viaY": "37.56515390827723",
-                        }
-                    ]
+                    "endX": end_Mapx.toString(),
+                    "endY": end_Mapy.toString(),
+                    "searchOption": "0",
+                    "viaPoints": viaPoints
                 }),
                 success:function(response){
                     var resultData = response.properties;
@@ -217,6 +208,14 @@
                                 strokeWeight: 6,
                                 map : map
                             });
+                            // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                            var newData = geoData[0];
+                            PTbounds = new Tmapv2.LatLngBounds();
+                            for (var i = 0; i < newData.length; i++) {
+                                var mData = newData[i];
+                                var type = mData.geometry.type;
+                                var pointType = mData.properties.pointType;
+                            }
                         }
                     }
                 },
@@ -228,38 +227,225 @@
     }
 
 
-    function addComma(num) {
-        var regexp = /\B(?=(\d{3})+(?!\d))/g;
-        return num.toString().replace(regexp, ',');
-    }
+    // function addComma(num) {
+    //     var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    //     return num.toString().replace(regexp, ',');
+    // }
 
 
-    // 아이콘 누르면 장소 담기에 추가하는 함수
-    $(document).ready(function() {
-        $('.plus').click(function() {
-            const areaname = $(this).prev('div').children('div').text();
-            console.log(areaname);
-            $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
-        })
-    })
+    // 이전에 쓴 코드
+    // function initTmap(){
+    //     // 1. 지도 띄우기
+    //     map = new Tmapv2.Map("map_div", {
+    //         center: new Tmapv2.LatLng(37.56701114710962, 126.9973611831669),
+    //         width : "100%",
+    //         height : "100%",
+    //         zoom : 15,
+    //         zoomControl : true,
+    //         scrollwheel : true
+    //     });
+    //
+    //     // 시작, 도착 심볼찍기
+    //     // 시작
+    //     marker_s = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.568085523663385, 126.98605733268329),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_s.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     // 도착
+    //     marker_e = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.56445848334345, 127.00973587385866),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_r_m_e.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     marker = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.56626352138058, 126.98735015742581),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     marker = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.56568310756034, 127.00221495976581),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_2.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     marker = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.570369, 126.992153),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_3.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     marker = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.56335290252303, 127.00352387777271),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_4.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     marker = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.570721714117965, 127.00186090818215),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_5.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     marker = new Tmapv2.Marker({
+    //         position : new Tmapv2.LatLng(37.56515390827723, 126.99066536776698),
+    //         icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_6.png",
+    //         iconSize : new Tmapv2.Size(24, 38),
+    //         map:map
+    //     });
+    //
+    //     // var marker = new Tmapv2.Marker({
+    //     //     position: new Tmapv2.LatLng(mapx, mapy), 이러면될텐데 어떻게 컨텐츠에접근해야될지모르겠음
+    //     //     icon:"https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png",
+    //     //     iconSize : new Tmapv2.Size(24, 38),
+    //     //     map:map
+    //     // })
+    //
+    //
+    //     // 최적화 버튼을 누르면 ajax 실행
+    //     $("#btn_optimize").click(function () {
+    //         var headers = {};
+    //         headers["appKey"]="aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
+    //
+    //         // 실행되었다면 지도에 표시된 경로를 지우고 다시 실행하기
+    //         if(drawInfoArr.length != 0) {
+    //             line.setMap(null);
+    //         }
+    //
+    //
+    //         $.ajax({
+    //             type:"POST",
+    //             headers : headers,
+    //             url:"https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
+    //             async:false,
+    //             contentType: "application/json",
+    //             data: JSON.stringify({
+    //                 "reqCoordType": "WGS84GEO",
+    //                 "resCoordType" : "EPSG3857",
+    //                 "startName": "출발",
+    //                 "startX": "126.98605733268329",
+    //                 "startY": "37.568085523663385",
+    //                 "startTime": "201711121314",
+    //                 "endName": "도착",
+    //                 "endX": "127.00973587385866",
+    //                 "endY": "37.56445848334345",
+    //                 "searchOption" : "0",
+    //                 "viaPoints": [
+    //                     {
+    //                         "viaPointId": "test01",
+    //                         "viaPointName": "test01",
+    //                         "viaX": "126.98735015742581",
+    //                         "viaY": "37.56626352138058",
+    //                     },
+    //                     {
+    //                         "viaPointId": "test02",
+    //                         "viaPointName": "test02",
+    //                         "viaX": "127.00221495976581",
+    //                         "viaY": "37.56568310756034",
+    //                     },
+    //                     {
+    //                         "viaPointId": "test03",
+    //                         "viaPointName": "test03",
+    //                         "viaX": "126.992153",
+    //                         "viaY": "37.570369",
+    //                     },
+    //                     {
+    //                         "viaPointId": "test04",
+    //                         "viaPointName": "test04",
+    //                         "viaX": "127.00352387777271",
+    //                         "viaY": "37.56335290252303",
+    //                     },
+    //                     {
+    //                         "viaPointId": "test05",
+    //                         "viaPointName": "test05",
+    //                         "viaX": "127.00186090818215",
+    //                         "viaY": "37.570721714117965",
+    //                     },
+    //                     {
+    //                         "viaPointId": "test06",
+    //                         "viaPointName": "test06",
+    //                         "viaX": "126.99066536776698",
+    //                         "viaY": "37.56515390827723",
+    //                     }
+    //                 ]
+    //             }),
+    //             success:function(response){
+    //                 var resultData = response.properties;
+    //                 var resultFeatures = response.features;
+    //
+    //                 // 결과 출력
+    //                 var tDistance = "총 거리 : " + (resultData.totalDistance/1000).toFixed(1) + "km,  ";
+    //                 var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
+    //                 var tFare = "총 요금 : " + resultData.totalFare + "원";
+    //
+    //                 $("#result").text(tDistance+tTime+tFare);
+    //
+    //                 for(var i in resultFeatures) {
+    //                     var geometry = resultFeatures[i].geometry;
+    //                     var properties = resultFeatures[i].properties;
+    //                     var polyline_;
+    //
+    //                     drawInfoArr = [];
+    //
+    //                     if(geometry.type == "LineString") {
+    //                         for(var j in geometry.coordinates){
+    //                             // 경로들의 결과값(구간)들을 포인트 객체로 변환
+    //                             var latlng = new Tmapv2.Point(geometry.coordinates[j][0], geometry.coordinates[j][1]);
+    //                             // 포인트 객체를 받아 좌표값으로 변환
+    //                             var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
+    //                             // 포인트객체의 정보로 좌표값 변환 객체로 저장
+    //                             var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
+    //
+    //                             drawInfoArr.push(convertChange);
+    //                         }
+    //
+    //                         polyline_ = new Tmapv2.Polyline({
+    //                             path : drawInfoArr,
+    //                             strokeColor : "#FF0000",
+    //                             strokeWeight: 6,
+    //                             map : map
+    //                         });
+    //                     }
+    //                 }
+    //             },
+    //             error:function(request,status,error){
+    //                 console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+    //             }
+    //         });
+    //     })
+    // }
+    //
+    //
+    // function addComma(num) {
+    //     var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    //     return num.toString().replace(regexp, ',');
+    // }
+    //
+    //
+    // // 아이콘 누르면 장소 담기에 추가하는 함수
+    // $(document).ready(function() {
+    //     $('.plus').click(function() {
+    //         const areaname = $(this).prev('div').children('div').text();
+    //         console.log(areaname);
+    //         $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
+    //     })
+    // })
 
-    // 담은 아이템 지우는 함수
-    function deleteRow(ths) {
-        var ths = $(ths);
-        ths.closest("a").remove();
-    }
 
-    // 창 토글로 접는 함수
-    function toggleDay() {
-        $('#your_item').toggleClass('d-flex');
-        $('#your_item').toggle();
-        $('#toggle-btn-icon').toggleClass('bi-caret-right-fill');
-        $('#toggle-btn-icon').toggleClass('bi-caret-left-fill');
-        // 지도 너비 100%로 고정하기
-        $('#map_div').children('div:eq(0)').css('width','100%');
-        $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
-        $('#map').toggleClass('wide');
-    }
+
+
+
+
 </script>
 
 
@@ -498,6 +684,8 @@
                                     <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
 
                                     <div th:title="${touritem.title}" class="ps-3">
+                                        <input type="hidden" th:id="mapx" th:value="${touritem.mapx}">
+                                        <input type="hidden" th:id="mapy" th:value="${touritem.mapy}">
                                         <div class="content-title" th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}" th:text="${touritem.title}"></div>
                                         <p class="content-address" th:text="${touritem.address}"></p>
                                     </div>
