@@ -47,9 +47,24 @@ public class UserService {
     }
 
 
+    public User authenticateUser(String id, String pw) {
+        // ID를 사용하여 사용자를 검색합니다.
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        // 사용자가 존재하고, 비밀번호가 일치하면 사용자를 반환합니다.
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getPw().equals(pw)) {
+                return user;
+            }
+        }
+
+        // 사용자가 존재하지 않거나 비밀번호가 일치하지 않으면 null을 반환합니다.
+        return null;
 
     // TODO : 이메일 체크
 //    public boolean isEmailDuplicate(String email) {
 //        return userRepository.existsByEmail(email);
 //    }
+}
 }
