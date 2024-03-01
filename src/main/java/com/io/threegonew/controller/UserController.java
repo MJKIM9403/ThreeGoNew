@@ -13,12 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.io.threegonew.service.UserDetailService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
+import java.io.IOException;
+
+//@RestController
+@Controller
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -34,6 +38,7 @@ public class UserController {
 
 
     @PostMapping("/register")
+    @ResponseBody
     public ResponseEntity<String> registerUser(@RequestBody AddUserRequest dto) {
         //이미 등록된 사용자 인지 확인
         if (userService.isIdDuplicate(dto.getId())) {
@@ -50,8 +55,7 @@ public class UserController {
 
 //
 @PostMapping("/login")
-public String login(@ModelAttribute Model model,
-                    @RequestParam(value="id", required = false) String id,
+public String login(@RequestParam(value="id", required = false) String id,
                     @RequestParam(value="pw", required = false) String pw,
                     HttpServletRequest request, RedirectAttributes rttr) {
 

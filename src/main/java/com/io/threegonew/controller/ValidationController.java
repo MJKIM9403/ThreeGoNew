@@ -2,6 +2,7 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,16 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class ValidationController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
-
-    @Autowired
-    public ValidationController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
 
     @GetMapping("/checkDuplicateId")
     public ResponseEntity<String> checkDuplicateId(@RequestParam(name = "userId") String userId) {
@@ -31,7 +26,7 @@ public class ValidationController {
         }
         else {
             System.out.println("사용 가능한 아이디입니다: " + userId); // 콘솔 출력 추가
-            return ResponseEntity.ok("false");
+            return ResponseEntity.ok().body("false");
         }
     }
 
