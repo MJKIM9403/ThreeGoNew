@@ -26,16 +26,18 @@ public class PrincipalDetails implements UserDetails {
         return collections;
     }
 
+    public String getName() { return user.getName(); }
+
     // get Password 메서드
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getPw();
     }
 
     // get Username 메서드 (생성한 User은 loginId 사용)
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getId();
     }
 
     // 계정이 만료 되었는지 (true: 만료X)

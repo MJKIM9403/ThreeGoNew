@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class User implements UserDetails {
+public class User /*implements UserDetails*/ {
 
     @Id
     @Column(name = "u_id", updatable = false, unique = true)
@@ -55,7 +55,7 @@ public class User implements UserDetails {
         this.u_about = u_about;
     }
 
-    //권한 반환
+   /* //권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));
@@ -89,5 +89,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
+    }*/
 }

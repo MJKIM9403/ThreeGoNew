@@ -41,15 +41,15 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/api/users/login")
-                        //.loginProcessingUrl("/login")
+                        .loginPage("/login")
+                        .loginProcessingUrl("/loginProcess")
                         .defaultSuccessUrl("/index")
                         .usernameParameter("id")
                         .passwordParameter("pw")
                     //    .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/logout")
+                        .logoutSuccessUrl("/index")
                         .invalidateHttpSession(true)
                 )
                 .csrf(AbstractHttpConfigurer::disable)
