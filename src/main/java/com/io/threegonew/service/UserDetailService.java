@@ -1,5 +1,6 @@
 package com.io.threegonew.service;
 
+import com.io.threegonew.config.PrincipalDetails;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.domain.UserRole;
 import com.io.threegonew.repository.UserRepository;
@@ -33,20 +34,21 @@ public class UserDetailService implements UserDetailsService {
 @Override
 public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
-    Optional<User> findId = userRepository.findById(id);
-    User user = findId.get();
+    User user = userRepository.findById(id).orElseThrow(() -> {
+        return new UsernameNotFoundException("유저 정보를 찾을 수 없습니다.");
+    });
 
-    List<GrantedAuthority> authorities = new ArrayList<>();
-
-    if(("admin").equals(id)){
-        authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
-    }else {
-        authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-    }
-    //TODO:관리자 모드인것같은디
-//    return new User(user.getId(), user.getPw() , authorities);
-    return userRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+//
+//    List<GrantedAuthority> authorities = new ArrayList<>();
+//
+//    if(("admin").equals(id)){
+//        authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
+//    }else {
+//        authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
+//    }
+//    //TODO:관리자 모드인것같은디
+////    return new User(user.getId(), user.getPw() , authorities);
+    return new PrincipalDetails(user);
 }
 
 }
