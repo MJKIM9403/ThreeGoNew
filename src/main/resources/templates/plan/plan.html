@@ -33,7 +33,18 @@
     // 담은 아이템 지우는 함수
     function deleteRow(ths) {
         var ths = $(ths);
-        ths.closest("a").remove();
+        var text = ths.closest('a').find('strong.mb-1').text();
+        console.log(text);
+        for (var i = 0; i<viaMarkers.length; i++) {
+            console.log(viaMarkers[i]._marker_data.options.title);
+            if(text == viaMarkers[i]._marker_data.options.title) {
+                console.log("if문을탔으면실행을해라")
+                ths.closest("a").remove();
+                viaMarkers[i].setMap(null); // 뜨는 마커를 지우기
+                viaMarkers.splice(i,1); // 마커 배열에서 삭제하기
+                places.splice(i,1); // 선택한 관광지 배열에서 삭제하기
+            }
+        }
     }
 
     // 창 토글로 접는 함수
@@ -60,7 +71,13 @@
     var marker_s, marekr_e;
 
     // 경유지
-    var viaMarkers = new Array();
+    var viaMarkers = [];
+
+    // 관광지들
+    var places = [];
+
+    // 내가 선택한 관광지
+    var place = [];
 
     // 경유지 최적화 실행 시간
     var startTime = getRealTime();
@@ -81,7 +98,6 @@
         return currentDate;
     }
 
-
     function initTmap() {
         // 1. 지도 띄우기
         map = new Tmapv2.Map("map_div", {
@@ -93,22 +109,32 @@
             scrollwheel: true
         });
 
-
         // 아이콘 누르면 장소 담기에 추가하는 함수
         $(document).ready(function () {
             $('.plus').click(function () {
                 // const touritem = 투어아이템하나씩 아이디를 뿌리던가해서 그걸 토대로 정보를 가져와서 클릭할때마다 지도에 x,y좌표 담아주기 해야될듯...?
+
+                // 이름 가져오기
                 const areaname = $(this).prev('div').children('div').text();
                 console.log(areaname);
-                $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
 
-
-                // 위치 끌어오기
+                // 위치 가져오기
                 const mapx = $(this).prev('div').children('input').eq(0).val();
                 const mapy = $(this).prev('div').children('input').eq(1).val();
                 console.log(mapx, mapy);
 
+                place = {
+                    title : areaname,
+                    mapx: mapx,
+                    mapy: mapy
+                }
 
+                // 관광지 목록에 내가 선택한 관광지를 추가하고
+                places.push(place);
+                // 출력한다
+                $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
+
+                // 관광지 목록에 추가한 대로 marker 생성
                 marker = new Tmapv2.Marker({
                     position: new Tmapv2.LatLng(mapy, mapx),
                     icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
@@ -118,14 +144,18 @@
                 })
                 viaMarkers.push(marker);
                 // points에 들어간 marker 값 찾기
-                console.log(viaMarkers[0]._marker_data.options.title)
-                console.log(viaMarkers[0]._marker_data.options.position._lat)
-                console.log(viaMarkers[0]._marker_data.options.position._lng)
             })
         })
 
+        // 다음 버튼
+        $("#next-btn").click(function () {
+        })
 
 
+        // 전체 관광지 삭제하기 버튼을 누르면 모든 마커를 삭제
+        $("#btn_delete").click(function () {
+            deleteMarkers();
+        })
 
         // 최적화 버튼을 누르면 ajax 실행
         $("#btn_optimize").click(function () {
@@ -133,9 +163,9 @@
             headers["appKey"] = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
             // 실행되었다면 지도에 표시된 경로를 지우고 다시 실행하기
-            if (drawInfoArr.length != 0) {
-                line.setMap(null);
-            }
+            // if (drawInfoArr.length != 0) {
+            //     line.setMap(null);
+            // }
 
             // 시작 장소와 종료 장소
             var start_Mapx = viaMarkers[0]._marker_data.options.position._lng;
@@ -144,7 +174,7 @@
             var end_Mapy = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lat;
 
             // 마커에 찍힌 경유지
-            var viaPoints = new Array();
+            var viaPoints = [];
             for(var i = 1; i<viaMarkers.length-1; i++) {
                 var viaPoint = {};
                 viaPoint.viaPointId = i+"경유지";
@@ -152,7 +182,10 @@
                 viaPoint.viaX = viaMarkers[i]._marker_data.options.position._lng.toString();
                 viaPoint.viaY = viaMarkers[i]._marker_data.options.position._lat.toString();
                 viaPoints.push(viaPoint);
+
+                console.log(viaPoint);
             }
+            console.log(viaPoints);
 
 
             $.ajax({
@@ -441,7 +474,25 @@
     //     })
     // })
 
+function deleteMarkers() {
+    for (var i=0; i<viaMarkers.length; i++) {
+        viaMarkers[i].setMap(null);
+    }
+    // 등록된 마커 배열도 초기화
+    viaMarkers = [];
+    // 출력된 목록도 초기화
+    $("#areabox").empty();
+}
 
+function deleteMarker() {
+    // 지우기 전에
+    console.log(places);
+
+
+    // 지우고 나서
+    console.log("지움 - places 갯수 확인하기")
+    console.log(places);
+}
 
 
 
@@ -636,7 +687,7 @@
                 </li>
             </ul>
             <div class="btn_con text-center">
-                <button type="button" id="next-btn" class="btn btn-primary" onclick="location.href='/datil'">다음</button>
+                <button type="button" id="next-btn" class="btn btn-primary" >다음</button>
             </div>
             <div class="dropdown border-top">
                 <a href="#" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
@@ -738,17 +789,19 @@
                     </div>
 
 
+<!--선택되면 이렇게 파란배경으로 하고 싶었음-->
+<!--                    <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
+<!--                        <div class="d-flex w-100 align-items-center justify-content-between">-->
+<!--                            <strong class="mb-1">장소1</strong>-->
+<!--                            <button class="plus">-->
+<!--                                &lt;!&ndash;아이콘 눌러서 담기&ndash;&gt;-->
+<!--                                <i class="bi bi-bookmark-plus"></i>-->
+<!--                            </button>-->
+<!--                        </div>-->
+<!--                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>-->
+<!--                    </a>-->
 
-                    <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <strong class="mb-1">장소1</strong>
-                            <button class="plus">
-                                <!--아이콘 눌러서 담기-->
-                                <i class="bi bi-bookmark-plus"></i>
-                            </button>
-                        </div>
-                        <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-                    </a>
+
 <!--                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">-->
 <!--                        <div class="d-flex w-100 align-items-center justify-content-between">-->
 <!--                            <strong class="mb-1">장소2</strong>-->
@@ -893,6 +946,7 @@
             <div class="map-result position-absolute">
                 <p id="result"></p>
                 <button id="btn_optimize" class="btn btn-primary">최적화 적용하기</button>
+                <button id="btn_delete" class="btn btn-danger">전체 삭제하기</button>
             </div>
             <div id="map_div">
             </div>
