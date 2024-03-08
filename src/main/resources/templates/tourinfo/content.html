@@ -693,7 +693,7 @@
                     <div class="col-md-12">
                         <h4 th:if='${response.tourItemResponse.contenttypeid.equals("25")}'>코스 안내</h4>
                         <h4 th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>동일 카테고리의 주변 관광지 추천</h4>
-                        <div id="sub-items">
+                        <div th:if="${response.moreTourItems.size() > 0}" id="sub-items">
                             <swiper-container class="mySwiper" pagination="true" pagination-clickable="true" space-between="30"
                                               slides-per-view="5">
                                 <th:block th:each="moreitem : ${response.moreTourItems}">
@@ -711,6 +711,9 @@
                                     </swiper-slide>
                                 </th:block>
                             </swiper-container>
+                        </div>
+                        <div th:unless="${response.moreTourItems.size() > 0}">
+                            <p>반경 3km 내에 조회된 관광지가 없습니다.</p>
                         </div>
                     </div>
                 </div>

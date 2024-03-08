@@ -259,7 +259,6 @@
     document.getElementById('idCheckBtn').addEventListener('click', function () {
         console.log('Button clicked');
         let enteredId = document.getElementsByName('id')[0].value;
-
         // 빈 칸인 경우 처리
         if (enteredId === "") {
             alert('아이디를 입력해주세요.');
@@ -268,6 +267,7 @@
         $.ajax({
             url: '/checkDuplicateId',
             type: 'GET',
+            dataType: 'text',
             data: {
                 userId: enteredId
             },
@@ -277,18 +277,18 @@
                 $('#idNotAvailable').hide().text('');
 
                 // 아이디 입력 필드를 읽기 전용으로 변경
-                $('input[name=id]').prop('readonly', true);
-
-                if (result === true) {
+                console.log(result);
+                let duplicate = result == "true" ? true : false
+                if (duplicate) {
                     // 중복된 아이디가 존재할 경우
                     $('#idNotAvailable').show().text('이미 사용 중인 아이디입니다.');
+                    console.log("중복: " + duplicate);
                     idCheck = false;
-                    // console.log(result);
                 } else {
                     // 사용 가능한 아이디일 경우
                     $('#idAvailable').show().text('사용 가능한 아이디입니다.');
+                    console.log("가능: " + duplicate);
                     idCheck = true;
-                    // console.log(result);
                 }
             },
             error: function (xhr, status, error) {

@@ -50,24 +50,22 @@ public class UserController {
 
 //
 @PostMapping("/login")
-public String login(@ModelAttribute Model model,
-                    @RequestParam(value="id", required = false) String id,
-                    @RequestParam(value="pw", required = false) String pw,
-                    HttpServletRequest request, RedirectAttributes rttr) {
+public String login(@RequestBody LoginRequest loginDto,
+                    HttpServletRequest request) {
 
-    System.out.println("usercontroller : " + id);
+    System.out.println("usercontroller : " + loginDto.getId());
 
     // 인증 로직을 사용하여 사용자를 인증하려고 시도합니다.
-    User login = userService.authenticateUser(id, pw);
+    User loginUser = userService.authenticateUser(loginDto.getId(), loginDto.getPw());
 
-    if (login == null) {
+    if (loginUser == null) {
         // 인증 실패 시 리다이렉트 및 메시지 처리 (선택사항)
         return "redirect:/login";
     }
 
     // 세션에 인증된 사용자 설정
     HttpSession session = request.getSession();
-    session.setAttribute("loginUser", login);
+    session.setAttribute("loginUser", loginUser);
 
     // 리다이렉트할 때는 return 구문을 여기에 작성합니다.
     return "redirect:/index";
