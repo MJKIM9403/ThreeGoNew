@@ -8,32 +8,28 @@ import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.io.threegonew.service.UserDetailService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
+@Controller
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final UserDetailService userDetailService;
-
-    @Autowired
-    public UserController(UserService userService, UserDetailService userDetailService) {
-        this.userService = userService;
-        this.userDetailService = userDetailService;
-    }
-
 
 
     @PostMapping("/register")
+    @ResponseBody
     public ResponseEntity<String> registerUser(@RequestBody AddUserRequest dto) {
         //이미 등록된 사용자 인지 확인
         if (userService.isIdDuplicate(dto.getId())) {
@@ -49,13 +45,14 @@ public class UserController {
 
 //
 @PostMapping("/login")
-public String login(@RequestBody LoginRequest loginDto,
+public String login(@RequestParam(name = "id") String id,
+                    @RequestParam(name = "pw") String pw,
                     HttpServletRequest request) {
 
-    System.out.println("usercontroller : " + loginDto.getId());
+    System.out.println("usercontroller : " + id);
 
     // 인증 로직을 사용하여 사용자를 인증하려고 시도합니다.
-    User loginUser = userService.authenticateUser(loginDto.getId(), loginDto.getPw());
+    User loginUser = userService.authenticateUser(id, pw);
 
     if (loginUser == null) {
         // 인증 실패 시 리다이렉트 및 메시지 처리 (선택사항)
