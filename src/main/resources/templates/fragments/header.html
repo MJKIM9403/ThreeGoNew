@@ -19,9 +19,11 @@
                 <li><a href="/board" class="nav-link px-2">커뮤니티</a></li>
             </ul>
 
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                ${sessionScope.u_name}
-            </form>
+<!--            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">-->
+<!--                ${sessionScope.u_name}-->
+<!--            </form>-->
+            <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" th:if="${session.loginUser != null}" th:text="${session.loginUser.name}"></div>
+            <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" th:if="${session.loginUser == null}" >로그인 후 이용해주세요.</div>
 
             <div class="dropdown text-end">
 

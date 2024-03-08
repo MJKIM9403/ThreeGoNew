@@ -54,7 +54,7 @@ dependencies {
     implementation("javax.mail:mail:1.4.7")
 
     // json 데이터 처리
-    // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+    // https://mvnrpository.com/artifact/com.googlecode.json-simple/json-simple
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
 
     // Spring Boot Starter Validation

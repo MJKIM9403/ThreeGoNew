@@ -69,7 +69,7 @@
 
 
 
-<form action="/login" method="POST" name="loginFrm" onsubmit="return validateForm(this)">
+<form action="/api/users/login" method="POST" name="loginFrm" onsubmit="return validateForm(this)">
     <!-- 오류 확인 -->
     <div th:if="${param.error}">
         <div class="alert alert-danger">

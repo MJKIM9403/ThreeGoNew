@@ -48,7 +48,7 @@ create table `BOARD` (
 -- 유저테이블 --
 CREATE TABLE `USERS` (
                          U_ID   varchar(40)      NOT NULL,
-                         U_PW   varchar(40)      NOT NULL,
+                         U_PW   varchar(255)      NOT NULL,
                          U_NAME   varchar(40)      NOT NULL,
                          U_EMAIL   varchar(200)      NOT NULL,
                          U_OFILE   varchar(200)      NULL,
