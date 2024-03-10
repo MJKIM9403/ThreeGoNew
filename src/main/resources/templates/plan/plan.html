@@ -39,8 +39,8 @@
             console.log(viaMarkers[i]._marker_data.options.title);
             if(text == viaMarkers[i]._marker_data.options.title) {
                 console.log("if문을탔으면실행을해라")
-                ths.closest("a").remove();
-                viaMarkers[i].setMap(null); // 뜨는 마커를 지우기
+                ths.closest("a").remove(); // 화면에서 출력되는 목록을 지우기
+                viaMarkers[i].setMap(null); // 지도에 뜨는 마커를 지우기
                 viaMarkers.splice(i,1); // 마커 배열에서 삭제하기
                 places.splice(i,1); // 선택한 관광지 배열에서 삭제하기
             }
@@ -129,21 +129,76 @@
                     mapy: mapy
                 }
 
-                // 관광지 목록에 내가 선택한 관광지를 추가하고
-                places.push(place);
-                // 출력한다
-                $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
+                // 중복 체크
+                var isDuplicate = places.some(function(p) {
+                    return p.title === place.title;
+                });
 
-                // 관광지 목록에 추가한 대로 marker 생성
-                marker = new Tmapv2.Marker({
-                    position: new Tmapv2.LatLng(mapy, mapx),
-                    icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
-                    iconSize: new Tmapv2.Size(24, 38),
-                    map: map,
-                    title: areaname
-                })
-                viaMarkers.push(marker);
-                // points에 들어간 marker 값 찾기
+                if (!isDuplicate) {
+                    // 중복이 아닐 경우에만 관광지 목록에 내가 선택한 관광지를 추가하고
+                    places.push(place);
+                    // 출력한다
+                    $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
+
+                    // 선택한 관광지가 3개 이상일 경우에만 (경유지가 1개 이상 포함된 경우)
+                    if (places.length > 2) {
+                        // 기존 마커 제거
+                        viaMarkers.forEach(function(marker) {
+                            marker.setMap(null); // TMap에서 마커 제거
+                        });
+                        viaMarkers = []; // viaMarkers 배열 초기화
+
+                        addMarker("start", places[0]);
+                        for (var i = 1; i < places.length - 1; i++) {
+                            addMarker("pass", places[i]);
+                        }
+                        addMarker("end", places[places.length - 1]);
+                    } else if(places.length == 1) { // 선택한 관광지가 1개일 경우
+                        alert('경유지는 최소 1개 이상이어야 합니다.');
+                        addMarker("start", places[0]);
+                    } else if(places.length == 2) { // 선택한 관광지가 2개일 경우
+                        alert('경유지는 최소 1개 이상이어야 합니다.');
+                        // 기존 마커 제거
+                        viaMarkers.forEach(function(marker) {
+                            marker.setMap(null); // TMap에서 마커 제거
+                        });
+                        viaMarkers = []; // viaMarkers 배열 초기화
+                        addMarker("start", places[0]);
+                        addMarker("pass", places[1]);
+                    }
+                } else {
+                    alert ('이미 추가된 장소입니다.');
+                }
+
+                function addMarker(status, info) {
+                    // status 에 따라 아이콘 바꾸기
+                    switch (status) {
+                        case "start":
+                            imgUrl = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_s.png';
+                            break;
+                        case "pass":
+                            imgUrl = 'https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png';
+                            break;
+                        case "end":
+                            imgUrl = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_e.png';
+                            break;
+                        default:
+                    }
+
+                    // 관광지 목록에 추가한 대로 marker 생성
+                    marker = new Tmapv2.Marker({
+                        position: new Tmapv2.LatLng(info.mapy, info.mapx),
+                        icon: imgUrl,
+                        iconSize: new Tmapv2.Size(24, 38),
+                        map: map,
+                        title: info.title
+                    })
+                    viaMarkers.push(marker);
+                    // points에 들어간 marker 값 찾기
+                    return marker;
+                }
+
+
             })
         })
 
