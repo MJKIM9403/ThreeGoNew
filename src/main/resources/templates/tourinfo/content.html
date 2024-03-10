@@ -27,11 +27,12 @@
     </script>
     <script th:inline="javascript">
         $(document).ready(function(){
-            initTmap(lon, lat)
+            initTmap(lon, lat);
         });
 
         var map;
         var marker;
+        var label;
         var marker_s, marekr_e, waypoint;
         var resultMarkerArr = [];
         //경로그림정보
@@ -42,24 +43,20 @@
 
             switch (contentTypeId){
                 case "25":
+                    // 경로 검색 시간
+                    var startTime = getRealTime();
+
+                    // 다중 마커의 중심 위치를 찾기 위한 최대,최소 위도-경도
                     let maxLon = Number.MIN_VALUE, maxLat = Number.MIN_VALUE;
                     let minLon = Number.MAX_VALUE, minLat = Number.MAX_VALUE;
 
                     const moreItems = [[${response.moreTourItems}]]
 
-                    /*let positions = []; //다중 마커 저장 배열
-*/
                     $.each(moreItems, function(index, item) {
                         if(Number(item.mapy) > maxLon) maxLon = Number(item.mapy)
                         if(Number(item.mapy) < minLon) minLon = Number(item.mapy)
                         if(Number(item.mapx) > maxLat) maxLat = Number(item.mapx)
                         if(Number(item.mapx) < minLat) minLat = Number(item.mapx)
-
-                        /*let itemInfo = {
-                            title: item.title,
-                            lonlat: new Tmapv2.LatLng(item.mapy, item.mapx)
-                        }
-                        positions.push(itemInfo)*/
                     })
 
                     const midLon = (maxLon + minLon)/2
@@ -68,38 +65,13 @@
                     const courseCount = moreItems.length
 
                     const startTitle = moreItems[0].title
-                    const startLon = Number(moreItems[0].mapy)
-                    const startLat = Number(moreItems[0].mapx)
+                    const startLon = moreItems[0].mapy
+                    const startLat = moreItems[0].mapx
 
                     const endTitle = moreItems[courseCount-1].title
-                    const endLon = Number(moreItems[courseCount-1].mapy)
-                    const endLat = Number(moreItems[courseCount-1].mapx)
+                    const endLon = moreItems[courseCount-1].mapy
+                    const endLat = moreItems[courseCount-1].mapx
 
-                    // 지도 띄우기
-                    /*map = new Tmapv2.Map("map_div", {
-                        center : new Tmapv2.LatLng(midLon, midLat),
-                        width : "100%",
-                        height : "400px",
-                        zoom : 15,
-                        zoomControl : true,
-                        scrollwheel : true
-
-                    });*/
-
-                    /*for (var i = 0; i< positions.length; i++){//for문을 통하여 배열 안에 있는 값을 마커 생성
-                        var lonlat = positions[i].lonlat;
-                        var title = positions[i].title;
-                        var markerName = i+1;
-                        //Marker 객체 생성.
-                        marker = new Tmapv2.Marker({
-                            position : lonlat, //Marker의 중심좌표 설정.
-                            icon : `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
-                            iconSize : new Tmapv2.Size(24, 38),
-                            map : map, //Marker가 표시될 Map 설정.
-                            title : title //Marker 타이틀.
-                        });
-                    }*/
-                    /**/
                     resultMarkerArr = [];
                     viaPoints = [];
 
@@ -107,7 +79,7 @@
                     map = new Tmapv2.Map("map_div", {
                         center: new Tmapv2.LatLng(midLon, midLat),
                         width : "100%",
-                        height : "400px",
+                        height : "600px",
                         zoom : 14,
                         zoomControl : true,
                         scrollwheel : true
@@ -117,11 +89,13 @@
                     // 2. 시작, 도착 심볼찍기
                     $.each(moreItems, function(index, item) {
                         let markerName = index+1;
+                        label="<span style='font-size: 15px; background-color: #46414E;color:white'>"+item.title+"</span>";
                         marker = new Tmapv2.Marker({
                             position : new Tmapv2.LatLng(item.mapy, item.mapx),
                             icon : `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
                             iconSize : new Tmapv2.Size(24, 38),
-                            map:map
+                            map:map,
+                            label:label
                         });
                         resultMarkerArr.push(marker);
                         if(index > 0 && index < courseCount -1){
@@ -131,40 +105,40 @@
                                 "viaX" : item.mapx ,
                                 "viaY" : item.mapy
                             }
-                            console.log(item.title)
                             viaPoints.push(viaPoint);
                         }
                     })
 
                     // 4. 경로탐색 API 사용요청
-                    var routeLayer;
+                    // var routeLayer;
 
                     var headers = {};
                     headers["appKey"] = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
                     headers["Content-Type"] = "application/json";
 
-                    var param = {
+                    var param = JSON.stringify({
                         "startName" : startTitle,
                         "startX" : startLat,
                         "startY" : startLon,
-                        "startTime" : "201708081103",
+                        "startTime" : startTime,
                         "endName" : endTitle,
                         "endX" : endLat,
                         "endY" : endLon,
                         "viaPoints" : viaPoints,
                         "reqCoordType" : "WGS84GEO",
                         "resCoordType" : "EPSG3857",
-                        "searchOption": "1"
-                    };
+                        "searchOption": "0"
+                    });
+
+                    console.log(param)
 
                     $.ajax({
                         method:"POST",
-                        url:"https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",
+                        url:"https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",//
                         headers : headers,
-                        traditional: true,
-                        dataType : 'json',
                         async:false,
-                        data:JSON.stringify(param),
+                        contentType: "application/json",
+                        data:param,
                         success:function(response){
 
                             //var resultData = response.properties;
@@ -255,12 +229,16 @@
 
                     });
 
+                    const touritemTitle = [[${response.tourItemResponse.title}]]
+
+                    label="<span style='font-size: 15px; background-color: #46414E;color:white'>"+ touritemTitle +"</span>";
+
                     // 마커 초기화
                     marker = new Tmapv2.Marker(
                         {
                             icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
                             iconSize : new Tmapv2.Size(24, 38),
-                            map : map
+                            map : map,
                         });
 
                     marker.setMap(null);
@@ -272,8 +250,59 @@
                             position : markerPosition,
                             icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
                             iconSize : new Tmapv2.Size(24, 38),
-                            map : map
+                            map : map,
+                            label : label
                         });
+            }
+        }
+
+        function getRealTime() {
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = ('0' + (date.getMonth() + 1)).slice(-2);
+            var day = ('0' + (date.getDate())).slice(-2);
+            var hour = ('0' + (date.getHours())).slice(-2);
+            var minute = ('0' + (date.getMinutes())).slice(-2);
+
+            var currentDate = year + month + day + hour + minute
+            console.log(currentDate);
+            return currentDate;
+        }
+
+        function checkBookmark() {
+            let userId = [[${userId}]]
+            if(userId === 'anonymousUser'){
+                alert("북마크는 로그인 후 이용하실 수 있습니다.");
+                location.href = '/login';
+            }else {
+                $.ajax({
+                    url: '/bookmark/check',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        "contentId" : [[${response.tourItemResponse.contentid}]],
+                        "userId" : userId
+                    }),
+                    contentType : 'application/json; charset=utf-8',
+                    success : function(data){
+                        let isChecked = data.isChecked;
+                        let checkCount = data.bookmarkCount;
+                        if(isChecked){
+                            // 이미 북마크를 등록한 경우
+                            $('.bookmark').removeClass('checked-bookmark')
+                            $('.bookmark-icon').removeClass('bi-bookmark-star-fill')
+                            $('.bookmark-icon').addClass('bi-bookmark-plus')
+                        }else {
+                            // 아직 북마크를 등록하지 않았을 경우
+                            $('.bookmark').addClass('checked-bookmark')
+                            $('.bookmark-icon').addClass('bi-bookmark-star-fill')
+                            $('.bookmark-icon').removeClass('bi-bookmark-plus')
+                        }
+                        $('.bookmark-count').html(checkCount)
+                    },
+                    error : function (err){
+                        console.log(err)
+                    }
+                })
             }
         }
 
@@ -319,14 +348,10 @@
             object-fit: cover;
         }
 
-        .swiper-pagination {
-            position: static;
-        }
-
         .title-box{
             display: flex;
-            align-items: flex-end;
-            gap: 20px;
+            align-items: center;
+            gap: 10px;
             padding: 50px 0 0;
         }
         #period{
@@ -377,6 +402,24 @@
         .display-none{ /*감추기*/
             display:none;
         }
+        .bookmark {
+            padding: 5px;
+            border-radius: 20%;
+            border: solid 2px #000000;
+            color: #000000;
+            cursor: pointer;
+        }
+
+        .checked-bookmark {
+            color: #FFFFFF;
+            background-color: #000000;
+        }
+        .bookmark-count {
+            font-size: 20px;
+        }
+        .bi-bookmark-plus, .bi-bookmark-star-fill{
+            font-size: 20px;
+        }
 
     </style>
 
@@ -392,45 +435,51 @@
                 <div class="title-box">
                     <h3 th:text="${response.tourItemResponse.title}" id="title"></h3>
                     <h5 id="period" th:if='${response.tourItemResponse.contenttypeid.equals("15")}' th:text='${response.detailInfo.get("진행상태")}'></h5>
+                    <div class="bookmark" th:classappend="${isBookmarkChecked ? 'checked-bookmark' : ''}" onclick="checkBookmark()">
+                        <i class="bi bookmark-icon" th:classappend="${isBookmarkChecked ? 'bi-bookmark-star-fill' : 'bi-bookmark-plus'}"></i>
+                        <span class="bookmark-count" th:text="${response.bookmarkCount}"></span>
+                    </div>
                 </div>
                 <div id="category" th:text="${response.tourItemResponse.fullCategoryName}"></div>
                 <div class="row" id="row1">
                     <!--캐러셀-->
-                    <div id="carousel_grid" class="col-md-6">
-                        <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <!--indicators-->
-                            <div class="carousel-indicators" th:if="${response.imagesURL.size() > 1}">
-                                <th:block  th:each="imgUrl, stat : ${response.imagesURL}">
-                                    <button type="button" data-bs-target="#myCarousel" th:data-bs-slide-to="${stat.index}" th:classappend="${stat.index == 0 ? 'active' : ''}"></button>
-                                </th:block>
-                            </div>
-                            <!--이미지-->
-                            <div class="carousel-inner">
-                                <th:block th:if="${response.imagesURL.size() > 1}" th:each="imgUrl, stat : ${response.imagesURL}">
-                                    <div class="carousel-item" data-bs-interval="5000" th:classappend="${stat.index == 0 ? 'active' : ''}">
-                                        <img th:src='${imgUrl}' class="d-block w-100">
-                                    </div>
-                                </th:block>
-                                <th:block th:if="${response.imagesURL.isEmpty()}">
-                                    <div class="carousel-item active">
-                                        <img th:if="${!response.tourItemResponse.firstimage.isEmpty()}" th:src="${response.tourItemResponse.firstimage}">
-                                        <img th:unless="${!response.tourItemResponse.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
-                                    </div>
-                                </th:block>
-                            </div>
+                    <th:block th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>
+                        <div id="carousel_grid" class="col-md-6">
+                            <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <!--indicators-->
+                                <div class="carousel-indicators" th:if="${response.imagesURL.size() > 1}">
+                                    <th:block  th:each="imgUrl, stat : ${response.imagesURL}">
+                                        <button type="button" data-bs-target="#myCarousel" th:data-bs-slide-to="${stat.index}" th:classappend="${stat.index == 0 ? 'active' : ''}"></button>
+                                    </th:block>
+                                </div>
+                                <!--이미지-->
+                                <div class="carousel-inner">
+                                    <th:block th:if="${response.imagesURL.size() > 1}" th:each="imgUrl, stat : ${response.imagesURL}">
+                                        <div class="carousel-item" data-bs-interval="5000" th:classappend="${stat.index == 0 ? 'active' : ''}">
+                                            <img th:src='${imgUrl}' class="d-block w-100">
+                                        </div>
+                                    </th:block>
+                                    <th:block th:if="${response.imagesURL.isEmpty()}">
+                                        <div class="carousel-item active">
+                                            <img th:if="${!response.tourItemResponse.firstimage.isEmpty()}" th:src="${response.tourItemResponse.firstimage}">
+                                            <img th:unless="${!response.tourItemResponse.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
+                                        </div>
+                                    </th:block>
+                                </div>
 
-                            <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </th:block>
                     <!--지도-->
-                    <div id="map_grid" class="col-md-6">
+                    <div id="map_grid" th:classappend="${response.tourItemResponse.contenttypeid.equals('25')} ? 'col-md-12' : 'col-md-6'">
                         <div id="map_wrap">
                             <div id="map_div"></div>
                         </div>

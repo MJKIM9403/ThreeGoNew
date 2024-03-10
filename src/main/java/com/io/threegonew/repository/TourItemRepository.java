@@ -11,9 +11,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TourItemRepository extends JpaRepository<TourItem, String>, JpaSpecificationExecutor<TourItem> {
     Page<TourItem> findAll(Specification spec, Pageable pageable);
+
+    Optional<TourItem> findByContentid(String contentid);
 
     // 현재 조회중인 페이지의 관광지와 같은 소분류 관광지를 가까운 거리순으로 조회(현재 페이지 관광지 제외)
     @Query(value = "SELECT t.contentid, t.title, t.firstimage, t.mapx, t.mapy, " +

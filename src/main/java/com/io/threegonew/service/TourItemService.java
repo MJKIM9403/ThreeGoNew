@@ -26,6 +26,7 @@ public class TourItemService {
     private final ContentTypeRepository contentTypeRepository;
     private final AreaRepository areaRepository;
     private final TourItemRepository tourItemRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final ModelMapper modelMapper;
 
     public TourItemResponse findTourItem(String contentid){
@@ -150,6 +151,7 @@ public class TourItemService {
                 .sigungucode(tourItem.getSigungucode())
                 .tel(tourItem.getTel())
                 .title(cropTitle(tourItem.getTitle()))
+                .bookmarkCount((long) tourItem.getBookmarkList().size())
                 .build();
     }
 

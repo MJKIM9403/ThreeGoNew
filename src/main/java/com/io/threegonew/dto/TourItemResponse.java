@@ -26,4 +26,5 @@ public class TourItemResponse {
     private String tel;
     private String title;
 
+    private Long bookmarkCount;
 }

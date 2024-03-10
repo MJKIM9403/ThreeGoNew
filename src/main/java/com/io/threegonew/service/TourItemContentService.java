@@ -1,5 +1,6 @@
 package com.io.threegonew.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.io.threegonew.ApiKey;
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.dto.MoreTourItemDTO;
@@ -13,6 +14,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,6 +26,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +35,7 @@ import java.util.stream.Collectors;
 public class TourItemContentService {
 
     private final TourItemRepository tourItemRepository;
+    private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
 
     /* URI path */
@@ -40,6 +46,7 @@ public class TourItemContentService {
 
     private String homepage;
 
+    /*@Async("customAsyncExecutor")*/
     public TourItemContentResponse getContentInfo(TourItemResponse tourItemResponse){
         TourItemContentResponse contentResponse = TourItemContentResponse.builder()
                 .tourItemResponse(tourItemResponse)
@@ -47,11 +54,51 @@ public class TourItemContentService {
                 .overview(getOverview(tourItemResponse))
                 .detailInfo(getDetailInfo(tourItemResponse))
                 .moreTourItems(getMoreItems(tourItemResponse))
-                //bookmarkCount;
+                .bookmarkCount(tourItemResponse.getBookmarkCount())
                 .build();
 
         return contentResponse;
     }
+
+//    private String makeURL(TourItemResponse tourItemResponse, String path) {
+//        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+//                .fromHttpUrl("https://apis.data.go.kr/B551011/KorService1/")
+//                .path(path)
+//                .queryParam("MobileOS","ETC")
+//                .queryParam("MobileApp","THREEGO");
+//
+//        if(path.equals(IMAGES)){
+//            uriBuilder.queryParam("numOfRows",10)
+//                    .queryParam("pageNo", 1)
+//                    .queryParam("subImageYN","Y");
+//        }
+//        if(path.equals(COURSE)){
+//            uriBuilder.queryParam("numOfRows",100)
+//                    .queryParam("pageNo", 1);
+//        }
+//        if(path.equals(COMMON) || path.equals(INFO) || path.equals(COURSE)){
+//            uriBuilder.queryParam("contentTypeId", tourItemResponse.getContenttypeid());
+//        }
+//        if(path.equals(COMMON)){
+//            uriBuilder.queryParam("overviewYN","Y");
+//        }
+//
+//        uriBuilder.queryParam("contentId",tourItemResponse.getContentid())
+//                .queryParam("serviceKey", ApiKey.TOURAPI_KEY_1)
+//                .queryParam("_type","json")
+//                .build();
+//
+//        UriComponents uri = uriBuilder.build();
+//
+//        return uri.toUriString();
+//    }
+
+//    private ResponseEntity<List<String>> getImagesURL2(TourItemResponse tourItemResponse){
+//        List<CompletableFuture<Void>> futures = new ArrayList<>();
+//        try{
+//            URL url = new URL(makeURL(tourItemResponse, IMAGES))
+//        }
+//    }
 
 
     private String convertJsonToStr(TourItemResponse tourItemResponse, String path){
@@ -85,6 +132,7 @@ public class TourItemContentService {
                 .build();
 
         UriComponents uri = uriBuilder.build();
+
 
         System.out.println(uri.toUriString());
 
