@@ -132,6 +132,24 @@ public class TourItemService {
         return pageResponse;
     }
 
+    @Transactional(readOnly = true)
+    public PageResponse findMyBookmarkByArea(MyBookmarkByAreaRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        Page<TourItemResponse> page = tourItemRepository.findMyBookmarkByAreacode(pageable, request.getAreacode(), request.getUserId())
+                .map(this::tourItemMapper);
+
+        PageResponse<TourItemResponse> pageResponse = PageResponse.<TourItemResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
 
 
     /* TourItemResponse 매핑을 위한 메소드*/

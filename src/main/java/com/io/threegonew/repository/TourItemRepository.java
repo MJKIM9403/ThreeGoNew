@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface TourItemRepository extends JpaRepository<TourItem, String>, JpaSpecificationExecutor<TourItem> {
+public interface TourItemRepository extends JpaRepository<TourItem, String>, JpaSpecificationExecutor<TourItem>, TourItemRepositoryCustom {
     Page<TourItem> findAll(Specification spec, Pageable pageable);
 
     Optional<TourItem> findByContentid(String contentid);

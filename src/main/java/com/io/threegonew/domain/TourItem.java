@@ -45,5 +45,5 @@ public class TourItem {
     private String title;
 
     @OneToMany(mappedBy = "tourItem")
-    private List<Bookmark> bookmarkList;
+    private List<Bookmark> bookmarkList = new ArrayList<>();
 }
