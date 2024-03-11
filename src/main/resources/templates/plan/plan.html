@@ -220,11 +220,6 @@
             var headers = {};
             headers["appKey"] = appKey;
 
-            // 실행되었다면 지도에 표시된 경로를 지우고 다시 실행하기
-            // if (drawInfoArr.length != 0) {
-            //     line.setMap(null);
-            // }
-
             // 시작 장소와 종료 장소
             var start_Mapx = viaMarkers[0]._marker_data.options.position._lng;
             var start_Mapy = viaMarkers[0]._marker_data.options.position._lat;
@@ -331,11 +326,6 @@
         $("#btn_route").click(function () {
             var headers = {};
             headers["appKey"] = appKey;
-
-            // 실행되었다면 지도에 표시된 경로를 지우고 다시 실행하기
-            // if (drawInfoArr.length != 0) {
-            //     line.setMap(null);
-            // }
 
             // 시작 장소와 종료 장소
             var start_Mapx = viaMarkers[0]._marker_data.options.position._lng;
@@ -682,15 +672,15 @@ function deleteMarkers() {
         padding-left: 0 !important;
     }
     .search-scroll {
-        /*overflow-y: auto;*/
+        overflow-y: auto;
         overflow-x: hidden;
         height: calc(100vh - 112px);
     }
     .scroll {
-        /*overflow-y: auto;*/
+        overflow-y: auto;
         overflow-x: hidden;
         height: calc(100vh - 79px);
-        /*height: calc(100vh - 114px);*/
+        height: calc(100vh - 114px);
     }
     .default {
         width: calc(100% - 872px);
@@ -749,13 +739,13 @@ function deleteMarkers() {
     }
     #your_item {
         position: relative;
-        /*overflow-y: auto;*/
+        overflow-y: auto;
         overflow-x: hidden;
         height: 100vh;
         max-height: 100vh;
     }
     .overflow-y-auto {
-        /*overflow-y: auto;*/
+        overflow-y: auto;
     }
 
     .overflow-x-hidden {

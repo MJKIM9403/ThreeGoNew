@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -16,22 +15,23 @@ import java.util.Date;
 public class Planner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private Long id;
+    @Column(name = "p_id", updatable = false)
+    private Long plannerId;
 
-    @Column(name = "planner_name", nullable = true)
+    @Column(name = "p_name", nullable = false)
     private String plannerName;
 
     @Column(name = "start_date", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     private Date startDate;
 
     @Column(name = "end_date", nullable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     private Date endDate;
 
     @Builder
-    public Planner(Date startDate, Date endDate) {
+    public Planner(String plannerName, Date startDate, Date endDate) {
+        this.plannerName = plannerName;
         this.startDate = startDate;
         this.endDate = endDate;
     }

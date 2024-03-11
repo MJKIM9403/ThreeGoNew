@@ -21,8 +21,8 @@ public class TestController {
             return "login";
         }
 
-        @GetMapping("/calendar")
-        public String getMyCalendar() {
+        @GetMapping("/planner")
+        public String getMyPlanner() {
             return "plan/calendar";
         }
 

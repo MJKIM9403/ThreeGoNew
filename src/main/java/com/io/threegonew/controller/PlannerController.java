@@ -1,55 +1,41 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.domain.Cat2;
-import com.io.threegonew.domain.Cat3;
-import com.io.threegonew.dto.PageResponse;
-import com.io.threegonew.dto.TourItemResponse;
-import com.io.threegonew.dto.TourItemSelectRequest;
-import com.io.threegonew.service.TourItemContentService;
-import com.io.threegonew.service.TourItemService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.io.threegonew.dto.AddPlannerRequest;
+import com.io.threegonew.service.PlannerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("plan")
-@RequiredArgsConstructor
+@RequestMapping("/planner")
 public class PlannerController {
-    private final TourItemService tourItemService;
-    private final TourItemContentService tourItemContentService;
 
-    @GetMapping(value = {"/city/{areaCode}/{sigunguCode}","/city/{areaCode}"})
-    public String getSelectList(@PathVariable(name = "areaCode") Integer areaCode,
-                                @PathVariable(name = "sigunguCode", required = false) Integer sigunguCode,
-                                Model model){
-        TourItemSelectRequest request = buildTourItemSelectRequest(areaCode, sigunguCode);
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+    private final PlannerService plannerService;
 
-        model.addAttribute("areaList", tourItemService.findAreaList());
-        model.addAttribute("cat1List", tourItemService.findCat1List());
-        model.addAttribute("cat2List", new ArrayList<Cat2>());
-        model.addAttribute("cat3List", new ArrayList<Cat3>());
-        model.addAttribute("sigunguList", tourItemService.findSigunguList(areaCode));
-        model.addAttribute("contentTypeList", tourItemService.findContentTypeList());
-        model.addAttribute("selectedArea", tourItemService.findArea(areaCode));
-        model.addAttribute("pageResponse", pageResponse);
-
-        return "plan/plan";
+    @Autowired
+    public PlannerController(PlannerService plannerService) {
+        this.plannerService = plannerService;
     }
 
-    private TourItemSelectRequest buildTourItemSelectRequest(Integer areaCode, Integer sigunguCode) {
-        String AreaCode = String.valueOf(areaCode);
-        String SigunguCode = (sigunguCode == null) ? null : String.valueOf(sigunguCode);
+    @PostMapping("/add")
+    public String addPlanner(@ModelAttribute AddPlannerRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            // 바인딩 오류 처리
+            System.out.println("error");; // 오류 페이지로 리다이렉트 또는 오류 메시지를 출력하는 뷰를 반환
+        }
 
-        return TourItemSelectRequest.builder()
-                .areaCode(AreaCode)
-                .sigunguCode(SigunguCode)
-                .build();
+        System.out.println(request.getPlannerName());
+        System.out.println(request.getStartDate());
+        System.out.println(request.getEndDate());
+
+        plannerService.save(request);
+
+        // 데이터 저장 후 원하는 페이지로 리다이렉트하거나 뷰 반환
+        return "redirect:/index";
     }
 }
-
