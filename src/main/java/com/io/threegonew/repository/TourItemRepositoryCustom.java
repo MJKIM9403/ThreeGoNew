@@ -6,4 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface TourItemRepositoryCustom {
     Page<TourItem> findMyBookmarkByAreacode(Pageable pageable, String areacode, String userId);
+
+    long countMyBookmarkByAreacode(String areacode, String userId);
 }

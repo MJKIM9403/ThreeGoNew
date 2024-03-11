@@ -34,6 +34,20 @@ public class TourItemRepositoryCustomImpl implements TourItemRepositoryCustom{
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        return new PageImpl<>(contents, pageable, contents.size());
+        return new PageImpl<>(contents, pageable, countMyBookmarkByAreacode(areacode, userId));
+    }
+
+    @Override
+    public long countMyBookmarkByAreacode(String areacode, String userId) {
+        long count = jpaQueryFactory
+                .select(tourItem.count())
+                .from(tourItem)
+                .join(bookmark)
+                .on(tourItem.contentid.eq(bookmark.tourItem.contentid))
+                .where(
+                        tourItem.areacode.eq(areacode),
+                        bookmark.user.id.eq(userId)
+                ).fetchFirst();
+        return count;
     }
 }
