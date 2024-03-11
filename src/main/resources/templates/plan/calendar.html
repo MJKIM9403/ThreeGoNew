@@ -175,18 +175,19 @@
 
 
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
-            <form autocomplete="off" th:action method="post">
+            <form method="post" action="/planner/add">
+                <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
                 <div class="flex-sm-row flex-column d-flex">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-group input-daterange">
-                            <input id="start" type="text" class="form-control" placeholder="Arriving Date" onchange="test()" readonly>
+                            <input id="startDate" name="startDate" type="date" class="form-control" placeholder="Arriving Date" onchange="test()">
                             <i class="bi bi-calendar" id="fa-1"></i>
-                            <input id="end" type="text" class="form-control" placeholder="Leaving Date" onchange="test()" readonly>
+                            <input id="endDate" name="endDate" type="date" class="form-control" placeholder="Leaving Date" onchange="test()">
                             <i class="bi bi-calendar" id="fa-2"></i>
                         </div>
                     </div>
                     <div class="col-sm-3 col-12 px-0">
-                        <button type="submit" class="btn btn-black" onclick="location.href='/plan'">Search</button>
+                        <button type="submit" class="btn btn-black">Search</button>
                     </div>
                 </div>
             </form>
@@ -207,11 +208,11 @@
 
         function test() {
             // 시작일 value 가져오기
-            const startday = document.getElementById('start').value;
+            const startday = document.getElementById('startDate').value;
             document.querySelector('.result').innerText = startday;
 
             // 종료일 value 가져오기
-            const endday = document.getElementById('end').value;
+            const endday = document.getElementById('endDate').value;
             document.querySelector('.result').innerText = endday;
         }
 

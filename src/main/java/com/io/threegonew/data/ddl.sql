@@ -5,6 +5,21 @@
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 테이블 생성 --
+--플래너 테이블 추가--
+-- CREATE TABLE 'PLANNER' (
+--     u_id varchar(40) NOT NULL,
+--     p_title varchar(200) NOT NULL,
+--     p_startdate DATETIME NOT NULL,
+--     p_enddate DATETIME NOT NULL
+-- );
+
+-- 플래너 테이블 추가 --
+create table `PLANNER` (
+                           p_id int AUTO_INCREMENT PRIMARY KEY,
+                           p_name varchar(200) null default null,
+                           start_date DATE not null,
+                           end_date DATE not null
+);
 -- 추천 테이블 추가 --
 CREATE TABLE `LIKES` (
                          l_id INT AUTO_INCREMENT,
