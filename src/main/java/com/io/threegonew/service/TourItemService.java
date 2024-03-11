@@ -132,6 +132,8 @@ public class TourItemService {
         return pageResponse;
     }
 
+
+
     /* TourItemResponse 매핑을 위한 메소드*/
 
     private TourItemResponse tourItemMapper(TourItem tourItem){

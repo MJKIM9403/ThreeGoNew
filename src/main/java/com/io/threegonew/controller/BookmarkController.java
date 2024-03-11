@@ -27,11 +27,11 @@ public class BookmarkController {
         }else {
             boolean isBookmarkChecked = bookmark.isPresent();
             if(isBookmarkChecked){
+                // 북마크 제거
                 bookmarkService.deleteBookmark(bookmark.get());
-                System.out.println("북마크를 삭제했습니다.");
             }else {
+                // 북마크 추가
                 bookmarkService.addBookmark(request);
-                System.out.println("북마크를 추가했습니다.");
             }
             return ResponseEntity.ok(BookmarkResponse.builder()
                     .bookmarkCount(bookmarkService.bookmarkCount(request.getContentId()))

@@ -38,6 +38,7 @@ out/
 <<<<<<< HEAD
 =======
 
+src/main/generated
 
 APiKey.java
 apikey.js

@@ -30,4 +30,7 @@ public interface TourItemRepository extends JpaRepository<TourItem, String>, Jpa
             "ORDER BY distance " +
             "LIMIT 0 , 10", nativeQuery = true)
     List<MoreTourItemInterface> findSubItemByCat3OrderByDistance(TourItemResponse response);
+
+
+    Page<TourItem> findMyBookmarkByAreacode(Pageable pageable, String areacode);
 }

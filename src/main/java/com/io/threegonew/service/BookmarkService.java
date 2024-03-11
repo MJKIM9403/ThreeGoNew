@@ -4,10 +4,16 @@ import com.io.threegonew.domain.Bookmark;
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.BookmarkRequest;
+import com.io.threegonew.dto.MyBookmarkByAreaRequest;
+import com.io.threegonew.dto.PageResponse;
+import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.repository.BookmarkRepository;
 import com.io.threegonew.repository.TourItemRepository;
 import com.io.threegonew.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -49,4 +55,7 @@ public class BookmarkService {
     public void deleteBookmark(Bookmark bookmark){
         bookmarkRepository.delete(bookmark);
     }
+
+
+
 }
