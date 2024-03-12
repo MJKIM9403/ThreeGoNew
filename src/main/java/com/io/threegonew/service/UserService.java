@@ -43,9 +43,12 @@ public class UserService {
         ).getId();
     }
 
-//    public UserInfoResponse findUserInfo(String userId) {
-//        userRepository.findById(userId)
-//    }
+    public UserInfoResponse findUserInfo(String userId) {
+        User findUser = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
+
+        return userInfoResponse(findUser);
+    }
 
 
     private UserInfoResponse userInfoResponse(User user) {
