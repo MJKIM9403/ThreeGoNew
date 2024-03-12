@@ -12,11 +12,37 @@ ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 --     p_startdate DATETIME NOT NULL,
 --     p_enddate DATETIME NOT NULL
 -- );
+-- 지역
+CREATE TABLE `T_AREA` (
+                          j_areacode   INT      NOT NULL,
+                          j_area_name   varchar(200)      NOT null,
+                          latitude double,
+                          longitude double
+);
+insert into T_AREA values('1', '서울', 37.56632099109217, 126.97794558984958);
+insert into T_AREA values('2', '인천', 37.45590872680688, 126.70552692050053);
+insert into T_AREA values('3', '대전', 36.35046856919224, 127.38482123708665);
+insert into T_AREA values('4', '대구', 35.87140219365024, 128.60174803297681);
+insert into T_AREA values('5', '광주', 37.42941190584035, 127.2551452976328);
+insert into T_AREA values('6', '부산', 35.179775233195855, 129.0749925863485);
+insert into T_AREA values('7', '울산', 35.53962603316087, 129.31151418501798);
+insert into T_AREA values('8', '세종특별자치시', 36.480132736457776, 127.28875674178784);
+insert into T_AREA values('31', '경기도', 37.27504774582099, 127.00944450410927);
+insert into T_AREA values('32', '강원도', 37.88539639746763, 127.7297762607464);
+insert into T_AREA values('33', '충청북도', 36.63567674729703, 127.49138343414079);
+insert into T_AREA values('34', '충청남도', 36.658833942854216, 126.67284926797313);
+insert into T_AREA values('35', '경상북도', 36.57601417809463, 128.50559446919635);
+insert into T_AREA values('36', '경상남도', 35.23828668905039, 128.69239588910835);
+insert into T_AREA values('37', '전라북도', 35.82036067006113, 127.10872713817363);
+insert into T_AREA values('38', '전라남도', 34.81621546364296, 126.46291182755675);
+insert into T_AREA values('39', '제주도', 33.4889273516415, 126.50042271000662);
 
 -- 플래너 테이블 추가 --
 create table `PLANNER` (
                            p_id int AUTO_INCREMENT PRIMARY KEY,
-                           p_name varchar(200) null default null,
+                           u_id  varchar(40) not null,
+                           j_areacode INT not null,
+                           p_name varchar(200) not null,
                            start_date DATE not null,
                            end_date DATE not null
 );

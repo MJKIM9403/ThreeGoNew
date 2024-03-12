@@ -165,17 +165,21 @@
     <div class="container px-1 px-sm-5 mx-auto">
         <div class="pt-5 pb-5">
 
-            <select name="area">
-                <option value="">여행장소 선택 ㄱ</option>
-                <option value="../plan/city/1">서울</option>
-                <option value="../plan/city/2">인천</option>
-                <option value="../plan/city/3">대전</option>
-                <option value="../plan/city/4">대구</option>
-            </select>
-
-
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
             <form method="post" action="/planner/add">
+                <select name="areaCode" id="areaCode" onchange="updateSigunguList()">
+                    <option value="">여행장소 선택</option>
+                    <th:block th:each="area : ${areaList}">
+                        <option th:value="${area.areaCode}" th:text="${area.areaName}"></option>
+                    </th:block>
+                </select>
+
+                <select name="sigunguCode" id="sigunguCode">
+                    <option value="">시군구 선택</option>
+                    <!-- 여기는 JavaScript를 통해 동적으로 업데이트될 예정 -->
+                </select>
+
+
                 <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
                 <div class="flex-sm-row flex-column d-flex">
                     <div class="col-sm-9 col-12 px-0 mb-2">
@@ -196,6 +200,27 @@
     </div>
     <div class="result"></div>
     <script>
+        function updateSigunguList() {
+            const areaCode = document.getElementById('areaCode').value;
+            const sigunguSelect = document.getElementById('sigunguCode');
+
+            // 시군구 선택 드롭다운 초기화
+            sigunguSelect.innerHTML = '<option value="">시군구 선택</option>';
+
+            if (areaCode) {
+                fetch(`/planner/sigungu?areaCode=${areaCode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(sigungu => {
+                            const option = new Option(sigungu.sigunguName, sigungu.sigunguCode);
+                            sigunguSelect.add(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading sigungu data:', error));
+            }
+        }
+
+
         $(document).ready(function(){
 
             $('.input-daterange').datepicker({

@@ -21,10 +21,10 @@ public class TestController {
             return "login";
         }
 
-        @GetMapping("/planner")
-        public String getMyPlanner() {
-            return "plan/calendar";
-        }
+//        @GetMapping("/planner")
+//        public String getMyPlanner() {
+//            return "plan/calendar";
+//        }
 
 //        @GetMapping("/plan")
 //        public String getMyPlan() {

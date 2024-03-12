@@ -12,6 +12,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class AddPlannerRequest {
+    @NotNull(message = "여행지역을 선택해주세요.")
+    private Integer areaCode;
+
     @NotEmpty(message = "플래너 제목을 입력해주세요.")
     private String plannerName;
 

@@ -28,13 +28,6 @@ public class PlanController {
     private final TourItemService tourItemService;
     private final TourItemContentService tourItemContentService;
 
-
-//    @PostMapping("/")
-//    public String addPlanner(AddPlannerRequest request) {
-//        plannerService.save(request);
-//        return "redirect:/pl"
-//    }
-
     @GetMapping(value = {"/city/{areaCode}/{sigunguCode}","/city/{areaCode}"})
     public String getSelectList(@PathVariable(name = "areaCode") Integer areaCode,
                                 @PathVariable(name = "sigunguCode", required = false) Integer sigunguCode,

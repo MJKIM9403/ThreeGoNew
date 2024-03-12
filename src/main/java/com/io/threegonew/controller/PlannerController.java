@@ -1,15 +1,18 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.domain.Area;
+import com.io.threegonew.domain.Sigungu;
 import com.io.threegonew.dto.AddPlannerRequest;
 import com.io.threegonew.service.PlannerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/planner")
@@ -17,24 +20,46 @@ public class PlannerController {
 
     private final PlannerService plannerService;
 
-    @Autowired
     public PlannerController(PlannerService plannerService) {
         this.plannerService = plannerService;
     }
 
+    @GetMapping
+    public String showAreaCode(Model model) {
+        List<Area> areaList = plannerService.findAllAreas();
+        model.addAttribute("areaList", areaList);
+        return "plan/calendar";
+    }
+
+    @GetMapping("/sigungu")
+    @ResponseBody
+    public List<Sigungu> getSigunguList(@RequestParam Integer areaCode) {
+        return plannerService.findSigunguByAreaCode(areaCode);
+    }
+
     @PostMapping("/add")
-    public String addPlanner(@ModelAttribute AddPlannerRequest request, BindingResult result) {
+    public String addPlanner(@ModelAttribute AddPlannerRequest request, BindingResult result, RedirectAttributes rttr) {
         if (result.hasErrors()) {
             // 바인딩 오류 처리
             System.out.println("error");; // 오류 페이지로 리다이렉트 또는 오류 메시지를 출력하는 뷰를 반환
         }
 
+        // 현재 사용자의 인증 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 인증 정보에서 사용자 아이디를 추출
+        String userId = authentication.getName();
+
+        System.out.println(userId);
         System.out.println(request.getPlannerName());
         System.out.println(request.getStartDate());
         System.out.println(request.getEndDate());
 
-        plannerService.save(request);
+        plannerService.save(request, userId);
 
+        // RedirectAttributes 를 사용해 URL에 파라미터 추가
+        rttr.addAttribute("plannerName",request.getPlannerName());
+        rttr.addAttribute("startDate",request.getStartDate());
+        rttr.addAttribute("endDate",request.getEndDate());
         // 데이터 저장 후 원하는 페이지로 리다이렉트하거나 뷰 반환
         return "redirect:/index";
     }

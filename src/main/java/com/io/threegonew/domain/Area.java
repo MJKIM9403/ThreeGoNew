@@ -21,4 +21,8 @@ public class Area {
     private Integer areaCode;
     @Column(name = "j_area_name")
     private String areaName;
+    @Column(name = "latitude")
+    private Double mapY;
+    @Column(name = "longitude")
+    private Double mapX;
 }
