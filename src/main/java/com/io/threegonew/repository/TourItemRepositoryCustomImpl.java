@@ -31,6 +31,7 @@ public class TourItemRepositoryCustomImpl implements TourItemRepositoryCustom{
                         tourItem.areacode.eq(areacode),
                         bookmark.user.id.eq(userId)
                 )
+                .orderBy(bookmark.bookmarkId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -46,6 +47,36 @@ public class TourItemRepositoryCustomImpl implements TourItemRepositoryCustom{
                 .on(tourItem.contentid.eq(bookmark.tourItem.contentid))
                 .where(
                         tourItem.areacode.eq(areacode),
+                        bookmark.user.id.eq(userId)
+                ).fetchFirst();
+        return count;
+    }
+
+    @Override
+    public Page<TourItem> findMyBookmark(Pageable pageable, String userId) {
+        List<TourItem> contents = jpaQueryFactory
+                .select(tourItem)
+                .from(tourItem)
+                .join(bookmark)
+                .on(tourItem.contentid.eq(bookmark.tourItem.contentid))
+                .where(
+                        bookmark.user.id.eq(userId)
+                )
+                .orderBy(bookmark.bookmarkId.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        return new PageImpl<>(contents, pageable, countMyBookmark(userId));
+    }
+
+    @Override
+    public long countMyBookmark(String userId) {
+        long count = jpaQueryFactory
+                .select(tourItem.count())
+                .from(tourItem)
+                .join(bookmark)
+                .on(tourItem.contentid.eq(bookmark.tourItem.contentid))
+                .where(
                         bookmark.user.id.eq(userId)
                 ).fetchFirst();
         return count;

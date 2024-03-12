@@ -45,10 +45,6 @@ public class PageResponse<E> {
         this.end = Math.min(end, this.last);
         this.prev = this.start > 1;
         this.next = this.end < this.last;
-
-        System.out.println("totalPage: " + totalPages);
-        System.out.println("last: " + last);
-        System.out.println("end: " + end);
     }
 
 }

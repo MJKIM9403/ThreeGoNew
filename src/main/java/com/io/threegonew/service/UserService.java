@@ -3,8 +3,10 @@ package com.io.threegonew.service;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
 import com.io.threegonew.dto.LoginRequest;
+import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,21 @@ public class UserService {
                 .u_about(dto.getU_about())
                 .build()
         ).getId();
+    }
+
+//    public UserInfoResponse findUserInfo(String userId) {
+//        userRepository.findById(userId)
+//    }
+
+
+    private UserInfoResponse userInfoResponse(User user) {
+        return UserInfoResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .profileImg("../assets/img/profileimg/" + user.getU_sfile())
+                .about(user.getU_about())
+                .build();
     }
 
 
