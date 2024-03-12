@@ -21,9 +21,6 @@ public class Planner {
     @Column(name = "u_id")
     private String userId;
 
-    @Column(name = "j_areacode")
-    private Integer areaCode;
-
     @Column(name = "p_name", nullable = false)
     private String plannerName;
 
@@ -36,8 +33,7 @@ public class Planner {
     private Date endDate;
 
     @Builder
-    public Planner(String userId, Integer areaCode, String plannerName, Date startDate, Date endDate) {
-        this.areaCode = areaCode;
+    public Planner(String userId, String plannerName, Date startDate, Date endDate) {
         this.userId = userId;
         this.plannerName = plannerName;
         this.startDate = startDate;
