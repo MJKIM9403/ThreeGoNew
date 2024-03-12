@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller
@@ -56,11 +57,15 @@ public class PlannerController {
 
         plannerService.save(request, userId);
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = dateFormat.format(request.getStartDate());
+        String endDate = dateFormat.format(request.getEndDate());
+
         // RedirectAttributes 를 사용해 URL에 파라미터 추가
         rttr.addAttribute("plannerName",request.getPlannerName());
-        rttr.addAttribute("startDate",request.getStartDate());
-        rttr.addAttribute("endDate",request.getEndDate());
+        rttr.addAttribute("startDate",startDate);
+        rttr.addAttribute("endDate",endDate);
         // 데이터 저장 후 원하는 페이지로 리다이렉트하거나 뷰 반환
-        return "redirect:/index";
+        return "redirect:/plan/city";
     }
 }

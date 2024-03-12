@@ -35,7 +35,6 @@ public class PlannerService {
     public Planner save(AddPlannerRequest dto, String userId) {
         return plannerRepository.save(Planner.builder()
                 .userId(userId)
-                .areaCode(dto.getAreaCode())
                 .plannerName(dto.getPlannerName())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
