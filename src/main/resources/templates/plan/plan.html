@@ -869,7 +869,6 @@ function deleteMarkers() {
                                         <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
                                     </div>
 
-
                                     <div th:title="${touritem.title}" class="ps-3">
                                         <input type="hidden" th:id="mapx" th:value="${touritem.mapx}">
                                         <input type="hidden" th:id="mapy" th:value="${touritem.mapy}">
