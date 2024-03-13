@@ -316,6 +316,7 @@
 <script th:inline="javascript">
     let scrollPage = 0;
     let scrollCheck = false;
+    let fisrtLoad = true;
     let gallery = $('.gallery');
     $(document).ready(function (){
         gallery.html("")
@@ -329,20 +330,26 @@
             if (scrollCheck) return;
             // 현재 페이지가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
             observer.observe(document.getElementById('load-point'));
-            showBookmark(scrollPage);
+            if(fisrtLoad){
+                fisrtLoad = false;
+            }else {
+                scrollPage += 1;
+            }
+            showBookmark();
             // 페이지를 불러오는 함수를 호출합니다.
         });
     });
 
 
-    function showBookmark(page) {
+
+    function showBookmark() {
         $.ajax({
             url : '/api/bookmark',
             type : 'POST',
             contentType : 'application/json; charset=UTF-8',
             data : JSON.stringify({
                 userId : [[${findUser.id}]],
-                page : page
+                page : scrollPage
             }),
             success : function (response) {
                 let bookmarkList = response.pageResponse.dtoList;
@@ -371,7 +378,6 @@
                 console.log(err)
             },
             beforeSend : function () {
-                scrollPage += 1;
                 scrollCheck = true;
                 $(".loader").show()
             },
@@ -398,16 +404,16 @@
                 let type = sessionStorage.getItem("type");
                 console.log(sessionPage)
                 console.log(scrollPosition)
-                for(let page = 0; page <= sessionPage; page++){
+                for(let page = 0; page < sessionPage; page++){
                     scrollPage = page
                     console.log(`${scrollPage}, ${page}`)
-                    if(type === "bookmark") showBookmark(page);
+                    if(type === "bookmark") showBookmark();
                 }
                 window.scrollTo(0, scrollPosition);
                 sessionStorage.removeItem("scrollPage");
                 sessionStorage.removeItem("scrollPosition");
                 sessionStorage.removeItem("type");
-                // io.observe(document.getElementById('load-point'));
+                io.observe(document.getElementById('load-point'));
             }else {
                 io.observe(document.getElementById('load-point'));
             }
