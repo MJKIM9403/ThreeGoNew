@@ -69,10 +69,10 @@
     var marker = [];
 
     // 경유지
-    var viaMarkers = [];
+    var viaMarkers = new Array(days).fill([]);
 
     // 관광지들
-    var places = [];
+    var places = new Array(days).fill([]);
 
     // 내가 선택한 관광지
     var place;
@@ -153,16 +153,16 @@
                         // 선택한 관광지가 1개 이상일 경우에만
                         if (places[index].length >= 1) {
                             // 기존 마커 제거
-                            viaMarkers['viaMarkers'+i] .forEach(function(marker) {
+                            viaMarkers[index].forEach(function(marker) {
                                 marker.setMap(null); // TMap에서 마커 제거
                             });
-                            viaMarkers['viaMarkers'+i]  = []; // viaMarkers 배열 초기화
+                            viaMarkers[index]  = []; // viaMarkers 배열 초기화
 
-                            addMarker("start", places['places'+i][0]);
-                            for (var j = 1; j < places['places'+i].length - 1; j++) {
-                                addMarker("pass", places['places'+i][j]);
+                            addMarker("start", places[index][0]);
+                            for (var j = 1; j < places[index].length - 1; j++) {
+                                addMarker("pass", places[index][j]);
                             }
-                            addMarker("end", places['places'+i][places['places'+i].length - 1]);
+                            addMarker("end", places[index][places[index].length - 1]);
                         }
                     } else {
                         alert ('이미 추가된 장소입니다.');
@@ -184,15 +184,15 @@
                         }
 
                         // 관광지 목록에 추가한 대로 marker 생성
-                        marker['marker'+i] = new Tmapv2.Marker({
+                        marker = new Tmapv2.Marker({
                             position: new Tmapv2.LatLng(info.mapy, info.mapx),
                             icon: imgUrl,
                             iconSize: new Tmapv2.Size(24, 38),
-                            map: map,
+                            map: maps[index],
                             title: info.title
                         })
-                        viaMarkers['viaMarkers'+i].push(marker['marker'+i]);
-                        return marker['marker'+i];
+                        viaMarkers[index].push(marker);
+                        return marker;
                     }
                 })
             })
