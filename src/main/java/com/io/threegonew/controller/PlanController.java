@@ -103,7 +103,7 @@ public class PlanController {
 
 
 
-        return "plan/plan";
+        return "plan/plan2";
     }
 
     private TourItemSelectRequest buildTourItemSelectRequest() {
