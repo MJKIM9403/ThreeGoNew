@@ -203,7 +203,7 @@
 
 
             // 전체 관광지 삭제하기 버튼을 누르면 모든 마커를 삭제
-            $("#btn_delete").click(function () {
+            $(".btn_delete").click(function () {
                 deleteMarkers();
                 if(resultInfoArr.length > 0){
                     for(var i in resultInfoArr){
@@ -214,7 +214,7 @@
             })
 
             // 최적화 버튼을 누르면 ajax 실행
-            $("#btn_optimize").click(function () {
+            $(".btn_optimize").click(function () {
                 // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
                 if(viaMarkerss.length < 3) {
                     alert('경유지는 1개 이상이어야합니다.');
@@ -271,7 +271,7 @@
                             var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
                             var tFare = "총 요금 : " + resultData.totalFare + "원";
 
-                            $("#result").text(tDistance+tTime+tFare);
+                            $(".result").text(tDistance+tTime+tFare);
 
                             // 기존 라인 초기화
                             if(resultInfoArr.length > 0){
@@ -339,7 +339,7 @@
             }
 
             // 경로 보기 버튼을 누르면 ajax 실행
-            $("#btn_route").click(function () {
+            $(".btn_route").click(function () {
                 // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
                 if(viaMarkerss.length < 3) {
                     alert('경유지는 1개 이상이어야합니다.');
@@ -394,7 +394,7 @@
                             var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
                             var tFare = "총 요금 : " + resultData.totalFare + "원";
 
-                            $("#result").text(tDistance+tTime+tFare);
+                            $(".result").text(tDistance+tTime+tFare);
 
                             // 기존 라인 초기화
                             if(resultInfoArr.length > 0){
@@ -736,9 +736,9 @@
         padding-left: 0 !important;
         margin-bottom: 0 !important;
     }
-    .row {
-        justify-content: space-between;
-    }
+    /*.row {*/
+    /*    justify-content: space-between;*/
+    /*}*/
     .row > * {
         padding-right: 0 !important;
         padding-left: 0 !important;
@@ -919,8 +919,8 @@
             </div>
         </div>
 
-        <th:block th:each="dayNumber : ${dayNumbers}">
-        <div th:id="'day' + ${dayNumber}" class="day row vh-100 d-flex flex-column">
+
+
             <!--장소찾기-->
             <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
                 <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
@@ -1124,50 +1124,51 @@
             </div>
 
 
-            <!--장소담기-->
-            <div id="your_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-                <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                    <span class="fs-5 fw-semibold" th:text="DAY + ${dayNumber}"></span>
-                </a>
+            <th:block th:each="dayNumber : ${dayNumbers}">
+                <div th:id="'day' + ${dayNumber}" class="day row vh-100 d-flex flex-column">
+                    <!--장소담기-->
+                    <div id="your_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
+                        <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+                            <span class="fs-5 fw-semibold" th:text="DAY + ${dayNumber}"></span>
+                        </a>
 
-                <!--버튼눌러서 담으면 이렇게 됩니다.-->
-                <!--            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">-->
-                <!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
-                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
-                <!--                        <strong class="mb-1">장소1</strong>-->
-                <!--                        <small>-->
-                <!--아이콘 눌러서 담기-->
-                <!--                            <button id="deleteBtn" type="button" onclick="deleteRow(this);">-->
-                <!--                                <i class='bi bi-x-circle'></i>-->
-                <!--                            </button>-->
-                <!--                        </small>-->
-                <!--                    </div>-->
-                <!--                </a>-->
-                <!--            </div>-->
+                        <!--버튼눌러서 담으면 이렇게 됩니다.-->
+                        <!--            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">-->
+                        <!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
+                        <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                        <!--                        <strong class="mb-1">장소1</strong>-->
+                        <!--                        <small>-->
+                        <!--아이콘 눌러서 담기-->
+                        <!--                            <button id="deleteBtn" type="button" onclick="deleteRow(this);">-->
+                        <!--                                <i class='bi bi-x-circle'></i>-->
+                        <!--                            </button>-->
+                        <!--                        </small>-->
+                        <!--                    </div>-->
+                        <!--                </a>-->
+                        <!--            </div>-->
 
-                <div id="areabox" class="scroll list-group list-group-flush scrollarea">
+                        <div th:id="'areabox' + ${dayNumber}" class="scroll list-group list-group-flush scrollarea">
+                        </div>
+                    </div>
+
+                    <!--지도가 들어갑니다.-->
+                    <div th:id="'map' + ${dayNumber}" class="vh-100 d-flex flex-column align-items-stretch default">
+                        <button id="toggle-btn" class="bg-white text-center" type="button" onclick="toggleDay();">
+                            <i id="toggle-btn-icon" class="bi bi-caret-left-fill"></i>
+                        </button>
+
+                        <div class="map-result position-absolute">
+                            <p class="result"></p>
+                            <button class="btn btn-primary btn_route">경로 확인</button>
+                            <button class="btn btn-primary btn_optimize">동선 추천</button>
+                            <button class="btn btn-danger btn_delete">전체 삭제</button>
+                        </div>
+                        <div th:id="map_div + ${dayNumber}">
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <!--지도가 들어갑니다.-->
-            <div id="map" class="vh-100 d-flex flex-column align-items-stretch default">
-                <button id="toggle-btn" class="bg-white text-center" type="button" onclick="toggleDay();">
-                    <i id="toggle-btn-icon" class="bi bi-caret-left-fill"></i>
-                </button>
-
-                <div class="map-result position-absolute">
-                    <p id="result"></p>
-                    <button id="btn_route" class="btn btn-primary">경로 확인</button>
-                    <button id="btn_optimize" class="btn btn-primary">동선 추천</button>
-                    <button id="btn_delete" class="btn btn-danger">전체 삭제</button>
-                </div>
-                <div th:id="map_div + ${dayNumber}">
-                </div>
-            </div>
+            </th:block>
         </div>
-        </th:block>
-
     </div>
-</div>
 </body>
 </html>
