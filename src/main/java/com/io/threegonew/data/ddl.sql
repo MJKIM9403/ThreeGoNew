@@ -41,7 +41,6 @@ insert into T_AREA values('39', '제주도', 33.4889273516415, 126.5004227100066
 create table `PLANNER` (
                            p_id int AUTO_INCREMENT PRIMARY KEY,
                            u_id  varchar(40) not null,
-                           j_areacode INT not null,
                            p_name varchar(200) not null,
                            start_date DATE not null,
                            end_date DATE not null

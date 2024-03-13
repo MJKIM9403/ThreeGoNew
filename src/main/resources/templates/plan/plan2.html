@@ -56,40 +56,43 @@
     }
 
 
-    $(document).ready(function() {
-        initTmap();
-    })
-
     // 날짜
     var days = [[${daysBetween}]];
 
+    // 인덱스
+    var index;
+
     // tmap api
-    var maps = [{},{},{},{}];
+    var maps = [];
+
+    // 마커
+    var marker = [];
 
     // 경유지
-    var viaMarkers = [{},{},{},{}];
+    var viaMarkers = [];
 
     // 관광지들
-    var places = {};
+    var places = [];
 
     // 내가 선택한 관광지
-    var place = {};
-
-    // 경유지 최적화 실행 시간
-    var startTime = getRealTime();
+    var place;
 
     // 경로그림정보
-    var drawInfoArr = {};
-    var resultInfoArr = {};
+    var drawInfoArr = [];
+    var resultInfoArr = [];
 
-    // 앱키
-    const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
-
-    // 지도들
-    var maps = {};
-
-
+    // for(var i = 1; i <= days; i++) {
+    //     maps[`map`+i] = {};
+    //     viaMarkers['viaMarkers'+i] = {};
+    //     marker['marker'+i] = {};
+    //     places['places'+i] = {};
+    //     place['place'+i] = {};
+    //     drawInfoArr['drawInfoArr'+i] = {};
+    //     resultInfoArr['resultInfoArr'+i] = {};
+    // }
     console.log(days);
+
+
     // 현재 시간을 토대로 이동에 걸리는 시간을 구합니다.
     function getRealTime() {
         var date = new Date();
@@ -103,6 +106,345 @@
         console.log(currentDate);
         return currentDate;
     }
+    function initTmap2(mapId) {
+
+            map = new Tmapv2.Map(mapId, {
+                center: new Tmapv2.LatLng(36.4109466, 128.1590828),
+                width: "100%",
+                height: "100%",
+                zoom: 8,
+                zoomControl: true,
+                scrollwheel: true
+            });
+
+            maps.push(map);
+
+            // 아이콘 누르면 장소 담기에 추가하는 함수
+            $(document).ready(function () {
+                $('.plus').click(function () {
+                    // 이름 가져오기
+                    const areaname = $(this).prev('div').children('div').text();
+                    console.log(areaname);
+
+                    // 위치 가져오기
+                    const mapx = $(this).prev('div').children('input').eq(0).val();
+                    const mapy = $(this).prev('div').children('input').eq(1).val();
+                    console.log(mapx, mapy);
+
+                    // 지금 선택한 장소
+                    place = {
+                        title : areaname,
+                        mapx: mapx,
+                        mapy: mapy
+                    }
+
+                    console.log(place);
+                    // 중복 체크
+                    var isDuplicate = places.some(function(p) {
+                        return p.title === place.title;
+                    });
+
+                    if (!isDuplicate) {
+                        // 중복이 아닐 경우에만 관광지 목록에 내가 선택한 관광지를 추가하고
+                        places[index].push(place);
+                        // 출력한다
+                        $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
+
+                        // 선택한 관광지가 1개 이상일 경우에만
+                        if (places[index].length >= 1) {
+                            // 기존 마커 제거
+                            viaMarkers['viaMarkers'+i] .forEach(function(marker) {
+                                marker.setMap(null); // TMap에서 마커 제거
+                            });
+                            viaMarkers['viaMarkers'+i]  = []; // viaMarkers 배열 초기화
+
+                            addMarker("start", places['places'+i][0]);
+                            for (var j = 1; j < places['places'+i].length - 1; j++) {
+                                addMarker("pass", places['places'+i][j]);
+                            }
+                            addMarker("end", places['places'+i][places['places'+i].length - 1]);
+                        }
+                    } else {
+                        alert ('이미 추가된 장소입니다.');
+                    }
+
+                    function addMarker(status, info) {
+                        // status 에 따라 아이콘 바꾸기
+                        switch (status) {
+                            case "start":
+                                imgUrl = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_s.png';
+                                break;
+                            case "pass":
+                                imgUrl = 'https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png';
+                                break;
+                            case "end":
+                                imgUrl = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_e.png';
+                                break;
+                            default:
+                        }
+
+                        // 관광지 목록에 추가한 대로 marker 생성
+                        marker['marker'+i] = new Tmapv2.Marker({
+                            position: new Tmapv2.LatLng(info.mapy, info.mapx),
+                            icon: imgUrl,
+                            iconSize: new Tmapv2.Size(24, 38),
+                            map: map,
+                            title: info.title
+                        })
+                        viaMarkers['viaMarkers'+i].push(marker['marker'+i]);
+                        return marker['marker'+i];
+                    }
+                })
+            })
+
+            // 다음 버튼
+            $("#next-btn").click(function () {
+            })
+
+
+            // 전체 관광지 삭제하기 버튼을 누르면 모든 마커를 삭제
+            $("#btn_delete").click(function () {
+                deleteMarkers();
+                if(resultInfoArr.length > 0){
+                    for(var i in resultInfoArr){
+                        resultInfoArr[i].setMap(null);
+                    }
+                    resultInfoArr=[];
+                }
+            })
+
+            // 최적화 버튼을 누르면 ajax 실행
+            $("#btn_optimize").click(function () {
+                // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
+                if(viaMarkerss.length < 3) {
+                    alert('경유지는 1개 이상이어야합니다.');
+                    return false;
+                } else {
+                    var headers = {};
+                    headers["appKey"] = appKey;
+
+                    // 시작 장소와 종료 장소
+                    var start_Mapx = viaMarkerss[0]._marker_data.options.position._lng;
+                    var start_Mapy = viaMarkerss[0]._marker_data.options.position._lat;
+                    var end_Mapx = viaMarkerss[viaMarkerss.length-1]._marker_data.options.position._lng;
+                    var end_Mapy = viaMarkerss[viaMarkerss.length-1]._marker_data.options.position._lat;
+
+                    // 마커에 찍힌 경유지
+                    var viaPoints = [];
+                    for(var i = 1; i<viaMarkerss.length-1; i++) {
+                        var viaPoint = {};
+                        viaPoint.viaPointId = i+"경유지";
+                        viaPoint.viaPointName = viaMarkerss[i]._marker_data.options.title;
+                        viaPoint.viaX = viaMarkerss[i]._marker_data.options.position._lng.toString();
+                        viaPoint.viaY = viaMarkerss[i]._marker_data.options.position._lat.toString();
+                        viaPoints.push(viaPoint);
+
+                        console.log(viaPoint);
+                    }
+                    console.log(viaPoints);
+
+
+                    $.ajax({
+                        type: "POST",
+                        headers: headers,
+                        url: "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
+                        async: false,
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            "startName": "출발",
+                            "startX": start_Mapx.toString(),
+                            "startY": start_Mapy.toString(),
+                            "startTime": startTime,
+                            "endName": "도착",
+                            "endX": end_Mapx.toString(),
+                            "endY": end_Mapy.toString(),
+                            "viaPoints": viaPoints,
+                            "reqCoordType" : "WGS84GEO",
+                            "resCoordType" : "EPSG3857"
+                        }),
+                        success:function(response){
+                            var resultData = response.properties;
+                            var resultFeatures = response.features;
+
+                            // 결과 출력
+                            var tDistance = "총 거리 : " + (resultData.totalDistance/1000).toFixed(1) + "km,  ";
+                            var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
+                            var tFare = "총 요금 : " + resultData.totalFare + "원";
+
+                            $("#result").text(tDistance+tTime+tFare);
+
+                            // 기존 라인 초기화
+                            if(resultInfoArr.length > 0){
+                                for(var i in resultInfoArr){
+                                    resultInfoArr[i].setMap(null);
+                                }
+                                resultInfoArr=[];
+                            }
+
+                            for(var i in resultFeatures) {
+                                var geometry = resultFeatures[i].geometry;
+                                var polyline_;
+
+                                drawInfoArr = [];
+
+                                if(geometry.type == "LineString") {
+                                    for(var j in geometry.coordinates){
+                                        // 경로들의 결과값(구간)들을 포인트 객체로 변환
+                                        var latlng = new Tmapv2.Point(geometry.coordinates[j][0], geometry.coordinates[j][1]);
+                                        // 포인트 객체를 받아 좌표값으로 변환
+                                        var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
+                                        // 포인트객체의 정보로 좌표값 변환 객체로 저장
+                                        var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
+
+                                        drawInfoArr.push(convertChange);
+                                    }
+
+                                    polyline_ = new Tmapv2.Polyline({
+                                        path : drawInfoArr,
+                                        strokeColor : "#FF0000",
+                                        strokeWeight: 6,
+                                        map : map
+                                    });
+                                    resultInfoArr.push(polyline_);
+
+                                    // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                    // var newData = geoData[0];
+                                    // PTbounds = new Tmapv2.LatLngBounds();
+                                    // for (var i = 0; i < newData.length; i++) {
+                                    //     var mData = newData[i];
+                                    //     var type = mData.geometry.type;
+                                    //     var pointType = mData.properties.pointType;
+                                    // }
+                                }
+                            }
+                        },
+                        error:function(request,status,error){
+                            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+                }
+            })
+
+            function deleteMarkers() {
+                for (var i=0; i<viaMarkerss.length; i++) {
+                    viaMarkerss[i].setMap(null);
+                }
+                // 등록된 마커 배열도 초기화
+                viaMarkerss = [];
+                // 장소 배열도 초기화
+                placess = [];
+                place = null;
+                // 출력된 목록도 초기화
+                $("#areabox").empty();
+            }
+
+            // 경로 보기 버튼을 누르면 ajax 실행
+            $("#btn_route").click(function () {
+                // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
+                if(viaMarkerss.length < 3) {
+                    alert('경유지는 1개 이상이어야합니다.');
+                    return false;
+                } else {
+                    var headers = {};
+                    headers["appKey"] = appKey;
+
+                    // 시작 장소와 종료 장소
+                    var start_Mapx = viaMarkerss[0]._marker_data.options.position._lng;
+                    var start_Mapy = viaMarkerss[0]._marker_data.options.position._lat;
+                    var end_Mapx = viaMarkerss[viaMarkerss.length-1]._marker_data.options.position._lng;
+                    var end_Mapy = viaMarkerss[viaMarkerss.length-1]._marker_data.options.position._lat;
+
+                    // 마커에 찍힌 경유지
+                    var viaPoints = [];
+                    for(var i = 1; i<viaMarkerss.length-1; i++) {
+                        var viaPoint = {};
+                        viaPoint.viaPointId = i+"경유지";
+                        viaPoint.viaPointName = viaMarkerss[i]._marker_data.options.title;
+                        viaPoint.viaX = viaMarkerss[i]._marker_data.options.position._lng.toString();
+                        viaPoint.viaY = viaMarkerss[i]._marker_data.options.position._lat.toString();
+                        viaPoints.push(viaPoint);
+
+                        console.log(viaPoint);
+                    }
+                    console.log(viaPoints);
+
+
+                    $.ajax({
+                        type: "POST",
+                        headers: headers,
+                        url: "https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",
+                        async: false,
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            "startName": "출발",
+                            "startX": start_Mapx.toString(),
+                            "startY": start_Mapy.toString(),
+                            "startTime": startTime,
+                            "endName": "도착",
+                            "endX": end_Mapx.toString(),
+                            "endY": end_Mapy.toString(),
+                            "viaPoints": viaPoints
+                        }),
+                        success:function(response){
+                            var resultData = response.properties;
+                            var resultFeatures = response.features;
+
+                            // 결과 출력
+                            var tDistance = "총 거리 : " + (resultData.totalDistance/1000).toFixed(1) + "km,  ";
+                            var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
+                            var tFare = "총 요금 : " + resultData.totalFare + "원";
+
+                            $("#result").text(tDistance+tTime+tFare);
+
+                            // 기존 라인 초기화
+                            if(resultInfoArr.length > 0){
+                                for(var i in resultInfoArr){
+                                    resultInfoArr[i].setMap(null);
+                                }
+                                resultInfoArr=[];
+                            }
+
+                            for(var i in resultFeatures) {
+                                var geometry = resultFeatures[i].geometry;
+                                var polyline_;
+
+                                drawInfoArr = [];
+
+                                if(geometry.type == "LineString") {
+                                    for(var j in geometry.coordinates){
+                                        var point = new Tmapv2.LatLng(geometry.coordinates[j][1],geometry.coordinates[j][0]);
+
+                                        drawInfoArr.push(point);
+                                    }
+
+                                    polyline_ = new Tmapv2.Polyline({
+                                        path : drawInfoArr,
+                                        strokeColor : "#FF0000",
+                                        strokeWeight: 6,
+                                        map : map
+                                    });
+                                    resultInfoArr.push(polyline_);
+
+
+                                    // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                    // var newData = geoData[0];
+                                    // PTbounds = new Tmapv2.LatLngBounds();
+                                    // for (var i = 0; i < newData.length; i++) {
+                                    //     var mData = newData[i];
+                                    //     var type = mData.geometry.type;
+                                    //     var pointType = mData.properties.pointType;
+                                    // }
+                                }
+                            }
+                        },
+                        error:function(request,status,error){
+                            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+                }
+            })
+    }
+
 
     function initTmap(mapId) {
         // 1. 지도 띄우기
@@ -118,319 +460,10 @@
         // 생성된 지도 인스턴스를 저장
         maps.push(map);
 
-        // 아이콘 누르면 장소 담기에 추가하는 함수
-        $(document).ready(function () {
-            $('.plus').click(function () {
-                // 이름 가져오기
-                const areaname = $(this).prev('div').children('div').text();
-                console.log(areaname);
 
-                // 위치 가져오기
-                const mapx = $(this).prev('div').children('input').eq(0).val();
-                const mapy = $(this).prev('div').children('input').eq(1).val();
-                console.log(mapx, mapy);
-
-                // 지금 선택한 장소
-                place = {
-                    title : areaname,
-                    mapx: mapx,
-                    mapy: mapy
-                }
-
-                // 중복 체크
-                var isDuplicate = places.some(function(p) {
-                    return p.title === place.title;
-                });
-
-                if (!isDuplicate) {
-                    // 중복이 아닐 경우에만 관광지 목록에 내가 선택한 관광지를 추가하고
-                    places.push(place);
-                    // 출력한다
-                    $("#areabox").append("<a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'> <div class='d-flex w-100 align-items-center justify-content-between'> <strong class='mb-1'>" + areaname + "</strong> <button class='delete' type='button' onclick='deleteRow(this);'><i class='bi bi-x-circle'></i></button> </div> </a>")
-
-                    // 선택한 관광지가 1개 이상일 경우에만
-                    if (places.length >= 1) {
-                        // 기존 마커 제거
-                        viaMarkers.forEach(function(marker) {
-                            marker.setMap(null); // TMap에서 마커 제거
-                        });
-                        viaMarkers = []; // viaMarkers 배열 초기화
-
-                        addMarker("start", places[0]);
-                        for (var i = 1; i < places.length - 1; i++) {
-                            addMarker("pass", places[i]);
-                        }
-                        addMarker("end", places[places.length - 1]);
-                    }
-                } else {
-                    alert ('이미 추가된 장소입니다.');
-                }
-
-                function addMarker(status, info) {
-                    // status 에 따라 아이콘 바꾸기
-                    switch (status) {
-                        case "start":
-                            imgUrl = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_s.png';
-                            break;
-                        case "pass":
-                            imgUrl = 'https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png';
-                            break;
-                        case "end":
-                            imgUrl = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_e.png';
-                            break;
-                        default:
-                    }
-
-                    // 관광지 목록에 추가한 대로 marker 생성
-                    marker = new Tmapv2.Marker({
-                        position: new Tmapv2.LatLng(info.mapy, info.mapx),
-                        icon: imgUrl,
-                        iconSize: new Tmapv2.Size(24, 38),
-                        map: map,
-                        title: info.title
-                    })
-                    viaMarkers.push(marker);
-                    return marker;
-                }
-            })
-        })
-
-        // 다음 버튼
-        $("#next-btn").click(function () {
-        })
-
-
-        // 전체 관광지 삭제하기 버튼을 누르면 모든 마커를 삭제
-        $("#btn_delete").click(function () {
-            deleteMarkers();
-            if(resultInfoArr.length > 0){
-                for(var i in resultInfoArr){
-                    resultInfoArr[i].setMap(null);
-                }
-                resultInfoArr=[];
-            }
-        })
-
-        // 최적화 버튼을 누르면 ajax 실행
-        $("#btn_optimize").click(function () {
-            // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
-            if(viaMarkers.length < 3) {
-                alert('경유지는 1개 이상이어야합니다.');
-                return false;
-            } else {
-                var headers = {};
-                headers["appKey"] = appKey;
-
-                // 시작 장소와 종료 장소
-                var start_Mapx = viaMarkers[0]._marker_data.options.position._lng;
-                var start_Mapy = viaMarkers[0]._marker_data.options.position._lat;
-                var end_Mapx = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lng;
-                var end_Mapy = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lat;
-
-                // 마커에 찍힌 경유지
-                var viaPoints = [];
-                for(var i = 1; i<viaMarkers.length-1; i++) {
-                    var viaPoint = {};
-                    viaPoint.viaPointId = i+"경유지";
-                    viaPoint.viaPointName = viaMarkers[i]._marker_data.options.title;
-                    viaPoint.viaX = viaMarkers[i]._marker_data.options.position._lng.toString();
-                    viaPoint.viaY = viaMarkers[i]._marker_data.options.position._lat.toString();
-                    viaPoints.push(viaPoint);
-
-                    console.log(viaPoint);
-                }
-                console.log(viaPoints);
-
-
-                $.ajax({
-                    type: "POST",
-                    headers: headers,
-                    url: "https://apis.openapi.sk.com/tmap/routes/routeOptimization20?version=1&format=json",
-                    async: false,
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        "startName": "출발",
-                        "startX": start_Mapx.toString(),
-                        "startY": start_Mapy.toString(),
-                        "startTime": startTime,
-                        "endName": "도착",
-                        "endX": end_Mapx.toString(),
-                        "endY": end_Mapy.toString(),
-                        "viaPoints": viaPoints,
-                        "reqCoordType" : "WGS84GEO",
-                        "resCoordType" : "EPSG3857"
-                    }),
-                    success:function(response){
-                        var resultData = response.properties;
-                        var resultFeatures = response.features;
-
-                        // 결과 출력
-                        var tDistance = "총 거리 : " + (resultData.totalDistance/1000).toFixed(1) + "km,  ";
-                        var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
-                        var tFare = "총 요금 : " + resultData.totalFare + "원";
-
-                        $("#result").text(tDistance+tTime+tFare);
-
-                        // 기존 라인 초기화
-                        if(resultInfoArr.length > 0){
-                            for(var i in resultInfoArr){
-                                resultInfoArr[i].setMap(null);
-                            }
-                            resultInfoArr=[];
-                        }
-
-                        for(var i in resultFeatures) {
-                            var geometry = resultFeatures[i].geometry;
-                            var polyline_;
-
-                            drawInfoArr = [];
-
-                            if(geometry.type == "LineString") {
-                                for(var j in geometry.coordinates){
-                                    // 경로들의 결과값(구간)들을 포인트 객체로 변환
-                                    var latlng = new Tmapv2.Point(geometry.coordinates[j][0], geometry.coordinates[j][1]);
-                                    // 포인트 객체를 받아 좌표값으로 변환
-                                    var convertPoint = new Tmapv2.Projection.convertEPSG3857ToWGS84GEO(latlng);
-                                    // 포인트객체의 정보로 좌표값 변환 객체로 저장
-                                    var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
-
-                                    drawInfoArr.push(convertChange);
-                                }
-
-                                polyline_ = new Tmapv2.Polyline({
-                                    path : drawInfoArr,
-                                    strokeColor : "#FF0000",
-                                    strokeWeight: 6,
-                                    map : map
-                                });
-                                resultInfoArr.push(polyline_);
-
-                                // 경유지 최적화 결과 반경만큼 지도 레벨 조정
-                                // var newData = geoData[0];
-                                // PTbounds = new Tmapv2.LatLngBounds();
-                                // for (var i = 0; i < newData.length; i++) {
-                                //     var mData = newData[i];
-                                //     var type = mData.geometry.type;
-                                //     var pointType = mData.properties.pointType;
-                                // }
-                            }
-                        }
-                    },
-                    error:function(request,status,error){
-                        console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                    }
-                });
-            }
-        })
-
-
-
-        // 경로 보기 버튼을 누르면 ajax 실행
-        $("#btn_route").click(function () {
-            // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
-            if(viaMarkers.length < 3) {
-                alert('경유지는 1개 이상이어야합니다.');
-                return false;
-            } else {
-                var headers = {};
-                headers["appKey"] = appKey;
-
-                // 시작 장소와 종료 장소
-                var start_Mapx = viaMarkers[0]._marker_data.options.position._lng;
-                var start_Mapy = viaMarkers[0]._marker_data.options.position._lat;
-                var end_Mapx = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lng;
-                var end_Mapy = viaMarkers[viaMarkers.length-1]._marker_data.options.position._lat;
-
-                // 마커에 찍힌 경유지
-                var viaPoints = [];
-                for(var i = 1; i<viaMarkers.length-1; i++) {
-                    var viaPoint = {};
-                    viaPoint.viaPointId = i+"경유지";
-                    viaPoint.viaPointName = viaMarkers[i]._marker_data.options.title;
-                    viaPoint.viaX = viaMarkers[i]._marker_data.options.position._lng.toString();
-                    viaPoint.viaY = viaMarkers[i]._marker_data.options.position._lat.toString();
-                    viaPoints.push(viaPoint);
-
-                    console.log(viaPoint);
-                }
-                console.log(viaPoints);
-
-
-                $.ajax({
-                    type: "POST",
-                    headers: headers,
-                    url: "https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",
-                    async: false,
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        "startName": "출발",
-                        "startX": start_Mapx.toString(),
-                        "startY": start_Mapy.toString(),
-                        "startTime": startTime,
-                        "endName": "도착",
-                        "endX": end_Mapx.toString(),
-                        "endY": end_Mapy.toString(),
-                        "viaPoints": viaPoints
-                    }),
-                    success:function(response){
-                        var resultData = response.properties;
-                        var resultFeatures = response.features;
-
-                        // 결과 출력
-                        var tDistance = "총 거리 : " + (resultData.totalDistance/1000).toFixed(1) + "km,  ";
-                        var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
-                        var tFare = "총 요금 : " + resultData.totalFare + "원";
-
-                        $("#result").text(tDistance+tTime+tFare);
-
-                        // 기존 라인 초기화
-                        if(resultInfoArr.length > 0){
-                            for(var i in resultInfoArr){
-                                resultInfoArr[i].setMap(null);
-                            }
-                            resultInfoArr=[];
-                        }
-
-                        for(var i in resultFeatures) {
-                            var geometry = resultFeatures[i].geometry;
-                            var polyline_;
-
-                            drawInfoArr = [];
-
-                            if(geometry.type == "LineString") {
-                                for(var j in geometry.coordinates){
-                                    var point = new Tmapv2.LatLng(geometry.coordinates[j][1],geometry.coordinates[j][0]);
-
-                                    drawInfoArr.push(point);
-                                }
-
-                                polyline_ = new Tmapv2.Polyline({
-                                    path : drawInfoArr,
-                                    strokeColor : "#FF0000",
-                                    strokeWeight: 6,
-                                    map : map
-                                });
-                                resultInfoArr.push(polyline_);
-
-
-                                // 경유지 최적화 결과 반경만큼 지도 레벨 조정
-                                // var newData = geoData[0];
-                                // PTbounds = new Tmapv2.LatLngBounds();
-                                // for (var i = 0; i < newData.length; i++) {
-                                //     var mData = newData[i];
-                                //     var type = mData.geometry.type;
-                                //     var pointType = mData.properties.pointType;
-                                // }
-                            }
-                        }
-                    },
-                    error:function(request,status,error){
-                        console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                    }
-                });
-            }
-        })
     }
+
+
 
     document.addEventListener("DOMContentLoaded", function () {
         // 각 탭 요소들을 선택
@@ -444,7 +477,7 @@
                 // 현재 선택한 탭의 일련 번호를 가져옴
                 var dayNumber = tab.innerText.split(' ')[1]; // 탭 텍스트에서 'Day'를 제외하고 숫자만 추출
                 var dayId = 'day' + dayNumber; // 해당 날짜의 창 ID 생성
-
+                index = Number(dayNumber) - 1;
 
                 // 모든 날짜 창을 숨김
                 var allDayWindows = document.querySelectorAll('.day');
@@ -464,7 +497,7 @@
                 // 만약 해당 탭에 지도가 없다면, 지도를 생성하고 표시
                 if (!mapExists) {
                     var mapContainer = 'map_div' + dayNumber
-                    initTmap(mapContainer);
+                    initTmap2(mapContainer);
                 }
             });
         });
@@ -672,18 +705,7 @@
     //     })
     // })
 
-function deleteMarkers() {
-    for (var i=0; i<viaMarkers.length; i++) {
-        viaMarkers[i].setMap(null);
-    }
-    // 등록된 마커 배열도 초기화
-    viaMarkers = [];
-    // 장소 배열도 초기화
-    places = [];
-    place = null;
-    // 출력된 목록도 초기화
-    $("#areabox").empty();
-}
+
 </script>
 
 <!--계획 화면에선 헤더가 안들어가야됨-->

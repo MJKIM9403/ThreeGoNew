@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,17 +34,24 @@ public class PlanController {
     private final TourItemService tourItemService;
     private final TourItemContentService tourItemContentService;
 
-    @PostMapping("/city")
-    public String handleCityRequest(@RequestParam(name = "plannerName") String plannerName,
-                                    @RequestParam(name = "startDate") Date startDate,
-                                    @RequestParam(name = "endDate") Date endDate,
-                                    Model model) {
-        // Date를 LocalDate로 변환
-        LocalDate startLocalDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate endLocalDate = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    @GetMapping("/city")
+    public String getSelectList(@RequestParam(name = "plannerName") String plannerName,
+                                @RequestParam(name = "startDate") String startDate,
+                                @RequestParam(name = "endDate") String endDate,
 
-        // 날짜 차이 계산
+//                                @PathVariable(name = "areaCode") Integer areaCode,
+//                                @PathVariable(name = "sigunguCode", required = false) Integer sigunguCode,
+                                Model model){
+        System.out.println("test1");
+
+        // String을 LocalDate로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startLocalDate = LocalDate.parse(startDate, formatter);
+        LocalDate endLocalDate = LocalDate.parse(endDate, formatter);
+
+        // 날짜 차이 계산 (+1을 해서 시작일과 종료일 포함)
         long daysBetween = ChronoUnit.DAYS.between(startLocalDate, endLocalDate) + 1;
+
         System.out.println("시작일 : " + startDate);
         System.out.println("시작일 : " + startLocalDate);
         System.out.println("종료일 : " + endDate);
@@ -56,30 +64,16 @@ public class PlanController {
             dayNumbers.add(i);
         }
 
-        try {
-            // ...
-            System.out.println("날짜 차이: " + daysBetween);
-            model.addAttribute("plannerName", plannerName);
-            model.addAttribute("startDate", startDate);
-            model.addAttribute("endDate", endDate);
-            model.addAttribute("daysBetween", daysBetween);
-            model.addAttribute("dayNumbers", dayNumbers);
+        System.out.println("날짜 차이: " + daysBetween);
+        model.addAttribute("plannerName", plannerName);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("daysBetween", daysBetween);
+        model.addAttribute("dayNumbers", dayNumbers);
 
-            return "plan/plan";
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 예외 처리 로직 추가
-            System.out.println("미치고팔짝뛰겠어");
-            return "error";
-        }
-    }
 
-    @GetMapping("/city")
-    public String getSelectList(
+        // 여기까지 날짜부분
 
-//                                @PathVariable(name = "areaCode") Integer areaCode,
-//                                @PathVariable(name = "sigunguCode", required = false) Integer sigunguCode,
-                                Model model){
         TourItemSelectRequest request = buildTourItemSelectRequest();
         PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
 
@@ -97,7 +91,7 @@ public class PlanController {
 //                        .areacode(String.valueOf(areaCode))
 //                        .userId(userId)
 //                        .build());
-        System.out.println("바보멍청이");
+        System.out.println("test3");
         model.addAttribute("areaList", tourItemService.findAreaList());
         model.addAttribute("cat1List", tourItemService.findCat1List());
         model.addAttribute("cat2List", new ArrayList<Cat2>());
@@ -109,7 +103,7 @@ public class PlanController {
 
 
 
-        return "plan/plan";
+        return "plan/plan2";
     }
 
     private TourItemSelectRequest buildTourItemSelectRequest() {
