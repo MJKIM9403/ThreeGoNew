@@ -335,25 +335,25 @@
             }else {
                 scrollPage += 1;
             }
-            showBookmark();
+            showBookmark(scrollPage);
             // 페이지를 불러오는 함수를 호출합니다.
         });
     });
 
 
 
-    function showBookmark() {
+    function showBookmark(page) {
         $.ajax({
             url : '/api/bookmark',
             type : 'POST',
             contentType : 'application/json; charset=UTF-8',
             data : JSON.stringify({
                 userId : [[${findUser.id}]],
-                page : scrollPage
+                page : page
             }),
             success : function (response) {
                 let bookmarkList = response.pageResponse.dtoList;
-                console.log(scrollPage)
+                console.log(page)
                 $.each(bookmarkList, function (index, bookmark){
                     let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
                         `<a href="/info/content/${bookmark.contentid}">` +
@@ -404,10 +404,10 @@
                 let type = sessionStorage.getItem("type");
                 console.log(sessionPage)
                 console.log(scrollPosition)
-                for(let page = 0; page < sessionPage; page++){
+                for(let page = 0; page <= sessionPage; page++){
                     scrollPage = page
                     console.log(`${scrollPage}, ${page}`)
-                    if(type === "bookmark") showBookmark();
+                    if(type === "bookmark") showBookmark(page);
                 }
                 window.scrollTo(0, scrollPosition);
                 sessionStorage.removeItem("scrollPage");
