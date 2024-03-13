@@ -307,7 +307,7 @@
         </div>
         <!-- End of gallery -->
 
-
+        <div id="load-point"></div>
         <div class="loader"></div>
     </div>
     <!-- End of container -->
@@ -315,42 +315,103 @@
 
 <script th:inline="javascript">
     let scrollPage = 0;
+    let scrollCheck = false;
     let gallery = $('.gallery');
     $(document).ready(function (){
         gallery.html("")
-        showBookmark()
+        loadPage();
     })
-    function showBookmark() {
+
+    const io = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            // entry가 intersecting 중이 아니라면 함수를 실행하지 않습니다.
+            if (scrollCheck) return;
+            // 현재 페이지가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
+            observer.observe(document.getElementById('load-point'));
+            showBookmark(scrollPage);
+            // 페이지를 불러오는 함수를 호출합니다.
+        });
+    });
+
+
+    function showBookmark(page) {
         $.ajax({
             url : '/api/bookmark',
             type : 'POST',
             contentType : 'application/json; charset=UTF-8',
             data : JSON.stringify({
                 userId : [[${findUser.id}]],
-                page : scrollPage
+                page : page
             }),
             success : function (response) {
                 let bookmarkList = response.pageResponse.dtoList;
+                console.log(scrollPage)
                 $.each(bookmarkList, function (index, bookmark){
-                    gallery.append(
-                        `<div className="gallery-item" tabIndex="0">` +
-                            `<img src="${bookmark.firstimage}"` +
-                                 `className="gallery-image" alt="">` +
-                                `<div className="gallery-item-info">` +
-                                    `<div className="bookmark-info-wrap">` +
-                                        `<div className="bookmark-category">${bookmark.fullCategoryName}</div>` +
-                                        `<div className="bookmark-title">${bookmark.title}</div>` +
-                                        `<div className="bookmark-address">${bookmark.address}</div>` +
-                                    `</div>` +
-                                `</div>` +
+                    let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
+                        `<a href="/info/content/${bookmark.contentid}">` +
+                        `<img src="${bookmark.firstimage}"` +
+                        `class="gallery-image" alt="">` +
+                        `<div class="gallery-item-info">` +
+                        `<div class="bookmark-info-wrap">` +
+                        `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
+                        `<div class="bookmark-title">${bookmark.title}</div>` +
+                        `<div class="bookmark-address">${bookmark.address}</div>` +
+                        `</div>` +
+                        `</div>` +
+                        `</a>` +
                         `</div>`
-                    )
+                    gallery.append(tempHtml).trigger("create")
                 })
+                if(bookmarkList.length < 12){
+                    $('#load-point').hide()
+                }
             },
             error : function (err) {
                 console.log(err)
+            },
+            beforeSend : function () {
+                scrollPage += 1;
+                scrollCheck = true;
+                $(".loader").show()
+            },
+            complete : function () {
+                scrollCheck = false;
+                $(".loader").hide()
             }
         })
+    }
+
+    function savePage() {
+        io.unobserve(document.getElementById('load-point'));
+        sessionStorage.setItem("type", "bookmark");
+        sessionStorage.setItem("scrollPage", scrollPage);
+        sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+    }
+
+    function loadPage() {
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+                console.log("back")
+                let sessionPage = Number(sessionStorage.getItem("scrollPage"));
+                let scrollPosition = Number(sessionStorage.getItem("scrollPosition"));
+                let type = sessionStorage.getItem("type");
+                console.log(sessionPage)
+                console.log(scrollPosition)
+                for(let page = 0; page <= sessionPage; page++){
+                    scrollPage = page
+                    console.log(`${scrollPage}, ${page}`)
+                    if(type === "bookmark") showBookmark(page);
+                }
+                window.scrollTo(0, scrollPosition);
+                sessionStorage.removeItem("scrollPage");
+                sessionStorage.removeItem("scrollPosition");
+                sessionStorage.removeItem("type");
+                // io.observe(document.getElementById('load-point'));
+            }else {
+                io.observe(document.getElementById('load-point'));
+            }
+        });
     }
 </script>
 
