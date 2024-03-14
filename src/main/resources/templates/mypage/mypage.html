@@ -314,64 +314,93 @@
 </div>
 
 <script th:inline="javascript">
-    let scrollPage = 0;
-    let scrollCheck = false;
-    let fisrtLoad = true;
+    let scrollPage = 0; // 무한스크롤로 불러올 페이지
+    let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
+    let firstLoad = true; // 첫 로딩인지 체크
     let gallery = $('.gallery');
+    let tabType = "bookmark"; // 화면에 보여줄 탭
+    let back = false;
     $(document).ready(function (){
-        gallery.html("")
+        changeTab(tabType);
         loadPage();
     })
 
-    const io = new IntersectionObserver((entries, observer) => {
+    const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
+            // entry가 intersecting 중이 아니라면 함수를 실행하지 않음.
             if (!entry.isIntersecting) return;
-            // entry가 intersecting 중이 아니라면 함수를 실행하지 않습니다.
+            // 현재 페이지가 불러오는 중이면 함수를 실행하지 않음.
             if (scrollCheck) return;
-            // 현재 페이지가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
+            //옵저버 타겟 설정
             observer.observe(document.getElementById('load-point'));
-            if(fisrtLoad){
-                fisrtLoad = false;
-            }else {
-                scrollPage += 1;
-            }
-            showBookmark(scrollPage);
-            // 페이지를 불러오는 함수를 호출합니다.
+            // 페이지를 불러오는 함수 호출.
+            showBookmark();
         });
     });
 
+    // 탭을 이동시 마다 변수 및 기존 화면 초기화(탭 이동시 마다 실행 해주세요.)
+    function changeTab(type) {
+        tabType = type;
+        scrollPage = 0;
+        scrollCheck = false;
+        firstLoad = true;
+        back = false;
+        gallery.html("")
+        $('#load-point').hide() // 옵저버 관측 타이밍을 컨트롤하기 위해 hide
+        // 옵저버 타겟 관측 시작
+        observer.observe(document.getElementById('load-point'));
+    }
 
 
-    function showBookmark(page) {
+
+    function showBookmark() {
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(firstLoad){
+            firstLoad = false;
+        }else {
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
         $.ajax({
             url : '/api/bookmark',
             type : 'POST',
             contentType : 'application/json; charset=UTF-8',
             data : JSON.stringify({
                 userId : [[${findUser.id}]],
-                page : page
+                page : scrollPage
             }),
+            async: false,
             success : function (response) {
                 let bookmarkList = response.pageResponse.dtoList;
-                console.log(page)
-                $.each(bookmarkList, function (index, bookmark){
-                    let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
-                        `<a href="/info/content/${bookmark.contentid}">` +
-                        `<img src="${bookmark.firstimage}"` +
-                        `class="gallery-image" alt="">` +
-                        `<div class="gallery-item-info">` +
-                        `<div class="bookmark-info-wrap">` +
-                        `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
-                        `<div class="bookmark-title">${bookmark.title}</div>` +
-                        `<div class="bookmark-address">${bookmark.address}</div>` +
-                        `</div>` +
-                        `</div>` +
-                        `</a>` +
-                        `</div>`
-                    gallery.append(tempHtml).trigger("create")
-                })
+                console.log(scrollPage)
+                // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                setTimeout(() => {
+                    $(".loader").hide()
+                    $.each(bookmarkList, function (index, bookmark){
+                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
+                            `<a href="/info/content/${bookmark.contentid}">` +
+                            `<img src="${bookmark.firstimage}"` +
+                            `class="gallery-image" alt="">` +
+                            `<div class="gallery-item-info">` +
+                            `<div class="bookmark-info-wrap">` +
+                            `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
+                            `<div class="bookmark-title">${bookmark.title}</div>` +
+                            `<div class="bookmark-address">${bookmark.address}</div>` +
+                            `</div>` +
+                            `</div>` +
+                            `</a>` +
+                            `</div>`
+                        gallery.append(tempHtml).trigger("create")
+                    })
+                    window.scrollTo({top: loadScroll, behavior: "instant"});
+                }, time)
                 if(bookmarkList.length < 12){
-                    $('#load-point').hide()
+                    // 다음페이지가 없다면 관측을 종료
+                    observer.unobserve(document.getElementById('load-point'));
                 }
             },
             error : function (err) {
@@ -380,45 +409,61 @@
             beforeSend : function () {
                 scrollCheck = true;
                 $(".loader").show()
+                loadScroll = window.scrollY;
             },
             complete : function () {
                 scrollCheck = false;
-                $(".loader").hide()
             }
         })
     }
 
     function savePage() {
-        io.unobserve(document.getElementById('load-point'));
-        sessionStorage.setItem("type", "bookmark");
-        sessionStorage.setItem("scrollPage", scrollPage);
-        sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+        let myPageInfo = {};
+        myPageInfo.tabType = tabType;
+        myPageInfo.scrollPage = scrollPage;
+        myPageInfo.scrollPosition = window.scrollY.toString();
+        sessionStorage.setItem("myPageInfo", JSON.stringify(myPageInfo));
     }
 
     function loadPage() {
         window.addEventListener('pageshow', function (event) {
             if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+                // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
                 console.log("back")
-                let sessionPage = Number(sessionStorage.getItem("scrollPage"));
-                let scrollPosition = Number(sessionStorage.getItem("scrollPosition"));
-                let type = sessionStorage.getItem("type");
-                console.log(sessionPage)
-                console.log(scrollPosition)
+                let session_myPageInfo = JSON.parse(sessionStorage.getItem("myPageInfo"));
+                let tabType = session_myPageInfo.tabType;
+                let sessionPage = Number(session_myPageInfo.scrollPage);
+                let scrollPosition = Number(session_myPageInfo.scrollPosition);
+                changeTab(tabType)
+                console.log(sessionPage);
+                console.log(scrollPosition);
                 for(let page = 0; page <= sessionPage; page++){
-                    scrollPage = page
-                    console.log(`${scrollPage}, ${page}`)
-                    if(type === "bookmark") showBookmark(page);
+                    back = true;
+                    console.log(`${scrollPage}, ${page}`);
+                    switch (tabType){
+                        case "bookmark":
+                            showBookmark();
+                            break;
+                        // 탭 메뉴의 타입을 추가하여 사용
+                    }
                 }
-                window.scrollTo(0, scrollPosition);
-                sessionStorage.removeItem("scrollPage");
-                sessionStorage.removeItem("scrollPosition");
-                sessionStorage.removeItem("type");
-                io.observe(document.getElementById('load-point'));
+                setTimeout(() => {
+                    window.scrollTo(0, scrollPosition);
+                }, 10);
+                // sessionStorage.removeItem("myPageInfo");
+                setTimeout(() => {
+                    $('#load-point').show();
+                }, 550)
             }else {
-                io.observe(document.getElementById('load-point'));
+                // 그 외의 방법으로 페이지 접근 시 바로 타겟을 노출, 데이터 로딩
+                if(sessionStorage.getItem("myPageInfo") != null){
+                    sessionStorage.removeItem("myPageInfo");
+                }
+                $('#load-point').show();
             }
         });
     }
+
 </script>
 
 </body>
