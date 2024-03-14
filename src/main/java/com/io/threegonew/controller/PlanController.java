@@ -34,6 +34,13 @@ public class PlanController {
     private final TourItemService tourItemService;
     private final TourItemContentService tourItemContentService;
 
+    @PostMapping("/api/touritems")
+    public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+        model.addAttribute("pageResponse", pageResponse);
+        return "plan/plan2 :: #touritems";
+    }
+
     @GetMapping("/city")
     public String getSelectList(@RequestParam(name = "plannerName") String plannerName,
                                 @RequestParam(name = "startDate") String startDate,
