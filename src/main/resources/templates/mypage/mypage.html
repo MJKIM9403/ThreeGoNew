@@ -28,58 +28,59 @@
 
 </style>
 <div class="d-flex flex-nowrap">
-    <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <span class="fs-4 text-center">ThreeGo</span>
-        </a>
-        <hr>
-        <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item">
-                <a href="#" class="nav-link py-2 border-bottom active" aria-current="page">
-                    <i class="bi bi-house-door-fill icon"></i>
-                    메인화면
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-speedometer2 icon"></i>
-                    여행정보
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-card-checklist icon"></i>
-                    여행일정
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-columns icon"></i>
-                    커뮤니티
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-people-fill icon"></i>
-                    마이페이지
-                </a>
-            </li>
-        </ul>
-        <hr>
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                <strong>mdo</strong>
-            </a>
-            <ul class="dropdown-menu text-small shadow">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
-            </ul>
-        </div>
-    </div>
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+<!--    <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">-->
+<!--        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">-->
+<!--            <span class="fs-4 text-center">ThreeGo</span>-->
+<!--        </a>-->
+<!--        <hr>-->
+<!--        <ul class="nav nav-pills flex-column mb-auto">-->
+<!--            <li class="nav-item">-->
+<!--                <a href="#" class="nav-link py-2 border-bottom active" aria-current="page">-->
+<!--                    <i class="bi bi-house-door-fill icon"></i>-->
+<!--                    메인화면-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <a href="#" class="nav-link py-2 border-bottom">-->
+<!--                    <i class="bi bi-speedometer2 icon"></i>-->
+<!--                    여행정보-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <a href="#" class="nav-link py-2 border-bottom">-->
+<!--                    <i class="bi bi-card-checklist icon"></i>-->
+<!--                    여행일정-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <a href="#" class="nav-link py-2 border-bottom">-->
+<!--                    <i class="bi bi-columns icon"></i>-->
+<!--                    커뮤니티-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <a href="#" class="nav-link py-2 border-bottom">-->
+<!--                    <i class="bi bi-people-fill icon"></i>-->
+<!--                    마이페이지-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--        <hr>-->
+<!--        <div class="dropdown">-->
+<!--            <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">-->
+<!--                <strong>mdo</strong>-->
+<!--            </a>-->
+<!--            <ul class="dropdown-menu text-small shadow">-->
+<!--                <li><a class="dropdown-item" href="#">New project...</a></li>-->
+<!--                <li><a class="dropdown-item" href="#">Settings</a></li>-->
+<!--                <li><a class="dropdown-item" href="#">Profile</a></li>-->
+<!--                <li><hr class="dropdown-divider"></li>-->
+<!--                <li><a class="dropdown-item" href="#">Sign out</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </div>-->
 
 
 
@@ -428,32 +429,36 @@
     function loadPage() {
         window.addEventListener('pageshow', function (event) {
             if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
-                // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
-                console.log("back")
-                let session_myPageInfo = JSON.parse(sessionStorage.getItem("myPageInfo"));
-                let tabType = session_myPageInfo.tabType;
-                let sessionPage = Number(session_myPageInfo.scrollPage);
-                let scrollPosition = Number(session_myPageInfo.scrollPosition);
-                changeTab(tabType)
-                console.log(sessionPage);
-                console.log(scrollPosition);
-                for(let page = 0; page <= sessionPage; page++){
-                    back = true;
-                    console.log(`${scrollPage}, ${page}`);
-                    switch (tabType){
-                        case "bookmark":
-                            showBookmark();
-                            break;
-                        // 탭 메뉴의 타입을 추가하여 사용
+                if(sessionStorage.getItem("myPageInfo") != null){
+                    // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
+                    console.log("back")
+                    let session_myPageInfo = JSON.parse(sessionStorage.getItem("myPageInfo"));
+                    let tabType = session_myPageInfo.tabType;
+                    let sessionPage = Number(session_myPageInfo.scrollPage);
+                    let scrollPosition = Number(session_myPageInfo.scrollPosition);
+                    changeTab(tabType)
+                    console.log(sessionPage);
+                    console.log(scrollPosition);
+                    for(let page = 0; page <= sessionPage; page++){
+                        back = true;
+                        console.log(`${scrollPage}, ${page}`);
+                        switch (tabType){
+                            case "bookmark":
+                                showBookmark();
+                                break;
+                            // 탭 메뉴의 타입을 추가하여 사용
+                        }
                     }
-                }
-                setTimeout(() => {
-                    window.scrollTo(0, scrollPosition);
-                }, 10);
-                // sessionStorage.removeItem("myPageInfo");
-                setTimeout(() => {
+                    setTimeout(() => {
+                        window.scrollTo(0, scrollPosition);
+                    }, 10);
+                    // sessionStorage.removeItem("myPageInfo");
+                    setTimeout(() => {
+                        $('#load-point').show();
+                    }, 550)
+                }else {
                     $('#load-point').show();
-                }, 550)
+                }
             }else {
                 // 그 외의 방법으로 페이지 접근 시 바로 타겟을 노출, 데이터 로딩
                 if(sessionStorage.getItem("myPageInfo") != null){
