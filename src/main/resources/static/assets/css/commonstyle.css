@@ -5,6 +5,16 @@ body, * {
     font-family: 'Noto Sans KR', sans-serif !important;
 }
 
+.container {
+    padding-left: 280px;
+}
+/* side bar */
+.nav-item {
+    padding: 0 40px !important;
+    text-align: left !important;
+}
+/* side bar */
+
 .nav-link {
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 17px;
