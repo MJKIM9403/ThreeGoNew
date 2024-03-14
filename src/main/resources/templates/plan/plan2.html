@@ -45,9 +45,6 @@
     // 찍은 모든 마커
     var viaMarkers = Array.from({length: days}, () => []);
 
-    // 하나하나 선택한 경유지
-    var viaPoint = {};
-
     // 경유지만 넣는 배열
     var viaPoints = Array.from({length: days}, () => []);
 
@@ -63,6 +60,9 @@
     // 경로그림정보
     var drawInfoArr = Array.from({length: days}, () => []);
     var resultInfoArr = Array.from({length: days}, () => []);
+
+    // 경로 출력 결과
+    var resultText = Array.from({length: days}, () => []);
 
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
@@ -263,7 +263,7 @@
             // 최적화 버튼을 누르면 ajax 실행
             $(".btn_optimize").click(function () {
                 // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
-                if(viaMarkerss.length < 3) {
+                if(viaMarkers[index].length < 3) {
                     alert('경유지는 1개 이상이어야합니다.');
                     return false;
                 } else {
@@ -278,13 +278,17 @@
 
                     // 마커에 찍힌 경유지
                     for(var i = 1; i<viaMarkers[index].length-1; i++) {
+                        // 하나하나 선택한 경유지
+                        var viaPoint = {};
                         viaPoint.viaPointId = i+"경유지";
                         viaPoint.viaPointName = viaMarkers[index][i]._marker_data.options.title;
                         viaPoint.viaX = viaMarkers[index][i]._marker_data.options.position._lng.toString();
                         viaPoint.viaY = viaMarkers[index][i]._marker_data.options.position._lat.toString();
+                        console.log("viaPoint : " + viaPoint);
+
                         viaPoints[index].push(viaPoint);
 
-                        console.log(viaPoint);
+
                     }
                     console.log(viaPoints[index]);
 
@@ -328,7 +332,7 @@
 
                             for(var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
-                                var polyline_;
+                                var polyline_ = Array.from({length: days}, () => []);
 
                                 drawInfoArr[index] = [];
 
@@ -344,13 +348,13 @@
                                         drawInfoArr[index].push(convertChange);
                                     }
 
-                                    polyline_ = new Tmapv2.Polyline({
+                                    polyline_[index] = new Tmapv2.Polyline({
                                         path : drawInfoArr[index],
                                         strokeColor : "#FF0000",
                                         strokeWeight: 6,
                                         map : map
                                     });
-                                    resultInfoArr[index].push(polyline_);
+                                    resultInfoArr[index].push(polyline_[index]);
 
                                     // 경유지 최적화 결과 반경만큼 지도 레벨 조정
                                     // var newData = geoData[0];
@@ -389,16 +393,15 @@
                     var end_Mapy = viaMarkers[index][viaMarkers[index].length-1]._marker_data.options.position._lat;
 
                     // 마커에 찍힌 경유지
-                    var viaPoints = [];
                     for(var i = 1; i<viaMarkers[index].length-1; i++) {
                         var viaPoint = {};
                         viaPoint.viaPointId = i+"경유지";
                         viaPoint.viaPointName = viaMarkers[index][i]._marker_data.options.title;
                         viaPoint.viaX = viaMarkers[index][i]._marker_data.options.position._lng.toString();
                         viaPoint.viaY = viaMarkers[index][i]._marker_data.options.position._lat.toString();
-                        viaPoints[index].push(viaPoint);
-
                         console.log(viaPoint);
+
+                        viaPoints[index].push(viaPoint);
                     }
                     console.log(viaPoints[index]);
 
@@ -428,7 +431,8 @@
                             var tTime = "총 시간 : " + (resultData.totalTime/60).toFixed(0) + "분,  ";
                             var tFare = "총 요금 : " + resultData.totalFare + "원";
 
-                            $(".result").text(tDistance+tTime+tFare);
+                            resultText[index] = tDistance+tTime+tFare;
+                            $(".result").text(resultText[index]);
 
                             // 기존 라인 초기화
                             if(resultInfoArr[index].length > 0){
@@ -510,14 +514,34 @@
                     viaMarkers[previousTabIndex].forEach(function(marker) {
                         marker.setMap(null); // TMap에서 이전 탭 마커 제거
                     });
+                    resultInfoArr[previousTabIndex].forEach(function(line) {
+                        line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
+                    })
+                    $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
                 }
+                // if(resultInfoArr[previousTabIndex].length > 0){
+                //     for(var i in resultInfoArr[previousTabIndex]){
+                //         resultInfoArr[previousTabIndex][i].setMap(null); // TMap에서 이전 탭 경로 표시 제거
+                //     }
+                //     resultInfoArr[previousTabIndex]=[];
+                // }
                 // 현재탭의 목록 불러오기
                 addPrintDayList();
                 // 선택한 인덱스 탭에 맞는 마커를 다시 로드
                 viaMarkers[index].forEach(function(marker) {
                     marker.setMap(map);
                 });
+                // 선택한 인덱스 탭에 맞는 경로 빨간 선 표시를 다시 로드
+                resultInfoArr[index].forEach(function(line) {
+                    line.setMap(map);
+                })
+                // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
+                $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
 
+                // resultInfoArr[index].push(polyline_[index]);
+                // resultInfoArr[index].forEach(function(resultLine) {
+                //     resultLine.setMap(map);
+                // });
 
                 // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
                 previousTabIndex = index;
