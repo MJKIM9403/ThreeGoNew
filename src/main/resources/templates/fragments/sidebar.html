@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<body>
+<th:block th:fragment="sidebarFragment">
+  <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <span class="fs-4 text-center">ThreeGo</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a href="/index" class="nav-link py-2 border-bottom active" aria-current="page">
+          <i class="bi bi-house-door-fill icon"></i>
+          메인화면
+        </a>
+      </li>
+      <li>
+        <a href="/info/area" class="nav-link py-2 border-bottom">
+          <i class="bi bi-speedometer2 icon"></i>
+          여행정보
+        </a>
+      </li>
+      <li>
+        <a href="/planner" class="nav-link py-2 border-bottom">
+          <i class="bi bi-card-checklist icon"></i>
+          여행일정
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link py-2 border-bottom">
+          <i class="bi bi-columns icon"></i>
+          커뮤니티
+        </a>
+      </li>
+      <li>
+        <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class="nav-link py-2 border-bottom">
+        <i class="bi bi-people-fill icon"></i>
+        마이페이지
+        </span>
+        <a sec:authorize="isAuthenticated()" th:href="@{/mypage/{userId}(userId=${#authentication.principal.username})}" class="nav-link py-2 border-bottom">
+          <i class="bi bi-people-fill icon"></i>
+          마이페이지
+        </a>
+      </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+        <strong>mdo</strong>
+      </a>
+      <ul class="dropdown-menu text-small shadow">
+        <li><a class="dropdown-item" href="#">New project...</a></li>
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+      </ul>
+    </div>
+  </div>
+</th:block>
+<script>
+  function anonymousUserClick() {
+    alert("로그인 후 이용하실 수 있습니다.");
+    location.replace("/login")
+  }
+</script>
+</body>
+</html>
