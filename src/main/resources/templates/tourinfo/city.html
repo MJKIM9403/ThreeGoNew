@@ -69,7 +69,7 @@
         function showTourItems(){
             $(document).on('click','.page-item',function (e) {
                 const target = e.target;
-                sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
+                // sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
                 if(!target.classList.contains('disabled')){
                     $.ajax({
                         url : '/info/api/touritems',
@@ -395,19 +395,19 @@
             <nav aria-label="page-bar">
                 <ul class="pagination">
                     <li class="page-item">
-                        <span class="page-link" data-num="0" th:text="처음으로"></span>
+                        <i class="bi bi-chevron-double-left page-link" data-num="0"></i>
                     </li>
                     <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
-                        <span class="page-link" th:attr="data-num=${pageResponse.start -1}" th:text="이전"></span>
+                        <i class="bi bi-chevron-left page-link" th:attr="data-num=${pageResponse.start -1}"></i>
                     </li>
                     <th:block th:each="pageNo : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
                         <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" th:classappend="${pageResponse.page == pageNo} ? 'active' : ''" th:text="${pageNo + 1}"></span></li>
                     </th:block>
                     <li class="page-item" th:classappend="${pageResponse.next} ? '' : 'disabled'">
-                        <span class="page-link" th:attr="data-num=${pageResponse.end +1}" th:text="다음"></span>
+                        <i class="bi bi-chevron-right page-link" th:attr="data-num=${pageResponse.end +1}"></i>
                     </li>
                     <li class="page-item">
-                        <span class="page-link" th:attr="data-num=${pageResponse.last}" th:text="끝으로"></span>
+                        <i class="bi bi-chevron-double-right page-link" th:attr="data-num=${pageResponse.last}"></i>
                     </li>
                 </ul>
             </nav>
