@@ -47,6 +47,9 @@ create table `PLAN` (
                         contentid varchar(40) not null
 )
 
+--이미 플래너 테이블을 추가했다면 contentid 로 칼럼명을 바꿔주세요. touritem 의 contentid와 통일--
+ALTER TABLE test.plan CHANGE plan_contentid contentid varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+
 
 create table `PLANNER` (
                            p_id int AUTO_INCREMENT PRIMARY KEY,
