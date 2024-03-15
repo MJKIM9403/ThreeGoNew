@@ -1,9 +1,11 @@
 package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.Area;
+import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.Sigungu;
 import com.io.threegonew.dto.AddPlannerRequest;
 import com.io.threegonew.service.PlannerService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,11 +20,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/planner")
 public class PlannerController {
-
+    private final HttpSession httpSession;
     private final PlannerService plannerService;
 
-    public PlannerController(PlannerService plannerService) {
+    public PlannerController(PlannerService plannerService, HttpSession httpSession) {
         this.plannerService = plannerService;
+        this.httpSession = httpSession;
     }
 
     @GetMapping
@@ -39,7 +42,10 @@ public class PlannerController {
     }
 
     @PostMapping("/add")
-    public String addPlanner(@ModelAttribute AddPlannerRequest request, BindingResult result, RedirectAttributes rttr) {
+    public String addPlanner(@ModelAttribute AddPlannerRequest request,
+                             BindingResult result,
+                             RedirectAttributes rttr) {
+
         if (result.hasErrors()) {
             // 바인딩 오류 처리
             System.out.println("error");; // 오류 페이지로 리다이렉트 또는 오류 메시지를 출력하는 뷰를 반환
@@ -55,7 +61,9 @@ public class PlannerController {
         System.out.println(request.getStartDate());
         System.out.println(request.getEndDate());
 
-        plannerService.save(request, userId);
+        // Planner 저장 후 반환된 plannerId
+        Long plannerId = plannerService.save(request, userId).getPlannerId();
+        httpSession.setAttribute("plannerId", plannerId);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startDate = dateFormat.format(request.getStartDate());

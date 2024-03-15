@@ -1,38 +1,39 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.domain.Bookmark;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
-import com.io.threegonew.dto.BookmarkRequest;
-import com.io.threegonew.dto.MyBookmarkByAreaRequest;
-import com.io.threegonew.dto.PageResponse;
-import com.io.threegonew.dto.TourItemSelectRequest;
-import com.io.threegonew.service.PlannerService;
+import com.io.threegonew.domain.Plan;
+import com.io.threegonew.dto.*;
+import com.io.threegonew.service.PlanService;
 import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("plan")
 @RequiredArgsConstructor
 public class PlanController {
-    private final PlannerService plannerService;
+    private final PlanService planService;
     private final TourItemService tourItemService;
     private final TourItemContentService tourItemContentService;
+    private final HttpSession httpSession;
+
+
+
 
     @PostMapping("/api/touritems")
     public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
@@ -49,7 +50,6 @@ public class PlanController {
 //                                @PathVariable(name = "areaCode") Integer areaCode,
 //                                @PathVariable(name = "sigunguCode", required = false) Integer sigunguCode,
                                 Model model){
-        System.out.println("test1");
 
         // String을 LocalDate로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -118,6 +118,8 @@ public class PlanController {
         return TourItemSelectRequest.builder()
                 .build();
     }
+
+
 //    private TourItemSelectRequest buildTourItemSelectRequest(Integer areaCode, Integer sigunguCode) {
 //        String AreaCode = (areaCode == null ) ? null : String.valueOf(areaCode);
 //        String SigunguCode = (sigunguCode == null) ? null : String.valueOf(sigunguCode);
@@ -127,5 +129,66 @@ public class PlanController {
 //                .sigunguCode(SigunguCode)
 //                .build();
 //    }
+
+
+
+    @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE) // consumes 설정 추가
+    public String savePlan(@RequestBody List<AddPlanRequest> places,
+                            RedirectAttributes rttr) {
+        // places 데이터를 처리하고 데이터베이스에 저장하는 로직
+        try {
+            // 현재 사용자의 인증 정보를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // 인증 정보에서 사용자 아이디를 추출
+            String userId = authentication.getName();
+
+            System.out.println(userId);
+            Long plannerId = (Long) httpSession.getAttribute("plannerId");
+
+            if (plannerId == null) {
+                // plannerId가 null인 경우 처리
+                // 실패 응답 반환 또는 예외 처리
+                System.out.println("plannerId 반환 실패~~~");
+                return "error";
+            }
+
+
+            for(AddPlanRequest place: places) {
+                place.setUserId(userId);
+                place.setPlannerId(plannerId);
+                planService.save(place, userId);
+            }
+
+
+            // RedirectAttributes 를 사용해 URL에 파라미터 추가
+            rttr.addAttribute("p_id",plannerId);
+            // 성공적으로 저장된 후의 로직 처리
+//            return ResponseEntity.ok().body("Data saved successfully");
+            return "redirect:/plan/show";
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
+    @GetMapping("/show")
+    public String ShowYourPlan (
+                                    @RequestParam(name = "p_id") Long plannerId,
+                                    Model model
+                                ) {
+
+        System.out.println("plannerId : " + plannerId);
+        List<Plan> plans = planService.findByPlannerId(plannerId);
+
+        TourItemSelectRequest request = TourItemSelectRequest.builder().plannerId(plannerId).build();
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+
+
+        model.addAttribute("pageResponse", pageResponse);
+
+        return "plan/showplan";
+    }
 }
 

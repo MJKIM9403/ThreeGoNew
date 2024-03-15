@@ -569,6 +569,19 @@
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+                } else if (previousTabIndex === -1) {
+                    // 첫 번째 탭에서 다른 탭으로 이동하는 경우
+                    // 첫 번째 탭의 마커와 경로가 이미 있을 경우에만 제거
+                    if (viaMarkers[0] && viaMarkers[0].length > 0) {
+                        viaMarkers[0].forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                    }
+                    if (resultInfoArr[0] && resultInfoArr[0].length > 0) {
+                        resultInfoArr[0].forEach(function(line) {
+                            line.setMap(null);
+                        });
+                    }
                 }
 
                 // 현재탭의 목록 불러오기
@@ -597,7 +610,32 @@
                     return placeList.length > 0;
                 });
                 if (allPlacesAdded) {
-                    alert('데이터 저장해야됨');
+                    var placesData = places;
+
+                    $.ajax({
+                        type: "POST", // HTTP 요청 방식
+                        url: "api/saveplans", // 데이터를 전송할 서버의 URL
+                        contentType: "application/json", // 전송할 데이터의 타입
+                        data: JSON.stringify(places.flatMap(function(place, index) {
+                            return place.map(function(subPlace, subIndex) {
+                                return {
+                                    userId: subPlace.userId,
+                                    day: index + 1, // day 값 설정
+                                    order: subIndex + 1, // order 값 설정
+                                    contentId: subPlace.contentid
+                                };
+                            });
+                        })), // 전송할 데이터
+                        success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
+
+                        },
+                        error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
+                            alert('실패');
+                        }
+                    });
+
+
+
                 } else {
                     alert('모든 탭에서 장소를 추가해주세요.');
                 }
@@ -783,6 +821,9 @@
         justify-content: center;
         padding-top: 10px;
     }
+    .nav-item {
+        padding: 0 !important;
+    }
 </style>
 
 
@@ -834,6 +875,22 @@
                     <input class="search-bar__input" placeholder="장소를 검색하세요.">
                     <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
                 </div>
+                <!--장소선택이 들어가야 하는 부분, 추후에 구현-->
+<!--                <div class="wrap">-->
+<!--                    <div class="flex-box">-->
+<!--                        <h2 id="areaName" th:text="${selectedArea.areaName}"></h2>-->
+<!--                        &lt;!&ndash; Button trigger modal &ndash;&gt;-->
+<!--                        <button type="button" class="btn btn-2 btn-primary2 btn-select-area " id="morebtn" >지역선택</button>-->
+<!--                    </div>-->
+<!--                    <div id="area-list-box" class = "invisiblecard">-->
+<!--                        <th:block th:each="area, idx : ${areaList}">-->
+<!--                            <input type="radio" class="areaSelect btn-check" name="areaSelect" th:id="|area${idx.count}|" autocomplete="off"-->
+<!--                                   th:value="${area.areaCode}" th:checked="${selectedArea.areaCode == area.areaCode}">-->
+<!--                            <label class="btn btn-3 btn-area" th:for="|area${idx.count}|"><a th:href="@{/info/city/{areaCode}(areaCode = ${area.areaCode})}" th:text="|${area.areaName}|"></a></label>-->
+<!--                        </th:block>-->
+<!--                    </div>-->
+<!--                </div>-->
+
 
                 <div class="search-scroll list-group list-group-flush border-bottom scrollarea">
                     <div class="flex overflow-x-hidden">
