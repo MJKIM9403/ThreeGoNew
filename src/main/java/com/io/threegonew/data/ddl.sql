@@ -44,7 +44,7 @@ create table `PLAN` (
                         p_id int not null,
                         plan_day int not null,
                         plan_order int not null,
-                        plan_contentid varchar(40) not null
+                        contentid varchar(40) not null
 )
 
 
