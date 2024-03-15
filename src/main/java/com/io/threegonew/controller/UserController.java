@@ -44,42 +44,6 @@ public class UserController {
     }
 
 
-//
-//@PostMapping("/login")
-//public String login(@RequestParam(name = "id") String id,
-//                    @RequestParam(name = "pw") String pw,
-//                    HttpServletRequest request) {
-//
-//    System.out.println("usercontroller : " + id);
-//
-//    // 인증 로직을 사용하여 사용자를 인증하려고 시도합니다.
-//    User loginUser = userService.authenticateUser(id, pw);
-//
-//    if (loginUser == null) {
-//        // 인증 실패 시 리다이렉트 및 메시지 처리 (선택사항)
-//        return "redirect:/login";
-//    }
-//
-//    // 세션에 인증된 사용자 설정
-//    HttpSession session = request.getSession();
-//    session.setAttribute("loginUser", loginUser);
-//    userDetailService.loadUserByUsername(id);
-//
-//    // 리다이렉트할 때는 return 구문을 여기에 작성합니다.
-//    return "redirect:/index";
-//}
-
-
-
-//    @GetMapping("/logout")
-//    public String logout(HttpServletRequest request, HttpServletResponse response){
-//        new SecurityContextLogoutHandler()
-//                .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-//        return "redirect:/login";
-//    }
-
-
-
 }
 
 

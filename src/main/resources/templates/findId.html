@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- 코드언어 표시 == 웹 표준지침 준수 -->
+<head>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- jquery-->
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/css/style.css?after" rel="stylesheet" />
+    <link href="assets/css/commonstyle.css?after" rel="stylesheet"/>
+    <title>아이디 찾기</title>
+    <link rel = "icon" href="image/wave.ico">
+
+</head>
+
+<style>
+    #find-info{
+        margin-top: 20px;
+    }
+    #find-info a:first-of-type{
+        margin-right: 15px;
+        position: relative;
+    }
+    #find-info a:first-of-type:after{
+        width: 1px;
+        height: 20px;
+        position: absolute;
+        bottom: 1px;
+        right: -11px;
+        background-color: #CCCCCC;
+        content: "";
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .headerImg {
+        margin-bottom: 0; /* 아래쪽 여백 제거 */
+
+    }
+
+</style>
+
+
+<body>
+<!--사이드바-->
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+
+<div class="w3-content w3-container w3-margin-top container position-relative pb-5">
+
+<!--허전해서 이미지-->
+    <div class="w3-content w3-container container position-relative pb-5 headerImg"
+         style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
+         background-size: cover;
+         height: 15em;
+         margin-bottom: 3em;">
+    </div>
+
+    <h1 id="findh1" class="text-center">아이디 찾기</h1>
+    <div id="header">
+        <p class="text-center">아이디 찾기 위해 이메일을 입력해주세요.</p>
+    </div>
+
+    <div class="w3-container w3-card-4">
+
+        <form id="findForm" action="/findId" method="post" onsubmit="return validateForm()">
+            <div class="form-group userInput mb-5">
+            <h4 class="list">이메일</h4>
+                <input type="email" name="email" id="email" class="form-control form-control-sm" maxlength="20" placeholder="이메일을 입력하세요">
+
+            </div>
+
+            <div class="col text-center">
+                <button class="btn btn-primary btn-md" type="submit" id="id-find">아이디 찾기</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        var email = document.getElementById('email').value;
+
+        if (email.trim() === '') {
+            alert('이메일을 입력하세요.');
+            return false;
+        }
+
+
+        return true;
+    }
+</script>
+
+</div>
+
+
+
+<!--&lt;!&ndash;footer&ndash;&gt;-->
+<!--<th:block th:replace="~{fragments/footer}"></th:block>-->
+<!--&lt;!&ndash; Bootstrap core JS&ndash;&gt;-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

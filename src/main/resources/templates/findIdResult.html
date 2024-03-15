@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<!-- 코드언어 표시 == 웹 표준지침 준수 -->
+<head>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+          type="text/css"/>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/commonstyle.css?after" rel="stylesheet" type="text/css"/>
+    <!-- Jquery -->
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <title>로그인</title>
+
+
+</head>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>아이디 찾기 결과</title>
+</head>
+<body>
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+
+    <div class="w3-content w3-container w3-margin-top container position-relative pb-5">
+
+
+        <div class="w3-content w3-container container position-relative pb-5 headerImg"
+             style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
+         background-size: cover;
+         height: 15em;
+         margin-bottom: 3em;
+">
+        </div>
+    <div class="w3-container w3-card-4">
+    <h1 id="findh1" class="text-center">아이디 찾기 결과</h1>
+
+        <div class="w3-container w3-card-4 mb-5">
+
+        <!-- 서버로부터 전달된 findId 변수를 통해 아이디를 표시하거나, 아이디가 없는 경우 메시지를 표시합니다. -->
+        <div th:if="${findId}">
+            <!-- 아이디 표시 -->
+            <p class="text-center">아이디를 찾았습니다. 찾은 아이디는
+                <span th:text="${#strings.substring(findId, 0, 3)} +
+                         ${#strings.repeat('*', #strings.length(findId) - 3)}">
+        </span> 입니다.
+            </p>
+        </div>
+        <div th:unless="${findId}">
+            <p class="text-center " >찾는 아이디가 없습니다.</p>
+        </div>
+
+        </div>
+    <div class=" col text-center">
+        <span id="findId_btn">
+            <a href="/login">
+    <button class="btn btn-primary btn-md" >로그인 페이지로 돌아가기</button>
+            </a>
+    </span>
+    </div>
+    </div>
+
+
+</p>
+</div>
+</div>
+</body>
+</html>
