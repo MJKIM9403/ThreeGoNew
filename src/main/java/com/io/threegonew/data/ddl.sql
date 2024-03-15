@@ -38,6 +38,16 @@ insert into T_AREA values('38', '전라남도', 34.81621546364296, 126.462911827
 insert into T_AREA values('39', '제주도', 33.4889273516415, 126.50042271000662);
 
 -- 플래너 테이블 추가 --
+create table `PLAN` (
+                        plan_id int AUTO_INCREMENT PRIMARY KEY,
+                        u_id  varchar(40) not null,
+                        p_id int not null,
+                        plan_day int not null,
+                        plan_order int not null,
+                        plan_contentid varchar(40) not null
+)
+
+
 create table `PLANNER` (
                            p_id int AUTO_INCREMENT PRIMARY KEY,
                            u_id  varchar(40) not null,
