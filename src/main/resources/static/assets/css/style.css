@@ -261,3 +261,6 @@ a {
 .page-link {
     display: inline !important;
 }
+
+/*로그인, 아이디찾기 h1 여백 조정*/
+#findh1 { margin-bottom: 1em; }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.io.threegonew.domain.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,13 +22,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+//    User findUserByEmail(String email);
+
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> findAll(){
         return userRepository.findAll();
     }
-
 
 
     public String save(AddUserRequest dto) {
@@ -88,4 +90,11 @@ public class UserService {
 //        return userRepository.existsByEmail(email);
 //    }
 }
+
+    public User findUserByEmail(String email){
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        return userOptional.orElse(null); // 만약 사용자가 존재하지 않는다면 null 반환
+    }
+
 }
+
