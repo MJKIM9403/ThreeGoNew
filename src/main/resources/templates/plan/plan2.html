@@ -168,6 +168,7 @@
     // tmap 실행
     $(document).ready(function() {
         initTmap2();
+        addPlace();
         showTourItems();
     })
 
@@ -202,9 +203,8 @@
         // return marker;
     }
 
-    // 아이콘 누르면 장소 담기에 추가하는 함수
-    $(document).ready(function () {
-        $('.plus').click(function () {
+    function addPlace() {
+        $(document).on('click','.plus',function () {
             if(places[index].length < 9) {
                 // 이름 가져오기
                 const areaname = $(this).prev('div').children('div').text();
@@ -259,7 +259,7 @@
 
 
         });
-    });
+    }
 
     function addPrintDayList() {
         $('#areabox').empty(); // 반복문 시작 전에 출력된 목록을 지우고
