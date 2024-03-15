@@ -71,7 +71,6 @@
     function showTourItems(){
         $(document).on('click','.page-item',function (e) {
             const target = e.target;
-            console.log(target.getAttribute('data-num'))
             // sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
             if(!target.classList.contains('disabled')){
                 $.ajax({
