@@ -29,16 +29,17 @@ public class Plan {
     @Column(name = "plan_order", nullable = false)
     private Integer order;
 
-    @Column(name = "plan_contentid", nullable = false)
-    private String contentid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "content_id")
+    private TourItem tourItem;
 
     @Builder
-    public Plan(Long plannerId, String userId, Integer day, Integer order, String contentid) {
+    public Plan(Long plannerId, String userId, Integer day, Integer order, TourItem tourItem) {
         this.plannerId = plannerId;
         this.userId = userId;
         this.day = day;
         this.order = order;
-        this.contentid = contentid;
+        this.tourItem = tourItem;
     }
 
     public void update(Integer day, Integer order) {
