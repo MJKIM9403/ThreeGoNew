@@ -1,6 +1,7 @@
 package com.io.threegonew.dto;
 
 
+import com.io.threegonew.domain.TourItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

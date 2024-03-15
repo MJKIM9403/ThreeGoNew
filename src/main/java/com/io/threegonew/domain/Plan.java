@@ -30,7 +30,7 @@ public class Plan {
     private Integer order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "content_id")
+    @JoinColumn(name = "contentid")
     private TourItem tourItem;
 
     @Builder
