@@ -126,6 +126,13 @@
         .card-header {
             background-color: transparent;
         }
+
+
+    /*  리뷰작성 관련  */
+        #new-post-btn {
+            bottom: 5%;
+            right: 5%;
+        }
     </style>
 
 </head>
@@ -227,6 +234,26 @@
             </div>
         </div>
     </div>
+    <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editor">
+        <i class="bi bi-compass"></i>
+    </button>
 </div>
 
 
