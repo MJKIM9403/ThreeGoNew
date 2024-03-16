@@ -3,6 +3,7 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
 import com.io.threegonew.domain.Plan;
+import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.PlanService;
 import com.io.threegonew.service.TourItemContentService;
@@ -181,12 +182,15 @@ public class PlanController {
 
         System.out.println("plannerId : " + plannerId);
         List<Plan> plans = planService.findByPlannerId(plannerId);
+        List<TourItem> tourItems = new ArrayList<>();
+        for (Plan plan : plans) {
+            tourItems.add(plan.getTourItem());
+        }
 
-        TourItemSelectRequest request = TourItemSelectRequest.builder().plannerId(plannerId).build();
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+        // 모델에 Plan과 TourItem 정보를 넣어서 view로 전달
+        model.addAttribute("plans", plans);
+        model.addAttribute("tourItems", tourItems);
 
-
-        model.addAttribute("pageResponse", pageResponse);
 
         return "plan/showplan";
     }
