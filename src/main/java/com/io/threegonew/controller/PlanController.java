@@ -22,10 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("plan")
@@ -137,8 +135,7 @@ public class PlanController {
 
 
     @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE) // consumes 설정 추가
-    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody List<AddPlanRequest> places,
-                                                      RedirectAttributes rttr) {
+    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody List<AddPlanRequest> places) {
         // places 데이터를 처리하고 데이터베이스에 저장하는 로직
         try {
             // 현재 사용자의 인증 정보를 가져옴
@@ -181,11 +178,12 @@ public class PlanController {
         System.out.println("plannerId : " + plannerId);
         List<Plan> plans = planService.findByPlannerId(plannerId);
         List<TourItem> tourItems = new ArrayList<>();
+
         for (Plan plan : plans) {
             tourItems.add(plan.getTourItem());
         }
 
-        // 모델에 Plan과 TourItem 정보를 넣어서 view로 전달
+        // 모델에 groupedPlans와 Plan과 TourItem 정보를 넣어서 view로 전달
         model.addAttribute("plans", plans);
         model.addAttribute("tourItems", tourItems);
 
