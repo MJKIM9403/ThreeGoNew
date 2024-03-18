@@ -22,7 +22,7 @@
     <title>Three Go</title>
 
     <style>
-        #sidebar {
+        /*#sidebar {
             min-width: 300px;
             max-width: 300px;
             background: #1d1919;
@@ -109,7 +109,7 @@
         }
         .number-label {
             display: block;
-        }
+        }*/
 
 
         /*card*/
@@ -211,206 +211,209 @@
 </head>
 <body>
 
-<div class="d-flex">
-    <nav id="sidebar" class="">
-        <div class="pt-5">
-            <!--유저 프로필 사진을 누르면 마이페이지로 이동-->
-            <a href="#" class="mb-5">
-                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" class="logo rounded-circle">
-            </a>
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+<!--    <nav id="sidebar" class="">-->
+<!--        <div class="pt-5">-->
+<!--            &lt;!&ndash;유저 프로필 사진을 누르면 마이페이지로 이동&ndash;&gt;-->
+<!--            <a href="#" class="mb-5">-->
+<!--                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" class="logo rounded-circle">-->
+<!--            </a>-->
 
-            <div class="text-center p-5">
-                <span class="fs-5 fw-semibold">농담곰</span>
-            </div>
+<!--            <div class="text-center p-5">-->
+<!--                <span class="fs-5 fw-semibold">농담곰</span>-->
+<!--            </div>-->
 
-            <div class="counter d-flex justify-content-center text-center pb-5">
-                <div class="col column">
-                    <strong class="number">892</strong>
-                    <span class="number-label">게시글</span>
+<!--            <div class="counter d-flex justify-content-center text-center pb-5">-->
+<!--                <div class="col column">-->
+<!--                    <strong class="number">892</strong>-->
+<!--                    <span class="number-label">게시글</span>-->
+<!--                </div>-->
+<!--                <div class="col column">-->
+<!--                    <strong class="number">22.5k</strong>-->
+<!--                    <span class="number-label">팔로워</span>-->
+<!--                </div>-->
+<!--                <div class="col column">-->
+<!--                    <strong class="number">150</strong>-->
+<!--                    <span class="number-label">팔로잉</span>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <ul class="list-unstyled components mb-5">-->
+<!--                <li class="active">-->
+<!--                    <a href="#">-->
+<!--                        <i class="bi bi-house-door-fill icon"></i>-->
+<!--                        피드-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <a href="#">-->
+<!--                        <i class="bi bi-speedometer2 icon"></i>-->
+<!--                        여행정보-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <a href="#">-->
+<!--                        <i class="bi bi-card-checklist icon"></i>-->
+<!--                        여행일정-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <a href="#">-->
+<!--                        <i class="bi bi-columns icon"></i>-->
+<!--                        커뮤니티-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <a href="#">-->
+<!--                        <i class="bi bi-people-fill icon"></i>-->
+<!--                        마이페이지-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <a href="#">-->
+<!--                        <i class="bi bi-people-fill icon"></i>-->
+<!--                        로그아웃-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <div class="footer">-->
+<!--                <p>-->
+<!--                    푸터에쓸내용-->
+<!--                </p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </nav>-->
+
+    <div class="container">
+        <div id="content" class="p-4 p-md-5">
+            <div class="card">
+                <!--유저 정보-->
+                <div class="d-flex card-header gap-3">
+                    <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo" class="rounded-circle">
+                    <span>nongdamgom</span>
+                    <span>농담곰</span>
                 </div>
-                <div class="col column">
-                    <strong class="number">22.5k</strong>
-                    <span class="number-label">팔로워</span>
-                </div>
-                <div class="col column">
-                    <strong class="number">150</strong>
-                    <span class="number-label">팔로잉</span>
-                </div>
-            </div>
-
-            <ul class="list-unstyled components mb-5">
-                <li class="active">
-                    <a href="#">
-                        <i class="bi bi-house-door-fill icon"></i>
-                        피드
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="bi bi-speedometer2 icon"></i>
-                        여행정보
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="bi bi-card-checklist icon"></i>
-                        여행일정
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="bi bi-columns icon"></i>
-                        커뮤니티
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="bi bi-people-fill icon"></i>
-                        마이페이지
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="bi bi-people-fill icon"></i>
-                        로그아웃
-                    </a>
-                </li>
-            </ul>
-            <div class="footer">
-                <p>
-                    푸터에쓸내용
-                </p>
-            </div>
-        </div>
-    </nav>
-
-    <div id="content" class="p-4 p-md-5">
-        <div class="card">
-            <!--유저 정보-->
-            <div class="d-flex card-header gap-3">
-                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo" class="rounded-circle">
-                <span>nongdamgom</span>
-                <span>농담곰</span>
-            </div>
-            <div class="card-body">
-                <!--유저가 업로드한 이미지-->
-                <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="Card image cap">
-                <!--좋아요와 댓글 -->
-                <div class="d-flex gap-3">
-                    <i class="bi bi-heart"></i>
-                    <i class="bi bi-chat"></i>
-                </div>
-
-
-                <p class="card-text">좋아요 몇개</p>
-                <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
-            </div>
-        </div>
-    </div>
-    <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="selectBookLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="selectBookLabel">리뷰북 선택</h1>
-                </div>
-                <div class="modal-body">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1">
-                        <label class="form-check-label" for="selectReviewBook1">
-                            새 리뷰북 생성
-                            <select class="form-select form-select-sm" aria-label="Default select example">
-                                <option selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                                <input class="form-control form-control-sm" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
-                            </select>
-                        </label>
+                <div class="card-body">
+                    <!--유저가 업로드한 이미지-->
+                    <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="Card image cap">
+                    <!--좋아요와 댓글 -->
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-heart"></i>
+                        <i class="bi bi-chat"></i>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2" >
-                        <label class="form-check-label" for="selectReviewBook2">
-                            기존 리뷰북에 추가
-                            <select class="form-select form-select-sm" aria-label="Default select example">
-                                <option selected>Open this select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3">
-                        <label class="form-check-label" for="selectReviewBook3">
-                            리뷰북을 선택하지 않고 리뷰 작성
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editor" onclick="goEdit()">다음</button>
+
+
+                    <p class="card-text">좋아요 몇개</p>
+                    <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editorLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="preview-container col-md-7">
-                            <div class="add-file">
-                                <label for="img-uploader" class="uploader border border-primary rounded-pill">사진 추가</label>
-                                <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()" multiple/>
-                            </div>
-                            <div class="swiper mySwiper">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">사진을 추가해주세요.</div>
+        <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="selectBookLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="selectBookLabel">리뷰북 선택</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1">
+                            <label class="form-check-label" for="selectReviewBook1">
+                                새 리뷰북 생성
+                                <select class="form-select form-select-sm mt-2" aria-label="Default select example">
+                                    <option class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                                <input class="form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2" >
+                            <label class="form-check-label" for="selectReviewBook2">
+                                기존 리뷰북에 추가
+                                <select class="form-select form-select-sm mt-2" aria-label="Default select example">
+                                    <option class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3">
+                            <label class="form-check-label" for="selectReviewBook3">
+                                리뷰북을 선택하지 않고 리뷰 작성
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editor" onclick="goEdit()">다음</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editorLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="preview-container col-md-7">
+                                <div class="add-file">
+                                    <label for="img-uploader" class="uploader border border-primary rounded-pill">사진 추가</label>
+                                    <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()" multiple/>
                                 </div>
-                                <div class="swiper-controller">
-                                    <div class="swiper-button-next"></div>
-                                    <div class="swiper-button-prev"></div>
-                                    <div class="swiper-pagination"></div>
+                                <div class="swiper mySwiper">
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide">사진을 추가해주세요.</div>
+                                    </div>
+                                    <div class="swiper-controller">
+                                        <div class="swiper-button-next"></div>
+                                        <div class="swiper-button-prev"></div>
+                                        <div class="swiper-pagination"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5 d-flex align-items-center">
+                                <div class="modal-body">
+                                    <div class="mb-2">
+                                        <label for="selected-review-book" class="form-label">리뷰북</label>
+                                        <input type="text" class="form-control form-control-sm" id="selected-review-book" readonly>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="select-touritem-info" class="form-label">관광지 정보 불러오기</label>
+                                        <select class="form-select form-select-sm" id="select-touritem-info" onchange="selectTouritem()">
+                                            <option class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
+                                            <option value="direct">직접 입력</option>
+                                            <option value="contentid1">집가기</option>
+                                            <option value="contentid2">밥먹기</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="selected-touritem-name" class="form-label">관광지 이름 작성</label>
+                                        <input type="text" class="form-control form-control-sm" id="selected-touritem-name" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="review-contents" class="form-label">본문</label>
+                                        <textarea class="form-control form-control-sm" id="review-contents"></textarea>
+                                    </div>
+                                    <div class="editor-btn-group d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#select-book">이전</button>
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">완료</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5 d-flex align-items-center">
-                            <div class="modal-body">
-                                <div class="mb-2">
-                                    <label for="selected-review-book" class="form-label">리뷰북</label>
-                                    <input type="text" class="form-control form-control-sm" id="selected-review-book" readonly>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="select-touritem-info" class="form-label">관광지 정보 불러오기</label>
-                                    <select class="form-select form-select-sm" id="select-touritem-info" onchange="selectTouritem()">
-                                        <option class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
-                                        <option value="direct">직접 입력</option>
-                                        <option value="contentid1">집가기</option>
-                                        <option value="contentid2">밥먹기</option>
-                                    </select>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="selected-touritem-name" class="form-label">관광지 이름 작성</label>
-                                    <input type="text" class="form-control form-control-sm" id="selected-touritem-name" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="review-contents" class="form-label">본문</label>
-                                    <textarea class="form-control form-control-sm" id="review-contents"></textarea>
-                                </div>
-                                <div class="editor-btn-group d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#select-book">이전</button>
-                                    <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">완료</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#select-book">
+            <i class="bi bi-compass"></i>
+        </button>
     </div>
-    <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#select-book">
-        <i class="bi bi-compass"></i>
-    </button>
 </div>
 
 
@@ -420,7 +423,7 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <!--카드 -->
-<script>
+<script th:inline="javascript">
     // 버튼 누르면 더보기
     $(document).ready(function() {
         // $("#morebtn").click(function() {
@@ -470,6 +473,15 @@
         titleInput.attr('disabled',false);
         titleInput.val(title)
     }
+
+    $('#select-book').on('show.bs.modal', function (e) {
+        let login = [[${loginUserId}]];
+        console.log(login);
+        if(login == "anonymousUser"){
+            alert("리뷰는 로그인 후 작성할 수 있습니다.")
+            e.preventDefault();
+        }
+    })
 
     function setPreview(){
         let files = fileInput.files;

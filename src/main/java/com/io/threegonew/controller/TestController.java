@@ -21,39 +21,10 @@ public class TestController {
             return "login";
         }
 
-//        @GetMapping("/planner")
-//        public String getMyPlanner() {
-//            return "plan/calendar";
-//        }
-
-//        @GetMapping("/plan")
-//        public String getMyPlan() {
-//            return "plan/plan";
-//        }
-
         @GetMapping("detail")
         public String getDetail() {
             return "plan/detail";
         }
 
-        @GetMapping("mypage")
-        public String getMyPage() {
-            return "mypage/mypage";
-        }
-
-        @GetMapping("home")
-        public String getHome() {
-            return "index2";
-        }
-
-//    @GetMapping("/area")
-//    public String getArea() {
-//        return "tourinfo/area";
-//    }
-
-//    @GetMapping("/bbs")
-//    public String getBoard() {
-//        return "board/bbs";
-//    }
     }
 

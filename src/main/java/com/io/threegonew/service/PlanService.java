@@ -43,13 +43,15 @@ public class PlanService {
         // tourItem을 찾아서 설정
         TourItem tourItem = tourItemRepository.findById(dto.getContentId()).orElse(null);
 
-        return planRepository.save(Plan.builder()
-                    .userId(userId)
-                    .plannerId(dto.getPlannerId())
-                    .day(dto.getDay())
-                    .order(dto.getOrder())
-                    .tourItem(tourItem)
-                    .build()
-            );
+        Plan plan = planRepository.save(Plan.builder()
+                .userId(userId)
+                .plannerId(dto.getPlannerId())
+                .day(dto.getDay())
+                .order(dto.getOrder())
+                .tourItem(tourItem)
+                .build());
+
+
+        return plan;
     }
 }

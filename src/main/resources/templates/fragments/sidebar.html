@@ -14,7 +14,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="/index" class="nav-link py-2 border-bottom active" aria-current="page">
+        <a href="/review" class="nav-link py-2 border-bottom active" aria-current="page">
           <i class="bi bi-house-door-fill icon"></i>
           메인화면
         </a>
@@ -50,16 +50,29 @@
     </ul>
     <hr>
     <div class="dropdown mt-auto">
-      <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>mdo</strong>
+      <hr>
+      <a href="#" class="d-flex justify-content-center align-items-center text-decoration-none dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+        <th:block sec:authorize="isAuthenticated()">
+          <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+          <strong th:text="${#authentication.principal.name}"></strong>
+        </th:block>
+        <th:block sec:authorize="isAnonymous()">
+          <i class="bi bi-person-circle text-dark"></i>
+          <strong>로그인</strong>
+        </th:block>
       </a>
       <ul class="dropdown-menu text-small shadow">
-        <li><a class="dropdown-item" href="#">New project...</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <th:block sec:authorize="isAnonymous()">
+          <li><a class="dropdown-item" href="/login">로그인</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/join">회원가입</a></li>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
+        </th:block>
       </ul>
     </div>
   </div>

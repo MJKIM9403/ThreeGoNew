@@ -36,20 +36,20 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
                 .authorizeRequests()
-                .requestMatchers("/bookmark/**","home/**", "mypage/**", "/checkDuplicateId", "/api/**", "/plan/**","planner/**","/login", "/join", "/user", "/error", "/index", "/info/**","/insertData", "/findId").permitAll()
+                .requestMatchers("/bookmark/**","review/**", "mypage/**", "/checkDuplicateId", "/api/**", "/plan/**","planner/**","/login", "/join", "/user", "/error", "/index", "/info/**","/insertData", "/findId").permitAll()
                 //.requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .loginProcessingUrl("/loginProcess")
-                        .defaultSuccessUrl("/index")
+                        .defaultSuccessUrl("/review")
                         .usernameParameter("id")
                         .passwordParameter("pw")
                     //    .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/index")
+                        .logoutSuccessUrl("/review")
                         .invalidateHttpSession(true)
                 )
                 .csrf(AbstractHttpConfigurer::disable)
