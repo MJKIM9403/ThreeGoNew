@@ -8,4 +8,5 @@ import java.util.List;
 public interface PlanRepository extends JpaRepository<Plan, Long> {
     List<Plan> findByPlannerId(Long plannerId);
     // 유무 확인 나중에 추가
+
 }

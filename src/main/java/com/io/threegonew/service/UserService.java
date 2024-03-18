@@ -22,8 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-//    User findUserByEmail(String email);
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
