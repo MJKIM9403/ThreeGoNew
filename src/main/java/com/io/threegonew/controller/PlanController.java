@@ -11,6 +11,7 @@ import com.io.threegonew.service.TourItemService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("plan")
@@ -134,8 +137,8 @@ public class PlanController {
 
 
     @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE) // consumes 설정 추가
-    public String savePlan(@RequestBody List<AddPlanRequest> places,
-                            RedirectAttributes rttr) {
+    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody List<AddPlanRequest> places,
+                                                      RedirectAttributes rttr) {
         // places 데이터를 처리하고 데이터베이스에 저장하는 로직
         try {
             // 현재 사용자의 인증 정보를 가져옴
@@ -148,9 +151,7 @@ public class PlanController {
 
             if (plannerId == null) {
                 // plannerId가 null인 경우 처리
-                // 실패 응답 반환 또는 예외 처리
                 System.out.println("plannerId 반환 실패~~~");
-                return "error";
             }
 
 
@@ -160,17 +161,14 @@ public class PlanController {
                 planService.save(place, userId);
             }
 
-
-            // RedirectAttributes 를 사용해 URL에 파라미터 추가
-            rttr.addAttribute("p_id",plannerId);
             // 성공적으로 저장된 후의 로직 처리
-//            return ResponseEntity.ok().body("Data saved successfully");
-            return "redirect:/plan/show";
+            // JSON 객체로 p_id를 포함하여 반환
+            return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
         }
     }
 
