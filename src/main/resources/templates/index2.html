@@ -317,33 +317,33 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1">
+                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1" value="1">
                             <label class="form-check-label" for="selectReviewBook1">
                                 새 리뷰북 생성
-                                <select class="form-select form-select-sm mt-2" aria-label="Default select example">
-                                    <option class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
+                                <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example" onchange="writeBookTitle()">
+                                    <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
                                 </select>
-                                <input class="form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
+                                <input id="new-book-title" class="book-input form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
                             </label>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2" >
+                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2" value="2">
                             <label class="form-check-label" for="selectReviewBook2">
                                 기존 리뷰북에 추가
-                                <select class="form-select form-select-sm mt-2" aria-label="Default select example">
-                                    <option class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select id="exist-book-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example">
+                                    <option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
+                                    <option value="1">아침먹기</option>
+                                    <option value="2">점심먹기</option>
+                                    <option value="3">저녁먹기</option>
                                 </select>
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3">
-                            <label class="form-check-label" for="selectReviewBook3">
+                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3" value="3">
+                            <label class="book-input form-check-label" for="selectReviewBook3">
                                 리뷰북을 선택하지 않고 리뷰 작성
                             </label>
                         </div>
@@ -435,6 +435,7 @@
         //     }
         // });
         //
+        selectBook();
         $('.swiper-controller').hide();
         deleteImg();
     });
@@ -458,8 +459,64 @@
     const fileInput = document.getElementById('img-uploader');
     const images = [];
 
+    function editorReset() {
+        //사진 배열 초기화
+        images.length = 0;
+        fileInput.files.length = 0;
+        $('.swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
+        // 리뷰북 선택 정보 초기화
+        $('input:radio[name=selectReviewBook]').prop('checked', false);
+        $('#new-book-item-select').html('<option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>');
+        $('#new-book-title').val('');
+        $('#exist-book-select').html('<option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>');
+        // 에디터 내용 초기화
+        selectedReviewBook = "";
+        $('.book-input').attr('disabled', true);
+        $('#selected-review-book').val('');
+        $('#select-touritem-info').html(
+            '<option class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>' +
+            '<option value="direct">직접 입력</option>'
+        );
+        $('#selected-touritem-name').val('');
+        $('#review-contents').val('');
+    }
+
+    function selectBook() {
+        $("input:radio[name=selectReviewBook]").click(function (){
+            let select = Number($("input[name=selectReviewBook]:checked").val());
+            $(".book-input").attr('disabled', true);
+            switch (select){
+                case 1:
+                    $("#new-book-item-select").attr('disabled',false);
+                    if($("#new-book-item-select").val() != "hint"){
+                        writeBookTitle()
+                    }
+                    break;
+                case 2:
+                    $("#exist-book-select").attr('disabled',false);
+                    break;
+            }
+        })
+    }
+
+    function writeBookTitle() {
+        $("#new-book-title").attr('disabled',false);
+    }
+
     function goEdit(){
-        selectedReviewBook = "test";
+        let select = Number($("input[name=selectReviewBook]:checked").val());
+        switch (select){
+            case 1:
+                selectedReviewBook = $("#new-book-title").val();
+                break;
+            case 2:
+                selectedReviewBook = $("#exist-book-select").text();
+                break;
+            case 3:
+                selectedReviewBook = "선택하지 않음";
+                break;
+        }
+
         $('#selected-review-book').val(selectedReviewBook);
     }
 
@@ -475,6 +532,7 @@
     }
 
     $('#select-book').on('show.bs.modal', function (e) {
+        editorReset();
         let login = [[${loginUserId}]];
         console.log(login);
         if(login == "anonymousUser"){
@@ -530,8 +588,6 @@
     function deleteImg() {
         $(document).on('click','.delete-img-btn',function () {
             let idx = $(".delete-img-btn").index(this);
-            //let imgSlide = $(this).parent();
-            //imgSlide.remove();
             swiper.slideTo(idx-1,300,false);
             swiper.removeSlide(idx);
             swiper.update();
