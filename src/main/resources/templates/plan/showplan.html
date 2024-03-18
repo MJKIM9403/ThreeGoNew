@@ -337,8 +337,48 @@
 
 </script>
 <style>
-
+.a {
+    background-color: #0d6efd;
+    width: 30px;
+    height: 30px;
+    border-radius: 60%;
+}
 </style>
+
+<div style="flex-direction:row;">
+    <div class="a"></div>
+    <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">List group item heading</h5>
+                <small>3 days ago</small>
+            </div>
+            <p class="mb-1">Some placeholder content in a paragraph.</p>
+            <small>And some small print.</small>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">List group item heading</h5>
+                <small class="text-muted">3 days ago</small>
+            </div>
+            <p class="mb-1">Some placeholder content in a paragraph.</p>
+            <small class="text-muted">And some muted small print.</small>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">List group item heading</h5>
+                <small class="text-muted">3 days ago</small>
+            </div>
+            <p class="mb-1">Some placeholder content in a paragraph.</p>
+            <small class="text-muted">And some muted small print.</small>
+        </a>
+    </div>
+</div>
+
+
+
+
+
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <div class="container mt-5">
@@ -353,14 +393,20 @@
         </div>
 
         <div class="container-fluid">
+            <div class="list-group">
             <th:block th:each="plan : ${plans}">
-                <p th:text="${plan.tourItem.contentid}"></p>
-                <p th:text="${plan.tourItem.title}"></p>
-                <p th:text="${plan.tourItem.addr1}"></p>
-                <p th:text="${plan.tourItem.addr1}"></p>
+                <a th:href="@{/info/content/{contentid}(contentid=${plan.tourItem.contentid})}" class="list-group-item list-group-item-action" aria-current="true">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1" th:text="${plan.tourItem.title}"></h5>
+                        <small th:text="${plan.tourItem.contentid}"></small>
+                        <small th:text="${plan.day} + 일차"></small>
+                    </div>
+                    <p class="mb-1" th:text="${plan.tourItem.addr1}">Some placeholder content in a paragraph.</p>
+                    <small th:text="${plan.tourItem.addr2}">And some small print.</small>
+                </a>
             </th:block>
+            </div>
         </div>
-
     </div>
 
 </div>
