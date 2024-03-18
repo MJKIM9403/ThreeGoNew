@@ -20,18 +20,30 @@
     <link rel = "icon" href="image/wave.ico">
 
 </head>
+
+<style>
+    .joindiv{
+        padding-left: 12px;
+    }
+</style>
 <body>
 
-<!--<c:if test="${ joinResult == 0}"></c:if>-->
-<!--header-->
-<th:block th:replace="~{fragments/header}"></th:block>
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
 
-<div class="sub-header">
-    <div class="container pt-5 pl-5">
-        <h3 class="display-6 text-white">마이페이지</h3>
-    </div>
-</div>
-<div id="wrap" class="container position-relative pt-5 pb-5">
+    <div class="w3-content w3-container w3-margin-top container position-relative pb-5" style="margin: 0 auto;">
+
+
+    <!--허전해서 이미지-->
+        <div class="w3-content w3-container container position-relative pb-5 headerImg"
+             style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
+         background-size: cover;
+         height: 15em;
+         margin-bottom: 3em;">
+        </div>
+
+
+<div id="wrap" class="container position-relative pb-5 joindiv">
     <form th:action="@{/api/users/register}" th:method="post" onsubmit="return false"  name="joinForm"  enctype="application/json">
 
     <!-- 회원가입 타이틀부분 -->
@@ -200,45 +212,6 @@
 
     // TODO : 이메일 체크
     //
-    // document.getElementById('emailCheckBtn').addEventListener('click', function () {
-    //     let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-    //     let testEmails = document.getElementsByName('email')[0].value;
-    //
-    //     if (!regExp.test(testEmails)) {
-    //         emailCheck = false;
-    //         alert('이메일 형식이 올바르지 않습니다.');
-    //     } else {
-    //         // 서버로 이메일 중복 확인 요청
-    //         $.ajax({
-    //             url: '/checkDuplicateEmail',
-    //             type: 'GET',
-    //             data: {
-    //                 userEmail: testEmails
-    //             },
-    //             success: function (result) {
-    //                 // 메시지 초기화
-    //                 $('#emailAvailable').hide().text('');
-    //                 $('#emailNotAvailable').hide().text('');
-    //
-    //                 if (result === true) {
-    //                     // 중복된 이메일이 존재할 경우
-    //                     $('#emailNotAvailable').show().text('이미 사용 중인 이메일입니다.');
-    //                     emailCheck = false;
-    //                     console.log(result);
-    //                 } else {
-    //                     // 사용 가능한 이메일일 경우
-    //                     $('#emailAvailable').show().text('사용 가능한 이메일입니다.');
-    //                     emailCheck = true;
-    //                     console.log(result);
-    //                 }
-    //             },
-    //             error: function (xhr, status, error) {
-    //                 // 에러 메시지 출력
-    //                 console.error("Error:", error);
-    //             }
-    //         });
-    //     }
-    // });
 
     //원본
     document.getElementById('emailCheckBtn').addEventListener('click', function () {
@@ -312,6 +285,6 @@
 </script>
 
 
-
+</div>
 </body>
 </html>
