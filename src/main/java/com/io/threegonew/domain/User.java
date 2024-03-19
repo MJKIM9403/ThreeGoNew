@@ -42,17 +42,17 @@ public class User /*implements UserDetails*/ {
     private String u_sfile;
 
     @Column(name = "u_about")
-    private String u_about;
+    private String about;
 
     @Builder
-    public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String u_about){
+    public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String about){
         this.id = id;
         this.pw = pw;
         this.name = name;
         this.email = email;
         this.u_ofile = u_ofile;
         this.u_sfile = u_sfile;
-        this.u_about = u_about;
+        this.about = about;
     }
 
    /* //권한 반환

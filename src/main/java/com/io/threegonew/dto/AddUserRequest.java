@@ -24,5 +24,5 @@ public class AddUserRequest {
     private String email;
     private String u_ofile;
     private String u_sfile;
-    private String u_about;
+    private String about;
 }
