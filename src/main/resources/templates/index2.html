@@ -350,7 +350,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editor" onclick="goEdit()">다음</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="goEdit()">다음</button>
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@
                                     <div class="mb-2">
                                         <label for="select-touritem-info" class="form-label">관광지 정보 불러오기</label>
                                         <select class="form-select form-select-sm" id="select-touritem-info" onchange="selectTouritem()">
-                                            <option class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
+                                            <option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
                                             <option value="direct">직접 입력</option>
                                             <option value="contentid1">집가기</option>
                                             <option value="contentid2">밥먹기</option>
@@ -401,7 +401,7 @@
                                     </div>
                                     <div class="editor-btn-group d-flex justify-content-end gap-2">
                                         <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#select-book">이전</button>
-                                        <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">완료</button>
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="createPost()">완료</button>
                                     </div>
                                 </div>
                             </div>
@@ -410,7 +410,7 @@
                 </div>
             </div>
         </div>
-        <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#select-book">
+        <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
             <i class="bi bi-compass"></i>
         </button>
     </div>
@@ -474,7 +474,7 @@
         $('.book-input').attr('disabled', true);
         $('#selected-review-book').val('');
         $('#select-touritem-info').html(
-            '<option class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>' +
+            '<option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>' +
             '<option value="direct">직접 입력</option>'
         );
         $('#selected-touritem-name').val('');
@@ -504,20 +504,41 @@
     }
 
     function goEdit(){
-        let select = Number($("input[name=selectReviewBook]:checked").val());
-        switch (select){
-            case 1:
-                selectedReviewBook = $("#new-book-title").val();
-                break;
-            case 2:
-                selectedReviewBook = $("#exist-book-select").text();
-                break;
-            case 3:
-                selectedReviewBook = "선택하지 않음";
-                break;
-        }
+        if($("input[name=selectReviewBook]:checked").val() == undefined){
+            alert("리뷰북 설정을 완료해주세요.");
+        }else {
+            let validation = false;
+            let select = Number($("input[name=selectReviewBook]:checked").val());
+            switch (select){
+                case 1:
+                    if($("new-book-item-select").val() == 'hint'){
+                        alert("리뷰북에 기록할 여행정보를 선택해주세요.")
+                    }else if($("#new-book-title").val() == ''){
+                        alert("생성할 리뷰북의 제목을 입력해주세요.")
+                    }else {
+                        validation = true;
+                        selectedReviewBook = $("#new-book-title").val();
+                    }
+                    break;
+                case 2:
+                    if($("#exist-book-select").val() == 'hint'){
+                        alert("리뷰를 작성할 리뷰북을 선택해주세요.")
+                    }else {
+                        validation = true;
+                        selectedReviewBook = $("#exist-book-select").text();
+                    }
+                    break;
+                case 3:
+                    validation = true;
+                    selectedReviewBook = "선택하지 않음";
+                    break;
+            }
 
-        $('#selected-review-book').val(selectedReviewBook);
+            if(validation){
+                $('#selected-review-book').val(selectedReviewBook);
+                $('#select-book, #editor').modal('toggle');
+            }
+        }
     }
 
     function selectTouritem(){
@@ -531,14 +552,33 @@
         titleInput.val(title)
     }
 
-    $('#select-book').on('show.bs.modal', function (e) {
+    $('#new-post-btn').click(function () {
         editorReset();
         let login = [[${loginUserId}]];
-        console.log(login);
         if(login == "anonymousUser"){
             alert("리뷰는 로그인 후 작성할 수 있습니다.")
-            e.preventDefault();
+        }else {
+            //todo: 모달 실행 시 리뷰북, 플래너 목록 띄워주기
+            $('#select-book').modal('show');
         }
+    })
+
+    function createPost(){
+        if(images.length < 1){
+            alert("사진을 반드시 한 장 이상 첨부해주세요.")
+        }else if($('#select-touritem-info').val() === 'hint'){
+            alert("관광지 정보를 선택해주세요.")
+        }else if($('#selected-touritem-name').val() === ''){
+            alert('관광지 이름을 작성해주세요.')
+        }else if($('#review-contents').val() === ''){
+            alert('본문 내용을 입력해주세요.')
+        }else {
+            $('#editor').modal('hide');
+        }
+    }
+
+    $('#editor').on('hide.bs.modal', function () {
+        //todo: 글 작성 시 서버와 비동기 처리
     })
 
     function setPreview(){

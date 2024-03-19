@@ -37,6 +37,44 @@ insert into T_AREA values('37', '전라북도', 35.82036067006113, 127.108727138
 insert into T_AREA values('38', '전라남도', 34.81621546364296, 126.46291182755675);
 insert into T_AREA values('39', '제주도', 33.4889273516415, 126.50042271000662);
 
+-- 리뷰, 리뷰북, 리뷰 사진 테이블 추가 --
+CREATE TABLE `review` (
+                          `review_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                          `book_id` bigint(20) DEFAULT NULL,
+                          `user_id` varchar(40) NOT NULL,
+                          `touritem_id` varchar(40) DEFAULT NULL,
+                          `touritem_title` varchar(40) NOT NULL,
+                          `review_content` text NOT NULL,
+                          `view_count` bigint(20) NOT NULL DEFAULT 0,
+                          `reg_date` date NOT NULL,
+                          `mod_date` date NOT NULL,
+                          PRIMARY KEY (`review_id`),
+                          KEY `review_FK` (`book_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+CREATE TABLE `review_book` (
+                               `book_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                               `user_id` varchar(40) NOT NULL,
+                               `book_title` varchar(40) NOT NULL,
+                               `book_content` varchar(100) NOT NULL,
+                               `cover_o_file` varchar(255) DEFAULT NULL,
+                               `cover_file_path` varchar(1000) DEFAULT NULL,
+                               `reg_date` date NOT NULL,
+                               `mod_date` date NOT NULL,
+                               PRIMARY KEY (`book_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+
+CREATE TABLE `review_photo` (
+                                `file_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                `review_id` bigint(20) NOT NULL,
+                                `o_file` varchar(255) NOT NULL,
+                                `file_path` varchar(1000) NOT NULL,
+                                `file_size` bigint(20) NOT NULL,
+                                `reg_date` date NOT NULL,
+                                PRIMARY KEY (`file_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 -- 플래너 테이블 추가 --
 create table `PLAN` (
                         plan_id int AUTO_INCREMENT PRIMARY KEY,
