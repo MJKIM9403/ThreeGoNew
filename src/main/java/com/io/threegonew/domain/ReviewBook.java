@@ -23,10 +23,14 @@ public class ReviewBook extends BaseTimeEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Planner.class)
+    @JoinColumn(name = "planner_id", nullable = false)
+    private Planner planner;
+
     @Column(name = "book_title", nullable = false)
     private String bookTitle;
 
-    @Column(name = "book_content", nullable = false)
+    @Column(name = "book_content")
     private String bookContent;
 
     @Column(name = "cover_o_file")
@@ -43,8 +47,9 @@ public class ReviewBook extends BaseTimeEntity{
     private List<Review> reviewList = new ArrayList<>();
 
     @Builder
-    public ReviewBook(User user, String bookTitle, String bookContent, String coverOfile, String coverFilePath, List<Review> reviewList) {
+    public ReviewBook(User user, Planner planner, String bookTitle, String bookContent, String coverOfile, String coverFilePath, List<Review> reviewList) {
         this.user = user;
+        this.planner = planner;
         this.bookTitle = bookTitle;
         this.bookContent = bookContent;
         this.coverOfile = coverOfile;

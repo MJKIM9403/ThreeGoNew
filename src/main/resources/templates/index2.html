@@ -573,13 +573,32 @@
         }else if($('#review-contents').val() === ''){
             alert('본문 내용을 입력해주세요.')
         }else {
+            saveReview();
             $('#editor').modal('hide');
         }
     }
 
-    $('#editor').on('hide.bs.modal', function () {
-        //todo: 글 작성 시 서버와 비동기 처리
-    })
+    function saveReview(){
+        $.ajax({
+            url : '/review/create',
+            type : 'POST',
+            contentType : 'application/json; charset=UTF-8',
+            data : JSON.stringify({
+                bookId : 1, /*test*/
+                userId : [[${loginUserId}]],
+                touritemId : "1080734", /*test*/
+                touritemTitle : $('#selected-touritem-name').val(),
+                reviewContent : $('#review-contents').val(),
+                photoList : images
+            }),
+            success : function (response) {
+                alert("리뷰를 등록하였습니다.") /*test*/
+            },
+            error : function (err) {
+                console.log(err)
+            }
+        })
+    }
 
     function setPreview(){
         let files = fileInput.files;

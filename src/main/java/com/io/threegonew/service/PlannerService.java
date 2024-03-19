@@ -20,6 +20,10 @@ public class PlannerService {
     private final AreaRepository areaRepository;
     private final SigunguRepository sigunguRepository;
 
+    public Planner findPlanner(Long plannerId) {
+        return plannerRepository.findById(plannerId)
+                .orElseThrow(() -> new IllegalArgumentException("플래너 정보를 찾을 수 없습니다."));
+    }
     public List<Planner> findAll() {
         return plannerRepository.findAll();
     }

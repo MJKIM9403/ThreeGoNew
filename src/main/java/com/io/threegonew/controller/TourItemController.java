@@ -1,6 +1,5 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.config.PrincipalDetails;
 import com.io.threegonew.domain.Bookmark;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
@@ -12,14 +11,12 @@ import com.io.threegonew.service.BookmarkService;
 import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -78,7 +75,7 @@ public class TourItemController {
 
     @GetMapping("/content/{contentid}")
     public String getContentInfo(@PathVariable(name = "contentid") String contentid, Model model){
-        TourItemResponse tourItemResponse = tourItemService.findTourItem(contentid);
+        TourItemResponse tourItemResponse = tourItemService.findTourItemResponse(contentid);
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = "";
         boolean isBookmarkChecked = false;

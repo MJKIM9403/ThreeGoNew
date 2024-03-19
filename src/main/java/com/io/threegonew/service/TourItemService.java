@@ -27,10 +27,13 @@ public class TourItemService {
     private final ContentTypeRepository contentTypeRepository;
     private final AreaRepository areaRepository;
     private final TourItemRepository tourItemRepository;
-    private final BookmarkRepository bookmarkRepository;
     private final ModelMapper modelMapper;
 
-    public TourItemResponse findTourItem(String contentid){
+    public TourItem findTourItem(String contentid){
+        return tourItemRepository.findById(contentid)
+                .orElseThrow(()-> new IllegalArgumentException("not found : touritem"));
+    }
+    public TourItemResponse findTourItemResponse(String contentid){
         TourItem selectedTourItem = tourItemRepository.findById(contentid)
                 .orElseThrow(()-> new IllegalArgumentException("not found : touritem"));
 

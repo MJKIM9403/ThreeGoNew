@@ -50,6 +50,11 @@ public class UserService {
         return userInfoResponse(findUser);
     }
 
+    public User findUser(String userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
+    }
+
 
     private UserInfoResponse userInfoResponse(User user) {
         return UserInfoResponse.builder()

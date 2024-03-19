@@ -55,4 +55,22 @@ public class Review extends BaseTimeEntity {
         this.tourItemTitle = tourItemTitle;
         this.reviewContent = reviewContent;
     }
+
+    @PrePersist
+    public void prePersist() {
+        this.viewCount = this.viewCount == null ? 0 : this.viewCount;
+    }
+
+    public void addPhoto(ReviewPhoto photo){
+        this.reviewPhotoList.add(photo);
+
+        if(photo.getReview() != this){
+            photo.setReview(this);
+        }
+    }
+
+    public Long viewCountUp(){
+        this.viewCount += 1;
+        return viewCount;
+    }
 }
