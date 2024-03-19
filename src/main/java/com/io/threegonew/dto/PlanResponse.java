@@ -13,6 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlanResponse {
-    private boolean success;
-    private List<Plan> plans;
+    private List<PlanDTO> plans;
 }

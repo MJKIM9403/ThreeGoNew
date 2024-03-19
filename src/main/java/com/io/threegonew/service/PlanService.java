@@ -1,14 +1,11 @@
 package com.io.threegonew.service;
 
-import com.io.threegonew.domain.Area;
-import com.io.threegonew.domain.Plan;
-import com.io.threegonew.domain.Sigungu;
-import com.io.threegonew.domain.TourItem;
+import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.AddPlanRequest;
-import com.io.threegonew.repository.AreaRepository;
-import com.io.threegonew.repository.PlanRepository;
-import com.io.threegonew.repository.SigunguRepository;
-import com.io.threegonew.repository.TourItemRepository;
+import com.io.threegonew.dto.PlanDTO;
+import com.io.threegonew.dto.PlanRequest;
+import com.io.threegonew.dto.PlanResponse;
+import com.io.threegonew.repository.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +16,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PlanService {
 
+    private final PlannerRepository plannerRepository;
     private final PlanRepository planRepository;
     private final AreaRepository areaRepository;
     private final SigunguRepository sigunguRepository;
@@ -60,8 +58,27 @@ public class PlanService {
         return planMap;
     }
 
-    public List<Plan> findByPlannerIdAndDay(Long plannerId, Integer day) {
-        return planRepository.findByPlannerIdAndDay(plannerId, day);
+    public List<PlanDTO> findByPlannerIdAndDay(PlanRequest planRequest) {
+        Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId());
+        List<Plan> plans = planRepository.findByPlannerIdAndDay(planner.getPlannerId(), planRequest.getDay());
+
+        // Plan 엔티티 리스트를 PlanDto 리스트로 변환
+        List<PlanDTO> planDTOs = new ArrayList<>();
+        for (Plan plan : plans) {
+            PlanDTO planDto = new PlanDTO();
+            planDto.setPlanId(plan.getPlanId());
+            planDto.setPlannerId(plan.getPlannerId());
+            planDto.setDay(plan.getDay());
+            planDto.setOrder(plan.getOrder());
+            planDto.setContentId(Long.valueOf(plan.getTourItem().getContentid()));
+            planDto.setTitle(plan.getTourItem().getTitle());
+            planDto.setAddress(plan.getTourItem().getAddr1());
+            // 다른 필드들도 필요하다면 추가
+
+            planDTOs.add(planDto);
+        }
+
+        return planDTOs;
     }
 
     public Optional<Plan> findTopByPlannerIdOrderByDayDesc(Long plannerId) {

@@ -67,54 +67,73 @@
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
+    // 페이지 로드 시 실행되는 코드
     $(document).ready(function() {
+        // 처음으로 첫 번째 날짜의 계획을 로드
+        loadPlanForDay(1);
+
+        // 날짜 버튼 클릭 시 실행되는 이벤트 핸들러
         $('.dayButton').click(function() {
             var day = $(this).attr('data-day');
-            var plannerId = $('.timeline').attr('data-pid');
-
-            $.ajax({
-                type: "POST", // HTTP 요청 방식
-                url: "/api/showplan",
-                contentType: 'application/json; charset=UTF-8',
-                data: JSON.stringify({
-                    "p_id": plannerId,
-                    "day": day
-                }),
-                async: false,
-                success: function(response) {
-                    let dayPlanList = response.plans;
-                    $.each(dayPlanList, function(index, plan) {
-                        var template = `
-                    <p th:text="${day} + '일차'"></p>
-                    <div class="timeline">
-                        <div class="outer planContainer">
-                            <div>
-                                <a th:href="@{/info/content/{contentid}(contentid=${plan.contentid})}" class="list-group-item list-group-item-action" aria-current="true">
-                                    <div class="content">
-                                        <div class="info">
-                                            <h5 class="mb-1 title">${plan.title}</h5>
-                                            <p class="mb-1">${plan.contentid}</p>
-                                            <p class="mb-1">${plan.address}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                        // 성공적으로 응답을 받았을 때, 해당 내용을 업데이트합니다.
-                        $('.plan').append(template);
-                    })
-
-
-                },
-                error: function(xhr, status, error) {
-                    // 오류 처리
-                    console.error(error);
-                }
-            });
+            loadPlanForDay(day);
         });
     });
+
+    // 특정 날짜의 계획을 로드하는 함수
+    function loadPlanForDay(day) {
+        var plannerId = $('.timeline').attr('data-pid');
+
+        $.ajax({
+            type: "POST",
+            url: "/api/showplan",
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify({
+                "plannerId": plannerId,
+                "day": day
+            }),
+            success: function(response) {
+                // 응답으로 받은 계획을 표시
+                displayPlan(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
+    // 계획을 표시하는 함수
+    function displayPlan(planList) {
+        $('.plan').empty(); // 계획을 비우고 다시 채움
+
+        // 첫 번째 계획의 일차 정보를 저장
+        var firstDay = planList.length > 0 ? planList[0].day : '';
+
+        // 첫 번째 계획의 일차 정보만 출력
+        var dayTemplate = `<p>${firstDay}일차</p>`;
+        $('.plan').append(dayTemplate);
+
+        $.each(planList, function(index, plan) {
+            var template = `
+            <div class="timeline" data-pid="${plan.plannerId}">
+                <div class="outer planContainer">
+                    <div>
+                        <a href="" class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="content">
+                                <div class="info">
+                                    <h5 class="mb-1 title">${plan.title}</h5>
+                                    <p class="mb-1">${plan.contentId}</p>
+                                    <p class="mb-1">${plan.address}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+            $('.plan').append(template);
+        });
+    }
+
 
 
     // 현재 시간을 토대로 이동에 걸리는 시간을 구합니다.
