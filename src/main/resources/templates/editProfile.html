@@ -71,21 +71,21 @@
             <div class="profile-info">
                 <img src="/assets/img/mainimg/daejeon2.jpg" alt="프로필 이미지">
                 <div>
-                    <p>아이디: <span id="username">사용자 아이디</span></p>
-                    <p>메일주소: <span id="email">사용자 이메일</span></p>
+                    <p>아이디: <span th:text="${userId}"></span></p>
+                    <p>메일주소: <span th:text="${email}"></span></p>
                 </div>
 
-                <button class="btn btn-primary btn-md" onclick="editProfile()">프로필 사진 수정</button>
+                <button class="btn btn-primary btn-md">프로필 사진 수정</button>
             </div>
 
             <form id="editForm" action="/editProfile" method="post" onsubmit="return validateForm()">
             <div class="form-group userInput mb-5">
 
                     <h4 class="list">닉네임</h4>
-                    <input type="text" id="nickname"  class="form-control form-control-sm" maxlength="20"  placeholder="닉네임">
+                    <input type="text" id="name"  class="form-control form-control-sm" maxlength="20"  placeholder="닉네임">
 
                     <h4 class="list">내 소개</h4>
-                    <textarea id="intro" rows="4"  class="form-control form-control-sm" maxlength="20"  placeholder="내 소개"></textarea>
+                    <textarea id="about" rows="4"  class="form-control form-control-sm" maxlength="20"  placeholder="내 소개"></textarea>
 
 
                 <button class="btn-save" onclick="saveProfile()">저장</button>
@@ -93,29 +93,9 @@
             </form>
         </div>
 
-<!--        <script>-->
-<!--            function editProfile() {-->
-<!--                document.getElementById("nicknameDiv").style.display = "block";-->
-<!--                document.getElementById("introDiv").style.display = "block";-->
-<!--                document.getElementById("passwordDiv").style.display = "block";-->
-<!--            }-->
-
-<!--            function saveProfile() {-->
-<!--                // 수정된 프로필 정보를 서버에 저장하는 로직 추가-->
-<!--                // 이 부분은 JavaScript와 서버 통신을 사용하여 구현해야 합니다.-->
-<!--                // 수정된 닉네임, 소개, 비밀번호를 가져와서 서버로 전송할 수 있습니다.-->
-<!--                var nickname = document.getElementById("nickname").value;-->
-<!--                var intro = document.getElementById("intro").value;-->
-<!--                var currentPassword = document.getElementById("currentPassword").value;-->
-<!--                var newPassword = document.getElementById("newPassword").value;-->
-<!--                var confirmPassword = document.getElementById("confirmPassword").value;-->
-
-<!--                // 서버에 수정된 프로필 정보 전송하는 로직 추가-->
-<!--            }-->
-<!--        </script>-->
-
     </div>
 </div>
 </div>
+
 </body>
 </html>
