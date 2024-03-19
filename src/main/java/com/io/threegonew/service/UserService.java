@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -94,5 +96,34 @@ public class UserService {
         return userOptional.orElse(null); // 만약 사용자가 존재하지 않는다면 null 반환
     }
 
+//     사용자 프로필 업데이트 메서드
+    public void updateProfile(String userId, String name, String about) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        user.setName(name);
+        user.setAbout(about);
+        userRepository.save(user);
+    }
+
+    // 현재 인증된 사용자의 아이디 반환
+    public String getCurrentUserId() {
+        // 현재 인증된 사용자의 정보를 SecurityContextHolder에서 가져와서 반환
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    // 현재 인증된 사용자의 이메일 주소 반환
+    public String getCurrentUserEmail() {
+        // 현재 인증된 사용자의 아이디를 가져옴
+        String userId = getCurrentUserId();
+
+        // userId를 사용하여 사용자 정보를 조회하여 이메일 주소를 반환
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        return user.getEmail();
+    }
 }
+
+
 

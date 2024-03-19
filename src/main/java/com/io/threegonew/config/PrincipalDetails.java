@@ -40,6 +40,10 @@ public class PrincipalDetails implements UserDetails {
         return user.getId();
     }
 
+    // 사용자의 이메일 주소를 반환하는 메서드
+    public String getEmail() {
+        return user.getEmail();
+    }
     // 계정이 만료 되었는지 (true: 만료X)
     @Override
     public boolean isAccountNonExpired() {
