@@ -22,8 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-//    User findUserByEmail(String email);
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -40,7 +38,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .u_ofile(dto.getU_ofile())
                 .u_sfile(dto.getU_sfile())
-                .u_about(dto.getU_about())
+                .about(dto.getAbout())
                 .build()
         ).getId();
     }
@@ -59,7 +57,7 @@ public class UserService {
                 .name(user.getName())
                 .email(user.getEmail())
                 .profileImg("../assets/img/profileimg/" + user.getU_sfile())
-                .about(user.getU_about())
+                .about(user.getAbout())
                 .build();
     }
 
