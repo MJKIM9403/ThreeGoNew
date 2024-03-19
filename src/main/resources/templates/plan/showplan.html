@@ -67,6 +67,55 @@
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
+    $(document).ready(function() {
+        $('.dayButton').click(function() {
+            var day = $(this).attr('data-day');
+            var plannerId = $('.timeline').attr('data-pid');
+
+            $.ajax({
+                type: "POST", // HTTP 요청 방식
+                url: "/api/showplan",
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify({
+                    "p_id": plannerId,
+                    "day": day
+                }),
+                async: false,
+                success: function(response) {
+                    let dayPlanList = response.plans;
+                    $.each(dayPlanList, function(index, plan) {
+                        var template = `
+                    <p th:text="${day} + '일차'"></p>
+                    <div class="timeline">
+                        <div class="outer planContainer">
+                            <div>
+                                <a th:href="@{/info/content/{contentid}(contentid=${plan.contentid})}" class="list-group-item list-group-item-action" aria-current="true">
+                                    <div class="content">
+                                        <div class="info">
+                                            <h5 class="mb-1 title">${plan.title}</h5>
+                                            <p class="mb-1">${plan.contentid}</p>
+                                            <p class="mb-1">${plan.address}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                        // 성공적으로 응답을 받았을 때, 해당 내용을 업데이트합니다.
+                        $('.plan').append(template);
+                    })
+
+
+                },
+                error: function(xhr, status, error) {
+                    // 오류 처리
+                    console.error(error);
+                }
+            });
+        });
+    });
+
 
     // 현재 시간을 토대로 이동에 걸리는 시간을 구합니다.
     function getRealTime() {
@@ -337,43 +386,40 @@
 
 </script>
 <style>
-.a {
-    background-color: #0d6efd;
-    width: 30px;
-    height: 30px;
-    border-radius: 60%;
+.outer {
+    border-left: 2px solid #333;
+}
+
+.content {
+    position: relative;
+    margin: 0 0 20px 20px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.title:before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #0d6efd;
+    border-radius: 999px;
+    left: -3.2rem;
+    border: 3px solid #0d6efd;
+}
+
+.planContainer {
+    padding: 20px;
 }
 </style>
 
-<div style="flex-direction:row;">
-    <div class="a"></div>
-    <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action" aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">List group item heading</h5>
-                <small>3 days ago</small>
-            </div>
-            <p class="mb-1">Some placeholder content in a paragraph.</p>
-            <small>And some small print.</small>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">List group item heading</h5>
-                <small class="text-muted">3 days ago</small>
-            </div>
-            <p class="mb-1">Some placeholder content in a paragraph.</p>
-            <small class="text-muted">And some muted small print.</small>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">List group item heading</h5>
-                <small class="text-muted">3 days ago</small>
-            </div>
-            <p class="mb-1">Some placeholder content in a paragraph.</p>
-            <small class="text-muted">And some muted small print.</small>
-        </a>
-    </div>
-</div>
 
 
 
@@ -392,21 +438,64 @@
             </div>
         </div>
 
+
+
         <div class="container-fluid">
-            <div class="list-group">
-            <th:block th:each="plan : ${plans}">
-                <a th:href="@{/info/content/{contentid}(contentid=${plan.tourItem.contentid})}" class="list-group-item list-group-item-action" aria-current="true">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" th:text="${plan.tourItem.title}"></h5>
-                        <small th:text="${plan.tourItem.contentid}"></small>
-                        <small th:text="${plan.day} + 일차"></small>
+            <div id="dayButtons">
+                <th:block th:each="i : ${#numbers.sequence(1, maxDay)}">
+                    <button class="dayButton" th:data-day="${i}" th:text="'Day' + ${i}">Day${i}</button>
+                </th:block>
+            </div>
+
+            <div class="plan">
+            <p th:text="${day} + '일차'"></p>
+            <div class="timeline" th:data-pid="${plannerId}">
+                <div class="outer planContainer">
+                    <div>
+                        <a href="" class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="content">
+                                <div class="info">
+                                    <h5 class="mb-1 title">관광지 이름</h5>
+                                    <p class="mb-1">컨텐츠 아이디</p>
+                                    <p class="mb-1">관광지 주소</p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <p class="mb-1" th:text="${plan.tourItem.addr1}">Some placeholder content in a paragraph.</p>
-                    <small th:text="${plan.tourItem.addr2}">And some small print.</small>
-                </a>
-            </th:block>
+                </div>
+            </div>
             </div>
         </div>
+    </div>
+
+<!--        <div class="container-fluid">-->
+<!--            <div id="dayButtons">-->
+<!--                <th:block th:each="plan : ${planDayList.keySet()}">-->
+<!--                    <button class="dayButton" th:data-day="${day}" th:text="${day}"></button>-->
+<!--                </th:block>-->
+<!--            </div>-->
+
+<!--            <div id="plansContainer">-->
+<!--                <div class="timeline" th:each="dayPlansEntry : ${planDayList}">-->
+<!--                    <div class="outer planContainer" th:data-day="${dayPlansEntry.key}">-->
+<!--                        <p th:text="${dayPlansEntry.key}"></p>-->
+<!--                        <div th:each="plan : ${dayPlansEntry.value}">-->
+<!--                            <a th:href="@{/info/content/{contentid}(contentid=${plan.tourItem.contentid})}" class="list-group-item list-group-item-action" aria-current="true">-->
+<!--                                <div class="content">-->
+<!--                                    <div class="info">-->
+<!--                                        <h5 class="mb-1 title" th:text="${plan.tourItem.title}"></h5>-->
+<!--                                        <p class="mb-1" th:text="${plan.tourItem.contentid}"></p>-->
+<!--                                        <p class="mb-1" th:text="${plan.tourItem.addr1}"></p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
     </div>
 
 </div>

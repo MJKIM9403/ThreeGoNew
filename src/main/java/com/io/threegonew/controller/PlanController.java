@@ -10,6 +10,7 @@ import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.embedded.netty.NettyWebServer;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -177,15 +178,24 @@ public class PlanController {
 
         System.out.println("plannerId : " + plannerId);
         List<Plan> plans = planService.findByPlannerId(plannerId);
-        List<TourItem> tourItems = new ArrayList<>();
+        // 버튼으로 안나눌거면 planDayList를 TreeMap으로 넘겨줌
+        // TreeMap<String, List<Plan>> planDayList = planService.findByPlannerGroupByDay(plannerId);
+
+        Optional<Plan> maxDayOptional = planService.findTopByPlannerIdOrderByDayDesc(plannerId);
+        int maxDay = maxDayOptional.isPresent() ? maxDayOptional.get().getDay() : 0;
+
+        List<TourItem> planList = new ArrayList<>();
 
         for (Plan plan : plans) {
-            tourItems.add(plan.getTourItem());
+            planList.add(plan.getTourItem());
         }
+
 
         // 모델에 groupedPlans와 Plan과 TourItem 정보를 넣어서 view로 전달
         model.addAttribute("plans", plans);
-        model.addAttribute("tourItems", tourItems);
+        model.addAttribute("plannerId", plannerId);
+        model.addAttribute("planList", planList);
+        model.addAttribute("maxDay", maxDay);
 
 
         return "plan/showplan";

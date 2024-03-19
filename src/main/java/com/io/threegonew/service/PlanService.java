@@ -9,10 +9,11 @@ import com.io.threegonew.repository.AreaRepository;
 import com.io.threegonew.repository.PlanRepository;
 import com.io.threegonew.repository.SigunguRepository;
 import com.io.threegonew.repository.TourItemRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class PlanService {
     private final AreaRepository areaRepository;
     private final SigunguRepository sigunguRepository;
     private final TourItemRepository tourItemRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     public List<Plan> findAll() {
         return planRepository.findAll();
@@ -29,6 +31,41 @@ public class PlanService {
 
     public List<Plan> findByPlannerId(Long plannerId) {
         return planRepository.findByPlannerId(plannerId);
+    }
+
+    public TreeMap<String, List<Plan>> findByPlannerGroupByDay(Long plannerId) {
+        List<Plan> planList = planRepository.findByPlannerId(plannerId);
+
+        int day = 0;
+        String key = "";
+        TreeMap<String, List<Plan>> planMap = new TreeMap<>();
+        List<Plan> dayPlanList = new ArrayList<>();
+
+        for(Plan plan : planList){
+            if(day != plan.getDay()){
+                if(day > 0){
+                    planMap.put(key, dayPlanList);
+                }
+                day = plan.getDay();
+                key = day + "day";
+                dayPlanList = new ArrayList<>();
+            }
+            dayPlanList.add(plan);
+        }
+
+        if(!dayPlanList.isEmpty()) {
+            planMap.put(key, dayPlanList);
+        }
+
+        return planMap;
+    }
+
+    public List<Plan> findByPlannerIdAndDay(Long plannerId, Integer day) {
+        return planRepository.findByPlannerIdAndDay(plannerId, day);
+    }
+
+    public Optional<Plan> findTopByPlannerIdOrderByDayDesc(Long plannerId) {
+        return planRepository.findTopByPlannerIdOrderByDayDesc(plannerId);
     }
 
     public List<Area> findAllAreas() {
