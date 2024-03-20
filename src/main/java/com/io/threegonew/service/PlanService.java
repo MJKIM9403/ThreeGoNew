@@ -1,10 +1,7 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
-import com.io.threegonew.dto.AddPlanRequest;
-import com.io.threegonew.dto.PlanDTO;
-import com.io.threegonew.dto.PlanRequest;
-import com.io.threegonew.dto.PlanResponse;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +12,12 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class PlanService {
-
+    private final Cat3Repository cat3Repository;
     private final PlannerRepository plannerRepository;
     private final PlanRepository planRepository;
     private final AreaRepository areaRepository;
     private final SigunguRepository sigunguRepository;
     private final TourItemRepository tourItemRepository;
-    private final JPAQueryFactory jpaQueryFactory;
 
     public List<Plan> findAll() {
         return planRepository.findAll();
@@ -65,15 +61,15 @@ public class PlanService {
         // Plan 엔티티 리스트를 PlanDto 리스트로 변환
         List<PlanDTO> planDTOs = new ArrayList<>();
         for (Plan plan : plans) {
-            PlanDTO planDto = new PlanDTO();
+            PlanDTO<TourItemResponse> planDto = new PlanDTO<>();
             planDto.setPlanId(plan.getPlanId());
             planDto.setPlannerId(plan.getPlannerId());
             planDto.setDay(plan.getDay());
             planDto.setOrder(plan.getOrder());
-            planDto.setContentId(Long.valueOf(plan.getTourItem().getContentid()));
-            planDto.setTitle(plan.getTourItem().getTitle());
-            planDto.setAddress(plan.getTourItem().getAddr1());
-            // 다른 필드들도 필요하다면 추가
+            // TourItemResponse 정보를 받아와서 dtoList에 추가
+            List<TourItemResponse> tourItemResponses = new ArrayList<>();
+            tourItemResponses.add(tourItemMapper(plan.getTourItem()));
+            planDto.setDtoList(tourItemResponses);
 
             planDTOs.add(planDto);
         }
@@ -107,5 +103,54 @@ public class PlanService {
 
 
         return plan;
+    }
+
+
+    // TourItem을 TourItemResponse로 매핑하는 메서드
+    private TourItemResponse tourItemMapper(TourItem tourItem) {
+        return TourItemResponse.builder()
+                .contentid(tourItem.getContentid())
+                .cat1(tourItem.getCat1())
+                .cat2(tourItem.getCat2())
+                .cat3(tourItem.getCat3())
+                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
+                .areacode(tourItem.getAreacode())
+                .contenttypeid(tourItem.getContenttypeid())
+                .address(getAddress(tourItem))
+                .firstimage(tourItem.getFirstimage())
+                .mapx(tourItem.getMapx())
+                .mapy(tourItem.getMapy())
+                .mlevel(tourItem.getMlevel())
+                .sigungucode(tourItem.getSigungucode())
+                .tel(tourItem.getTel())
+                .title(cropTitle(tourItem.getTitle()))
+                .bookmarkCount((long) tourItem.getBookmarkList().size())
+                .build();
+    }
+
+    private String getFullCategoryName(String cat3Code){
+        Cat3 cat3 = cat3Repository.findById(cat3Code)
+                .orElseThrow(()-> new IllegalArgumentException("not found : cat3"));
+
+        return cat3.getCat2().getCat1().getCat1Name() + " > " + cat3.getCat2().getCat2Name() + " > " + cat3.getCat3Name();
+    }
+
+    private String getAddress(TourItem tourItem){
+        StringBuilder address = new StringBuilder();
+        if(tourItem.getAddr1() != null){
+            address.append(tourItem.getAddr1());
+        }
+        if(tourItem.getAddr2() != null){
+            address.append(" ");
+            address.append(tourItem.getAddr2());
+        }
+        return address.toString();
+    }
+
+    private String cropTitle(String title){
+        if(title.contains("[한국")){
+            title = title.substring(0,title.lastIndexOf("[한국"));
+        }
+        return title;
     }
 }
