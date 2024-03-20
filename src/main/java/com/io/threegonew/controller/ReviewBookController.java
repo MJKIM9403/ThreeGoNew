@@ -27,14 +27,14 @@ public class ReviewBookController {
 
     @PostMapping("/create")
     @ResponseBody
-    public ResponseEntity saveReviewBook(@RequestBody AddReviewBookRequest request) {
+    public ResponseEntity<Long> saveReviewBook(@RequestBody AddReviewBookRequest request) {
         try {
             User author = userService.findUser(request.getUserId());
             Planner selectedPlanner = plannerService.findPlanner(request.getPlannerId());
 
-            reviewBookService.createReviewBook(author, selectedPlanner,request);
+            ReviewBook reviewBook = reviewBookService.createReviewBook(author,selectedPlanner,request);
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().body(reviewBook.getBookId());
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

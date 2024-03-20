@@ -63,10 +63,6 @@ public class Review extends BaseTimeEntity {
 
     public void addPhoto(ReviewPhoto photo){
         this.reviewPhotoList.add(photo);
-
-        if(photo.getReview() != this){
-            photo.setReview(this);
-        }
     }
 
     public Long viewCountUp(){

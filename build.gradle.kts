@@ -51,6 +51,8 @@ dependencies {
 
     // 파일 업로드
     implementation ("commons-io:commons-io:2.7")
+    implementation("commons-fileupload:commons-fileupload:1.5")
+
     // 저장될 파일명을 랜덤 문자열로 만들기 위해 사용
     implementation ("org.apache.commons:commons-lang3")
 

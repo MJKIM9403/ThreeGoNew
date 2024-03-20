@@ -4,13 +4,16 @@ import com.io.threegonew.domain.Area;
 import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.Sigungu;
 import com.io.threegonew.dto.AddPlannerRequest;
+import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.repository.AreaRepository;
 import com.io.threegonew.repository.PlannerRepository;
 import com.io.threegonew.repository.SigunguRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class PlannerService {
     private final PlannerRepository plannerRepository;
     private final AreaRepository areaRepository;
     private final SigunguRepository sigunguRepository;
+    private final ModelMapper modelMapper;
 
     public Planner findPlanner(Long plannerId) {
         return plannerRepository.findById(plannerId)
@@ -26,6 +30,14 @@ public class PlannerService {
     }
     public List<Planner> findAll() {
         return plannerRepository.findAll();
+    }
+
+    public List<PlannerResponse> findMyPlannerList(String userId) {
+        List<PlannerResponse> plannerResponseList =
+                plannerRepository.findByUserId(userId).stream()
+                        .map(planner -> modelMapper.map(planner, PlannerResponse.class))
+                        .collect(Collectors.toList());
+        return plannerResponseList;
     }
 
     public List<Area> findAllAreas() {

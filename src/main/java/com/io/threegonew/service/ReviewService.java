@@ -27,15 +27,17 @@ public class ReviewService {
                             .reviewContent(request.getReviewContent())
                             .build();
 
-        List<ReviewPhoto> photoList = fileHandler.parseFileInfo(request.getPhotoList());
+        Review savedReview = reviewRepository.save(review);
+
+        List<ReviewPhoto> photoList = fileHandler.parseFileInfo(savedReview, request.getPhotoList());
 
         if(!photoList.isEmpty()) {
             for(ReviewPhoto photo : photoList) {
                 // 파일을 DB에 저장
-                review.addPhoto(reviewPhotoRepository.save(photo));
+                savedReview.addPhoto(reviewPhotoRepository.save(photo));
             }
         }
 
-        return reviewRepository.save(review);
+        return savedReview;
     }
 }

@@ -1,13 +1,14 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddReviewRequest;
-import com.io.threegonew.service.ReviewBookService;
-import com.io.threegonew.service.ReviewService;
-import com.io.threegonew.service.TourItemService;
-import com.io.threegonew.service.UserService;
+import com.io.threegonew.dto.PlanDTO;
+import com.io.threegonew.dto.PlannerResponse;
+import com.io.threegonew.dto.ReviewBookResponse;
+import com.io.threegonew.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,6 +30,8 @@ public class ReviewController {
     private final UserService userService;
     private final TourItemService tourItemService;
     private final ReviewBookService reviewBookService;
+    private final PlannerService plannerService;
+    private final PlanService planService;
     private final ReviewService reviewService;
 
     @GetMapping("")
@@ -44,7 +52,22 @@ public class ReviewController {
 
     @PostMapping("/create")
     @ResponseBody
-    public ResponseEntity saveReview(@RequestBody AddReviewRequest request) {
+    public ResponseEntity saveReview(@RequestParam("bookId") Long bookId,
+                                     @RequestParam("userId") String userId,
+                                     @RequestParam("touritemId") String touritemId,
+                                     @RequestParam("touritemTitle") String touritemTitle,
+                                     @RequestParam("reviewContent") String reviewContent,
+                                     @RequestParam(name = "photoList") List<MultipartFile> photoList) {
+
+        AddReviewRequest request = AddReviewRequest.builder()
+                .bookId(bookId)
+                .userId(userId)
+                .touritemId(touritemId)
+                .touritemTitle(touritemTitle)
+                .reviewContent(reviewContent)
+                .photoList(photoList)
+                .build();
+
         try {
             ReviewBook selectedReviewBook = reviewBookService.findReviewBook(request.getBookId());
             User author = userService.findUser(request.getUserId());
@@ -56,5 +79,30 @@ public class ReviewController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/show_list")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> showSelectList(@RequestParam("userId") String userId){
+        User loginUser = userService.findUser(userId);
+        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+        List<ReviewBookResponse> reviewBookList = reviewBookService.findMyReviewBookList(loginUser);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("plannerList", plannerList);
+        result.put("reviewBookList", reviewBookList);
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/show_plan")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> showPlanList(@RequestParam("bookId") Long bookId){
+        List<PlanDTO> planList = planService.findPlanListByPlannerId(bookId);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("planList", planList);
+
+        return ResponseEntity.ok().body(result);
     }
 }

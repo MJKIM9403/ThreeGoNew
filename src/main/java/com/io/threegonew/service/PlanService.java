@@ -8,9 +8,11 @@ import com.io.threegonew.dto.PlanResponse;
 import com.io.threegonew.repository.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class PlanService {
     private final SigunguRepository sigunguRepository;
     private final TourItemRepository tourItemRepository;
     private final JPAQueryFactory jpaQueryFactory;
+    private final ModelMapper modelMapper;
 
     public List<Plan> findAll() {
         return planRepository.findAll();
@@ -29,6 +32,13 @@ public class PlanService {
 
     public List<Plan> findByPlannerId(Long plannerId) {
         return planRepository.findByPlannerId(plannerId);
+    }
+
+    public List<PlanDTO> findPlanListByPlannerId(Long plannerId) {
+        List<PlanDTO> planList = planRepository.findByPlannerId(plannerId).stream()
+                .map(plan -> modelMapper.map(plan, PlanDTO.class))
+                .collect(Collectors.toList());
+        return planList;
     }
 
     public TreeMap<String, List<Plan>> findByPlannerGroupByDay(Long plannerId) {

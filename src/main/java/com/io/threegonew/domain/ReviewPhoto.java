@@ -39,19 +39,14 @@ public class ReviewPhoto{
     @Column(name = "reg_date", nullable = false)
     private LocalDateTime regDate;
     @Builder
-    public ReviewPhoto(String ofile, String filePath, Long fileSize){
+    public ReviewPhoto(Review review, String ofile, String filePath, Long fileSize){
+        this.review = review;
         this.ofile = ofile;
         this.filePath = filePath;
         this.fileSize = fileSize;
-    }
 
-    // Review 정보 저장
-    public void setReview(Review review){
-        this.review = review;
-
-        // 게시글에 현재 파일이 존재하지 않는다면
-        if(!review.getReviewPhotoList().contains(this))
-            // 파일 추가
-            review.getReviewPhotoList().add(this);
+//        if(!review.getReviewPhotoList().contains(this)){
+//            review.getReviewPhotoList().add(this);
+//        }
     }
 }

@@ -1,5 +1,6 @@
 package com.io.threegonew.util;
 
+import com.io.threegonew.domain.Review;
 import com.io.threegonew.domain.ReviewPhoto;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -16,7 +17,7 @@ import java.util.List;
 @Component
 public class FileHandler {
 
-    public List<ReviewPhoto> parseFileInfo(List<MultipartFile> multipartFiles) throws Exception {
+    public List<ReviewPhoto> parseFileInfo(Review review, List<MultipartFile> multipartFiles) throws Exception {
         // 반환할 파일 리스트
         List<ReviewPhoto> fileList = new ArrayList<>();
 
@@ -72,6 +73,7 @@ public class FileHandler {
                 String sFileName = System.nanoTime() + oFileExtension;
 
                 ReviewPhoto photo = ReviewPhoto.builder()
+                                .review(review)
                                 .ofile(multipartFile.getOriginalFilename())
                                 .filePath(path + File.separator + sFileName)
                                 .fileSize(multipartFile.getSize())

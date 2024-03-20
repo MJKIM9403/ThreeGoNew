@@ -322,9 +322,6 @@
                                 새 리뷰북 생성
                                 <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example" onchange="writeBookTitle()">
                                     <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
                                 </select>
                                 <input id="new-book-title" class="book-input form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
                             </label>
@@ -335,9 +332,6 @@
                                 기존 리뷰북에 추가
                                 <select id="exist-book-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example">
                                     <option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
-                                    <option value="1">아침먹기</option>
-                                    <option value="2">점심먹기</option>
-                                    <option value="3">저녁먹기</option>
                                 </select>
                             </label>
                         </div>
@@ -456,19 +450,20 @@
     });
 
     let selectedReviewBook;
-    const fileInput = document.getElementById('img-uploader');
+    const fileInput = $('#img-uploader')[0];
     const images = [];
 
     function editorReset() {
-        //사진 배열 초기화
+        //사진 미리보기 초기화
         images.length = 0;
         fileInput.files.length = 0;
         $('.swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
+        $('.uploader').show()
         // 리뷰북 선택 정보 초기화
         $('input:radio[name=selectReviewBook]').prop('checked', false);
-        $('#new-book-item-select').html('<option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>');
+        $('#new-book-item-select').html('<option value="hint" class="select-hint" disabled selected>리뷰북에 기록할 여행정보를 선택하세요.</option>');
         $('#new-book-title').val('');
-        $('#exist-book-select').html('<option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>');
+        $('#exist-book-select').html('<option value="hint" class="select-hint" disabled selected>리뷰를 작성할 리뷰북을 선택하세요.</option>');
         // 에디터 내용 초기화
         selectedReviewBook = "";
         $('.book-input').attr('disabled', true);
@@ -481,6 +476,57 @@
         $('#review-contents').val('');
     }
 
+    function showSelectList(){
+        let loginUSer = [[${loginUserId}]];
+        $.ajax({
+            url : '/review/show_list',
+            type : 'GET',
+            data : {
+                userId : loginUSer
+            },
+            contentType : 'application/json; charset=UTF-8',
+            success : function (result) {
+                const plannerList = result.plannerList;
+                const reviewBookList = result.reviewBookList;
+
+                if(plannerList.length > 0){
+                    for(let planner of plannerList){
+                        let template = `<option value=${planner.plannerId}>${planner.plannerName}</option>`;
+                        $('#new-book-item-select').append(template)
+                    }
+                }else {
+                    let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
+                    $('#new-book-item-select').append(template)
+                }
+
+                if(reviewBookList.length > 0){
+                    for(let reviewBook of reviewBookList){
+                        let template = `<option value=${reviewBook.bookId}>${reviewBook.bookTitle}</option>`;
+                        $('#exist-book-select').append(template)
+                    }
+                }else {
+                    let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
+                    $('#exist-book-select').append(template)
+                }
+            },
+            error : function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    $('#new-post-btn').click(function () {
+        editorReset();
+        let login = [[${loginUserId}]];
+        if(login == "anonymousUser"){
+            alert("리뷰는 로그인 후 작성할 수 있습니다.")
+        }else {
+            //todo: 모달 실행 시 리뷰북, 플래너 목록 띄워주기
+            showSelectList();
+            $('#select-book').modal('show');
+        }
+    })
+
     function selectBook() {
         $("input:radio[name=selectReviewBook]").click(function (){
             let select = Number($("input[name=selectReviewBook]:checked").val());
@@ -488,7 +534,7 @@
             switch (select){
                 case 1:
                     $("#new-book-item-select").attr('disabled',false);
-                    if($("#new-book-item-select").val() != "hint"){
+                    if($("#new-book-item-select option:selected").val() != "hint"){
                         writeBookTitle()
                     }
                     break;
@@ -504,14 +550,14 @@
     }
 
     function goEdit(){
-        if($("input[name=selectReviewBook]:checked").val() == undefined){
+        let select = $("input[name=selectReviewBook]:checked").val();
+        if(select == undefined){
             alert("리뷰북 설정을 완료해주세요.");
         }else {
             let validation = false;
-            let select = Number($("input[name=selectReviewBook]:checked").val());
-            switch (select){
+            switch (Number(select)){
                 case 1:
-                    if($("new-book-item-select").val() == 'hint'){
+                    if($("#new-book-item-select option:selected").val() == 'hint'){
                         alert("리뷰북에 기록할 여행정보를 선택해주세요.")
                     }else if($("#new-book-title").val() == ''){
                         alert("생성할 리뷰북의 제목을 입력해주세요.")
@@ -521,11 +567,11 @@
                     }
                     break;
                 case 2:
-                    if($("#exist-book-select").val() == 'hint'){
+                    if($("#exist-book-select option:selected").val() == 'hint'){
                         alert("리뷰를 작성할 리뷰북을 선택해주세요.")
                     }else {
                         validation = true;
-                        selectedReviewBook = $("#exist-book-select").text();
+                        selectedReviewBook = $("#exist-book-select option:checked").text();
                     }
                     break;
                 case 3:
@@ -535,10 +581,64 @@
             }
 
             if(validation){
-                $('#selected-review-book').val(selectedReviewBook);
-                $('#select-book, #editor').modal('toggle');
+                if(Number(select) === 1){
+                    createBookAndAddPlanList();
+                }else {
+                    $('#selected-review-book').val(selectedReviewBook);
+                    $('#select-book, #editor').modal('toggle');
+                }
             }
         }
+    }
+
+    function createBookAndAddPlanList(){
+        let propise = new Promise((resolve, reject) => {
+            $.ajax({
+                url : '/book/create',
+                type : 'POST',
+                data : JSON.stringify({
+                    userId : [[${loginUserId}]],
+                    plannerId : $("#new-book-item-select option:selected").val(),
+                    bookTitle : $("#new-book-title").val()
+                }),
+                contentType : 'application/json; charset=UTF-8',
+                success : function (createdBookId) {
+                    resolve(createdBookId);
+                },
+                error : function (err) {
+                    reject("리뷰북 생성에 실패하였습니다.");
+                    console.log(err);
+                }
+            })
+        })
+
+        propise.then(createdBookId => {
+            $.ajax({
+                url : '/book/create',
+                type : 'GET',
+                data : {
+                    bookId : createdBookId
+                },
+                contentType : 'application/json; charset=UTF-8',
+                success : function (result) {
+                    const planList = result.planList;
+                    for(let plan of planList){
+                        console.log(plan);
+                        let template = `<option value=${plan.tourItem.contentid}>${plan.touritem.title}</option>`;
+                        $('#select-touritem-info').append(template);
+                    }
+                    resolve("ok");
+                },
+                error : function (err) {
+                    console.log(err);
+                }
+            })
+        }).catch((msg) => alert(msg));
+
+        propise.then(ok => {
+            $('#selected-review-book').val(selectedReviewBook);
+            $('#select-book, #editor').modal('toggle');
+        })
     }
 
     function selectTouritem(){
@@ -552,21 +652,10 @@
         titleInput.val(title)
     }
 
-    $('#new-post-btn').click(function () {
-        editorReset();
-        let login = [[${loginUserId}]];
-        if(login == "anonymousUser"){
-            alert("리뷰는 로그인 후 작성할 수 있습니다.")
-        }else {
-            //todo: 모달 실행 시 리뷰북, 플래너 목록 띄워주기
-            $('#select-book').modal('show');
-        }
-    })
-
     function createPost(){
         if(images.length < 1){
             alert("사진을 반드시 한 장 이상 첨부해주세요.")
-        }else if($('#select-touritem-info').val() === 'hint'){
+        }else if($('#select-touritem-info option:selected').val() === 'hint'){
             alert("관광지 정보를 선택해주세요.")
         }else if($('#selected-touritem-name').val() === ''){
             alert('관광지 이름을 작성해주세요.')
@@ -579,19 +668,25 @@
     }
 
     function saveReview(){
-        //todo: formData 로 수정해야됨...
+        let formData = new FormData();
+        let loginUser = [[${loginUserId}]]
+
+        formData.append("bookId", "1"); /*test*/
+        formData.append("userId", `${loginUser}`);
+        formData.append("touritemId", "1080734"); /*test*/
+        formData.append("touritemTitle", $('#selected-touritem-name').val());
+        formData.append("reviewContent", $('#review-contents').val());
+
+        for(let image of images){
+            formData.append("photoList", image);
+        }
+
         $.ajax({
             url : '/review/create',
             type : 'POST',
-            contentType : 'application/json; charset=UTF-8',
-            data : JSON.stringify({
-                bookId : 1, /*test*/
-                userId : [[${loginUserId}]],
-                touritemId : "1080734", /*test*/
-                touritemTitle : $('#selected-touritem-name').val(),
-                reviewContent : $('#review-contents').val(),
-                photoList : images
-            }),
+            data : formData,
+            processData : false,
+            contentType : false,
             success : function (response) {
                 alert("리뷰를 등록하였습니다.") /*test*/
             },
