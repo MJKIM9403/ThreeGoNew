@@ -10,12 +10,16 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.io.threegonew.domain.User;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -134,10 +138,20 @@ public class UserService {
     }
 
 //    회원 수정 업데이트 처리.
-    @Transactional
-    public void modify(){
+@Transactional
+public void modifyUserProfile(String userId, String name, String about) {
+    // userId를 사용하여 사용자 정보를 조회합니다.
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-    }
+    // 사용자 정보를 업데이트합니다.
+    user.setName(name);
+    user.setAbout(about);
+
+    // 업데이트된 사용자 정보를 저장합니다.
+    userRepository.save(user);
+}
+
 
 }
 

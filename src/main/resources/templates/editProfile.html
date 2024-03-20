@@ -88,8 +88,9 @@
                     <textarea id="about" rows="4"  class="form-control form-control-sm" maxlength="20"   th:placeholder="${about} == null ? '아직 내용이 없습니다.' : ${about}"></textarea>
 
 
-                <button class="btn btn-primary2" id="saveProfile" type="submit" onclick="saveProfile()">저장</button>
-                <button class="btn btn-primary2" id="saveCancle">취소</button>
+                <button class="btn btn-primary2" id="saveProfile" type="button"
+                        onclick="saveProfile()">저장</button>
+                <button class="btn btn-primary2" id="saveCancel">취소</button>
             </div>
             </form>
         </div>
@@ -98,47 +99,39 @@
 </div>
 </div>
 
-
 <script>
+    $(document).ready(function() {
+        $("#saveProfile").click(function() {
+            saveProfile();
+        });
+
+    });
+
     function saveProfile(){
+        console.log("저장 버튼이 클릭되었습니다.");
 
         let name = $("#name").val();
-        let about = $("#name").val();
-        // let data = $("#editForm").serialize();
-
+        let about = $("#about").val();
         let data = {
             name: name,
             about: about
-        }
+        };
+
+        console.log("전송할 데이터: ", data); // 데이터 확인
 
         $.ajax({
-            type: "PUT",
-            url: '/api/users/editProfile', // 프로필 업데이트를 처리하는 엔드포인트 URL로 변경
-            data: data,
-            contentType: "application/json", // 변경된 contentType
+            type: "POST",
+            url: '/update',
+            data: JSON.stringify(data),
+            contentType: "application/json",
             dataType: "json"
-
-        }).done(res=>{
-            console.log("update 성공");
-        }).fail(error=> {
-            console.log("update 실패");
-        })
-
-
-    //     취소 버튼 눌렀을 때
-    //     $(document).ready(function() {
-    //         // 취소 버튼 클릭 시 처리할 함수
-    //         $("#saveCancel").click(function() {
-    //             // 유저 아이디를 가져옴
-    //             var userId = $("#userId").text();
-    //             // 유저 아이디를 사용하여 적절한 URL을 생성함
-    //             var cancelUrl = "/mypage/" + userId; // 원하는 URL로 수정
-    //             // 페이지를 리다이렉트함
-    //             window.location.href = cancelUrl;
-    //         });
-    //     });
+        }).done(res => {
+            console.log("프로필 업데이트 성공");
+        }).fail(error => {
+            console.error("프로필 업데이트 실패");
+            console.error(error); // 오류 메시지 출력
+        });
     }
-
 </script>
 </body>
 </html>

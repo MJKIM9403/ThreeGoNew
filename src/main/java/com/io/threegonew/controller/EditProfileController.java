@@ -32,4 +32,19 @@ public class EditProfileController {
         return "editprofile";
     }
 
+    // EditProfileController 클래스에서 updateProfile 메서드를 다음과 같이 수정합니다.
+    @PostMapping("/update")
+    @ResponseBody
+    public ResponseEntity<String> updateProfile(@RequestBody User editedUser) {
+        // 클라이언트로부터 받은 데이터를 사용자 정보로 업데이트
+        String userId = editedUser.getId(); // 변경되지 않는 ID를 가져옵니다.
+        String name = editedUser.getName();
+        String about = editedUser.getAbout();
+
+        // UserService의 메서드를 호출하여 프로필 업데이트 수행
+        userService.modifyUserProfile(userId, name, about);
+
+        return ResponseEntity.ok("프로필이 성공적으로 업데이트되었습니다.");
+    }
+
 }

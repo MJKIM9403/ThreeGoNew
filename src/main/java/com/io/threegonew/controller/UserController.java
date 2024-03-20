@@ -44,9 +44,6 @@ public class UserController {
     }
 
 
-    // 프로필 업데이트 요청 처리
-
-
 }
 
 
