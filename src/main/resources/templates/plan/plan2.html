@@ -43,6 +43,12 @@
     // 찍은 모든 마커
     var viaMarkers = Array.from({length: days}, () => []);
 
+    // 마커 위치 찍어서 지도 확대하기 위한 배열
+    var newData = Array.from({length: days}, () => []);
+
+    // 지도 줌좀 하자
+    var bounds;
+
     // 경유지만 넣는 배열
     var viaPoints = Array.from({length: days}, () => []);
 
@@ -309,6 +315,7 @@
                     var end_Mapx = viaMarkers[index][viaMarkers[index].length-1]._marker_data.options.position._lng;
                     var end_Mapy = viaMarkers[index][viaMarkers[index].length-1]._marker_data.options.position._lat;
 
+
                     // 마커에 찍힌 경유지를 새로 받는다
                     for(var i = 1; i<viaMarkers[index].length-1; i++) {
                         // 하나하나 선택한 경유지
@@ -362,12 +369,13 @@
                                 resultInfoArr[index]=[];
                             }
 
+                            PTbounds = new Tmapv2.LatLngBounds();
                             for(var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
                                 var polyline_ = Array.from({length: days}, () => []);
-
                                 drawInfoArr[index] = [];
 
+                                // 지도 레벨과 경로를 함께 조정
                                 if(geometry.type == "LineString") {
                                     for(var j in geometry.coordinates){
                                         // 경로들의 결과값(구간)들을 포인트 객체로 변환
@@ -377,7 +385,17 @@
                                         // 포인트객체의 정보로 좌표값 변환 객체로 저장
                                         var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
 
+                                        // console.log("latlng : " + latlng);
+                                        // console.log("convertPoint : " + convertPoint);
+                                        // console.log("convertChange : " + convertChange);
+
+                                        bounds = convertChange;
                                         drawInfoArr[index].push(convertChange);
+
+                                        // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                        var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
+                                        // console.log(linePt);
+                                        PTbounds.extend(linePt);
                                     }
 
                                     polyline_[index] = new Tmapv2.Polyline({
@@ -388,14 +406,7 @@
                                     });
                                     resultInfoArr[index].push(polyline_[index]);
 
-                                    // 경유지 최적화 결과 반경만큼 지도 레벨 조정
-                                    // var newData = geoData[0];
-                                    // PTbounds = new Tmapv2.LatLngBounds();
-                                    // for (var i = 0; i < newData.length; i++) {
-                                    //     var mData = newData[i];
-                                    //     var type = mData.geometry.type;
-                                    //     var pointType = mData.properties.pointType;
-                                    // }
+                                    map.fitBounds(PTbounds);
                                 }
                             }
                         },
@@ -476,36 +487,35 @@
                                 resultInfoArr[index]=[];
                             }
 
+                            PTbounds = new Tmapv2.LatLngBounds();
                             for(var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
-                                var polyline_;
-
+                                var polyline_ = Array.from({length: days}, () => []);
                                 drawInfoArr[index] = [];
 
+                                // 지도 레벨과 경로를 함께 조정
                                 if(geometry.type == "LineString") {
                                     for(var j in geometry.coordinates){
+                                        // 경로들의 결과값(구간)들을 포인트 객체로 변환
                                         var point = new Tmapv2.LatLng(geometry.coordinates[j][1],geometry.coordinates[j][0]);
 
+                                        bounds = point;
                                         drawInfoArr[index].push(point);
+
+                                        // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                        var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
+                                        PTbounds.extend(linePt);
                                     }
 
-                                    polyline_ = new Tmapv2.Polyline({
+                                    polyline_[index] = new Tmapv2.Polyline({
                                         path : drawInfoArr[index],
                                         strokeColor : "#FF0000",
                                         strokeWeight: 6,
                                         map : map
                                     });
-                                    resultInfoArr[index].push(polyline_);
+                                    resultInfoArr[index].push(polyline_[index]);
 
-
-                                    // 경유지 최적화 결과 반경만큼 지도 레벨 조정
-                                    // var newData = geoData[0];
-                                    // PTbounds = new Tmapv2.LatLngBounds();
-                                    // for (var i = 0; i < newData.length; i++) {
-                                    //     var mData = newData[i];
-                                    //     var type = mData.geometry.type;
-                                    //     var pointType = mData.properties.pointType;
-                                    // }
+                                    map.fitBounds(PTbounds);
                                 }
                             }
                         },

@@ -152,6 +152,7 @@
 
                 // 중복이 아닐 경우에만 관광지 목록에 내가 선택한 관광지를 추가한다.
                 places[plan.day - 1].push(place);
+
                 for(var i = 0; i<places[plan.day - 1].length; i++) {
                     addMarker(i+1, places[plan.day - 1][i])
                 }
@@ -172,18 +173,17 @@
             map: map,
             title: info.title
         })
-        viaMarkers[index].push(marker);
 
         // 마커 위치에 맞게 지도 줌
-        Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
-        console.log(Points[index]);
-        PTbounds = new Tmapv2.LatLngBounds();
-        for(var i in Points[index]) {
-            var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-            PTbounds.extend(linePt);
-        }
-
-        map.fitBounds(PTbounds);
+        // Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
+        // console.log(Points[index]);
+        // PTbounds = new Tmapv2.LatLngBounds();
+        // for(var i in Points[index]) {
+        //     var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+        //     PTbounds.extend(linePt);
+        // }
+        //
+        // map.fitBounds(PTbounds);
     }
 
 
@@ -206,25 +206,23 @@
                         marker.setMap(null); // TMap에서 이전 탭 마커 제거
                     });
                     viaMarkers[previousTabIndex] = []; // 등록된 마커 배열도 초기화
-                    Points[previousTabIndex] = []; // 지도 확대를 위한 배열도 초기화
+                    // Points[previousTabIndex] = []; // 지도 확대를 위한 배열도 초기화
                     places[previousTabIndex] = []; // 장소 배열도 초기화
                     resultInfoArr[previousTabIndex].forEach(function(line) {
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
-                    // if(viaMarkers != null) {
-                    //     for (var i=0; i<viaMarkers[index].length; i++) {
-                    //     }
-                    // }
 
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
                 } else if (previousTabIndex === -1) {
                     // 첫 번째 탭에서 다른 탭으로 이동하는 경우
-                    viaMarkers[0].forEach(function(marker) {
-                        marker.setMap(null);
-                    });
-                    viaMarkers[0] = []; // 등록된 마커 배열도 초기화
-                    places[0] = []; // 장소 배열도 초기화
-                    Points[0] = []; // 지도 확대를 위한 배열도 초기화
+                    if (viaMarkers[0] && viaMarkers[0].length > 0) {
+                        viaMarkers[0].forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                        // Points[0] = []; // 지도 확대를 위한 배열도 초기화
+                        viaMarkers[0] = []; // 등록된 마커 배열도 초기화
+                        places[0] = []; // 장소 배열도 초기화
+                    }
                     if (resultInfoArr[0] && resultInfoArr[0].length > 0) {
                         resultInfoArr[0].forEach(function(line) {
                             line.setMap(null);
@@ -240,8 +238,8 @@
                 // resultInfoArr[index].forEach(function(line) {
                 //     line.setMap(map);
                 // })
-                // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
-                $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+                // // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
+                // $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
 
                 // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
                 previousTabIndex = index;
@@ -513,61 +511,61 @@
 
 </script>
 <style>
-.map-result {
-    z-index: 9999;
-}
+    .map-result {
+        z-index: 9999;
+    }
 
-.container-fluid {
-    --bs-gutter-x: 0 !important;
-}
+    .container-fluid {
+        --bs-gutter-x: 0 !important;
+    }
 
-.outer {
-    border-left: 2px solid #333;
-}
+    .outer {
+        border-left: 2px solid #333;
+    }
 
-.content {
-    position: relative;
-    margin: 0 0 20px 20px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-}
+    .content {
+        position: relative;
+        margin: 0 0 20px 20px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
 
-.info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+    .info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
 
-.title:before {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #0d6efd;
-    border-radius: 999px;
-    left: -3.25rem;
-    border: 3px solid #0d6efd;
-}
+    .title:before {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #0d6efd;
+        border-radius: 999px;
+        left: -3.25rem;
+        border: 3px solid #0d6efd;
+    }
 
-.planContainer {
-    padding: 20px 0 20px 20px;
-}
+    .planContainer {
+        padding: 20px 0 20px 20px;
+    }
 
-div#day-btns {
-    flex-direction: column;
-    display: flex;
-    width: 300px;
-    gap: 10px;
-}
-div#list {
-    flex-direction: row;
-    display: flex;
-    gap: 100px;
-}
-div#plan-list {
-    width: 100%;
-}
+    div#day-btns {
+        flex-direction: column;
+        display: flex;
+        width: 300px;
+        gap: 10px;
+    }
+    div#list {
+        flex-direction: row;
+        display: flex;
+        gap: 100px;
+    }
+    div#plan-list {
+        width: 100%;
+    }
 </style>
 
 
@@ -617,38 +615,39 @@ div#plan-list {
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
-<!--        <div class="container-fluid">-->
-<!--            <div id="dayButtons">-->
-<!--                <th:block th:each="plan : ${planDayList.keySet()}">-->
-<!--                    <button class="dayButton" th:data-day="${day}" th:text="${day}"></button>-->
-<!--                </th:block>-->
-<!--            </div>-->
+    <!--        <div class="container-fluid">-->
+    <!--            <div id="dayButtons">-->
+    <!--                <th:block th:each="plan : ${planDayList.keySet()}">-->
+    <!--                    <button class="dayButton" th:data-day="${day}" th:text="${day}"></button>-->
+    <!--                </th:block>-->
+    <!--            </div>-->
 
-<!--            <div id="plansContainer">-->
-<!--                <div class="timeline" th:each="dayPlansEntry : ${planDayList}">-->
-<!--                    <div class="outer planContainer" th:data-day="${dayPlansEntry.key}">-->
-<!--                        <p th:text="${dayPlansEntry.key}"></p>-->
-<!--                        <div th:each="plan : ${dayPlansEntry.value}">-->
-<!--                            <a th:href="@{/info/content/{contentid}(contentid=${plan.tourItem.contentid})}" class="list-group-item list-group-item-action" aria-current="true">-->
-<!--                                <div class="content">-->
-<!--                                    <div class="info">-->
-<!--                                        <h5 class="mb-1 title" th:text="${plan.tourItem.title}"></h5>-->
-<!--                                        <p class="mb-1" th:text="${plan.tourItem.contentid}"></p>-->
-<!--                                        <p class="mb-1" th:text="${plan.tourItem.addr1}"></p>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+    <!--            <div id="plansContainer">-->
+    <!--                <div class="timeline" th:each="dayPlansEntry : ${planDayList}">-->
+    <!--                    <div class="outer planContainer" th:data-day="${dayPlansEntry.key}">-->
+    <!--                        <p th:text="${dayPlansEntry.key}"></p>-->
+    <!--                        <div th:each="plan : ${dayPlansEntry.value}">-->
+    <!--                            <a th:href="@{/info/content/{contentid}(contentid=${plan.tourItem.contentid})}" class="list-group-item list-group-item-action" aria-current="true">-->
+    <!--                                <div class="content">-->
+    <!--                                    <div class="info">-->
+    <!--                                        <h5 class="mb-1 title" th:text="${plan.tourItem.title}"></h5>-->
+    <!--                                        <p class="mb-1" th:text="${plan.tourItem.contentid}"></p>-->
+    <!--                                        <p class="mb-1" th:text="${plan.tourItem.addr1}"></p>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                            </a>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
 
 
-    </div>
+</div>
 
 </div>
 </body>
