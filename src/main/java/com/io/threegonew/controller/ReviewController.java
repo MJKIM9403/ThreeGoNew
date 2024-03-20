@@ -4,10 +4,7 @@ import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.domain.User;
-import com.io.threegonew.dto.AddReviewRequest;
-import com.io.threegonew.dto.PlanDTO;
-import com.io.threegonew.dto.PlannerResponse;
-import com.io.threegonew.dto.ReviewBookResponse;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -97,8 +94,8 @@ public class ReviewController {
 
     @GetMapping("/show_plan")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> showPlanList(@RequestParam("bookId") Long bookId){
-        List<PlanDTO> planList = planService.findPlanListByPlannerId(bookId);
+    public ResponseEntity<Map<String, Object>> showPlanList(@RequestParam("plannerId") Long plannerId){
+        List<SelectPlanResponse> planList = planService.findPlanListByPlannerId(plannerId);
 
         Map<String, Object> result = new HashMap<>();
         result.put("planList", planList);

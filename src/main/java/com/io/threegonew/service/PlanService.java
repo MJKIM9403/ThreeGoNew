@@ -30,11 +30,20 @@ public class PlanService {
         return planRepository.findByPlannerId(plannerId);
     }
 
-    public List<PlanDTO> findPlanListByPlannerId(Long plannerId) {
-        List<PlanDTO> planList = planRepository.findByPlannerId(plannerId).stream()
-                .map(plan -> modelMapper.map(plan, PlanDTO.class))
+    public List<SelectPlanResponse> findPlanListByPlannerId(Long plannerId) {
+        List<SelectPlanResponse> planList = planRepository.findByPlannerId(plannerId).stream()
+                .map(plan -> selectPlanMapper(plan))
                 .collect(Collectors.toList());
         return planList;
+    }
+
+    private SelectPlanResponse selectPlanMapper(Plan plan){
+        return SelectPlanResponse.builder()
+                .planId(plan.getPlanId())
+                .plannerId(plan.getPlannerId())
+                .day(plan.getDay())
+                .tourItem(tourItemMapper(plan.getTourItem()))
+                .build();
     }
 
     public TreeMap<String, List<Plan>> findByPlannerGroupByDay(Long plannerId) {

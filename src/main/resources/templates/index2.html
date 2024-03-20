@@ -602,8 +602,8 @@
                     bookTitle : $("#new-book-title").val()
                 }),
                 contentType : 'application/json; charset=UTF-8',
-                success : function (createdBookId) {
-                    resolve(createdBookId);
+                success : function () {
+                    resolve();
                 },
                 error : function (err) {
                     reject("리뷰북 생성에 실패하였습니다.");
@@ -612,22 +612,21 @@
             })
         })
 
-        propise.then(createdBookId => {
+        propise.then(() => {
             $.ajax({
-                url : '/book/create',
+                url : '/review/show_plan',
                 type : 'GET',
                 data : {
-                    bookId : createdBookId
+                    plannerId : $("#new-book-item-select option:selected").val()
                 },
                 contentType : 'application/json; charset=UTF-8',
                 success : function (result) {
                     const planList = result.planList;
                     for(let plan of planList){
                         console.log(plan);
-                        let template = `<option value=${plan.tourItem.contentid}>${plan.touritem.title}</option>`;
+                        let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
-                    resolve("ok");
                 },
                 error : function (err) {
                     console.log(err);
@@ -635,7 +634,8 @@
             })
         }).catch((msg) => alert(msg));
 
-        propise.then(ok => {
+        propise.then(() => {
+            console.log("create book")
             $('#selected-review-book').val(selectedReviewBook);
             $('#select-book, #editor').modal('toggle');
         })
