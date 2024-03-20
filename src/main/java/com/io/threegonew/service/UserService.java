@@ -31,7 +31,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-
     public String save(AddUserRequest dto) {
         return userRepository.save(User.builder()
                 .id(dto.getId())
@@ -101,14 +100,6 @@ public class UserService {
         return userOptional.orElse(null); // 만약 사용자가 존재하지 않는다면 null 반환
     }
 
-//     사용자 프로필 업데이트 메서드
-    public void updateProfile(String userId, String name, String about) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        user.setName(name);
-        user.setAbout(about);
-        userRepository.save(user);
-    }
 
     // 현재 인증된 사용자의 아이디 반환
     public String getCurrentUserId() {
@@ -121,13 +112,33 @@ public class UserService {
     public String getCurrentUserEmail() {
         // 현재 인증된 사용자의 아이디를 가져옴
         String userId = getCurrentUserId();
-
         // userId를 사용하여 사용자 정보를 조회하여 이메일 주소를 반환
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         return user.getEmail();
     }
+
+    public String getCurrentUserName(){
+        String userId = getCurrentUserId(); // 현재 사용자의 아이디를 가져옴
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        return user.getName();
+    }
+
+    public String getCurrentUserAbout(){
+        String userId = getCurrentUserId(); // 현재 사용자의 아이디를 가져옴
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        return user.getAbout();
+    }
+
+//    회원 수정 업데이트 처리.
+    @Transactional
+    public void modify(){
+
+    }
+
 }
 
 
