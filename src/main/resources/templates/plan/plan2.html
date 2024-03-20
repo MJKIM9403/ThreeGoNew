@@ -43,8 +43,8 @@
     // 찍은 모든 마커
     var viaMarkers = Array.from({length: days}, () => []);
 
-    // 마커 위치 찍어서 지도 확대하기 위한 배열
-    var newData = Array.from({length: days}, () => []);
+    // 지도 범위 확대하기 위한 배열
+    var Points = Array.from({length: days}, () => []);
 
     // 지도 줌좀 하자
     var bounds;
@@ -206,7 +206,23 @@
             title: info.title
         })
         viaMarkers[index].push(marker);
-        // return marker;
+
+        // 마커 위치에 맞게 지도 줌
+        Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
+        console.log(Points[index]);
+        PTbounds = new Tmapv2.LatLngBounds();
+
+        for(var i in Points[index]) {
+            var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+            PTbounds.extend(linePt);
+        }
+        map.fitBounds(PTbounds);
+        if(PTbounds._ne._lat == PTbounds._sw._lat) {
+            var zoomlevels = map.getZoom();
+            if(zoomlevels == 6) {
+                map.setZoom(11);
+            }
+        }
     }
 
     function addPlace() {
@@ -536,6 +552,7 @@
                 }
                 resultInfoArr[index]=[];
             }
+            $('.result').empty(); // 결과 값 비우기
         })
     }
 
