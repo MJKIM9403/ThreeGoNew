@@ -40,6 +40,8 @@ out/
 
 src/main/generated
 
+images
+
 APiKey.java
 apikey.js
 >>>>>>> 2053600 (이사 중240118)
