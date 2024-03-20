@@ -40,11 +40,14 @@
     // 마커
     var marker = [];
 
+    // 지도 확대용 모든 마커 배열
+    var allMarkers = [];
+
     // 찍은 모든 마커
     var viaMarkers = Array.from({length: days}, () => []);
 
-    // 마커 위치 찍어서 지도 확대하기 위한 배열
-    var newData = Array.from({length: days}, () => []);
+    // 지도 범위 확대하기 위한 배열
+    var Points = Array.from({length: days}, () => []);
 
     // 지도 줌좀 하자
     var bounds;
@@ -206,7 +209,6 @@
             title: info.title
         })
         viaMarkers[index].push(marker);
-        // return marker;
     }
 
     function addPlace() {
@@ -254,6 +256,21 @@
 
                         for(var i = 0; i<places[index].length; i++) {
                             addMarker(i+1, places[index][i])
+                        }
+                        // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                        if (viaMarkers[index].length === 1) {
+                            map.setCenter(marker.getPosition());
+                            map.setZoom(10); // 기본 줌 레벨 설정
+                        } else {
+                            // 모든 마커를 포함하는 경계를 계산
+                            var PTbounds = new Tmapv2.LatLngBounds();
+                            for (var i = 0; i < viaMarkers[index].length; i++) {
+                                var markerPosition = viaMarkers[index][i].getPosition();
+                                PTbounds.extend(markerPosition);
+                            }
+
+                            // 지도를 경계에 맞게 확대/축소
+                            map.fitBounds(PTbounds);
                         }
                     }
                 } else {
@@ -536,6 +553,7 @@
                 }
                 resultInfoArr[index]=[];
             }
+            $('.result').empty(); // 결과 값 비우기
         })
     }
 

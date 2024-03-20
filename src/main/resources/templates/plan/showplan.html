@@ -112,7 +112,7 @@
         $.each(planList, function(index, plan) {
             // 새로운 일차가 시작될 때만 일차 정보를 출력
             if (plan.day !== currentDay) {
-                var dayTemplate = `<p>${plan.day}일차</p>`;
+                var dayTemplate = `<h4 class="mb-1">${plan.day}일차</h4>`;
                 $('.plan').append(dayTemplate);
                 currentDay = plan.day; // 일차 업데이트
             }
@@ -268,9 +268,6 @@
     $(document).ready(function() {
         initTmap();
     })
-
-
-
 
     function initTmap() {
         map = new Tmapv2.Map("map_div", {
