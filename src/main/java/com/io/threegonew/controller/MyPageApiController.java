@@ -21,6 +21,7 @@ public class MyPageApiController {
                         .type("bookmark")
                         .pageResponse(tourItemService.findMyBookmark(request))
                         .build();
+
         return ResponseEntity.ok().body(myPageResponse);
     }
 
@@ -29,8 +30,9 @@ public class MyPageApiController {
         MyPageResponse<PageResponse<ReviewResponse>> myPageResponse =
                 MyPageResponse.builder()
                         .type("review")
-                        .pageResponse(tourItemService.findMyBookmark(request))
+                        .pageResponse(reviewService.findMyReview(request))
                         .build();
+
         return ResponseEntity.ok().body(myPageResponse);
     }
 }

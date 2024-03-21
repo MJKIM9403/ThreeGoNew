@@ -23,5 +23,5 @@ public class ReviewResponse {
     private String tourItemTitle;
     private String reviewContent;
     private Long viewCount;
-    private List<ReviewPhoto> reviewPhotoList;
+    private List<ReviewPhotoResponse> reviewPhotoList;
 }
