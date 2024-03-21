@@ -25,6 +25,5 @@ public class TestController {
         public String getDetail() {
             return "plan/detail";
         }
-
     }
 
