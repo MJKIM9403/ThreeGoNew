@@ -59,39 +59,9 @@ public class User /*implements UserDetails*/ {
         this.about = about;
     }
 
-   /* //권한 반환
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
-    }
 
-    @Override
-    public String getPassword() {
-        return pw;
-    }
+//    public void updatePw(String Pw){
+//        this.pw = Pw;
+//    }
 
-    @Override
-    public String getUsername() {
-        return id;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }*/
 }

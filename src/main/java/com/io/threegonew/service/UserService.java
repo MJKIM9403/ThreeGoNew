@@ -146,6 +146,11 @@ public void modifyUserProfile(String userId, String name, String about) {
     user.update(name, about);
 }
 
+//public void changePw(String userId, String pw){
+//        User user = userRepository.findById(userId).orElseThrow(()->
+//                new IllegalArgumentException("회원정보를 찾을 수 없습니다. "));
+//        user.updatePw(pw);
+//}
 
 }
 

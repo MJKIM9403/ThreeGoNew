@@ -3,6 +3,7 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.internal.bytebuddy.build.Plugin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,6 @@ public class EditProfileController {
         return "editprofile";
     }
 
-    // EditProfileController 클래스에서 updateProfile 메서드를 다음과 같이 수정합니다.
     @PostMapping("")
     @ResponseBody
     public ResponseEntity updateProfile(@RequestParam(value = "id") String userId,
@@ -50,5 +50,32 @@ public class EditProfileController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+//    비밀번호 변경 관련
+
+    @GetMapping("/mypage/changePw")
+    public String getChangePw() {
+        return "mypage/changePw";
+    }
+
+    // 비밀번호 변경 관련
+//    @PostMapping("/mypage/changePw")
+//    @ResponseBody
+//    public ResponseEntity updateChangePw(@RequestParam(value = "id") String userId,
+//                                         @RequestParam(value = "pw") String pw) {
+//        System.out.println("id: " + userId);
+//        System.out.println("pw: " + pw);
+//        try {
+//            userService.changePw(userId, pw);
+//        } catch (IllegalArgumentException e) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+    @GetMapping("/mypage/confirmPw")
+    public String getConfirmPw() {
+    return "mypage/confirmPw";
+    }
+
 
 }

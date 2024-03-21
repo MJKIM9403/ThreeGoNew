@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- 코드언어 표시 == 웹 표준지침 준수 -->
+<head>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- jquery-->
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../assets/css/style.css?after" rel="stylesheet" />
+    <link href="../../assets/css/commonstyle.css?after" rel="stylesheet"/>
+    <title>비밀번호 변경</title>
+    <link rel = "icon" href="image/wave.ico">
+
+</head>
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+    }
+    .form-group{
+        width: auto;}
+
+    .changePwdiv{
+        padding-left: 12px;
+    }
+</style>
+<body>
+<!--사이드바-->
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+
+    <div class="w3-content w3-container w3-margin-top container position-relative pb-5" style="margin: 0 auto;">
+        <!--허전해서 이미지-->
+        <div class="w3-content w3-container container position-relative pb-5 headerImg"
+             style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
+         background-size: cover;
+         height: 15em;
+         margin-bottom: 3em;">
+        </div>
+
+
+        <div id="wrap" class="container position-relative pb-5 changePwdiv">
+            <form id="changePwForm" action="/mypage/changePw" method="post">
+                <div class="form-group userInput mb-5">
+
+                <!-- 비밀번호 변경타이틀부분 -->
+                <div id="header">
+                    <h1 class="text-center">
+                        비밀번호 변경(1단계)
+                    </h1>
+                    <p class="text-center">비밀번호 변경 페이지입니다.</p>
+                </div>
+
+                <div id="container">
+                    <div class="row_group">
+                        <div class="userInput mb-5">
+                            <h4 class="list">현재 비밀번호</h4>
+
+                            <div class="input-group">
+                                <!-- 현재 비밀번호 -->
+                                <input type="password" name="currentPw" id="currentPw" class="form-control form-control-sm" maxlength="20" placeholder="현재 비밀번호를 입력하세요."/>
+                            </div>
+
+
+                            <button id="changePwBtn" class="btn btn-primary btn-md" type="button" onclick="changePw()"> 변경하기</button>
+                            <button class="btn btn-primary2" id="saveCancel">취소</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changePw() {
+        var currentPw = document.getElementById("currentPw").value;
+        // 현재 비밀번호를 암호화하여 서버로 전송
+        // 서버에서는 받은 암호화된 비밀번호를 복호화하여 DB에 저장된 암호화된 비밀번호와 비교
+        // Ajax를 사용하여 서버로 현재 비밀번호 전송
+        console.log("비번확인버튼")
+        $.ajax({
+            url: '/editprofile/mypage/changePw', // 현재 비밀번호를 확인하는 서버의 엔드포인트
+            type: 'POST',
+            data: {
+                currentPw: currentPw
+            },
+            success: function(response) {
+                // 서버로부터 받은 응답 처리
+                if (response === "valid") {
+                    // 현재 비밀번호가 일치하는 경우
+                    window.location.href = "confirmPw.html"; // 일치할 경우 페이지 이동
+                } else {
+                    // 현재 비밀번호가 일치하지 않는 경우
+                    alert("현재 비밀번호가 일치하지 않습니다.");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Ajax 요청 실패 시 처리
+                console.error(error);
+                alert("서버와의 통신 중 오류가 발생했습니다.");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
