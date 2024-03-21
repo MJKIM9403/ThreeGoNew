@@ -94,7 +94,11 @@ public class ReviewController {
 
     @GetMapping("/show_plan")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> showPlanList(@RequestParam("plannerId") Long plannerId){
+    public ResponseEntity<Map<String, Object>> showPlanList(@RequestParam("bookId") Long bookId){
+        Long plannerId = reviewBookService.findReviewBook(bookId)
+                                            .getPlanner()
+                                            .getPlannerId();
+
         List<SelectPlanResponse> planList = planService.findPlanListByPlannerId(plannerId);
 
         Map<String, Object> result = new HashMap<>();
