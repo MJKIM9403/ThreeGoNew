@@ -206,6 +206,17 @@
             height: 100%;
             object-fit: contain;
         }
+
+        /* 툴팁 */
+        body {
+            position: relative;
+        }
+
+        #tooltip {
+            visibility: hidden;
+            position: absolute;
+            z-index: 200;
+        }
     </style>
 
 </head>
@@ -409,7 +420,13 @@
         </button>
     </div>
 </div>
-
+<div id="tooltip" class="card" style="width: 18rem;">
+    <img id="tooltip-img" src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+        <h6 id="tooltip-title"></h6>
+        <p id="tooltip-category" class="card-text"></p>
+    </div>
+</div>
 
 
     <!-- Bootstrap core JS-->
@@ -554,7 +571,6 @@
         if(select == undefined){
             alert("리뷰북 설정을 완료해주세요.");
         }else {
-            let validation = false;
             switch (Number(select)){
                 case 1:
                     if($("#new-book-item-select option:selected").val() == 'hint'){
@@ -562,37 +578,29 @@
                     }else if($("#new-book-title").val() == ''){
                         alert("생성할 리뷰북의 제목을 입력해주세요.")
                     }else {
-                        validation = true;
                         selectedReviewBook = $("#new-book-title").val();
+                        createBookAndAddPlanList();
                     }
                     break;
                 case 2:
                     if($("#exist-book-select option:selected").val() == 'hint'){
                         alert("리뷰를 작성할 리뷰북을 선택해주세요.")
                     }else {
-                        validation = true;
                         selectedReviewBook = $("#exist-book-select option:checked").text();
+                        existBookAndAddPlanList();
                     }
                     break;
                 case 3:
-                    validation = true;
                     selectedReviewBook = "선택하지 않음";
-                    break;
-            }
-
-            if(validation){
-                if(Number(select) === 1){
-                    createBookAndAddPlanList();
-                }else {
                     $('#selected-review-book').val(selectedReviewBook);
                     $('#select-book, #editor').modal('toggle');
-                }
+                    break;
             }
         }
     }
 
     function createBookAndAddPlanList(){
-        let propise = new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             $.ajax({
                 url : '/book/create',
                 type : 'POST',
@@ -602,8 +610,8 @@
                     bookTitle : $("#new-book-title").val()
                 }),
                 contentType : 'application/json; charset=UTF-8',
-                success : function () {
-                    resolve();
+                success : function (createdBookId) {
+                    resolve(createdBookId);
                 },
                 error : function (err) {
                     reject("리뷰북 생성에 실패하였습니다.");
@@ -612,18 +620,17 @@
             })
         })
 
-        propise.then(() => {
+        promise.then((bookId) => {
             $.ajax({
                 url : '/review/show_plan',
                 type : 'GET',
                 data : {
-                    plannerId : $("#new-book-item-select option:selected").val()
+                    bookId : bookId
                 },
                 contentType : 'application/json; charset=UTF-8',
                 success : function (result) {
                     const planList = result.planList;
                     for(let plan of planList){
-                        console.log(plan);
                         let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
@@ -634,8 +641,37 @@
             })
         }).catch((msg) => alert(msg));
 
-        propise.then(() => {
-            console.log("create book")
+        promise.then(() => {
+            $('#selected-review-book').val(selectedReviewBook);
+            $('#select-book, #editor').modal('toggle');
+        })
+    }
+
+    function existBookAndAddPlanList(){
+        let bookId = $('#exist-book-select option:selected').val();
+        let promise = new Promise((resolve) => {
+            $.ajax({
+                url : '/review/show_plan',
+                type : 'GET',
+                data : {
+                    bookId : bookId
+                },
+                contentType : 'application/json; charset=UTF-8',
+                success : function (result) {
+                    const planList = result.planList;
+                    for(let plan of planList){
+                        let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
+                        $('#select-touritem-info').append(template);
+                        resolve();
+                    }
+                },
+                error : function (err) {
+                    console.log(err);
+                }
+            })
+        })
+
+        promise.then(() => {
             $('#selected-review-book').val(selectedReviewBook);
             $('#select-book, #editor').modal('toggle');
         })
