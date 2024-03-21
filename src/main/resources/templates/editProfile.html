@@ -88,7 +88,7 @@
                     <textarea id="about" rows="4"  class="form-control form-control-sm" maxlength="20"   th:placeholder="${about} == null ? '아직 내용이 없습니다.' : ${about}"></textarea>
 
 
-                <button class="btn btn-primary2" id="saveProfile" type="button"
+                <button class="btn btn-primary2" id="saveProfileBtn" type="button"
                         onclick="saveProfile()">저장</button>
                 <button class="btn btn-primary2" id="saveCancel">취소</button>
             </div>
@@ -99,20 +99,21 @@
 </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-        $("#saveProfile").click(function() {
-            saveProfile();
-        });
-
-    });
+<script th:inline="javascript">
+    // $(document).ready(function() {
+    //     $("#saveProfileBtn").click(function() {
+    //         saveProfile();
+    //     });
+    //
+    // });
 
     function saveProfile(){
         console.log("저장 버튼이 클릭되었습니다.");
-
-        let name = $("#name").val();
-        let about = $("#about").val();
-        let data = {
+        var id = [[${userId}]];
+        var name = $("#name").val();
+        var about = $("#about").val();
+        var data = {
+            id: id,
             name: name,
             about: about
         };
@@ -120,15 +121,15 @@
         console.log("전송할 데이터: ", data); // 데이터 확인
 
         $.ajax({
-            type: "POST",
-            url: '/update',
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "json"
-        }).done(res => {
-            console.log("프로필 업데이트 성공");
-        }).fail(error => {
-            console.error("프로필 업데이트 실패");
+            url: '/editprofile',
+            type: 'POST',
+            data: /*JSON.stringify(data)*/ data,
+            // contentType: "application/json; charset=UTF-8",
+        }).success(res => {
+            alert("프로필 업데이트 성공");
+
+        }).error(error => {
+            alert("프로필 업데이트에 실패했습니다.")
             console.error(error); // 오류 메시지 출력
         });
     }

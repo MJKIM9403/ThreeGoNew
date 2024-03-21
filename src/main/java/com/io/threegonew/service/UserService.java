@@ -141,15 +141,9 @@ public class UserService {
 @Transactional
 public void modifyUserProfile(String userId, String name, String about) {
     // userId를 사용하여 사용자 정보를 조회합니다.
-    User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-    // 사용자 정보를 업데이트합니다.
-    user.setName(name);
-    user.setAbout(about);
-
-    // 업데이트된 사용자 정보를 저장합니다.
-    userRepository.save(user);
+    User user = userRepository.findById(userId).orElseThrow(() ->
+            new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
+    user.update(name, about);
 }
 
 

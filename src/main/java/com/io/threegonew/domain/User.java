@@ -17,7 +17,6 @@ import java.util.List;
 @Table(name="users")
 @NoArgsConstructor
 @Getter
-@Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class User /*implements UserDetails*/ {
@@ -52,6 +51,11 @@ public class User /*implements UserDetails*/ {
         this.email = email;
         this.u_ofile = u_ofile;
         this.u_sfile = u_sfile;
+        this.about = about;
+    }
+
+    public void update(String name, String about/*, String u_ofile, String u_sfile*/){
+        this.name = name;
         this.about = about;
     }
 
