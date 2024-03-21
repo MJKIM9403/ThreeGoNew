@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyBookmarkRequest {
+public class MyPageRequest {
     private String userId;
 
     @Builder.Default

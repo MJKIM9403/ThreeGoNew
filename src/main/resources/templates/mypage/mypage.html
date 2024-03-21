@@ -25,7 +25,6 @@
 </head>
 <body>
 <style>
-
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
@@ -38,7 +37,7 @@
             <div class="profile-user-settings">
                 <h1 class="profile-user-name" th:text="${findUser.name}"></h1>
                 <th:block th:if="${findUser.id == loginUserId}">
-                    <button class="btn profile-edit-btn" >Edit Profile</button>
+                    <button class="btn profile-edit-btn" onclick="location.href = '/editprofile'" >Edit Profile</button>
                     <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
                 </th:block>
             </div>
@@ -52,10 +51,25 @@
             </div>
 
             <div class="profile-bio">
-                <p><span class="profile-real-name">Jane Doe</span> Lorem ipsum dolor sit, amet consectetur adipisicing elit 📷✈️🏕️</p>
+                <div class="profile-real-name" th:text="${findUser.id}"></div>
+                <div th:text="${findUser.about}"></div>
             </div>
         </div>
         <!-- End of profile section -->
+        <ul class="nav nav-underline mb-3 justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#" onclick="changeTab('review')">내 리뷰</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">내 리뷰북</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">관심 리뷰</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="changeTab('bookmark')">북마크</a>
+            </li>
+        </ul>
 
         <div class="gallery">
             <div class="gallery-item" tabindex="0">
@@ -363,6 +377,71 @@
         })
     }
 
+    function showReview() {
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(firstLoad){
+            firstLoad = false;
+        }else {
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/review',
+            type : 'POST',
+            contentType : 'application/json; charset=UTF-8',
+            data : JSON.stringify({
+                userId : [[${findUser.id}]],
+                page : scrollPage
+            }),
+            async: false,
+            success : function (response) {
+                let reviewList = response.pageResponse.dtoList;
+                console.log(scrollPage)
+                // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                setTimeout(() => {
+                    $(".loader").hide()
+                    $.each(reviewList, function (index, review){
+                        console.log(review)
+                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
+                            `<a href="#">` +
+                            `<img src="${review.reviewPhotoList[0].filePath}"` +
+                            `class="gallery-image" alt="">` +
+                            `<div class="gallery-item-info">` +
+                            // `<div class="bookmark-info-wrap">` +
+                            // `<div class="bookmark-category">${review.fullCategoryName}</div>` +
+                            // `<div class="bookmark-title">${review.title}</div>` +
+                            // `<div class="bookmark-address">${review.address}</div>` +
+                            `</div>` +
+                            `</div>` +
+                            `</a>` +
+                            `</div>`
+                        gallery.append(tempHtml).trigger("create")
+                    })
+                    window.scrollTo({top: loadScroll, behavior: "instant"});
+                }, time)
+                if(reviewList.length < 12){
+                    // 다음페이지가 없다면 관측을 종료
+                    observer.unobserve(document.getElementById('load-point'));
+                }
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
+    }
+
     function savePage() {
         let myPageInfo = {};
         myPageInfo.tabType = tabType;
@@ -390,6 +469,9 @@
                         switch (tabType){
                             case "bookmark":
                                 showBookmark();
+                                break;
+                            case "review":
+                                showReview();
                                 break;
                             // 탭 메뉴의 타입을 추가하여 사용
                         }

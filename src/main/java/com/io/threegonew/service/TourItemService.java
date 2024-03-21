@@ -155,7 +155,7 @@ public class TourItemService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse findMyBookmark(MyBookmarkRequest request){
+    public PageResponse findMyBookmark(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         Page<TourItemResponse> page = tourItemRepository.findMyBookmark(pageable, request.getUserId())

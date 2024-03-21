@@ -206,17 +206,6 @@
             height: 100%;
             object-fit: contain;
         }
-
-        /* 툴팁 */
-        body {
-            position: relative;
-        }
-
-        #tooltip {
-            visibility: hidden;
-            position: absolute;
-            z-index: 200;
-        }
     </style>
 
 </head>
@@ -420,13 +409,6 @@
         </button>
     </div>
 </div>
-<div id="tooltip" class="card" style="width: 18rem;">
-    <img id="tooltip-img" src="..." class="card-img-top" alt="...">
-    <div class="card-body">
-        <h6 id="tooltip-title"></h6>
-        <p id="tooltip-category" class="card-text"></p>
-    </div>
-</div>
 
 
     <!-- Bootstrap core JS-->
@@ -437,15 +419,6 @@
 <script th:inline="javascript">
     // 버튼 누르면 더보기
     $(document).ready(function() {
-        // $("#morebtn").click(function() {
-        //     $(".invisiblecard").slideToggle(500);
-        //     if ($("#morebtn").html() == "더보기") {
-        //         $("#morebtn").html("접기");
-        //     } else {
-        //         $("#morebtn").html("더보기");
-        //     }
-        // });
-        //
         selectBook();
         $('.swiper-controller').hide();
         deleteImg();
