@@ -68,8 +68,8 @@
           <li><a class="dropdown-item" href="/join">회원가입</a></li>
         </th:block>
         <th:block sec:authorize="isAuthenticated()">
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><a class="dropdown-item" href="/editprofile">editprofile</a></li>
+          <li><a class="dropdown-item" href="/changePw">setting</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
         </th:block>
