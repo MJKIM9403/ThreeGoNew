@@ -103,6 +103,12 @@ public class TourItemService {
 
         Specification<TourItem> spec = (root, query, criteriaBuilder) -> null;
 
+        // 키워드 추가 시작
+        if(request.getKeyword() != null && !request.getKeyword().isEmpty()) {
+            spec = spec.and(TourItemSpecification.equalKeyword(request.getKeyword()));
+        }
+        // 키워드 추가 끝
+
         if(request.getAreaCode() != null && !request.getAreaCode().isEmpty()){
             spec = spec.and(TourItemSpecification.equalAreacode(request.getAreaCode()));
         }

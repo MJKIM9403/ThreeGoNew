@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/mypage/{userId}")
 public class MyPageController {
-    private final TourItemService tourItemService;
     private final UserService userService;
 
     @GetMapping("")

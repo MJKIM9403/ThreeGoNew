@@ -6,10 +6,15 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TourItemSelectRequest {
+
+    // 키워드 추가
+    private String keyword;
+
     private String cat1;
     private String cat2;
     private String cat3;
