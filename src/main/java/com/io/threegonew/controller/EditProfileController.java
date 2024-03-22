@@ -1,6 +1,7 @@
 package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.User;
+import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.bytebuddy.build.Plugin;
@@ -19,17 +20,24 @@ public class EditProfileController {
 
     @GetMapping("")
     public String showEditProfilePage(Model model) {
-        // 현재 인증된 사용자의 아이디와 이메일 주소 가져오기
+//        // 현재 인증된 사용자의 아이디와 이메일 주소 가져오기
         String userId = userService.getCurrentUserId();
-        String email = userService.getCurrentUserEmail();
-        String name = userService.getCurrentUserName();
-        String about = userService.getCurrentUserAbout();
+        UserInfoResponse loginUser = userService.findUserInfo(userId);
+        System.out.println(loginUser.getId());
+        System.out.println(loginUser.getName());
+        System.out.println(loginUser.getEmail());
+        System.out.println(loginUser.getAbout());
+        model.addAttribute("loginUser", loginUser);
+//        String email = userService.getCurrentUserEmail();
+//        String name = userService.getCurrentUserName();
+//        String about = userService.getCurrentUserAbout();
+//
+//        // 모델에 사용자 정보 추가
+//        model.addAttribute("userId", userId);
+//        model.addAttribute("email", email);
+//        model.addAttribute("name", name);
+//        model.addAttribute("about", about);
 
-        // 모델에 사용자 정보 추가
-        model.addAttribute("userId", userId);
-        model.addAttribute("email", email);
-        model.addAttribute("name", name);
-        model.addAttribute("about", about);
 
         return "editprofile";
     }

@@ -1,14 +1,18 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
-import com.io.threegonew.dto.AddReviewRequest;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.ReviewPhotoRepository;
 import com.io.threegonew.repository.ReviewRepository;
 import com.io.threegonew.util.FileHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +43,55 @@ public class ReviewService {
         }
 
         return savedReview;
+    }
+
+    @Transactional
+    public PageResponse findMyReview(MyPageRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        Page<ReviewResponse> page = reviewRepository.findMyReview(pageable, request.getUserId())
+                .map(this::reviewMapper);
+
+        PageResponse<ReviewResponse> pageResponse = PageResponse.<ReviewResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+    private ReviewResponse reviewMapper(Review review){
+        return ReviewResponse.builder()
+                .reviewId(review.getReviewId())
+                .reviewBookId(review.getReviewBook().getBookId())
+                .reviewBookTitle(review.getReviewBook().getBookTitle())
+                .userInfo(userInfoResponse(review.getUser()))
+                .tourItemId(review.getTourItem().getContentid())
+                .tourItemTitle(review.getTourItemTitle())
+                .reviewContent(review.getReviewContent())
+                .viewCount(review.getViewCount())
+                .reviewPhotoList(reviewPhotoMapper(review.getReviewPhotoList()))
+                .build();
+    }
+
+    private List<ReviewPhotoResponse> reviewPhotoMapper(List<ReviewPhoto> reviewPhotoList) {
+        return reviewPhotoList.stream()
+                .map(reviewPhoto -> ReviewPhotoResponse.builder()
+                                        .fileId(reviewPhoto.getFileId())
+                                        .filePath(reviewPhoto.getFilePath())
+                                        .build()).collect(Collectors.toList());
+    }
+
+    private UserInfoResponse userInfoResponse(User user) {
+        return UserInfoResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .profileImg("../assets/img/profileimg/" + user.getU_sfile())
+                .about(user.getAbout())
+                .build();
     }
 }

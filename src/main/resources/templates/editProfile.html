@@ -71,8 +71,8 @@
             <div class="profile-info">
                 <img src="/assets/img/mainimg/daejeon2.jpg" alt="프로필 이미지">
                 <div>
-                    <p>아이디: <span th:text="${userId}"></span></p>
-                    <p>메일주소: <span th:text="${email}"></span></p>
+                    <p>아이디: <span th:text="${loginUser.id}"></span></p>
+                    <p>메일주소: <span th:text="${loginUser.email}"></span></p>
                 </div>
 
                 <input name="uploadFile" type="file" accept="image/gif, image/jpeg, image/png"/>
@@ -82,10 +82,10 @@
             <div class="form-group userInput mb-5">
 
                     <h4 class="list">닉네임</h4>
-                    <input type="text" id="name"  class="form-control form-control-sm" maxlength="20"  th:placeholder="${name}"/>
+                    <input type="text" id="name"  class="form-control form-control-sm" maxlength="20"  th:value="${loginUser.name}"/>
 
                     <h4 class="list">내 소개</h4>
-                    <textarea id="about" rows="4"  class="form-control form-control-sm" maxlength="20"   th:placeholder="${about} == null ? '아직 내용이 없습니다.' : ${about}"></textarea>
+                    <textarea id="about" rows="4"  class="form-control form-control-sm" maxlength="20"   th:text="${loginUser.about} == null ? '아직 내용이 없습니다.' : ${loginUser.about}"></textarea>
 
 
                 <button class="btn btn-primary2" id="saveProfileBtn" type="button"
@@ -103,7 +103,7 @@
 
     function saveProfile(){
         console.log("저장 버튼이 클릭되었습니다.");
-        var id = [[${userId}]];
+        var id = [[${loginUser.id}]];
         var name = $("#name").val();
         var about = $("#about").val();
         var data = {

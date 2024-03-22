@@ -206,17 +206,6 @@
             height: 100%;
             object-fit: contain;
         }
-
-        /* 툴팁 */
-        body {
-            position: relative;
-        }
-
-        #tooltip {
-            visibility: hidden;
-            position: absolute;
-            z-index: 200;
-        }
     </style>
 
 </head>
@@ -420,13 +409,6 @@
         </button>
     </div>
 </div>
-<div id="tooltip" class="card" style="width: 18rem;">
-    <img id="tooltip-img" src="..." class="card-img-top" alt="...">
-    <div class="card-body">
-        <h6 id="tooltip-title"></h6>
-        <p id="tooltip-category" class="card-text"></p>
-    </div>
-</div>
 
 
     <!-- Bootstrap core JS-->
@@ -437,15 +419,6 @@
 <script th:inline="javascript">
     // 버튼 누르면 더보기
     $(document).ready(function() {
-        // $("#morebtn").click(function() {
-        //     $(".invisiblecard").slideToggle(500);
-        //     if ($("#morebtn").html() == "더보기") {
-        //         $("#morebtn").html("접기");
-        //     } else {
-        //         $("#morebtn").html("더보기");
-        //     }
-        // });
-        //
         selectBook();
         $('.swiper-controller').hide();
         deleteImg();
@@ -467,6 +440,7 @@
     });
 
     let selectedReviewBook;
+    let selectedBookId;
     const fileInput = $('#img-uploader')[0];
     const images = [];
 
@@ -482,7 +456,8 @@
         $('#new-book-title').val('');
         $('#exist-book-select').html('<option value="hint" class="select-hint" disabled selected>리뷰를 작성할 리뷰북을 선택하세요.</option>');
         // 에디터 내용 초기화
-        selectedReviewBook = "";
+        selectedReviewBook = null;
+        selectedBookId = null;
         $('.book-input').attr('disabled', true);
         $('#selected-review-book').val('');
         $('#select-touritem-info').html(
@@ -538,7 +513,6 @@
         if(login == "anonymousUser"){
             alert("리뷰는 로그인 후 작성할 수 있습니다.")
         }else {
-            //todo: 모달 실행 시 리뷰북, 플래너 목록 띄워주기
             showSelectList();
             $('#select-book').modal('show');
         }
@@ -611,6 +585,7 @@
                 }),
                 contentType : 'application/json; charset=UTF-8',
                 success : function (createdBookId) {
+                    selectedBookId = createdBookId;
                     resolve(createdBookId);
                 },
                 error : function (err) {
@@ -649,6 +624,7 @@
 
     function existBookAndAddPlanList(){
         let bookId = $('#exist-book-select option:selected').val();
+        selectedBookId = bookId;
         let promise = new Promise((resolve) => {
             $.ajax({
                 url : '/review/show_plan',
@@ -707,9 +683,9 @@
         let formData = new FormData();
         let loginUser = [[${loginUserId}]]
 
-        formData.append("bookId", "1"); /*test*/
+        formData.append("bookId", selectedBookId); /*test*/
         formData.append("userId", `${loginUser}`);
-        formData.append("touritemId", "1080734"); /*test*/
+        formData.append("touritemId", $('#select-touritem-info option:selected').val());
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());
 
