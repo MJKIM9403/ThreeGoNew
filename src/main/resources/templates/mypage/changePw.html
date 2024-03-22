@@ -61,6 +61,11 @@
                     <p class="text-center">비밀번호 변경 페이지입니다.</p>
                 </div>
 
+                    <!-- 성공 메시지를 표시 -->
+                    <div id="successMessage" th:if="${data}" class="alert alert-success">
+                        <p th:text="${data.message}"></p>
+                    </div>
+
                 <div id="container">
                     <div class="row_group">
                         <div class="userInput mb-5">
@@ -71,8 +76,22 @@
                                 <input type="password" name="currentPw" id="currentPw" class="form-control form-control-sm" maxlength="20" placeholder="현재 비밀번호를 입력하세요."/>
                             </div>
 
+                            <h4 class="list">새 비밀번호</h4>
 
-                            <button id="changePwBtn" class="btn btn-primary btn-md" type="button" onclick="changePw()"> 변경하기</button>
+                            <div class="input-group">
+                                <!-- 새 비밀번호 -->
+                                <input type="password" name="newPw" id="newPw" class="form-control form-control-sm" maxlength="20" placeholder="새 비밀번호를 입력하세요."/>
+                            </div>
+
+                            <h4 class="list">새 비밀번호 확인</h4>
+                            <div class="input-group">
+                                <!-- 새 비밀번호 확인 -->
+                                <input type="password" name="newPwConfirm" id="newPwConfirm"  class="form-control form-control-sm" maxlength="20" placeholder="새 비밀번호 한 번 더 입력해주세요."/>
+                            </div>
+
+
+
+                            <button id="changePwBtn" class="btn btn-primary btn-md" type="submit" onclick="changePw()"> 변경하기</button>
                             <button class="btn btn-primary2" id="saveCancel">취소</button>
                         </div>
                     </div>
@@ -82,38 +101,43 @@
         </div>
     </div>
 </div>
-
 <script>
-    function changePw() {
-        var currentPw = document.getElementById("currentPw").value;
-        // 현재 비밀번호를 암호화하여 서버로 전송
-        // 서버에서는 받은 암호화된 비밀번호를 복호화하여 DB에 저장된 암호화된 비밀번호와 비교
-        // Ajax를 사용하여 서버로 현재 비밀번호 전송
-        console.log("비번확인버튼")
-        $.ajax({
-            url: '/editprofile/mypage/changePw', // 현재 비밀번호를 확인하는 서버의 엔드포인트
-            type: 'POST',
-            data: {
-                currentPw: currentPw
-            },
-            success: function(response) {
-                // 서버로부터 받은 응답 처리
-                if (response === "valid") {
-                    // 현재 비밀번호가 일치하는 경우
-                    window.location.href = "confirmPw.html"; // 일치할 경우 페이지 이동
-                } else {
-                    // 현재 비밀번호가 일치하지 않는 경우
-                    alert("현재 비밀번호가 일치하지 않습니다.");
-                }
-            },
-            error: function(xhr, status, error) {
-                // Ajax 요청 실패 시 처리
-                console.error(error);
-                alert("서버와의 통신 중 오류가 발생했습니다.");
-            }
-        });
+    // 성공 메시지가 표시될 때 폼을 숨기고, 성공 메시지를 보여준다.
+    var successMessage = document.getElementById("successMessage");
+    var formContainer = document.getElementById("formContainer");
+
+    if (successMessage) {
+        formContainer.style.display = "none";
     }
 
+        function changePassword(){
+        // 입력된 값 가져오기
+        var currentPassword = document.getElementById("currentPw").value;
+        var newPassword = document.getElementById("newPw").value;
+        var newPasswordConfirm = document.getElementById("newPwConfirm").value;
+
+        // AJAX 요청 보내기
+        $.ajax({
+        type: "POST",
+        url: "/mypage/changePw",
+        data: {
+        currentPw: currentPassword,
+        newPw: newPassword,
+        newPwConfirm: newPasswordConfirm
+    },
+        success: function(response) {
+        // 서버로부터의 성공 응답 처리
+        // 여기에 성공 메시지 표시 등의 동작 추가
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+    },
+        error: function(xhr, status, error) {
+        // 서버로부터의 오류 응답 처리
+        // 여기에 오류 메시지 표시 등의 동작 추가
+        alert("오류가 발생했습니다: " + error);
+    }
+    });
+    }
 </script>
+
 </body>
 </html>

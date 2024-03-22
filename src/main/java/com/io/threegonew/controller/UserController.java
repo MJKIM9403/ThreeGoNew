@@ -3,22 +3,28 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
 import com.io.threegonew.dto.LoginRequest;
+import com.io.threegonew.dto.PasswordResetForm;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.io.threegonew.service.UserDetailService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/api/users")
@@ -42,7 +48,6 @@ public class UserController {
         // 가입 성공 여부를 함께 반환하도록 수정
         return ResponseEntity.ok("가입을 환영합니다: " + userId);
     }
-
 
 }
 

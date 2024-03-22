@@ -17,6 +17,7 @@ import java.util.List;
 @Table(name="users")
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class User /*implements UserDetails*/ {
@@ -60,8 +61,5 @@ public class User /*implements UserDetails*/ {
     }
 
 
-//    public void updatePw(String Pw){
-//        this.pw = Pw;
-//    }
 
 }
