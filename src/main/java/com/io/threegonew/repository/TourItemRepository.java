@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TourItemRepository extends JpaRepository<TourItem, String>, JpaSpecificationExecutor<TourItem>, TourItemRepositoryCustom {
+
+    // 키워드로 검색 추가
+    List<TourItem> findByTitleContaining(String keyword);
+    // 키워드로 검색 추가 끝
+
     Page<TourItem> findAll(Specification spec, Pageable pageable);
 
     Optional<TourItem> findByContentid(String contentid);
