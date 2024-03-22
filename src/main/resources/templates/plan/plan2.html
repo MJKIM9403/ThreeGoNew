@@ -20,6 +20,177 @@
     <link href="../../../assets/css/commonstyle.css?after" rel="stylesheet"/>
 
     <title>Three Go</title>
+
+
+
+    <style>
+        *::-webkit-scrollbar {
+            width: 5px !important;
+        }
+        *::-webkit-scrollbar-thumb {
+            height: 30%; /* 스크롤바의 길이 */
+            background: #ddd; /* 스크롤바의 색상 */
+            border-radius: 10px;
+        }
+        *::-webkit-scrollbar-track {
+            background: #fff;  /*스크롤바 뒷 배경 색상*/
+        }
+
+        .container-fluid {
+            overflow-y: hidden !important;
+        }
+        ul {
+            padding-left: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        .row > * {
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+        .search-scroll {
+            overflow: auto;
+            height: calc(100vh - 112px);
+            padding: 10px;
+        }
+        .scroll {
+            overflow: auto;
+            height: calc(100vh - 79px);
+            height: calc(100vh - 114px);
+        }
+        .default {
+            width: calc(100% - 380px);
+            /* 기본 너비 상태 */
+        }
+        .plus, .delete {
+            background: #fff;
+            border: 0px;
+            width: 30px;
+            height: 30px;
+            border-radius: 100%;
+        }
+        .list-group-item {
+            border-width: 0 0 1px 0 !important;
+        }
+
+        .toggle-btn {
+            border: 0 !important;
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 50vh;
+            left: 0px;
+            z-index: 1000;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .d-flex:has(.toggle-btn) {
+            position: relative;
+        }
+
+        #areabox {
+            position:relative;
+        }
+
+        .select-title {
+            width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 1.5rem;
+        }
+
+        .wide {
+            width: 100% !important;
+        }
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin: 8px;
+            align-items: center;
+            justify-content: center;
+            width: 350px;
+        }
+        .search-input {
+            width: 300px;
+            border: none;
+            outline: none;
+        }
+        .search-btn {
+            width: 20px;
+            height: 20px;
+            background: none;
+            border: none;
+        }
+        #your_item {
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100vh;
+            max-height: 100vh;
+        }
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .overflow-x-hidden {
+            overflow-x: hidden;
+        }
+
+        .map-result {
+            z-index: 1001;
+        }
+        img.thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+        .content-title {
+            font-weight: bold;
+            width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 1.5rem;
+        }
+        .content-address {
+            font-size: 0.8rem;
+            width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 1.5rem;
+        }
+        .day {
+            width: calc(100% - 480px);
+        }
+        #day {
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .nav-container {
+            justify-content: center;
+            padding-top: 10px;
+        }
+        .nav-item {
+            padding: 0 !important;
+        }
+        .btn-2, .btn-3 {
+            width: 110px;
+            padding: 10px 0px;
+            margin: 0 0 10px 0px;
+        }
+    </style>
 </head>
 <body>
 
@@ -78,6 +249,71 @@
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
     console.log(days);
+
+    // 도시명 바꾸기
+    function updateCityName() {
+        // selectedAreaCode에 따라 city-name을 설정
+        let cityName;
+        switch (selectedAreaCode) {
+            case '1':
+                cityName = "서울";
+                break;
+            case '2':
+                cityName = "인천";
+                break;
+            case '3':
+                cityName = "대전"
+                break;
+            case '4':
+                cityName = "대구";
+                break;
+            case '5':
+                cityName = "광주";
+                break;
+            case '6':
+                cityName = "부산";
+                break;
+            case '7':
+                cityName = "울산";
+                break;
+            case '8':
+                cityName = "세종특별자치시";
+                break;
+            case '31':
+                cityName = "경기도";
+                break;
+            case '32':
+                cityName = "강원도";
+                break;
+            case '33':
+                cityName = "충청북도";
+                break;
+            case '34':
+                cityName = "충청남도";
+                break;
+            case '35':
+                cityName = "경상북도";
+                break;
+            case '36':
+                cityName = "경상남도";
+                break;
+            case '37':
+                cityName = "전라북도";
+                break;
+            case '38':
+                cityName = "전라남도";
+                break;
+            case '39':
+                cityName = "제주도";
+                break;
+            default:
+                cityName = "도시명";
+        }
+
+        // city-name 요소를 찾아서 텍스트 업데이트
+        $('.city-name').text(cityName);
+    }
+
 
     // 검색기능
     function searchItems(){
@@ -337,6 +573,7 @@
         // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
         $(document).on('click', '.areaSelect', function() {
             selectedAreaCode = $(this).val();
+            updateCityName();
         });
         checkCategory();
         checkSigungu();
@@ -856,176 +1093,14 @@
 <!--유효한 날짜값을 받았다면 end day - start day + 1 을 해서 일자 수를 계산합니다.-->
 <!--계산한 일자수를 토대로 day1, day2... 등을 출력합니다.-->
 <!--day1을 클릭하면 그 날짜의 장소를 검색하고 선택해서 가져오면, 빈칸에는 장소에 해당하는 지도가 출력됩니다.-->
-<style>
-    *::-webkit-scrollbar {
-        width: 5px !important;
-    }
-    *::-webkit-scrollbar-thumb {
-        height: 30%; /* 스크롤바의 길이 */
-        background: #ddd; /* 스크롤바의 색상 */
-        border-radius: 10px;
-    }
-    *::-webkit-scrollbar-track {
-        background: #fff;  /*스크롤바 뒷 배경 색상*/
-    }
 
-    .container-fluid {
-        overflow-y: hidden !important;
-    }
-    ul {
-        padding-left: 0 !important;
-        margin-bottom: 0 !important;
-    }
-    .row > * {
-        padding-right: 0 !important;
-        padding-left: 0 !important;
-    }
-    .search-scroll {
-        overflow: auto;
-        height: calc(100vh - 112px);
-        padding: 10px;
-    }
-    .scroll {
-        overflow: auto;
-        height: calc(100vh - 79px);
-        height: calc(100vh - 114px);
-    }
-    .default {
-        width: calc(100% - 380px);
-        /* 기본 너비 상태 */
-    }
-    .plus, .delete {
-        background: #fff;
-        border: 0px;
-        width: 30px;
-        height: 30px;
-        border-radius: 100%;
-    }
-    .list-group-item {
-        border-width: 0 0 1px 0 !important;
-    }
-
-    .toggle-btn {
-        border: 0 !important;
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        top: 50vh;
-        left: 0px;
-        z-index: 1000;
-        border-radius: 0 5px 5px 0;
-    }
-
-    .d-flex:has(.toggle-btn) {
-        position: relative;
-    }
-
-    #areabox {
-        position:relative;
-    }
-
-    .select-title {
-        width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        line-height: 1.5;
-        height: 1.5rem;
-    }
-
-    .wide {
-        width: 100% !important;
-    }
-    .search-bar {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        margin: 8px;
-        align-items: center;
-        justify-content: center;
-        width: 350px;
-    }
-    .search-input {
-        width: 300px;
-        border: none;
-        outline: none;
-    }
-    .search-btn {
-        width: 20px;
-        height: 20px;
-        background: none;
-        border: none;
-    }
-    #your_item {
-        position: relative;
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: 100vh;
-        max-height: 100vh;
-    }
-    .overflow-y-auto {
-        overflow-y: auto;
-    }
-
-    .overflow-x-hidden {
-        overflow-x: hidden;
-    }
-
-    .map-result {
-        z-index: 1001;
-    }
-    img.thumbnail {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-    }
-    .content-title {
-        font-weight: bold;
-        width: 220px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        line-height: 1.5;
-        height: 1.5rem;
-    }
-    .content-address {
-        font-size: 0.8rem;
-        width: 220px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        line-height: 1.5;
-        height: 1.5rem;
-    }
-    .day {
-        width: calc(100% - 480px);
-    }
-    #day {
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-
-    .nav-container {
-        justify-content: center;
-        padding-top: 10px;
-    }
-    .nav-item {
-        padding: 0 !important;
-    }
-</style>
 
 
 <div class="container-fluid">
 
     <!-- Modal -->
     <div class="modal fade" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog  modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">검색설정</h5>
@@ -1059,12 +1134,15 @@
                             <div id="category">
                                 <div id="cat1Selector">
                                     <h5>- 대분류 -</h5>
-                                    <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
-                                    <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
-                                    <th:block th:each="cat1, idx : ${cat1List}">
-                                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
-                                        <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
-                                    </th:block>
+                                    <div>
+                                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
+                                        <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
+                                        <th:block th:each="cat1, idx : ${cat1List}">
+                                            <input type="radio" class="catSelect btn-check select-btn" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
+                                            <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
+                                        </th:block>
+                                    </div>
+
                                 </div>
 
                                 <div id="category-middle">
@@ -1152,7 +1230,7 @@
             <!--장소찾기-->
             <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
                 <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
-                    <span class="fs-5 fw-semibold">도시명</span>
+                    <span class="city-name fs-5 fw-semibold">도시명</span>
                     <span class="fx-6">이전화면에서 선택한 날짜</span>
                 </a>
                 <div class="search-bar">
