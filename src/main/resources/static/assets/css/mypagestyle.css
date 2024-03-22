@@ -144,9 +144,13 @@ img {
     cursor: pointer;
 }
 
+.gallery-item:hover .gallery-item-info {
+    display: flex;
+}
+
 .gallery-item-info,
 .gallery-item-info {
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -154,6 +158,10 @@ img {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3);
+}
+.gallery-item-info ul{
+    padding: 0;
+    margin: 0;
 }
 
 .gallery-item a,
@@ -182,7 +190,15 @@ img {
     top: 1rem;
     right: 1rem;
     font-size: 1.5rem;
-    text-shadow: 0.2rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.fa-clone {
+    text-shadow:
+            -0.2rem 0 0.2rem rgba(0, 0, 0, 0.1),
+            0 0.2rem 0.2rem rgba(0, 0, 0, 0.1),
+            0.2rem 0 0.2rem rgba(0, 0, 0, 0.1),
+            0 -0.2rem 0.2rem rgba(0, 0, 0, 0.1);
 }
 
 .fa-clone,

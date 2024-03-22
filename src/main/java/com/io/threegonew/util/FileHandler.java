@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class FileHandler {
@@ -29,12 +30,11 @@ public class FileHandler {
             String current_date = now.format(dateTimeFormatter);
 
             // 프로젝트 디렉터리 내의 저장을 위한 절대 경로 설정
-            // 경로 구분자 File.separator 사용
-            String absolutePath = new File("").getAbsolutePath() + File.separator;
+            String absolutePath = "C://threeGo/images/";
 
             // 파일을 저장할 세부 경로 지정
-            String path = "images" + File.separator + current_date;
-            File file = new File(path);
+            String path = current_date;
+            File file = new File(absolutePath + path);
 
             // 디렉터리가 존재하지 않을 경우
             if(!file.exists()) {
@@ -70,12 +70,12 @@ public class FileHandler {
                 }
 
                 // 저장할 파일 이름 생성
-                String sFileName = System.nanoTime() + oFileExtension;
+                String sFileName = UUID.randomUUID() + oFileExtension;
 
                 ReviewPhoto photo = ReviewPhoto.builder()
                                 .review(review)
                                 .ofile(multipartFile.getOriginalFilename())
-                                .filePath(path + File.separator + sFileName)
+                                .filePath(path + "/" + sFileName)
                                 .fileSize(multipartFile.getSize())
                                 .build();
 
@@ -83,7 +83,7 @@ public class FileHandler {
                 fileList.add(photo);
 
                 // 업로드 한 파일 데이터를 지정한 파일에 저장
-                file = new File(absolutePath + path + File.separator + sFileName);
+                file = new File(absolutePath + path + "/" + sFileName);
                 multipartFile.transferTo(file);
 
                 // 파일 권한 설정(쓰기, 읽기)
