@@ -6,7 +6,8 @@
     <!--jquery-->
     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <!-- Font Awesome icons (free version)-->
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<!--    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <!-- Bootstrap icons-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
           type="text/css"/>
@@ -25,6 +26,97 @@
 </head>
 <body>
 <style>
+    .container-fluid {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .container-fluid .row {
+        height: 100%;
+    }
+
+    .btn-close {
+        position: absolute;
+        top: 5%;
+        right: 5%;
+    }
+
+    .preview-container {
+        position: relative;
+        padding: 0 !important;
+        height: 100%;
+    }
+
+    .icon-img {
+        width: 35px;
+        height: 35px;
+    }
+
+    #review-book-info {
+        position: absolute;
+        z-index: 100;
+        top: 1rem;
+        left: 1rem;
+    }
+
+    .delete-img-btn {
+        position: absolute;
+        top: 5%;
+        right: 5%;
+    }
+    .add-file {
+        position: absolute;
+        bottom: 5%;
+        right: 5%;
+        z-index: 100;
+    }
+    #img-uploader {
+        display: none;
+    }
+    .uploader {
+        padding: 10px;
+        color: #136DF8;
+        cursor: pointer;
+    }
+    .uploader:hover {
+        background-color: #136DF8;
+        color: #FFFFFF;
+        transition: all 0.2s;
+    }
+    .select-hint{
+        display: none;
+    }
+    #review-contents {
+        height: 380px;
+        resize: none;
+    }
+
+    /* swiper */
+    .swiper {
+        width: 100%;
+        height: 750px;
+        overflow: hidden;
+    }
+
+    .swiper-slide {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-size: 18px;
+        color: #999999;
+        background: #333333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
@@ -72,204 +164,65 @@
         </ul>
 
         <div class="gallery">
-            <div class="gallery-item" tabindex="0">
-                <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">
-                <div class="gallery-item-info">
-                    <div class="bookmark-info-wrap">
-                        <div class="bookmark-category">북마크 관광지 카테고리</div>
-                        <div class="bookmark-title">북마크 관광지 제목</div>
-                        <div class="bookmark-address">북마크 관광지 주소</div>
-                    </div>
-                </div>
-            </div>
-            <div class="gallery-item" tabindex="0">
-                <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">
-                <div class="gallery-item-info">
-                    <ul>
-                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>
-                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="gallery-item" tabindex="0">
-                <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">
-                <div class="gallery-item-info">
-                    <ul>
-                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>
-                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="gallery-item" tabindex="0">
-                <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">
-                <div class="gallery-item-info">
-                    <ul>
-                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>
-                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
-                    </ul>
-                </div>
-            </div>
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1497445462247-4330a224fdb1?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 89</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 5</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-<!--                <div class="gallery-item-type">-->
-<!--                    <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>-->
-<!--                </div>-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 42</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1502630859934-b3b41d18206c?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-<!--                <div class="gallery-item-type">-->
-<!--                    <span class="visually-hidden">Video</span><i class="fas fa-video" aria-hidden="true"></i>-->
-<!--                </div>-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 38</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1498471731312-b6d2b8280c61?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-type">-->
-<!--                    <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>-->
-<!--                </div>-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 47</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 94</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 3</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-type">-->
-<!--                    <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>-->
-<!--                </div>-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 52</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 4</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1515814472071-4d632dbc5d4a?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 66</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1511407397940-d57f68e81203?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-type">-->
-<!--                    <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>-->
-<!--                </div>-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 45</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1518481612222-68bbe828ecd1?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 34</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1505058707965-09a4469a87e4?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 41</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="gallery-item" tabindex="0">-->
-<!--                <img src="https://images.unsplash.com/photo-1423012373122-fff0a5d28cc9?w=500&h=500&fit=crop" class="gallery-image" alt="">-->
-
-<!--                <div class="gallery-item-type">-->
-<!--                    <span class="visually-hidden">Video</span><i class="fas fa-video" aria-hidden="true"></i>-->
-<!--                </div>-->
-
-<!--                <div class="gallery-item-info">-->
-<!--                    <ul>-->
-<!--                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 30</li>-->
-<!--                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
         </div>
         <!-- End of gallery -->
 
         <div id="load-point"></div>
         <div class="loader"></div>
     </div>
+    <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="preview-container col-md-7">
+                            <div id="review-book-info" class="d-flex">
+                                <div class="gap-1">
+                                    <img src="../assets/img/no_image.png" class="rounded-3 icon-img" alt="...">
+                                </div>
+                                <span>리뷰 북 타이틀</span>
+                            </div>
+                            <div class="swiper mySwiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">사진을 추가해주세요.</div>
+                                </div>
+                                <div class="swiper-controller">
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-start">
+                            <div class="modal-body">
+                                <div id="writer-info" class="mb-2 d-flex">
+                                    <img src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                    <span>작성자 이름</span>
+                                </div>
+                                <div id="contents-wrap" class="mb-2">
+                                    <div id="content">
+                                        본문
+                                    </div>
+                                    <div id="reply">
+
+                                    </div>
+                                </div>
+                                <div class="mb-2 d-flex">
+                                    <img src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                    <div>
+                                        <div>작성자 이름</div>
+                                        <textarea class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- End of container -->
 </div>
 
@@ -278,7 +231,7 @@
     let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
     let firstLoad = true; // 첫 로딩인지 체크
     let gallery = $('.gallery');
-    let tabType = "bookmark"; // 화면에 보여줄 탭
+    let tabType = "review"; // 화면에 보여줄 탭
     let back = false;
     $(document).ready(function (){
         gallery.html("")
@@ -354,10 +307,10 @@
                             `<a href="/info/content/${bookmark.contentid}">` +
                             `<img src="${bookmark.firstimage}"` +
                             `class="gallery-image" alt="">` +
-                            `<div class="gallery-item-info">` +
+                            `<div class="gallery-item-info d-flex">` +
                             `<div class="bookmark-info-wrap">` +
                             `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
-                            `<div class="bookmark-title">${bookmark.title}</div>` +
+                            `<div class="bookmark-title"><strong>${bookmark.title}</strong></div>` +
                             `<div class="bookmark-address">${bookmark.address}</div>` +
                             `</div>` +
                             `</div>` +
@@ -415,19 +368,23 @@
                     $(".loader").hide()
                     $.each(reviewList, function (index, review){
                         console.log(review)
-                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
-                            `<a href="#">` +
-                            `<img src="${review.reviewPhotoList[0].filePath}"` +
+                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="openViewer()">`
+                        if(review.reviewPhotoList.length > 1){
+                            tempHtml += '<div class="gallery-item-type">' +
+                                '<i class="fas fa-clone" aria-hidden="true"></i>' +
+                                '</div>'
+                        }
+                        tempHtml +=
+                            `<img src="/api/review-photo/${review.reviewPhotoList[0].filePath}"` +
                             `class="gallery-image" alt="">` +
                             `<div class="gallery-item-info">` +
-                            // `<div class="bookmark-info-wrap">` +
-                            // `<div class="bookmark-category">${review.fullCategoryName}</div>` +
-                            // `<div class="bookmark-title">${review.title}</div>` +
-                            // `<div class="bookmark-address">${review.address}</div>` +
+                            `<ul>` +
+                            `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>` +
+                            `<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>` +
+                            `</ul>` +
                             `</div>` +
                             `</div>` +
-                            `</a>` +
-                            `</div>`
+                            `</div>`;
                         gallery.append(tempHtml).trigger("create")
                     })
                     window.scrollTo({top: loadScroll, behavior: "instant"});
@@ -504,6 +461,10 @@
                 $('#load-point').show();
             }
         });
+    }
+
+    function openViewer() {
+        $('#viewer').modal('show');
     }
 
 </script>
