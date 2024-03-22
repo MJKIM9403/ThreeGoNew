@@ -137,6 +137,11 @@ public class UserService {
         return user.getAbout();
     }
 
+    public User getUser(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+
 //    회원 수정 업데이트 처리.
 @Transactional
 public void modifyUserProfile(String userId, String name, String about) {
@@ -147,6 +152,14 @@ public void modifyUserProfile(String userId, String name, String about) {
 }
 
 
+    public void resetPassword(User modifyUser, String password){
+        modifyUser.setPw(bCryptPasswordEncoder.encode(password));
+        this.userRepository.save(modifyUser);
+    }
+
+    public boolean isSamePassword(User user, String password){
+        return bCryptPasswordEncoder.matches(password, user.getPw());
+    }
 }
 
 

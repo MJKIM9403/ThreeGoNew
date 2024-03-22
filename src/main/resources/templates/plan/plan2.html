@@ -79,13 +79,40 @@
 
     console.log(days);
 
+    // 검색기능
+    function searchItems(){
+        $('.search-btn').click(function () {
+            let keyword = $('.search-input').val();
+            $.ajax({
+                url: '/plan/api/search',
+                type: 'POST',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify({
+                    page: 0,
+                    cat1 : $('input[name=cat1]:checked').val(),
+                    cat2 : $('input[name=cat2]:checked').val(),
+                    cat3 : $('input[name=cat3]:checked').val(),
+                    areaCode : selectedAreaCode,
+                    sigunguCode : $('input[name=sigungu]:checked').val(),
+                    contentTypeId : $('input[name=type]:checked').val(),
+                    keyword: keyword
+                }),
+                success: function (data) {
+                    $('#touritems').replaceWith(data);
+                },
+                error : function (err){
+                    console.log(err)
+                }
+            })
+        })
+    }
 
 
     // 페이지네이션
     function showTourItems(){
         $(document).on('click','.page-item, .areaSelect',function (e) {
             const target = e.target;
-
+            let keyword = $('.search-input').val();
             if(!target.classList.contains('disabled')){
                 $.ajax({
                     url : '/plan/api/touritems',
@@ -98,7 +125,8 @@
                         cat3 : $('input[name=cat3]:checked').val(),
                         areaCode : selectedAreaCode,
                         sigunguCode : $('input[name=sigungu]:checked').val(),
-                        contentTypeId : $('input[name=type]:checked').val()
+                        contentTypeId : $('input[name=type]:checked').val(),
+                        keyword: keyword
                     }),
                     success : function(data){
                         // var offset = $('.search-scroll').offset();
@@ -122,10 +150,11 @@
         // 지역을 선택하면
         $('.areaSelect').off('click').on('click', function () {
             selectedAreaCode = $(this).val(); // 선택된 지역 코드
+
             if(selectedAreaCode == null) {
                 sigunguCode = null;
             }
-
+            let keyword = $('.search-input').val();
             $.ajax({
                 url: '/plan/api/sigungu',
                 type: 'POST',
@@ -133,6 +162,7 @@
                 data: JSON.stringify({
                     page: 0,
                     areaCode: selectedAreaCode,
+                    keyword: keyword
                 }),
                 success: function(data) {
                     //$("html").scrollTop(0);
@@ -150,6 +180,7 @@
         // 카테고리(분류) 선택
         $('.catSelect').click(function (){
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
+            let keyword = $('.search-input').val();
             $.ajax({
                 url : '/plan/api/cat2',
                 type: 'POST',
@@ -157,7 +188,8 @@
                 data : JSON.stringify({
                     page : 0,
                     areaCode : selectedAreaCode,
-                    cat1 : cat1
+                    cat1 : cat1,
+                    keyword : keyword
                 }),
                 success : function(data){
                     $('#category-middle').replaceWith(data);
@@ -171,6 +203,7 @@
         $(document).on('click','.cat2Select',function () {
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
             const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
+            let keyword = $('.search-input').val();
             $.ajax({
                 url: '/plan/api/cat3',
                 type: 'POST',
@@ -179,7 +212,8 @@
                     page : 0,
                     areaCode : selectedAreaCode,
                     cat1: cat1,
-                    cat2: cat2
+                    cat2: cat2,
+                    keyword: keyword
                 }),
                 success: function (data) {
                     $('#category-row').replaceWith(data);
@@ -196,6 +230,7 @@
             let cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
             let cat3 = $('input[name=cat3]:checked').val() === '' ? null : $('input[name=cat3]:checked').val();
             let sigunguCode = $('input[name=sigungu]:checked').val() === '' ? null : $('input[name=sigungu]:checked').val();
+            let keyword = $('.search-input').val();
 
             if(cat1 == null){
                 cat2 = null;
@@ -219,7 +254,8 @@
                     cat3 : cat3,
                     areaCode : selectedAreaCode,
                     sigunguCode : sigunguCode,
-                    contentTypeId : $('input[name=type]:checked').val()
+                    contentTypeId : $('input[name=type]:checked').val(),
+                    keyword: keyword
                 }),
                 success : function(data){
                     //$("html").scrollTop(0);
@@ -297,6 +333,7 @@
     $(document).ready(function() {
         initTmap2();
         addPlace();
+        searchItems();
         // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
         $(document).on('click', '.areaSelect', function() {
             selectedAreaCode = $(this).val();
@@ -910,7 +947,7 @@
         justify-content: center;
         width: 350px;
     }
-    .search-bar__input {
+    .search-input {
         width: 300px;
         border: none;
         outline: none;
@@ -1119,7 +1156,7 @@
                     <span class="fx-6">이전화면에서 선택한 날짜</span>
                 </a>
                 <div class="search-bar">
-                    <input class="search-bar__input" placeholder="장소를 검색하세요.">
+                    <input class="search-input" placeholder="장소를 검색하세요.">
                     <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
                 </div>
                 <div class="flex-box">

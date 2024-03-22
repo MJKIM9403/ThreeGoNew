@@ -32,6 +32,14 @@ public class PlanController {
     private final TourItemContentService tourItemContentService;
     private final HttpSession httpSession;
 
+
+    @PostMapping("/api/search")
+    public String searchTourItems(@RequestBody TourItemSelectRequest request, Model model) {
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+        model.addAttribute("pageResponse", pageResponse);
+        return "plan/plan2 :: #touritems";
+    }
+
     @PostMapping("/api/touritems")
     public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
         PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);

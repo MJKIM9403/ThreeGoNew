@@ -25,12 +25,6 @@ public class UserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-//    @Override
-//    public UserDetails loadUserByUsername(String id) {
-//        return userRepository.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
-//    }
-
 @Override
 public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
@@ -50,6 +44,8 @@ public UserDetails loadUserByUsername(String id) throws UsernameNotFoundExceptio
 ////    return new User(user.getId(), user.getPw() , authorities);
     return new PrincipalDetails(user);
 }
+
+
 
 }
 
