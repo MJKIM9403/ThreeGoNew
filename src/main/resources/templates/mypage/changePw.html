@@ -7,17 +7,19 @@
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Bootstrap icons-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+          type="text/css"/>
     <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
     <!-- jquery-->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="../../assets/css/style.css?after" rel="stylesheet" />
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../../assets/css/style.css?after" rel="stylesheet"/>
     <link href="../../assets/css/commonstyle.css?after" rel="stylesheet"/>
     <title>비밀번호 변경</title>
-    <link rel = "icon" href="image/wave.ico">
+    <link rel="icon" href="image/wave.ico">
 
 </head>
 <style>
@@ -27,10 +29,12 @@
         align-items: center;
         margin-top: 50px;
     }
-    .form-group{
-        width: auto;}
 
-    .changePwdiv{
+    .form-group {
+        width: auto;
+    }
+
+    .changePwdiv {
         padding-left: 12px;
     }
 </style>
@@ -53,55 +57,68 @@
             <form id="changePwForm" action="/mypage/changePw" method="post">
                 <div class="form-group userInput mb-5">
 
-                <!-- 비밀번호 변경타이틀부분 -->
-                <div id="header">
-                    <h1 class="text-center">
-                        비밀번호 변경(1단계)
-                    </h1>
-                    <p class="text-center">비밀번호 변경 페이지입니다.</p>
-                </div>
+                    <!-- 비밀번호 변경타이틀부분 -->
+                    <div id="header">
+                        <h1 class="text-center">
+                            비밀번호 변경(1단계)
+                        </h1>
+                        <p class="text-center">비밀번호 변경 페이지입니다.</p>
+                    </div>
 
                     <!-- 성공 메시지를 표시 -->
                     <div id="successMessage" th:if="${data}" class="alert alert-success">
                         <p th:text="${data.message}"></p>
                     </div>
 
-                <div id="container">
-                    <div class="row_group">
-                        <div class="userInput mb-5">
-                            <h4 class="list">현재 비밀번호</h4>
+                    <div id="container">
+                        <div class="row_group">
+                            <div class="userInput mb-5">
+                                <h4 class="list">현재 비밀번호</h4>
 
-                            <div class="input-group">
-                                <!-- 현재 비밀번호 -->
-                                <input type="password" name="currentPw" id="currentPw" class="form-control form-control-sm" maxlength="20" placeholder="현재 비밀번호를 입력하세요."/>
+                                <div class="input-group">
+                                    <!-- 현재 비밀번호 -->
+                                    <input type="password" name="currentPw" id="currentPw"
+                                           class="form-control form-control-sm" maxlength="20"
+                                           placeholder="현재 비밀번호를 입력하세요."/>
+                                </div>
+
+                                <h4 class="list">새 비밀번호</h4>
+
+                                <div class="input-group">
+                                    <!-- 새 비밀번호 -->
+                                    <input type="password" name="newPw" id="newPw" class="form-control form-control-sm"
+                                           maxlength="20" placeholder="새 비밀번호를 입력하세요."/>
+                                </div>
+
+                                <h4 class="list">새 비밀번호 확인</h4>
+                                <div class="input-group">
+                                    <!-- 새 비밀번호 확인 -->
+                                    <input type="password" name="newPwConfirm" id="newPwConfirm"
+                                           class="form-control form-control-sm" maxlength="20"
+                                           placeholder="새 비밀번호 한 번 더 입력해주세요."/>
+                                </div>
+
+
+                                <button id="changePwBtn" class="btn btn-primary btn-md" type="submit"
+                                        onclick="changePassword()"> 변경하기
+                                </button>
+                                <button class="btn btn-primary2" id="saveCancel" onclick="cancel()">취소</button>
                             </div>
-
-                            <h4 class="list">새 비밀번호</h4>
-
-                            <div class="input-group">
-                                <!-- 새 비밀번호 -->
-                                <input type="password" name="newPw" id="newPw" class="form-control form-control-sm" maxlength="20" placeholder="새 비밀번호를 입력하세요."/>
-                            </div>
-
-                            <h4 class="list">새 비밀번호 확인</h4>
-                            <div class="input-group">
-                                <!-- 새 비밀번호 확인 -->
-                                <input type="password" name="newPwConfirm" id="newPwConfirm"  class="form-control form-control-sm" maxlength="20" placeholder="새 비밀번호 한 번 더 입력해주세요."/>
-                            </div>
-
-
-
-                            <button id="changePwBtn" class="btn btn-primary btn-md" type="submit" onclick="changePw()"> 변경하기</button>
-                            <button class="btn btn-primary2" id="saveCancel">취소</button>
                         </div>
                     </div>
-                </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
 <script>
+
+    // "취소" 버튼 클릭
+    function cancel() {
+        window.location.href = '/review';
+    }
+
+
     // 성공 메시지가 표시될 때 폼을 숨기고, 성공 메시지를 보여준다.
     var successMessage = document.getElementById("successMessage");
     var formContainer = document.getElementById("formContainer");
@@ -110,33 +127,41 @@
         formContainer.style.display = "none";
     }
 
-        function changePassword(){
-        // 입력된 값 가져오기
+    function changePassword() {
+
+        var reg_pw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/; // 비밀번호 정규식 추가
         var currentPassword = document.getElementById("currentPw").value;
         var newPassword = document.getElementById("newPw").value;
         var newPasswordConfirm = document.getElementById("newPwConfirm").value;
 
         // AJAX 요청 보내기
         $.ajax({
-        type: "POST",
-        url: "/mypage/changePw",
-        data: {
-        currentPw: currentPassword,
-        newPw: newPassword,
-        newPwConfirm: newPasswordConfirm
-    },
-        success: function(response) {
-        // 서버로부터의 성공 응답 처리
-        // 여기에 성공 메시지 표시 등의 동작 추가
-        alert("비밀번호가 성공적으로 변경되었습니다.");
-    },
-        error: function(xhr, status, error) {
-        // 서버로부터의 오류 응답 처리
-        // 여기에 오류 메시지 표시 등의 동작 추가
-        alert("오류가 발생했습니다: " + error);
+            type: "POST",
+            url: "/mypage/changePw",
+            data: {
+                currentPw: currentPassword,
+                newPw: newPassword,
+                newPwConfirm: newPasswordConfirm
+            },
+            success: function (response) {
+                // 서버로부터의 성공 응답 처리
+                // 여기에 성공 메시지 표시 등의 동작 추가
+                console.log(response);
+                alert(response);
+                window.location.href = '/review';
+            },
+            error: function (xhr, status, error) {
+                // 서버로부터의 오류 응답 처리
+                // 여기에 오류 메시지 표시 등의 동작 추가
+                console.log("오류가 발생했습니다: " + error);
+                // alert("오류가 발생했습니다: " + error);
+            }
+        });
+
+
     }
-    });
-    }
+
+
 </script>
 
 </body>
