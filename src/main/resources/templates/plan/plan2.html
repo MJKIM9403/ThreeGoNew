@@ -27,14 +27,6 @@
         *::-webkit-scrollbar {
             width: 5px !important;
         }
-        *::-webkit-scrollbar-thumb {
-            height: 30%; /* 스크롤바의 길이 */
-            background: #ddd; /* 스크롤바의 색상 */
-            border-radius: 10px;
-        }
-        *::-webkit-scrollbar-track {
-            background: #fff;  /*스크롤바 뒷 배경 색상*/
-        }
 
         .container-fluid {
             overflow-y: hidden !important;
@@ -251,67 +243,16 @@
     console.log(days);
 
     // 도시명 바꾸기
-    function updateCityName() {
-        // selectedAreaCode에 따라 city-name을 설정
-        let cityName;
-        switch (selectedAreaCode) {
-            case '1':
-                cityName = "서울";
-                break;
-            case '2':
-                cityName = "인천";
-                break;
-            case '3':
-                cityName = "대전"
-                break;
-            case '4':
-                cityName = "대구";
-                break;
-            case '5':
-                cityName = "광주";
-                break;
-            case '6':
-                cityName = "부산";
-                break;
-            case '7':
-                cityName = "울산";
-                break;
-            case '8':
-                cityName = "세종특별자치시";
-                break;
-            case '31':
-                cityName = "경기도";
-                break;
-            case '32':
-                cityName = "강원도";
-                break;
-            case '33':
-                cityName = "충청북도";
-                break;
-            case '34':
-                cityName = "충청남도";
-                break;
-            case '35':
-                cityName = "경상북도";
-                break;
-            case '36':
-                cityName = "경상남도";
-                break;
-            case '37':
-                cityName = "전라북도";
-                break;
-            case '38':
-                cityName = "전라남도";
-                break;
-            case '39':
-                cityName = "제주도";
-                break;
-            default:
-                cityName = "도시명";
-        }
 
-        // city-name 요소를 찾아서 텍스트 업데이트
-        $('.city-name').text(cityName);
+
+    function updateCityName() {
+        $('.areaSelect').change(function() {
+            // 변경된 라디오 버튼의 label 요소를 찾습니다.
+            var cityName = $(this).next('label').text();
+
+            // $('.city-name')의 텍스트를 변경된 label의 텍스트로 설정합니다.
+            $('.city-name').text(cityName);
+        });
     }
 
 
@@ -598,7 +539,7 @@
     // 마커 추가하기 함수
     function addMarker(status, info) {
         // status 에 따라 아이콘 바꾸기
-        imgUrl = `http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_${status}.png`;
+        imgUrl = `https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_${status}.png`;
 
         // 관광지 목록에 추가한 대로 marker 생성
         marker = new Tmapv2.Marker({
@@ -968,11 +909,6 @@
         // 각 탭에 대해 클릭 이벤트 리스너 추가
         tabs.forEach(function (tab, tabIndex) {
             tab.addEventListener('click', function () {
-                // 현재 탭이 비어있는지 확인
-                if (places[index].length === 0) { // 수정: 현재 탭의 장소 배열이 비어있으면
-                    alert('장소를 추가해주세요.');
-                    return; // 수정: 장소를 추가하지 않았으므로 다음으로 이동하지 않음
-                }
 
                 // 모든 탭에서 'active' 클래스 제거
                 tabs.forEach(function(otherTab) {
@@ -997,6 +933,7 @@
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+
                 } else if (previousTabIndex === -1) {
                     // 첫 번째 탭에서 다른 탭으로 이동하는 경우
                     // 첫 번째 탭의 마커와 경로가 이미 있을 경우에만 제거
@@ -1024,6 +961,22 @@
                 })
                 // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
                 $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+
+                // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                if (viaMarkers[index].length === 1) {
+                    map.setCenter(marker.getPosition());
+                    map.setZoom(10); // 기본 줌 레벨 설정
+                } else {
+                    // 모든 마커를 포함하는 경계를 계산
+                    var PTbounds = new Tmapv2.LatLngBounds();
+                    for (var i = 0; i < viaMarkers[index].length; i++) {
+                        var markerPosition = viaMarkers[index][i].getPosition();
+                        PTbounds.extend(markerPosition);
+                    }
+
+                    // 지도를 경계에 맞게 확대/축소
+                    map.fitBounds(PTbounds);
+                }
 
                 // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
                 previousTabIndex = index;
@@ -1071,16 +1024,8 @@
                     alert('모든 탭에서 장소를 추가해주세요.');
                 }
             }
-
-            // 현재 탭에서 장소를 추가한 경우에만 다음 탭으로 이동
-            if (places[index].length > 0 && viaMarkers[index].length > 0) {
-                // 다음 탭으로 이동
-                var nextTab = tabs[index + 1];
-                nextTab.click(); // 다음 탭으로 이동하는 클릭 이벤트 발생시킴
-            } else {
-                alert('장소를 추가해주세요.');
-            }
         });
+
     });
 
 
@@ -1184,7 +1129,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>

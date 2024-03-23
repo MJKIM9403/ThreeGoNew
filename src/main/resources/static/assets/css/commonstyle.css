@@ -160,3 +160,16 @@ body, * {
 #swiper-1 .swiper-pagination-bullet-active {
     background-color: aqua;
 }
+
+/*스크롤 바*/
+*::-webkit-scrollbar {
+    width: 10px;
+}
+*::-webkit-scrollbar-thumb {
+    height: 30%; /* 스크롤바의 길이 */
+    background: #ddd; /* 스크롤바의 색상 */
+    border-radius: 10px;
+}
+*::-webkit-scrollbar-track {
+    background: #fff;  /*스크롤바 뒷 배경 색상*/
+}
