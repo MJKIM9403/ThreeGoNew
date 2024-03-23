@@ -1,8 +1,6 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.domain.Message;
 import com.io.threegonew.domain.User;
-import com.io.threegonew.dto.PasswordResetForm;
 import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.service.UserService;
 import jakarta.validation.Valid;
