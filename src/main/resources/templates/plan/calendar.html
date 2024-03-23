@@ -90,7 +90,7 @@
         }
 
         .datepicker table tr td.today, span.focused {
-            border-radius: 50% !important;
+            border-radius: 5% !important;
             background-image: linear-gradient(#FFF3E0, #FFE0B2);
         }
 
@@ -113,18 +113,12 @@
         }
 
         .old-day:hover, .day:hover, .new-day:hover, .month:hover, .year:hover, .decade:hover, .century:hover {
-            border-radius: 50% !important;
+            border-radius: 5% !important;
             background-color: #eee;
         }
 
-        .active {
-            border-radius: 50% !important;
-            background-image: linear-gradient(#90CAF9, #64B5F6) !important;
-            color: #fff !important;
-        }
-
         .range-start, .range-end {
-            border-radius: 50% !important;
+            border-radius: 5% !important;
             background-image: linear-gradient(#FFA726, #FFA726) !important;
         }
 
@@ -225,19 +219,13 @@
     </div>
 </div>
 
-
-    <!--header-->
-    <th:block th:replace="fragments/header"></th:block>
-    <div class="sub-header">
-        <div class="container pt-5 pl-5">
-            <h3 class="display-6 text-white">캘린더 샘플</h3>
-        </div>
-    </div>
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
     <!--로그인한 유저 아이디로 등록된 planner가 있으면 조회화면을 보여줌-->
-    <div class="container px-1 px-sm-5 mx-auto" th:if="${plannerList.size() > 0}">
+    <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() > 0}">
         <div class="container">
             <div class="text-center mb-5">
-                <p>등록한 여행일정을 확인해보세요.</p>
+                <h2 class="display-6 text-center pb-5">등록한 여행일정을 확인해보세요.</h2>
             </div>
             <th:block th:each="planner, idx : ${plannerList}">
                 <div class="card mb-3">
@@ -268,7 +256,7 @@
 
 
     <!--로그인한 유저 아이디로 등록된 planner가 없으면 등록화면부터 보여줌-->
-    <div class="container px-1 px-sm-5 mx-auto" th:if="${plannerList.size() == 0}">
+    <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() == 0}">
         <div class="pt-5 pb-5">
 
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
@@ -292,16 +280,17 @@
             </form>
         </div>
     </div>
-    <div class="result"></div>
+</div>
     <script>
+        // datepicker 설정
         $(document).ready(function(){
-
             $('.input-daterange').datepicker({
                 format: 'yyyy-mm-dd',
                 todayHighlight: true,
-                startDate: '0d'
+                autoclose: true,
+                startDate: '0d',
+                language: "ko"
             });
-
         });
 
     </script>
