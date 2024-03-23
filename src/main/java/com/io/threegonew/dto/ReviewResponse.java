@@ -18,6 +18,7 @@ public class ReviewResponse {
     private Long reviewId;
     private Long reviewBookId;
     private String reviewBookTitle;
+    private String reviewBookCoverImg;
     private UserInfoResponse userInfo;
     private String tourItemId;
     private String tourItemTitle;

@@ -27,7 +27,7 @@ public class MyPageApiController {
 
     @PostMapping("/review")
     public ResponseEntity<MyPageResponse> getMyReviewBook(@RequestBody MyPageRequest request){
-        MyPageResponse<PageResponse<ReviewResponse>> myPageResponse =
+        MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
                 MyPageResponse.builder()
                         .type("review")
                         .pageResponse(reviewService.findMyReview(request))

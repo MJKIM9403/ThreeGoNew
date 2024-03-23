@@ -106,4 +106,15 @@ public class ReviewController {
 
         return ResponseEntity.ok().body(result);
     }
+
+    @GetMapping("/detail")
+    @ResponseBody
+    public ResponseEntity<ReviewResponse> showDetailReview(@RequestParam("reviewId") Long reviewId){
+        try{
+            ReviewResponse findReview = reviewService.findDetailReview(reviewId);
+            return ResponseEntity.ok().body(findReview);
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

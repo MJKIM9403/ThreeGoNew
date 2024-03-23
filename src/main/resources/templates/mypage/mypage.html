@@ -22,6 +22,10 @@
     <!--  my page 적용 템플릿 스타일 시트  -->
     <link href="../assets/css/mypagestyle.css" rel="stylesheet"/>
 
+    <!--swiper-->
+    <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <script src="../assets/swiper/swiper-bundle.min.js"></script>
+
     <title>Three Go</title>
 </head>
 <body>
@@ -52,15 +56,81 @@
         height: 35px;
     }
 
+    .comment-profile{
+        width: 25px;
+        height: 25px;
+    }
+
     #review-book-info {
         position: absolute;
         z-index: 100;
         top: 1rem;
         left: 1rem;
+        color: #FFFFFF;
+        text-shadow:
+                -2px 0px rgba(0, 0, 0, 0.5),
+                0px 2px rgba(0, 0, 0, 0.5),
+                2px 0px rgba(0, 0, 0, 0.5),
+                0px -2px rgba(0, 0, 0, 0.5);
+    }
+    .modal-body {
+        width: 100%;
+    }
+
+    #contents-wrap {
+        width: 100%;
+        max-height: 550px;
+        overflow-y: scroll;
+    }
+    #contents-wrap::-webkit-scrollbar {
+        width: 5px !important;
+    }
+    #contents-wrap::-webkit-scrollbar-thumb {
+        height: 30%; /* 스크롤바의 길이 */
+        background: #ddd; /* 스크롤바의 색상 */
+        border-radius: 10px;
+    }
+    #contents-wrap::-webkit-scrollbar-track {
+        background: #fff;  /*스크롤바 뒷 배경 색상*/
+    }
+
+    #my-comment-wrap {
+        width: 100%;
+    }
+
+    #comment-area {
+        flex: auto;
+    }
+    textarea {
+        resize: none;
+    }
+    #comment-btn {
+        border: 1px solid #AAA;
+        width: 70px;
+    }
+    #touritem-info {
+        position: absolute;
+        z-index: 100;
+        bottom: 3rem;
+        left: 2rem;
+    }
+    .fa-location-dot{
+        color: #000000;
+        font-size: 25px;
+    }
+    #touritem-name {
+        font-size: 18px;
+        color: #FFFFFF;
+        text-shadow:
+                -2px 0px rgba(0, 0, 0, 0.5),
+                0px 2px rgba(0, 0, 0, 0.5),
+                2px 0px rgba(0, 0, 0, 0.5),
+                0px -2px rgba(0, 0, 0, 0.5);
     }
 
     .delete-img-btn {
         position: absolute;
+        z-index: 101;
         top: 5%;
         right: 5%;
     }
@@ -128,7 +198,7 @@
 
             <div class="profile-user-settings">
                 <h1 class="profile-user-name" th:text="${findUser.name}"></h1>
-                <th:block th:if="${findUser.id == loginUserId}">
+                <th:block th:if="${findUser.id == loginUser.id}">
                     <button class="btn profile-edit-btn" onclick="location.href = '/editprofile'" >Edit Profile</button>
                     <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
                 </th:block>
@@ -177,11 +247,15 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="preview-container col-md-7">
-                            <div id="review-book-info" class="d-flex">
-                                <div class="gap-1">
-                                    <img src="../assets/img/no_image.png" class="rounded-3 icon-img" alt="...">
+                            <div id="review-book-info" class="d-flex align-items-center">
+                                <div>
+                                    <img id="review-book-cover" src="../assets/img/no_image.png" class="rounded-3 icon-img" alt="...">
                                 </div>
-                                <span>리뷰 북 타이틀</span>
+                                <span id="review-book-title" class="ms-2">리뷰 북 타이틀</span>
+                            </div>
+                            <div id="touritem-info" class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span id="touritem-name">관광지 이름</span>
                             </div>
                             <div class="swiper mySwiper">
                                 <div class="swiper-wrapper">
@@ -196,23 +270,65 @@
                         </div>
                         <div class="col-md-5 d-flex align-items-start">
                             <div class="modal-body">
-                                <div id="writer-info" class="mb-2 d-flex">
-                                    <img src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
-                                    <span>작성자 이름</span>
+                                <div id="writer-info" class="mb-2 d-flex align-items-center">
+                                    <img id="writer-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                    <span id="writer-name" class="ms-2">작성자 이름</span>
+                                    <span id="writer-id" class="ms-2">@writerId</span>
                                 </div>
-                                <div id="contents-wrap" class="mb-2">
-                                    <div id="content">
-                                        본문
+                                <div id="contents-wrap" class="mb-3">
+                                    <div id="content" class="mb-2">
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
+                                        본문<br/>
                                     </div>
-                                    <div id="reply">
-
+                                    <div id="comment-wrap">
+                                        <div class="comment-info d-flex justify-content-start mb-1">
+                                            <img src="../assets/img/profile.jpg" class="comment-profile rounded-circle icon-img" alt="...">
+                                            <span class="comment-writer ms-2">댓글1</span>
+                                            <span class="comment-text ms-4">우와~</span>
+                                        </div>
+                                        <div class="comment-info  d-flex justify-content-start mb-1">
+                                            <img src="../assets/img/profile.jpg" class="comment-profile rounded-circle icon-img" alt="...">
+                                            <span class="comment-writer ms-2">댓글2</span>
+                                            <span class="comment-text ms-4">정말 데단해</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="mb-2 d-flex">
-                                    <img src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
-                                    <div>
-                                        <div>작성자 이름</div>
-                                        <textarea class="form-control"></textarea>
+                                <div id="my-comment-wrap" class="d-flex align-items-start">
+                                    <img id="login-user-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                    <div id="comment-area" class="ms-2">
+                                        <div id="login-user-name" class="mb-2">작성자 이름</div>
+                                        <div class="d-flex gap-1">
+                                            <textarea class="form-control"></textarea>
+                                            <button id="comment-btn" type="button" class="btn btn-outline-secondary">등록</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -225,6 +341,109 @@
 
     <!-- End of container -->
 </div>
+<script th:inline="javascript">
+
+    // swiper 설정
+    var swiper = new Swiper(".mySwiper", {
+        observer: true,
+        observeParents: true,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
+        mousewheel: true,
+        keyboard: true,
+    });
+    function openViewer(reviewId) {
+        let loginUserName = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]]
+        let loginUserProfile = [[${loginUser.profileImg}]]
+        console.log(loginUserProfile)
+        $('#viewer').modal('show');
+        $('#login-user-name').text(loginUserName);
+        if(loginUserProfile != null){
+            $('#login-user-profile-img').attr('src','/api/review-photo/' + loginUserProfile);
+        }
+        loadDetailReview(reviewId);
+    }
+
+    function loadDetailReview(reviewId){
+        $.ajax({
+            url : '/review/detail',
+            type : 'GET',
+            data : {
+                reviewId : reviewId
+            },
+            contentType : 'application/json; charset=UTF-8',
+            success : function (findReview) {
+                let writer = findReview.userInfo;
+                let photoList = findReview.reviewPhotoList;
+                $('#writer-name').text(writer.name);
+                $('#writer-id').text('@' + writer.id);
+                if(writer.profileImg != null){
+                    $('#writer-profile-img').attr('src','/api/review-photo/' + writer.profileImg);
+                }
+                $('#content').html(findReview.reviewContent);
+                if(findReview.reviewBookId == null){
+                    $('#review-book-info').hide();
+                }else {
+                    $('#review-book-info').show();
+                    $('#review-book-title').text(findReview.reviewBookTitle);
+                    if(findReview.reviewBookCoverImg != null){
+                        $('#review-book-cover').attr('src','/api/review-photo/' + findReview.reviewBookCoverImg);
+                    }
+                }
+                $('#touritem-name').text(findReview.tourItemTitle);
+                $('.swiper-wrapper').html("");
+                for(let photo of photoList){
+                    const tempHtml = `<div class="swiper-slide">` +
+                        `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
+                        `<i class="bi bi-x-lg"></i>` +
+                        `</button>` +
+                        `<img class="preview-img" src="/api/review-photo/${photo.filePath}" style="object-fit: contain" onload="goLastSlide()"/>` +
+                        `</div>`;
+                    swiper.appendSlide(tempHtml);
+                    swiper.update();
+                }
+            },
+            error : function (){
+                alert("리뷰 정보 조회에 실패했습니다.")
+            }
+        })
+    }
+    function goLastSlide() {
+        swiper.slideTo(images.length-1,300,false);
+    }
+
+    function deleteImg() {
+        $(document).on('click','.delete-img-btn',function () {
+            let idx = $(".delete-img-btn").index(this);
+            swiper.slideTo(idx-1,300,false);
+            swiper.removeSlide(idx);
+            swiper.update();
+            images.splice(idx,1);
+
+            if(images.length > 1){
+                $('.swiper-controller').show()
+            }else {
+                $('.swiper-controller').hide()
+            };
+
+            if(images.length === 0){
+                const tempHtml = `<div class="swiper-slide">` +
+                    `사진을 추가해주세요.` +
+                    `</div>`;
+                swiper.appendSlide(tempHtml);
+                swiper.update();
+            }
+            if($('.uploader').css('display') === 'none' && images.length < 4){
+                $('.uploader').show()
+            }
+        })
+    }
+</script>
 
 <script th:inline="javascript">
     let scrollPage = 0; // 무한스크롤로 불러올 페이지
@@ -238,6 +457,8 @@
         observer.observe(document.getElementById('load-point'));
         $('#load-point').hide(); // 옵저버 관측 타이밍을 컨트롤하기 위해 hide
         loadPage();
+        $('.swiper-controller').hide();
+        deleteImg();
     })
 
     const observer = new IntersectionObserver((entries, observer) => {
@@ -368,19 +589,18 @@
                     $(".loader").hide()
                     $.each(reviewList, function (index, review){
                         console.log(review)
-                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="openViewer()">`
-                        if(review.reviewPhotoList.length > 1){
+                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="openViewer(${review.reviewId})">`
+                        if(review.photoCount > 1){
                             tempHtml += '<div class="gallery-item-type">' +
                                 '<i class="fas fa-clone" aria-hidden="true"></i>' +
                                 '</div>'
                         }
                         tempHtml +=
-                            `<img src="/api/review-photo/${review.reviewPhotoList[0].filePath}"` +
-                            `class="gallery-image" alt="">` +
+                            `<img src="/api/review-photo/${review.firstPhoto.filePath}" class="gallery-image" alt="">` +
                             `<div class="gallery-item-info">` +
                             `<ul>` +
-                            `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>` +
-                            `<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>` +
+                            `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> ${review.likeCount}</li>` +
+                            `<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> ${review.commentCount}</li>` +
                             `</ul>` +
                             `</div>` +
                             `</div>` +
@@ -445,7 +665,7 @@
                     }
                     setTimeout(() => {
                         window.scrollTo(0, scrollPosition);
-                    }, 10);
+                    }, 100);
                     // sessionStorage.removeItem("myPageInfo");
                     setTimeout(() => {
                         $('#load-point').show();
@@ -461,10 +681,6 @@
                 $('#load-point').show();
             }
         });
-    }
-
-    function openViewer() {
-        $('#viewer').modal('show');
     }
 
 </script>

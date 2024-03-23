@@ -45,14 +45,13 @@ public class ReviewService {
         return savedReview;
     }
 
-    @Transactional
     public PageResponse findMyReview(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-        Page<ReviewResponse> page = reviewRepository.findMyReview(pageable, request.getUserId())
-                .map(this::reviewMapper);
+        Page<MyReviewResponse> page = reviewRepository.findMyReview(pageable, request.getUserId())
+                .map(this::myReviewMapper);
 
-        PageResponse<ReviewResponse> pageResponse = PageResponse.<ReviewResponse>withAll()
+        PageResponse<MyReviewResponse> pageResponse = PageResponse.<MyReviewResponse>withAll()
                 .dtoList(page.getContent())
                 .page(page.getNumber())
                 .size(page.getSize())
@@ -63,26 +62,43 @@ public class ReviewService {
         return pageResponse;
     }
 
+    public ReviewResponse findDetailReview(Long reviewId){
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+        return reviewMapper(findReview);
+    }
+
+    private MyReviewResponse myReviewMapper(Review review){
+        return MyReviewResponse.builder()
+                .reviewId(review.getReviewId())
+                .firstPhoto(reviewPhotoMapper(review.getReviewPhotoList().get(0)))
+                .photoCount(review.getReviewPhotoList().size())
+                .likeCount(0)   /* TODO: 좋아요, 댓글 구현 후 값 바꿀 것*/
+                .commentCount(0)
+                .build();
+    }
+
     private ReviewResponse reviewMapper(Review review){
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())
                 .reviewBookId(review.getReviewBook().getBookId())
                 .reviewBookTitle(review.getReviewBook().getBookTitle())
+                .reviewBookCoverImg(review.getReviewBook().getCoverFilePath())
                 .userInfo(userInfoResponse(review.getUser()))
                 .tourItemId(review.getTourItem().getContentid())
                 .tourItemTitle(review.getTourItemTitle())
-                .reviewContent(review.getReviewContent())
+                .reviewContent(review.getReviewContent().replace("\r\n", "<br>"))
                 .viewCount(review.getViewCount())
-                .reviewPhotoList(reviewPhotoMapper(review.getReviewPhotoList()))
+                .reviewPhotoList( review.getReviewPhotoList().stream()
+                                .map(this::reviewPhotoMapper).collect(Collectors.toList()))
                 .build();
     }
 
-    private List<ReviewPhotoResponse> reviewPhotoMapper(List<ReviewPhoto> reviewPhotoList) {
-        return reviewPhotoList.stream()
-                .map(reviewPhoto -> ReviewPhotoResponse.builder()
-                                        .fileId(reviewPhoto.getFileId())
-                                        .filePath(reviewPhoto.getFilePath())
-                                        .build()).collect(Collectors.toList());
+    private ReviewPhotoResponse reviewPhotoMapper(ReviewPhoto reviewPhoto) {
+        return ReviewPhotoResponse.builder()
+                .fileId(reviewPhoto.getFileId())
+                .filePath(reviewPhoto.getFilePath())
+                .build();
     }
 
     private UserInfoResponse userInfoResponse(User user) {
@@ -90,7 +106,7 @@ public class ReviewService {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
-                .profileImg("../assets/img/profileimg/" + user.getU_sfile())
+                .profileImg(user.getU_sfile())
                 .about(user.getAbout())
                 .build();
     }

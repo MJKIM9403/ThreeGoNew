@@ -22,7 +22,7 @@ public class AddReviewBookRequest {
         this.userId = userId;
         this.plannerId = plannerId;
         this.bookTitle = bookTitle;
-        this.bookContent = bookContent.replace("\\r\\n", "<br>");
+        this.bookContent = bookContent.replace("\r\n", "<br>");
         this.coverFile = coverFile;
     }
 }

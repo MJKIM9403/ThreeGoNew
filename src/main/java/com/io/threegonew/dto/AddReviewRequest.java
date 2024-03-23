@@ -26,7 +26,7 @@ public class AddReviewRequest {
         this.userId = userId;
         this.touritemId = touritemId;
         this.touritemTitle = touritemTitle;
-        this.reviewContent = reviewContent.replace("\\r\\n", "<br>");
+        this.reviewContent = reviewContent;
         this.photoList = photoList;
     }
 }
