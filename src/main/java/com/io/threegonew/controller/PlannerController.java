@@ -1,11 +1,15 @@
 package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.Area;
+import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.Sigungu;
+import com.io.threegonew.dto.AddPlanRequest;
 import com.io.threegonew.dto.AddPlannerRequest;
+import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.service.PlannerService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -30,15 +36,27 @@ public class PlannerController {
 
     @GetMapping
     public String showAreaCode(Model model) {
-        List<Area> areaList = plannerService.findAllAreas();
-        model.addAttribute("areaList", areaList);
-        return "plan/calendar";
-    }
 
-    @GetMapping("/sigungu")
-    @ResponseBody
-    public List<Sigungu> getSigunguList(@RequestParam Integer areaCode) {
-        return plannerService.findSigunguByAreaCode(areaCode);
+
+        // 현재 사용자의 인증 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 인증 정보에서 사용자 아이디를 추출
+        String userId = authentication.getName();
+
+        System.out.println(userId);
+
+        // 사용자의 아이디와 동일한 Planner가 있는지 확인
+        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+
+        // 내가 작성한 plannerList
+        if(userId != null) {
+            model.addAttribute("plannerList", plannerList);
+        } else {
+            model.addAttribute("plannerList", new ArrayList<Planner>());
+        }
+
+
+        return "plan/calendar";
     }
 
     @PostMapping("/add")
