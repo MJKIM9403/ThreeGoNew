@@ -933,6 +933,7 @@
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+
                 } else if (previousTabIndex === -1) {
                     // 첫 번째 탭에서 다른 탭으로 이동하는 경우
                     // 첫 번째 탭의 마커와 경로가 이미 있을 경우에만 제거
@@ -960,6 +961,22 @@
                 })
                 // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
                 $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+
+                // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                if (viaMarkers[index].length === 1) {
+                    map.setCenter(marker.getPosition());
+                    map.setZoom(10); // 기본 줌 레벨 설정
+                } else {
+                    // 모든 마커를 포함하는 경계를 계산
+                    var PTbounds = new Tmapv2.LatLngBounds();
+                    for (var i = 0; i < viaMarkers[index].length; i++) {
+                        var markerPosition = viaMarkers[index][i].getPosition();
+                        PTbounds.extend(markerPosition);
+                    }
+
+                    // 지도를 경계에 맞게 확대/축소
+                    map.fitBounds(PTbounds);
+                }
 
                 // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
                 previousTabIndex = index;
@@ -1008,6 +1025,7 @@
                 }
             }
         });
+
     });
 
 
