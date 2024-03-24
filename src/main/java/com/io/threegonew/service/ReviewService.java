@@ -79,13 +79,23 @@ public class ReviewService {
     }
 
     private ReviewResponse reviewMapper(Review review){
+        Long bookId = null;
+        String bookTitle = null;
+        String bookCoverImg = null;
+        if(review.getReviewBook() != null) {
+            bookId = review.getReviewBook().getBookId();
+            bookTitle = review.getReviewBook().getBookTitle();
+            bookCoverImg = review.getReviewBook().getCoverFilePath();
+        }
+        String touritemId = review.getTourItem() == null ? null : review.getTourItem().getContentid();
+
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())
-                .reviewBookId(review.getReviewBook().getBookId())
-                .reviewBookTitle(review.getReviewBook().getBookTitle())
-                .reviewBookCoverImg(review.getReviewBook().getCoverFilePath())
+                .reviewBookId(bookId)
+                .reviewBookTitle(bookTitle)
+                .reviewBookCoverImg(bookCoverImg)
                 .userInfo(userInfoResponse(review.getUser()))
-                .tourItemId(review.getTourItem().getContentid())
+                .tourItemId(touritemId)
                 .tourItemTitle(review.getTourItemTitle())
                 .reviewContent(review.getReviewContent().replace("\r\n", "<br>"))
                 .viewCount(review.getViewCount())

@@ -1,13 +1,12 @@
 package com.io.threegonew.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class AddReviewRequest {
     private Long bookId;

@@ -646,8 +646,8 @@
                     for(let plan of planList){
                         let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
-                        resolve();
                     }
+                    resolve();
                 },
                 error : function (err) {
                     console.log(err);
@@ -690,16 +690,19 @@
     function saveReview(){
         let formData = new FormData();
         let loginUser = [[${loginUserId}]]
+        let touritemId = $('#select-touritem-info option:selected').val();
 
-        formData.append("bookId", selectedBookId); /*test*/
+        if(selectedBookId !== null) formData.append("bookId", selectedBookId);
         formData.append("userId", `${loginUser}`);
-        formData.append("touritemId", $('#select-touritem-info option:selected').val());
+        if(touritemId !== 'direct') formData.append("touritemId", touritemId);
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());
 
         for(let image of images){
             formData.append("photoList", image);
         }
+
+        console.log(formData)
 
         $.ajax({
             url : '/review/create',
@@ -708,10 +711,10 @@
             processData : false,
             contentType : false,
             success : function (response) {
-                alert("리뷰를 등록하였습니다.") /*test*/
+                alert("리뷰를 등록하였습니다.")
             },
             error : function (err) {
-                console.log(err)
+                alert("리뷰 등록에 실패했습니다.")
             }
         })
     }

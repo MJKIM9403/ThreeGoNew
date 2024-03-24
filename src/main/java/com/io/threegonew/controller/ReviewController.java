@@ -49,26 +49,17 @@ public class ReviewController {
 
     @PostMapping("/create")
     @ResponseBody
-    public ResponseEntity saveReview(@RequestParam("bookId") Long bookId,
-                                     @RequestParam("userId") String userId,
-                                     @RequestParam("touritemId") String touritemId,
-                                     @RequestParam("touritemTitle") String touritemTitle,
-                                     @RequestParam("reviewContent") String reviewContent,
-                                     @RequestParam(name = "photoList") List<MultipartFile> photoList) {
-
-        AddReviewRequest request = AddReviewRequest.builder()
-                .bookId(bookId)
-                .userId(userId)
-                .touritemId(touritemId)
-                .touritemTitle(touritemTitle)
-                .reviewContent(reviewContent)
-                .photoList(photoList)
-                .build();
-
+    public ResponseEntity saveReview(@ModelAttribute AddReviewRequest request) {
+        ReviewBook selectedReviewBook = null;
+        TourItem selectedTourItem = null;
         try {
-            ReviewBook selectedReviewBook = reviewBookService.findReviewBook(request.getBookId());
+            if(request.getBookId() != null){
+                selectedReviewBook = reviewBookService.findReviewBook(request.getBookId());
+            }
+            if(request.getTouritemId() != null){
+                selectedTourItem = tourItemService.findTourItem(request.getTouritemId());
+            }
             User author = userService.findUser(request.getUserId());
-            TourItem selectedTourItem = tourItemService.findTourItem(request.getTouritemId());
 
             reviewService.saveReview(selectedReviewBook, author, selectedTourItem, request);
 
