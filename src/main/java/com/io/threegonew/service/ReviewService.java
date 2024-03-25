@@ -68,6 +68,13 @@ public class ReviewService {
         return reviewMapper(findReview);
     }
 
+    public EditReviewResponse findEditReview(Long reviewId){
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        return editReviewMapper(findReview);
+    }
+
     private MyReviewResponse myReviewMapper(Review review){
         return MyReviewResponse.builder()
                 .reviewId(review.getReviewId())
@@ -101,6 +108,27 @@ public class ReviewService {
                 .viewCount(review.getViewCount())
                 .reviewPhotoList( review.getReviewPhotoList().stream()
                                 .map(this::reviewPhotoMapper).collect(Collectors.toList()))
+                .build();
+    }
+
+    private EditReviewResponse editReviewMapper(Review review){
+        Long bookId = null;
+        String bookTitle = null;
+        if(review.getReviewBook() != null) {
+            bookId = review.getReviewBook().getBookId();
+            bookTitle = review.getReviewBook().getBookTitle();
+        }
+        String touritemId = review.getTourItem() == null ? null : review.getTourItem().getContentid();
+
+        return EditReviewResponse.builder()
+                .reviewId(review.getReviewId())
+                .reviewBookId(bookId)
+                .reviewBookTitle(bookTitle)
+                .tourItemId(touritemId)
+                .tourItemTitle(review.getTourItemTitle())
+                .reviewContent(review.getReviewContent())
+                .reviewPhotoList( review.getReviewPhotoList().stream()
+                        .map(this::reviewPhotoMapper).collect(Collectors.toList()))
                 .build();
     }
 

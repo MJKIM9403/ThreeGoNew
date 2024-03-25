@@ -105,7 +105,7 @@
         resize: none;
     }
     #comment-btn {
-        border: 1px solid #AAA;
+        padding: 5px;
         width: 70px;
     }
     #touritem-wrap {
@@ -134,6 +134,23 @@
                 0px 2px rgba(0, 0, 0, 0.5),
                 2px 0px rgba(0, 0, 0, 0.5),
                 0px -2px rgba(0, 0, 0, 0.5);
+    }
+
+    #writer-info{
+        cursor: pointer;
+    }
+    #writer-id {
+        color: #999999;
+    }
+
+    #review-more-btn{
+        display: inline-block;
+        font: inherit;
+        background: none;
+        border: none;
+        color: inherit;
+        padding: 0;
+        cursor: pointer;
     }
 
     .delete-img-btn {
@@ -284,10 +301,21 @@
                         </div>
                         <div class="col-md-5 d-flex align-items-start">
                             <div class="modal-body">
-                                <div id="writer-info" class="mb-2 d-flex align-items-center">
-                                    <img id="writer-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
-                                    <span id="writer-name" class="ms-2">작성자 이름</span>
-                                    <span id="writer-id" class="ms-2">@writerId</span>
+                                <div id="writer-wrap" class="mb-2 d-flex align-items-center justify-content-between">
+                                    <div id="writer-info" class="d-flex align-items-center">
+                                        <img id="writer-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                        <strong id="writer-name" class="ms-2">작성자 이름</strong>
+                                        <span id="writer-id" class="ms-2">@writerId</span>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button id="review-more-btn" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-cog" aria-hidden="true"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a id="review-edit" class="dropdown-item" href="#">수정</a></li>
+                                            <li><a id="review-delete" class="dropdown-item" href="#">삭제</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div id="contents-wrap" class="mb-3">
                                     <div id="content" class="mb-2">
@@ -399,8 +427,17 @@
             success : function (findReview) {
                 let writer = findReview.userInfo;
                 let photoList = findReview.reviewPhotoList;
+                $('#writer-info').click(function (){
+                    location.href = `/mypage/${writer.id}`
+                })
                 $('#writer-name').text(writer.name);
                 $('#writer-id').text('@' + writer.id);
+                if(writer.id === [[${loginUser.id}]]){
+                    $('#writer-wrap .btn-group').addClass('d-flex').show();
+                    $('#review-edit').attr('href',`../review/edit/${reviewId}`);
+                }else {
+                    $('#writer-wrap .btn-group').removeClass('d-flex').hide();
+                }
                 if(writer.profileImg != null){
                     $('#writer-profile-img').attr('src','/api/review-photo/' + writer.profileImg);
                 }

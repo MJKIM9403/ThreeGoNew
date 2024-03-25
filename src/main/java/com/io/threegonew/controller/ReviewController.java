@@ -1,6 +1,5 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.domain.User;
@@ -14,8 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,32 @@ public class ReviewController {
         }
         model.addAttribute("loginUserId", loginUserId);
 
-        return "index2";
+        return "review/review";
+    }
+
+    @GetMapping("/edit/{reviewId}")
+    public String editReview(@PathVariable Long reviewId, Model model){
+        String userId = userService.getCurrentUserId();
+        User loginUser = userService.findUser(userId);
+
+        EditReviewResponse reviewResponse = reviewService.findEditReview(reviewId);
+
+        List<ReviewBookResponse> reviewBookList = reviewBookService.findMyReviewBookList(loginUser);;
+        List<SelectPlanResponse> planList;
+
+        if(reviewResponse.getReviewBookId() != null){
+            Long plannerId = reviewBookService.findReviewBook(reviewResponse.getReviewBookId())
+                    .getPlanner()
+                    .getPlannerId();
+            planList = planService.findPlanListByPlannerId(plannerId);
+        }else {
+            planList = new ArrayList<>();
+        }
+
+        model.addAttribute("reviewBookList", reviewBookList);
+        model.addAttribute("planList", planList);
+        model.addAttribute("reviewResponse", reviewResponse);
+        return "review/editreview";
     }
 
     @PostMapping("/create")
@@ -71,11 +95,11 @@ public class ReviewController {
 
     @GetMapping("/show_list")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> showSelectList(@RequestParam("userId") String userId){
+    public ResponseEntity<Map<String, Object>> showSelectList(){
+        String userId = userService.getCurrentUserId();
         User loginUser = userService.findUser(userId);
         List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
         List<ReviewBookResponse> reviewBookList = reviewBookService.findMyReviewBookList(loginUser);
-
         Map<String, Object> result = new HashMap<>();
         result.put("plannerList", plannerList);
         result.put("reviewBookList", reviewBookList);

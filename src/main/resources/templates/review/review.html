@@ -12,13 +12,13 @@
           rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
 
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="assets/css/style.css?after" rel="stylesheet"/>
-    <link href="assets/css/commonstyle.css?after" rel="stylesheet"/>
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../assets/css/style.css?after" rel="stylesheet"/>
+    <link href="../assets/css/commonstyle.css?after" rel="stylesheet"/>
 
     <!--swiper-->
-    <link href="assets/swiper/swiper-bundle.min.css" rel="stylesheet" />
-    <script src="assets/swiper/swiper-bundle.min.js"></script>
+    <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <script src="../assets/swiper/swiper-bundle.min.js"></script>
     <title>Three Go</title>
 
     <style>
@@ -477,13 +477,9 @@
     }
 
     function showSelectList(){
-        let loginUSer = [[${loginUserId}]];
         $.ajax({
             url : '/review/show_list',
             type : 'GET',
-            data : {
-                userId : loginUSer
-            },
             contentType : 'application/json; charset=UTF-8',
             success : function (result) {
                 const plannerList = result.plannerList;
@@ -614,7 +610,7 @@
                 success : function (result) {
                     const planList = result.planList;
                     for(let plan of planList){
-                        let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
+                        let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
                 },
@@ -644,7 +640,7 @@
                 success : function (result) {
                     const planList = result.planList;
                     for(let plan of planList){
-                        let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
+                        let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
                     resolve();
@@ -664,9 +660,8 @@
     function selectTouritem(){
         let item = $('#select-touritem-info option:selected');
         let title = item.text();
-        let contentId = item.val();
-        console.log(title);
-        console.log(contentId);
+        let startTitleIdx = title.indexOf(']') +2;
+        title = title.substring(startTitleIdx);
         let titleInput = $('#selected-touritem-name');
         titleInput.attr('disabled',false);
         titleInput.val(title)
