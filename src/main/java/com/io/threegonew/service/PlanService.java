@@ -78,7 +78,8 @@ public class PlanService {
     }
 
     public List<PlanDTO> findByPlannerIdAndDay(PlanRequest planRequest) {
-        Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId());
+        Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId())
+                .orElseThrow(() -> new IllegalArgumentException("Planner not found"));
         List<Plan> plans = planRepository.findByPlannerIdAndDay(planner.getPlannerId(), planRequest.getDay());
 
         // Plan 엔티티 리스트를 PlanDto 리스트로 변환

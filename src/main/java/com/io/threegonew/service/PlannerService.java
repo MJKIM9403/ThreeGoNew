@@ -1,13 +1,9 @@
 package com.io.threegonew.service;
 
-import com.io.threegonew.domain.Area;
-import com.io.threegonew.domain.Planner;
-import com.io.threegonew.domain.Sigungu;
+import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.AddPlannerRequest;
 import com.io.threegonew.dto.PlannerResponse;
-import com.io.threegonew.repository.AreaRepository;
-import com.io.threegonew.repository.PlannerRepository;
-import com.io.threegonew.repository.SigunguRepository;
+import com.io.threegonew.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +19,32 @@ public class PlannerService {
     private final AreaRepository areaRepository;
     private final SigunguRepository sigunguRepository;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final PlannerShareRepository plannerShareRepository;
+
+    // 특정 Planner를 다른 유저와 공유
+    public void sharePlanner(Long plannerId, String ownerId, List<String> sharedWithUserIds) {
+        User owner = userRepository.findById(ownerId).orElseThrow(() -> new RuntimeException("Owner user not found"));
+        Planner planner = plannerRepository.findById(plannerId).orElseThrow(() -> new RuntimeException("Planner not found"));
+
+        for (String userId : sharedWithUserIds) {
+            User sharedWithUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Shared with user not found"));
+
+            PlannerShare plannerShare = new PlannerShare();
+            plannerShare.setPlanner(planner);
+            plannerShare.setUser(sharedWithUser);
+            plannerShareRepository.save(plannerShare);
+        }
+    }
+
+    // 사용자가 공유받은 Planner들을 조회
+    public List<PlannerResponse> findSharedPlanners(String userId) {
+        List<PlannerResponse> sharedPlannerResponseList =
+                plannerShareRepository.findByUserId(userId).stream()
+                .map(plannerShare -> modelMapper.map(plannerShare.getPlanner(), PlannerResponse.class))
+                .collect(Collectors.toList());
+        return sharedPlannerResponseList;
+    }
 
     public Planner findPlanner(Long plannerId) {
         return plannerRepository.findById(plannerId)

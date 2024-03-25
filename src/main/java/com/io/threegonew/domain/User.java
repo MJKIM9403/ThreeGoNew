@@ -11,8 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Table(name="users")
 @NoArgsConstructor
@@ -43,6 +42,9 @@ public class User /*implements UserDetails*/ {
 
     @Column(name = "u_about")
     private String about;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PlannerShare> sharedPlanners = new HashSet<>();
 
     @Builder
     public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String about){

@@ -1,5 +1,6 @@
 package com.io.threegonew.config;
 
+import com.io.threegonew.service.PlannerService;
 import com.io.threegonew.service.UserDetailService;
 import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -23,6 +27,10 @@ public class WebSecurityConfig {
     //스프링 시큐리티 관련 설정파일
 
     private final UserDetailService userDetailService;
+
+    // 유저에 따라 엔드포인트에 대한 액세스를 제어해보기로...
+
+
 
     //스프링 기능 비활성화
     @Bean
