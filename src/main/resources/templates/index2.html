@@ -677,7 +677,7 @@
             alert("사진을 반드시 한 장 이상 첨부해주세요.")
         }else if($('#select-touritem-info option:selected').val() === 'hint'){
             alert("관광지 정보를 선택해주세요.")
-        }else if($('#selected-touritem-name').val() === ''){
+        }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
             alert('관광지 이름을 작성해주세요.')
         }else if($('#review-contents').val() === ''){
             alert('본문 내용을 입력해주세요.')

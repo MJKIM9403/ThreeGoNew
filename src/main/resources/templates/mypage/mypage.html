@@ -110,7 +110,6 @@
     }
     #touritem-wrap {
         padding: 5px;
-        cursor: pointer;
         position: absolute;
         z-index: 100;
         bottom: 3rem;
@@ -124,7 +123,7 @@
         width: 15rem;
         position: absolute;
         bottom: -50%;
-        right: 120%;
+        right: 110%;
         display: none;
     }
     #touritem-name {
@@ -257,18 +256,16 @@
                     <div class="row">
                         <div class="preview-container col-md-7">
                             <div id="review-book-info" class="d-flex align-items-center">
-                                <div>
-                                    <img id="review-book-cover" src="../assets/img/no_image.png" class="rounded-3 icon-img" alt="...">
-                                </div>
+                                <img id="review-book-cover" src="../assets/img/no_image.png" class="rounded-3 icon-img" alt="...">
                                 <span id="review-book-title" class="ms-2">리뷰 북 타이틀</span>
                             </div>
                             <div id="touritem-wrap" class="d-flex align-items-center gap-2">
                                 <div id="touritem-info" class="card">
-                                    <img id="touritem-info-img" src="../assets/img/no_image.png" class="card-img-top" alt="...">
+                                    <img id="touritem-info-img" src="../assets/img/no_img.jpg" class="card-img-top" alt="...">
                                     <div class="card-body">
-                                        <strong id="touritem-info-title" class="card-text">aaa</strong>
-                                        <p id="touritem-info-address" class="card-text">bbb</p>
-                                        <p id="touritem-info-category" class="card-text">ccc</p>
+                                        <strong id="touritem-info-title" class="card-text">관광지 이름</strong>
+                                        <p id="touritem-info-address" class="card-text">관광지 주소</p>
+                                        <p id="touritem-info-category" class="card-text">관광지 카테고리</p>
                                     </div>
                                 </div>
                                 <i class="fa-solid fa-location-dot"></i>
@@ -418,6 +415,7 @@
                     }
                 }
                 $('#touritem-name').text(findReview.tourItemTitle);
+                $('#touritem-name').attr('data-touritem-id', findReview.tourItemId);
                 $('.swiper-wrapper').html("");
                 for(let photo of photoList){
                     savedFile.push(photo.fileId);
@@ -443,17 +441,49 @@
         })
     }
 
+    // 리뷰 뷰어에서 관광지 정보 조회
     let touritemInfoTimer;
 
     $('#touritem-wrap').mouseenter(function (){
-        touritemInfoTimer = setTimeout(function () {
-            $('#touritem-info').show();
-        },300)
+        let tourItemId = $('#touritem-name').attr('data-touritem-id');
+        if(tourItemId !== undefined){
+            $('#touritem-wrap').css('cursor','pointer');
+            $('#touritem-wrap').click(function (){
+                location.href = `../info/content/${tourItemId}`;
+            })
+            touritemInfoTimer = setTimeout(function () {
+                showTourItemSimpleInfo(tourItemId)
+            },300)
+        }
     })
     $('#touritem-wrap').mouseleave(function (){
+        $('#touritem-wrap').css('cursor','');
         clearTimeout(touritemInfoTimer);
         $('#touritem-info').hide();
     })
+
+    function showTourItemSimpleInfo(tourItemId){
+        $.ajax({
+            url : '/review/simple-touritem',
+            type : 'GET',
+            data : {
+                tourItemId : tourItemId
+            },
+            contentType : 'application/json; charset=UTF-8',
+            success : function (tourItem){
+                $('#touritem-info-img').attr('src',tourItem.firstimage);
+                $('#touritem-info-title').text(tourItem.title);
+                $('#touritem-info-address').text(tourItem.address);
+                $('#touritem-info-category').text(tourItem.fullCategoryName);
+                $('#touritem-info').show();
+            },
+            error : function (err){
+                console.log(err);
+            }
+        })
+    }
+
+
     function goLastSlide() {
         let fileLength = calcFileLength();
         swiper.slideTo(fileLength-1,300,false);

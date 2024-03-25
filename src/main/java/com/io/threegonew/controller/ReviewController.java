@@ -108,4 +108,22 @@ public class ReviewController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/simple-touritem")
+    @ResponseBody
+    public ResponseEntity<TourItemSimpleResponse> showTourItemSimpleInfo(@RequestParam("tourItemId") String tourItemId){
+        TourItemSimpleResponse tourItemSimpleInfo;
+
+        try{
+            tourItemSimpleInfo = tourItemService.findTourItemSimpleInfo(tourItemId);
+        }catch (IllegalArgumentException e){
+            tourItemSimpleInfo = TourItemSimpleResponse.builder()
+                                                    .title("등록된 관광지 정보가 없습니다.")
+                                                    .fullCategoryName("-")
+                                                    .address("-")
+                                                    .firstimage("../assets/img/no_img.jpg")
+                                                    .build();
+        }
+        return ResponseEntity.ok().body(tourItemSimpleInfo);
+    }
 }
