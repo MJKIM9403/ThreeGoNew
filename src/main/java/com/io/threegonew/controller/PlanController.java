@@ -221,10 +221,12 @@ public class PlanController {
                                     Model model
                                 ) {
 
+        // 현재 사용자의 인증 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
         System.out.println("plannerId : " + plannerId);
         List<Plan> plans = planService.findByPlannerId(plannerId);
-        // 버튼으로 안나눌거면 planDayList를 TreeMap으로 넘겨줌
-        // TreeMap<String, List<Plan>> planDayList = planService.findByPlannerGroupByDay(plannerId);
 
         Optional<Plan> maxDayOptional = planService.findTopByPlannerIdOrderByDayDesc(plannerId);
         int maxDay = maxDayOptional.isPresent() ? maxDayOptional.get().getDay() : 0;
@@ -237,6 +239,7 @@ public class PlanController {
 
 
         // 모델에 groupedPlans와 Plan과 TourItem 정보를 넣어서 view로 전달
+        model.addAttribute("userId", userId);
         model.addAttribute("plans", plans);
         model.addAttribute("plannerId", plannerId);
         model.addAttribute("planList", planList);

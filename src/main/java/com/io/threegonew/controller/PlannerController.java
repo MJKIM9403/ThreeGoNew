@@ -29,6 +29,7 @@ public class PlannerController {
     private final HttpSession httpSession;
     private final PlannerService plannerService;
 
+
     public PlannerController(PlannerService plannerService, HttpSession httpSession) {
         this.plannerService = plannerService;
         this.httpSession = httpSession;
@@ -55,6 +56,14 @@ public class PlannerController {
             model.addAttribute("plannerList", new ArrayList<Planner>());
         }
 
+        // 내가 공유받은 Planner가 있는지 확인
+        List<PlannerResponse> sharedPlannerList = plannerService.findSharedPlanners(userId);
+
+        if(userId != null) {
+            model.addAttribute("sharedPlannerList", sharedPlannerList);
+        } else {
+            model.addAttribute("sharedPlannerList", sharedPlannerList);
+        }
 
         return "plan/calendar";
     }

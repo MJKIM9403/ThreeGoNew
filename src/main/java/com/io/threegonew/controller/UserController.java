@@ -3,6 +3,7 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
 import com.io.threegonew.dto.LoginRequest;
+import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import com.io.threegonew.service.UserDetailService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/users")
@@ -32,6 +34,28 @@ public class UserController {
 
     private final UserService userService;
     private final UserDetailService userDetailService;
+    private final UserRepository userRepository;
+
+
+    // 회원 조회
+    // /api/users/search?userId=
+    @GetMapping("/search")
+    @ResponseBody
+    public ResponseEntity<UserInfoResponse> getUserForShare(@RequestParam String userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            UserInfoResponse userInfo = UserInfoResponse.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .build();
+
+            return ResponseEntity.ok(userInfo);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
     @PostMapping("/register")

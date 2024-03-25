@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -31,6 +33,9 @@ public class Planner {
     @Column(name = "end_date", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date endDate;
+
+    @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PlannerShare> sharedUsers = new HashSet<>();
 
     @Builder
     public Planner(String userId, String plannerName, Date startDate, Date endDate) {

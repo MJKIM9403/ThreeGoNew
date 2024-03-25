@@ -24,6 +24,76 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ko.min.js" integrity="sha512-L4qpL1ZotXZLLe8Oo0ZyHrj/SweV7CieswUODAAPN/tnqN3PA1P+4qPu5vIryNor6HQ5o22NujIcAZIfyVXwbQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <title>Title</title>
+
+
+
+    <style>
+        .map-result {
+            z-index: 1000;
+        }
+
+        .container-fluid {
+            --bs-gutter-x: 0 !important;
+        }
+
+        .outer {
+            border-left: 2px solid #333;
+        }
+
+        .content {
+            position: relative;
+            margin: 0 0 20px 20px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .title:before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #0d6efd;
+            border-radius: 999px;
+            left: -3.25rem;
+            border: 3px solid #0d6efd;
+        }
+
+        .planContainer {
+            padding: 20px 0 20px 20px;
+        }
+
+        div#day-btns {
+            flex-direction: column;
+            display: flex;
+            width: 300px;
+            gap: 10px;
+        }
+        div#list {
+            flex-direction: row;
+            display: flex;
+            gap: 100px;
+        }
+        div#plan-list {
+            width: 100%;
+        }
+
+        #new-planner-btn {
+            bottom: 5%;
+            right: 5%;
+        }
+
+        #right-btn {
+            position: absolute;
+            right: 10px;
+        }
+    </style>
 </head>
 <body>
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
@@ -70,6 +140,11 @@
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
+
+    //
+    let typedText = "";
+
+
     // 페이지 로드 시 실행되는 코드
     $(document).ready(function() {
         // 처음으로 첫 번째 날짜의 계획을 로드
@@ -80,7 +155,63 @@
             var day = $(this).attr('data-day');
             loadPlanForDay(day);
         });
+
+        searchUser();
     });
+
+    function searchUser() {
+        // 유저 아이디를 입력하여 keyEvent 발생 시 호출
+        $('#searchInput').on('keyup', function () {
+            typedText = $(this).val();
+            // 입력한 값이 없으면 resultBox를 가립니다.
+            if(typedText == "") {
+                $('#searchResult').hide();
+            }
+
+            $('#searchResult').show();
+            $('#typedText').show();
+            $('#typedText').text(typedText);
+
+
+            $.ajax({
+                url: "/api/users/search?userId=" + typedText,
+                type: "GET",
+                success: function (result) {
+                    console.log(result);
+                    let button = "<button id='right-btn' class='btn btn-sm btn-outline-dark' ";
+                    if(result.id == typedText) {
+                        button += "onclick='share(\""+result.id+"\")'>추가하기</button>";
+                        $('#searchResult').append(button);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status == 404) { // 서버에서 유저 정보가 없는 경우
+                        $('#typedText').text("유저정보가 없습니다.");
+                    } else { // 그 외의 서버 통신 오류
+                        console.error("에러 발생:", error);
+                        $('#typedText').text("서버와의 통신 중 문제가 발생했습니다.");
+                    }
+                }
+            })
+        })
+    }
+
+    function share(id) {
+        let button = "<button id='' class='btn btn-sm btn-dark'>"+id+"</button>";
+        $('#resultBox').prepend(button);
+    }
+
+
+    // 다른 유저에게 공유하기
+    // function share(id) {
+    //     const myId = [[${userId}]];
+    //     if(id == myId) {
+    //         alert('본인에게 공유할 수 없습니다. 다른 사람의 아이디를 입력하세요.');
+    //     }
+    //     if(confirm(id+'님에게 일정을 공유하시겠습니까?')) {
+    //
+    //     }
+    // }
 
     // 특정 날짜의 계획을 로드하는 함수
     function loadPlanForDay(day) {
@@ -509,63 +640,41 @@
     }
 
 </script>
-<style>
-.map-result {
-    z-index: 9999;
-}
-
-.container-fluid {
-    --bs-gutter-x: 0 !important;
-}
-
-.outer {
-    border-left: 2px solid #333;
-}
-
-.content {
-    position: relative;
-    margin: 0 0 20px 20px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-}
-
-.info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.title:before {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #0d6efd;
-    border-radius: 999px;
-    left: -3.25rem;
-    border: 3px solid #0d6efd;
-}
-
-.planContainer {
-    padding: 20px 0 20px 20px;
-}
-
-div#day-btns {
-    flex-direction: column;
-    display: flex;
-    width: 300px;
-    gap: 10px;
-}
-div#list {
-    flex-direction: row;
-    display: flex;
-    gap: 100px;
-}
-div#plan-list {
-    width: 100%;
-}
-</style>
+<!-- Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">일정을 공유할 친구를 선택해주세요.</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+<!--                <form method="post" action="/planner/share">-->
+                    <!--출력될 결과 창-->
+                    <div style="height: 60px; display: none;">
+                        <div class="alert alert-success" id="resultBox" style="display: none;">
+                        </div>
+                    </div>
+                    <!--검색창-->
+                    <input id="searchInput" name="searchInput" type="text" class="form-control" placeholder="유저 아이디를 검색하세요.">
+                    <button class="search-btn"><i class="bi bi-search"></i></button>
+                    <!--출력될 결과 창-->
+                    <div style="height: 60px;">
+                        <div class="alert alert-success" id="searchResult" style="display: none;">
+                            <span id="typedText"></span>
+                        </div>
+                    </div>
+<!--                </form>-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">초대하기</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -615,37 +724,15 @@ div#plan-list {
                 </div>
             </div>
         </div>
+        <button type="button" id="new-planner-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shareModal">
+            <i class="bi bi-share-fill"></i>
+        </button>
     </div>
 
-<!--        <div class="container-fluid">-->
-<!--            <div id="dayButtons">-->
-<!--                <th:block th:each="plan : ${planDayList.keySet()}">-->
-<!--                    <button class="dayButton" th:data-day="${day}" th:text="${day}"></button>-->
-<!--                </th:block>-->
-<!--            </div>-->
-
-<!--            <div id="plansContainer">-->
-<!--                <div class="timeline" th:each="dayPlansEntry : ${planDayList}">-->
-<!--                    <div class="outer planContainer" th:data-day="${dayPlansEntry.key}">-->
-<!--                        <p th:text="${dayPlansEntry.key}"></p>-->
-<!--                        <div th:each="plan : ${dayPlansEntry.value}">-->
-<!--                            <a th:href="@{/info/content/{contentid}(contentid=${plan.tourItem.contentid})}" class="list-group-item list-group-item-action" aria-current="true">-->
-<!--                                <div class="content">-->
-<!--                                    <div class="info">-->
-<!--                                        <h5 class="mb-1 title" th:text="${plan.tourItem.title}"></h5>-->
-<!--                                        <p class="mb-1" th:text="${plan.tourItem.contentid}"></p>-->
-<!--                                        <p class="mb-1" th:text="${plan.tourItem.addr1}"></p>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
 
 
-    </div>
+
+</div>
 
 </div>
 </body>

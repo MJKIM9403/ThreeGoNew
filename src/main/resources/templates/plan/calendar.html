@@ -222,11 +222,14 @@
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <!--로그인한 유저 아이디로 등록된 planner가 있으면 조회화면을 보여줌-->
-    <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() > 0}">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-6 text-center pb-5">등록한 여행일정을 확인해보세요.</h2>
-            </div>
+    <div class="container mt-5" th:if="${plannerList.size() > 0 || sharedPlannerList.size() > 0}">
+
+        <div class="text-center mb-5">
+            <h2 class="display-6 text-center pb-5">등록한 여행일정을 확인해보세요.</h2>
+        </div>
+
+        <p>내가 작성한 여행</p>
+        <th:block th:if="${plannerList.size() > 0}">
             <th:block th:each="planner, idx : ${plannerList}">
                 <div class="card mb-3">
                     <div class="card-body">
@@ -248,15 +251,50 @@
                     </div>
                 </div>
             </th:block>
-        </div>
+        </th:block>
+
+        <th:block th:unless="${plannerList.size() > 0}">
+            <p>내가 작성한 일정이 없습니다.</p>
+        </th:block>
+
+
+        <p>공유받은 여행</p>
+        <th:block th:if="${sharedPlannerList.size() > 0}">
+            <th:block th:each="planner, idx : ${sharedPlannerList}">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
+                            <div class="d-flex flex-column flex-lg-row">
+                                <img class="img " src="../../assets/img/no_img.jpg">
+                                <div class="row flex-fill">
+                                    <div class="col-sm-10">
+                                        <h4 class="h5" th:text="${planner.plannerName}"></h4>
+                                        <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
+                                        <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
+                                    </div>
+                                    <div class="col-sm-2 text-lg-end">
+                                        <div class="btn btn-primary">확인하기</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </th:block>
+        </th:block>
+
+        <th:block th:unless="${sharedPlannerList.size() > 0}">
+            <p>공유받은 일정이 없습니다.</p>
+        </th:block>
+
         <button type="button" id="new-planner-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newPlannerModal">
             <i class="bi bi-plus"></i>
         </button>
     </div>
 
 
-    <!--로그인한 유저 아이디로 등록된 planner가 없으면 등록화면부터 보여줌-->
-    <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() == 0}">
+    <!--로그인한 유저 아이디로 등록된 planner나 공유받은 planner가 없으면 등록화면부터 보여줌-->
+    <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() == 0 && sharedPlannerList.size() == 0}">
         <div class="pt-5 pb-5">
 
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
