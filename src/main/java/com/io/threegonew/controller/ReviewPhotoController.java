@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.net.MalformedURLException;
 
 @Controller
-@RequestMapping("api/review-photo")
+@RequestMapping("/api/review-photo")
 public class ReviewPhotoController {
 
     @GetMapping("/{path}/{imagename}")

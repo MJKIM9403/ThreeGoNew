@@ -56,9 +56,7 @@
             color: #FFFFFF;
             transition: all 0.2s;
         }
-        .select-hint{
-            display: none;
-        }
+
         #review-contents {
             height: 380px;
             resize: none;
@@ -112,7 +110,7 @@
                                 <button class="delete-img-btn btn btn-dark rounded-pill opacity-50">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
-                                <img class="preview-img" th:src="|@{/api/review-photo/}${photo.filePath}|" style="object-fit: contain"/>
+                                <img class="preview-img" th:data-file-id="${photo.fileId}" th:src="|@{/api/review-photo/}${photo.filePath}|" style="object-fit: contain"/>
                             </div>
                         </th:block>
                     </div>
@@ -152,8 +150,7 @@
                         <textarea class="form-control form-control-sm" id="review-contents" th:text="${reviewResponse.reviewContent}"></textarea>
                     </div>
                     <div class="editor-btn-group d-flex justify-content-end gap-2">
-                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#select-book">이전</button>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="createPost()">완료</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="editPost()">저장</button>
                     </div>
                 </div>
             </div>
@@ -165,7 +162,19 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<script>
+<script th:inline="javascript">
+
+    $(document).ready(function (){
+        let fileLength = calcFileLength();
+        if(fileLength > 1){
+            $('.swiper-controller').show()
+        }else {
+            $('.swiper-controller').hide()
+        };
+
+        deleteImg();
+    })
+
     // swiper 설정
     var swiper = new Swiper(".mySwiper", {
         observer: true,
@@ -181,13 +190,108 @@
         keyboard: true,
     });
 
+    // 첨부파일 수정을 위한 배열
+    let savedFiles = [[${reviewResponse.reviewPhotoList}]]; // 기존 저장된 이미지 파일의 정보를 가진 배열
+    let deleteFilesId = []; // 기존 저장된 이미지 파일 중 삭제할 id를 저장할 배열
+    let uploadFiles = []; // 새로 업로드 할 파일의 정보를 저장할 배열
+
+    const fileInput = $('#img-uploader')[0];
+
+    function calcFileLength() {
+        return savedFiles.length - deleteFilesId.length + uploadFiles.length;
+    }
+
+    // 이미지 추가, 삭제, 수정 관련
+    function setPreview(){
+        let files = fileInput.files;
+        let fileLength = calcFileLength();
+        if(files.length + fileLength > 4){
+            files.length = 0;
+            alert("사진은 4장까지 첨부할 수 있습니다.")
+        }else {
+            if(files.length > 0 && fileLength === 0) {
+                $('.swiper-wrapper').html("");
+            }
+            if(files.length > 0){
+                for (let file of files) {
+                    uploadFiles.push(file);
+
+                    let reader = new FileReader();
+
+                    reader.onload = function(data) {
+                        const tempHtml = `<div class="swiper-slide">` +
+                            `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
+                            `<i class="bi bi-x-lg"></i>` +
+                            `</button>` +
+                            `<img class="preview-img" src="${data.target.result}" style="object-fit: contain" onload="goLastSlide()"/>` +
+                            `</div>`;
+                        swiper.appendSlide(tempHtml);
+                        swiper.update();
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            fileLength = calcFileLength();
+
+            if(fileLength > 1){
+                $('.swiper-controller').show()
+            }else {
+                $('.swiper-controller').hide()
+            }
+            if(fileLength >= 4){
+                $('.uploader').hide()
+            }
+        }
+    }
+
+    function deleteImg() {
+        $(document).on('click','.delete-img-btn',function () {
+            let idx = $(".delete-img-btn").index(this);
+            let deleteFileId = $('.swiper-wrapper .swiper-slide').eq(idx).find('img').attr('data-file-id');
+            if(deleteFileId !== undefined){
+                deleteFilesId.push(deleteFileId);
+            }
+            swiper.slideTo(idx-1,300,false);
+            swiper.removeSlide(idx);
+            swiper.update();
+
+            let fileLength = calcFileLength();
+
+            if(fileLength > 1){
+                $('.swiper-controller').show()
+            }else {
+                $('.swiper-controller').hide()
+            };
+
+            if(fileLength === 0){
+                const tempHtml = `<div class="swiper-slide">` +
+                    `사진을 추가해주세요.` +
+                    `</div>`;
+                swiper.appendSlide(tempHtml);
+                swiper.update();
+            }
+            if($('.uploader').css('display') === 'none' && fileLength < 4){
+                $('.uploader').show()
+            }
+        })
+    }
+
+    function goLastSlide() {
+        let fileLength = calcFileLength();
+        swiper.slideTo(fileLength-1,300,false);
+    }
+
+
+    // 리뷰북, 관광지 정보 선택 관련
     function changeReviewBook(){
         let bookId = $('#select-review-book option:selected').val();
         if(bookId === 'none'){
             $('#select-touritem-info').html('<option value="direct">직접 입력</option>')
         }else {
             $.ajax({
-                url : '/review/show_plan',
+                url : '/api/review/show_plan',
                 type : 'GET',
                 data : {
                     bookId : bookId
@@ -216,6 +320,57 @@
         let titleInput = $('#selected-touritem-name');
         titleInput.attr('disabled',false);
         titleInput.val(title)
+    }
+
+    function editPost(){
+        let fileLength = calcFileLength();
+        if(fileLength < 1){
+            alert("사진을 반드시 한 장 이상 첨부해주세요.")
+        }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
+            alert('관광지 이름을 작성해주세요.')
+        }else if($('#review-contents').val() === ''){
+            alert('본문 내용을 입력해주세요.')
+        }else {
+            updateReview();
+        }
+    }
+
+    // 리뷰 수정
+    function updateReview(){
+        let formData = new FormData();
+        let loginUserId = [[${loginUserId}]]
+        let reviewId = [[${reviewId}]]
+        let selectedBookId = $('#select-review-book option:selected').val();
+        let touritemId = $('#select-touritem-info option:selected').val();
+
+        if(selectedBookId !== 'none') formData.append("bookId", selectedBookId);
+        formData.append("reviewId", `${reviewId}`);
+        if(touritemId !== 'direct') formData.append("touritemId", touritemId);
+        formData.append("touritemTitle", $('#selected-touritem-name').val());
+        formData.append("reviewContent", $('#review-contents').val());
+
+        for(let file of uploadFiles){
+            formData.append("photoList", file);
+        }
+        for(let id of deleteFilesId){
+            formData.append("deletePhotoId", id);
+        }
+
+        $.ajax({
+            url : '/api/review/update',
+            type : 'PUT',
+            data : formData,
+            processData : false,
+            contentType : false,
+            success : function (response) {
+                alert("수정되었습니다.");
+                location.href = `/mypage/${loginUserId}`;
+            },
+            error : function (err) {
+                console.log(err)
+                alert("리뷰 수정에 실패했습니다.")
+            }
+        })
     }
 
 </script>
