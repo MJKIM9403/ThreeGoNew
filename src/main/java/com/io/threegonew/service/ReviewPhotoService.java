@@ -13,4 +13,10 @@ public class ReviewPhotoService {
     public ReviewPhoto savePhoto(ReviewPhoto photo){
         return reviewPhotoRepository.save(photo);
     }
+
+    public ReviewPhoto findPhotoById(Long id) {
+        return reviewPhotoRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("사진 정보를 찾을 수 없습니다.")
+        );
+    }
 }

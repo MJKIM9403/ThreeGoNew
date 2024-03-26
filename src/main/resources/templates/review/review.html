@@ -185,6 +185,12 @@
             height: 380px;
             resize: none;
         }
+        #create-book-btn{
+            --bs-btn-padding-y: 0.25rem;
+            --bs-btn-padding-x: 0.5rem;
+            --bs-btn-font-size: 0.875rem;
+            --bs-btn-border-radius: 0.25rem;
+        }
 
         /* swiper */
         .swiper {
@@ -326,7 +332,7 @@
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1" value="1">
                             <label class="form-check-label" for="selectReviewBook1">
-                                새 리뷰북 생성
+                                새 리뷰북 생성 <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1" onclick="createBook()">생성</button>
                                 <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example" onchange="writeBookTitle()">
                                     <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
                                 </select>
@@ -413,7 +419,7 @@
             </div>
         </div>
         <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
-            <i class="bi bi-compass"></i>
+            <i class="bi bi-send-plus"></i>
         </button>
     </div>
 </div>
@@ -447,10 +453,22 @@
         keyboard: true,
     });
 
+    let createBookFlag = false;
     let selectedReviewBook;
     let selectedBookId;
     const fileInput = $('#img-uploader')[0];
     const images = [];
+
+    $('#new-post-btn').click(function () {
+        editorReset();
+        let login = [[${loginUserId}]];
+        if(login == "anonymousUser"){
+            alert("리뷰는 로그인 후 작성할 수 있습니다.")
+        }else {
+            showSelectList();
+            $('#select-book').modal('show');
+        }
+    })
 
     function editorReset() {
         //사진 미리보기 초기화
@@ -459,6 +477,7 @@
         $('.swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
         $('.uploader').show()
         // 리뷰북 선택 정보 초기화
+        createBookFlag = false;
         $('input:radio[name=selectReviewBook]').prop('checked', false);
         $('#new-book-item-select').html('<option value="hint" class="select-hint" disabled selected>리뷰북에 기록할 여행정보를 선택하세요.</option>');
         $('#new-book-title').val('');
@@ -478,7 +497,7 @@
 
     function showSelectList(){
         $.ajax({
-            url : '/review/show_list',
+            url : '/api/review/show_list',
             type : 'GET',
             contentType : 'application/json; charset=UTF-8',
             success : function (result) {
@@ -511,17 +530,6 @@
         })
     }
 
-    $('#new-post-btn').click(function () {
-        editorReset();
-        let login = [[${loginUserId}]];
-        if(login == "anonymousUser"){
-            alert("리뷰는 로그인 후 작성할 수 있습니다.")
-        }else {
-            showSelectList();
-            $('#select-book').modal('show');
-        }
-    })
-
     function selectBook() {
         $("input:radio[name=selectReviewBook]").click(function (){
             let select = Number($("input[name=selectReviewBook]:checked").val());
@@ -541,8 +549,10 @@
     }
 
     function writeBookTitle() {
+        createBookFlag = false;
         $("#new-book-title").attr('disabled',false);
     }
+
 
     function goEdit(){
         let select = $("input[name=selectReviewBook]:checked").val();
@@ -555,17 +565,20 @@
                         alert("리뷰북에 기록할 여행정보를 선택해주세요.")
                     }else if($("#new-book-title").val() == ''){
                         alert("생성할 리뷰북의 제목을 입력해주세요.")
+                    }else if(!createBookFlag){
+                        alert("생성 버튼을 눌러 리뷰북을 생성해주세요.")
                     }else {
                         selectedReviewBook = $("#new-book-title").val();
-                        createBookAndAddPlanList();
+                        AddPlanList();
                     }
                     break;
                 case 2:
                     if($("#exist-book-select option:selected").val() == 'hint'){
                         alert("리뷰를 작성할 리뷰북을 선택해주세요.")
                     }else {
+                        selectedBookId = $('#exist-book-select option:selected').val();
                         selectedReviewBook = $("#exist-book-select option:checked").text();
-                        existBookAndAddPlanList();
+                        AddPlanList();
                     }
                     break;
                 case 3:
@@ -577,64 +590,36 @@
         }
     }
 
-    function createBookAndAddPlanList(){
-        let promise = new Promise((resolve, reject) => {
-            $.ajax({
-                url : '/book/create',
-                type : 'POST',
-                data : JSON.stringify({
-                    userId : [[${loginUserId}]],
-                    plannerId : $("#new-book-item-select option:selected").val(),
-                    bookTitle : $("#new-book-title").val()
-                }),
-                contentType : 'application/json; charset=UTF-8',
-                success : function (createdBookId) {
-                    selectedBookId = createdBookId;
-                    resolve(createdBookId);
-                },
-                error : function (err) {
-                    reject("리뷰북 생성에 실패하였습니다.");
-                    console.log(err);
-                }
-            })
-        })
-
-        promise.then((bookId) => {
-            $.ajax({
-                url : '/review/show_plan',
-                type : 'GET',
-                data : {
-                    bookId : bookId
-                },
-                contentType : 'application/json; charset=UTF-8',
-                success : function (result) {
-                    const planList = result.planList;
-                    for(let plan of planList){
-                        let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
-                        $('#select-touritem-info').append(template);
-                    }
-                },
-                error : function (err) {
-                    console.log(err);
-                }
-            })
-        }).catch((msg) => alert(msg));
-
-        promise.then(() => {
-            $('#selected-review-book').val(selectedReviewBook);
-            $('#select-book, #editor').modal('toggle');
+    function createBook(){
+        $.ajax({
+            url : '/book/create',
+            type : 'POST',
+            data : JSON.stringify({
+                userId : [[${loginUserId}]],
+                plannerId : $("#new-book-item-select option:selected").val(),
+                bookTitle : $("#new-book-title").val()
+            }),
+            contentType : 'application/json; charset=UTF-8',
+            success : function (createdBookId) {
+                createBookFlag = true;
+                selectedBookId = createdBookId;
+                let title = $("#new-book-title").val();
+                alert(`[${title}] 리뷰북이 생성되었습니다.`);
+            },
+            error : function (err) {
+                alert("리뷰북 생성에 실패하였습니다.");
+                console.log(err);
+            }
         })
     }
 
-    function existBookAndAddPlanList(){
-        let bookId = $('#exist-book-select option:selected').val();
-        selectedBookId = bookId;
+    function AddPlanList(){
         let promise = new Promise((resolve) => {
             $.ajax({
-                url : '/review/show_plan',
+                url : '/api/review/show_plan',
                 type : 'GET',
                 data : {
-                    bookId : bookId
+                    bookId : selectedBookId
                 },
                 contentType : 'application/json; charset=UTF-8',
                 success : function (result) {
@@ -700,7 +685,7 @@
         console.log(formData)
 
         $.ajax({
-            url : '/review/create',
+            url : '/api/review/create',
             type : 'POST',
             data : formData,
             processData : false,
