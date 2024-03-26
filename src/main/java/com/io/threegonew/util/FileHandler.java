@@ -18,6 +18,13 @@ import java.util.UUID;
 @Component
 public class FileHandler {
 
+    public boolean deleteFile(ReviewPhoto deletePhoto){
+        String absolutePath = "C://threeGo/images/";
+
+        File deleteFile = new File(absolutePath + deletePhoto.getFilePath());
+        return deleteFile.delete();
+    }
+
     public List<ReviewPhoto> parseFileInfo(Review review, List<MultipartFile> multipartFiles) throws Exception {
         // 반환할 파일 리스트
         List<ReviewPhoto> fileList = new ArrayList<>();

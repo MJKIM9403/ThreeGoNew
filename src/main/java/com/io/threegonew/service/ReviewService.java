@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +61,7 @@ public class ReviewService {
                     () -> new IllegalArgumentException("삭제할 사진 정보를 찾을 수 없습니다."));
             copyPhotoList.remove(deletePhoto);
             reviewPhotoRepository.delete(deletePhoto);
+            fileHandler.deleteFile(deletePhoto);
         }
 
         List<ReviewPhoto> addPhotoList = fileHandler.parseFileInfo(review, request.getPhotoList());
@@ -75,7 +77,16 @@ public class ReviewService {
     }
 
     public void deleteReview(Long reviewId){
-        reviewRepository.deleteById(reviewId);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        List<ReviewPhoto> reviewPhotoList = review.getReviewPhotoList();
+
+        for(ReviewPhoto deletePhoto : reviewPhotoList){
+            fileHandler.deleteFile(deletePhoto);
+        }
+
+        reviewRepository.delete(review);
     }
 
     public PageResponse findMyReview(MyPageRequest request){
