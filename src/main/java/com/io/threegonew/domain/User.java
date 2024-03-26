@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
@@ -44,7 +41,7 @@ public class User /*implements UserDetails*/ {
     private String about;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlannerShare> sharedPlanners = new HashSet<>();
+    private Set<Team> sharedPlanners = new HashSet<>();
 
     @Builder
     public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String about){

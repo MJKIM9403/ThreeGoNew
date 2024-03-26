@@ -93,6 +93,22 @@
             position: absolute;
             right: 10px;
         }
+
+        .delete-user-btn {
+            background: #808080;
+            padding: 0;
+            border: none;
+            color: #fff;
+        }
+        .delete-user-btn:hover {
+            background-color: #808080;
+            color: #fff;
+        }
+        div#resultBox {
+            flex-direction: row;
+            display: flex;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -144,6 +160,8 @@
     //
     let typedText = "";
 
+    // 검색을 위한 변수
+    var searchTimer;
 
     // 페이지 로드 시 실행되는 코드
     $(document).ready(function() {
@@ -157,13 +175,14 @@
         });
 
         searchUser();
+        share();
+        deleteUser();
+        hideModal();
     });
 
     function searchUser() {
-        // 유저 아이디를 입력하여 keyEvent 발생 시 호출
         $('#searchInput').on('keyup', function () {
             typedText = $(this).val();
-            // 입력한 값이 없으면 resultBox를 가립니다.
             if(typedText == "") {
                 $('#searchResult').hide();
             }
@@ -172,16 +191,31 @@
             $('#typedText').show();
             $('#typedText').text(typedText);
 
-
             $.ajax({
                 url: "/api/users/search?userId=" + typedText,
                 type: "GET",
                 success: function (result) {
                     console.log(result);
+                    var myId = [[${userId}]]; // 로그인 된 나의 아이디
+                    var plannerId = [[${plannerId}]]; // 플래너의 ID
                     let button = "<button id='right-btn' class='btn btn-sm btn-outline-dark' ";
-                    if(result.id == typedText) {
-                        button += "onclick='share(\""+result.id+"\")'>추가하기</button>";
-                        $('#searchResult').append(button);
+                    if (result.id == typedText) {
+                        // 이미 초대받은 게스트인지 확인
+                        $.ajax({
+                            url: "/api/checkInvitation/" + plannerId + "/" + result.id,
+                            type: "GET",
+                            success: function (response) {
+                                if (!response.invited) { // 초대되지 않은 게스트일 경우에만 버튼 추가
+                                    button += "onclick='printUser(\"" + result.id + "\")'>추가하기</button>";
+                                    $('#searchResult').append(button);
+                                } else {
+                                    alert("이미 초대된 게스트입니다.");
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("에러 발생:", error);
+                            }
+                        });
                     }
                 },
                 error: function (xhr, status, error) {
@@ -192,14 +226,83 @@
                         $('#typedText').text("서버와의 통신 중 문제가 발생했습니다.");
                     }
                 }
-            })
-        })
+            });
+        });
     }
 
-    function share(id) {
-        let button = "<button id='' class='btn btn-sm btn-dark'>"+id+"</button>";
+    function printUser(id) {
+        let button = `<div>
+                        <button class='btn btn-sm btn-dark user-btn' data-user-id='${id}'>${id}</button>
+                        <button class='btn delete-user-btn'>
+                            <i class='bi bi-x'></i>
+                        </button>
+                       </div>`;
+        $('#resultBox').show();
         $('#resultBox').prepend(button);
     }
+
+    function deleteUser() {
+        $('#resultBox').on('click', '.delete-user-btn', function() {
+            $(this).closest('div').remove();
+        });
+    }
+
+
+    function share() {
+        $('#share-btn').on('click', function () {
+            var plannerId = [[${plannerId}]]; // Planner ID를 설정합니다.
+            var ownerId = [[${userId}]]; // Owner ID를 설정합니다.
+            var userIds = [];
+            $('#resultBox .user-btn').each(function() {
+                userIds.push($(this).text()); // 버튼의 텍스트(ID)를 배열에 추가
+            });
+
+            var dataToSend = {
+                plannerId: plannerId,
+                ownerId: ownerId,
+                sharedWithUserIds: userIds
+            };
+
+            // 각 사용자의 ID를 쉼표로 구분하여 출력
+            var userIdsString = userIds.join("님, ");
+            var confirmMessage = userIdsString + "님 에게 공유하시겠습니까?";
+
+            // 확인 대화상자를 통해 공유를 확인한 후에만 나머지 코드를 실행
+            if (confirm(confirmMessage)) {
+                // AJAX를 사용하여 userIds를 서버로 POST 방식으로 전송
+                $.ajax({
+                    url: '/api/sharePlanner', // 요청을 보낼 서버의 URL 주소
+                    type: 'POST', // HTTP 요청 방식 (GET, POST 등)
+                    contentType: 'application/json', // 전송할 데이터의 MIME 타입
+                    data: JSON.stringify(dataToSend), // 서버로 보낼 데이터. JSON 문자열로 변환.
+                    success: function (response) { // 요청 성공 시 수행할 함수
+                        alert('초대가 성공적으로 완료되었습니다.');
+                        $('#shareModal').modal('hide');
+                        // hideModal();
+                    },
+                    error: function (xhr, status, error) { // 요청 실패 시 수행할 함수
+                        alert('초대 과정에서 오류가 발생했습니다: ' + error);
+                        // 실패 시 추가적인 로직 처리...
+                    }
+                });
+            } else {
+                alert('공유를 취소하였습니다.');
+            }
+        });
+    }
+
+    function hideModal() {
+        $('#shareModal').on('hidden.bs.modal', function () {
+            // 모달 내용 초기화
+            $('#searchInput').val(''); // 검색창 초기화
+            $('#typedText').text(''); // 검색 결과 초기화
+            $('#searchResult').hide(); // 검색 결과 숨기기
+            $('#resultBox').empty().hide(); // 선택된 유저 목록 초기화 및 숨기기
+        });
+        // $('#shareModal').modal('hide');
+    };
+
+
 
 
     // 다른 유저에게 공유하기
@@ -651,25 +754,35 @@
                 </button>
             </div>
             <div class="modal-body">
-<!--                <form method="post" action="/planner/share">-->
-                    <!--출력될 결과 창-->
-                    <div style="height: 60px; display: none;">
-                        <div class="alert alert-success" id="resultBox" style="display: none;">
+                    <div style="height: 60px;" th:if="${guestList.size() > 0}">
+                        <div id="guestList">
+                            공유중인 친구
+                        <th:block th:each="guest, idx : ${guestList}">
+                            <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${guest.id}" th:text="${guest.id}"></button>
+                            <button class="btn delete-user-btn">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </th:block>
+                        </div>
+                    </div>
+                    <!--선택한 유저의 목록이 보일 창-->
+                    <div style="height: 60px;">
+                        <div id="resultBox" style="display: none;">
                         </div>
                     </div>
                     <!--검색창-->
                     <input id="searchInput" name="searchInput" type="text" class="form-control" placeholder="유저 아이디를 검색하세요.">
-                    <button class="search-btn"><i class="bi bi-search"></i></button>
-                    <!--출력될 결과 창-->
+<!--                    <i class="bi bi-search"></i>-->
+                    <!--유저의 검색결과가 보일 창-->
                     <div style="height: 60px;">
                         <div class="alert alert-success" id="searchResult" style="display: none;">
                             <span id="typedText"></span>
                         </div>
                     </div>
-<!--                </form>-->
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">초대하기</button>
+                <button type="button" id="share-btn" class="btn btn-primary">초대하기</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
             </div>
         </div>

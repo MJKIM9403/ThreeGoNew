@@ -35,7 +35,7 @@ public class Planner {
     private Date endDate;
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlannerShare> sharedUsers = new HashSet<>();
+    private Set<Team> sharedUsers = new HashSet<>();
 
     @Builder
     public Planner(String userId, String plannerName, Date startDate, Date endDate) {

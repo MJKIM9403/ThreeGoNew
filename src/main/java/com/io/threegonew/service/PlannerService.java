@@ -20,31 +20,19 @@ public class PlannerService {
     private final SigunguRepository sigunguRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
-    private final PlannerShareRepository plannerShareRepository;
+    private final TeamRepository teamRepository;
 
-    // 특정 Planner를 다른 유저와 공유
-    public void sharePlanner(Long plannerId, String ownerId, List<String> sharedWithUserIds) {
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> new RuntimeException("Owner user not found"));
-        Planner planner = plannerRepository.findById(plannerId).orElseThrow(() -> new RuntimeException("Planner not found"));
+//    // 유저가 특정 Planner를 공유받았는지 확인
+//    public boolean isSharedUser(Long plannerId, String userId) {
+//        Planner planner = plannerRepository.findById(plannerId)
+//                .orElseThrow(() -> new RuntimeException("Planner not found"));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        return plannerShareRepository.existsByPlannerAndUser(planner, user);
+//    }
 
-        for (String userId : sharedWithUserIds) {
-            User sharedWithUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Shared with user not found"));
 
-            PlannerShare plannerShare = new PlannerShare();
-            plannerShare.setPlanner(planner);
-            plannerShare.setUser(sharedWithUser);
-            plannerShareRepository.save(plannerShare);
-        }
-    }
-
-    // 사용자가 공유받은 Planner들을 조회
-    public List<PlannerResponse> findSharedPlanners(String userId) {
-        List<PlannerResponse> sharedPlannerResponseList =
-                plannerShareRepository.findByUserId(userId).stream()
-                .map(plannerShare -> modelMapper.map(plannerShare.getPlanner(), PlannerResponse.class))
-                .collect(Collectors.toList());
-        return sharedPlannerResponseList;
-    }
 
     public Planner findPlanner(Long plannerId) {
         return plannerRepository.findById(plannerId)

@@ -12,11 +12,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PlannerShare {
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "s_id", updatable = false)
-    private Long shareId;
+    @Column(name = "t_id", updatable = false)
+    private Long teamId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "p_id")
@@ -26,8 +26,11 @@ public class PlannerShare {
     @JoinColumn(name = "u_id")
     private User user;
 
-    public PlannerShare(Planner planner, User user) {
+    private Integer teamLevel;
+
+    public Team(Planner planner, User user, Integer teamLevel) {
         this.planner = planner;
         this.user = user;
+        this.teamLevel = teamLevel;
     }
 }

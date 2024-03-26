@@ -2,9 +2,7 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
-import com.io.threegonew.service.PlanService;
-import com.io.threegonew.service.TourItemContentService;
-import com.io.threegonew.service.TourItemService;
+import com.io.threegonew.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.embedded.netty.NettyWebServer;
@@ -31,7 +29,7 @@ public class PlanController {
     private final TourItemService tourItemService;
     private final TourItemContentService tourItemContentService;
     private final HttpSession httpSession;
-
+    private final TeamService teamService;
 
     @PostMapping("/api/search")
     public String searchTourItems(@RequestBody TourItemSelectRequest request, Model model) {
@@ -237,6 +235,7 @@ public class PlanController {
             planList.add(plan.getTourItem());
         }
 
+        List<User> guestList = teamService.getGuestsOfPlanner(plannerId);
 
         // 모델에 groupedPlans와 Plan과 TourItem 정보를 넣어서 view로 전달
         model.addAttribute("userId", userId);
@@ -244,6 +243,7 @@ public class PlanController {
         model.addAttribute("plannerId", plannerId);
         model.addAttribute("planList", planList);
         model.addAttribute("maxDay", maxDay);
+        model.addAttribute("guestList", guestList);
 
 
         return "plan/showplan";

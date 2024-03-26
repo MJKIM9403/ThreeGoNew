@@ -8,7 +8,9 @@ import com.io.threegonew.dto.AddPlanRequest;
 import com.io.threegonew.dto.AddPlannerRequest;
 import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.service.PlannerService;
+import com.io.threegonew.service.TeamService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,15 +27,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/planner")
+@RequiredArgsConstructor
 public class PlannerController {
     private final HttpSession httpSession;
     private final PlannerService plannerService;
+    private final TeamService teamService;
 
-
-    public PlannerController(PlannerService plannerService, HttpSession httpSession) {
-        this.plannerService = plannerService;
-        this.httpSession = httpSession;
-    }
 
     @GetMapping
     public String showAreaCode(Model model) {
@@ -57,7 +56,7 @@ public class PlannerController {
         }
 
         // 내가 공유받은 Planner가 있는지 확인
-        List<PlannerResponse> sharedPlannerList = plannerService.findSharedPlanners(userId);
+        List<PlannerResponse> sharedPlannerList = teamService.findSharedPlanners(userId);
 
         if(userId != null) {
             model.addAttribute("sharedPlannerList", sharedPlannerList);
