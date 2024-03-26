@@ -225,16 +225,16 @@
         <!-- End of profile section -->
         <ul class="nav nav-underline mb-3 justify-content-center">
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" onclick="changeTab('review')">내 리뷰</a>
+                <a class="nav-link active" aria-current="page" onclick="changeTab('REVIEW')">내 리뷰</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link">내 리뷰북</a>
+                <a class="nav-link" onclick="changeTab('REVIEWBOOK')">내 리뷰북</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link">관심 리뷰</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" onclick="changeTab('bookmark')">북마크</a>
+                <a class="nav-link" onclick="changeTab('BOOKMARK')">북마크</a>
             </li>
         </ul>
 
@@ -489,6 +489,15 @@
             })
         }
     }
+
+    $('#new-post-btn').mouseenter(function (){
+        let tempHtml = "<span>리뷰 작성</span>";
+        $('#new-post-btn').append(tempHtml)
+    })
+
+    $('#new-post-btn').mouseleave(function (){
+        $('#new-post-btn span').remove()
+    })
 </script>
 
 <script th:inline="javascript">
@@ -496,7 +505,7 @@
     let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
     let firstLoad = true; // 첫 로딩인지 체크
     let gallery = $('.gallery');
-    let tabType = "review"; // 화면에 보여줄 탭
+    let tabType = "REVIEW"; // 화면에 보여줄 탭
     let back = false;
     $(document).ready(function (){
         gallery.html("")
@@ -516,10 +525,10 @@
             observer.observe(document.getElementById('load-point'));
             // 페이지를 불러오는 함수 호출.
             switch (tabType){
-                case "bookmark" :
+                case "BOOKMARK" :
                     showBookmark();
                     break;
-                case "review" :
+                case "REVIEW" :
                     showReview();
                     break
             }
@@ -690,10 +699,10 @@
             back = true;
             console.log(`${scrollPage}, ${page}`);
             switch (tabType){
-                case "bookmark":
+                case "BOOKMARK":
                     showBookmark();
                     break;
-                case "review":
+                case "REVIEW":
                     showReview();
                     break;
                 // 탭 메뉴의 타입을 추가하여 사용
@@ -732,6 +741,7 @@
             }
         });
     }
+
 
 </script>
 
