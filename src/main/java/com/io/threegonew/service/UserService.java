@@ -16,19 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.io.threegonew.domain.User;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> findAll(){
@@ -76,29 +72,6 @@ public class UserService {
         return userRepository.existsById(userId);
     }
 
-
-    public User authenticateUser(String id, String pw) {
-        // ID를 사용하여 사용자를 검색합니다.
-        Optional<User> optionalUser = userRepository.findById(id);
-
-        // 사용자가 존재하고, 비밀번호가 일치하면 사용자를 반환합니다.
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.orElseGet(User::new);
-            System.out.println(user.getPw());
-            if (bCryptPasswordEncoder.matches(pw, user.getPw())) {
-                return user;
-            }
-        }
-
-        // 사용자가 존재하지 않거나 비밀번호가 일치하지 않으면 null을 반환합니다.
-        return null;
-
-    // TODO : 이메일 체크
-//    public boolean isEmailDuplicate(String email) {
-//        return userRepository.existsByEmail(email);
-//    }
-}
-
     public User findUserByEmail(String email){
         Optional<User> userOptional = userRepository.findByEmail(email);
         return userOptional.orElse(null); // 만약 사용자가 존재하지 않는다면 null 반환
@@ -110,31 +83,6 @@ public class UserService {
         // 현재 인증된 사용자의 정보를 SecurityContextHolder에서 가져와서 반환
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
-    }
-
-    // 현재 인증된 사용자의 이메일 주소 반환
-    public String getCurrentUserEmail() {
-        // 현재 인증된 사용자의 아이디를 가져옴
-        String userId = getCurrentUserId();
-        // userId를 사용하여 사용자 정보를 조회하여 이메일 주소를 반환
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        return user.getEmail();
-    }
-
-    public String getCurrentUserName(){
-        String userId = getCurrentUserId(); // 현재 사용자의 아이디를 가져옴
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        return user.getName();
-    }
-
-    public String getCurrentUserAbout(){
-        String userId = getCurrentUserId(); // 현재 사용자의 아이디를 가져옴
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        return user.getAbout();
     }
 
     public User getUser(String id) {
@@ -151,7 +99,6 @@ public void modifyUserProfile(String userId, String name, String about) {
     user.update(name, about);
 }
 
-
     public void resetPassword(User modifyUser, String password){
         modifyUser.setPw(bCryptPasswordEncoder.encode(password));
         this.userRepository.save(modifyUser);
@@ -160,6 +107,22 @@ public void modifyUserProfile(String userId, String name, String about) {
     public boolean isSamePassword(User user, String password){
         return bCryptPasswordEncoder.matches(password, user.getPw());
     }
+
+//    비밀번호 찾기 이메일 체크
+    public boolean userEmailCheck(String email, String userId){
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        // 이메일이 존재하고 사용자 ID가 일치하는지 확인
+        return userOptional.isPresent() && userOptional.get().getId().equals(userId);
+    }
+
+    public void updateUserPassword(String id, String newPw) {
+        userRepository.findById(id).ifPresent(user -> {
+            user.setPw(bCryptPasswordEncoder.encode(newPw));
+            userRepository.save(user);
+        });
+    }
+
+
 }
 
 
