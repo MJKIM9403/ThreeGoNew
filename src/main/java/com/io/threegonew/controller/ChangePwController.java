@@ -26,45 +26,6 @@ public class ChangePwController {
         return "mypage/changePw"; // 비밀번호 변경 페이지를 랜더링
     }
 
-    //    @PreAuthorize("isAuthenticated()")
-//    @PostMapping("/mypage/changePw")
-//    public String resetPassword(@Valid @ModelAttribute("passwordResetForm")
-//                                PasswordResetForm passwordResetForm, BindingResult bindingResult, Principal principal, Model model){
-//        User user = this.userService.getUser(principal.getName());
-//
-//        if (bindingResult.hasErrors()) {
-//            return "changePw"; // 비밀번호 변경 페이지를 다시 렌더링하고 오류 표시
-//        }
-//
-//        if (!this.userService.isSamePassword(user, passwordResetForm.getCurrentPw())) {
-//            bindingResult.rejectValue("currentPw", "notCurrentPassword", "현재 비밀번호와 일치하지 않습니다.");
-//            return "mypage/changePw";
-//        }
-//
-//        if (passwordResetForm.getNewPw().equals(passwordResetForm.getCurrentPw())) {
-//            bindingResult.rejectValue("newPw", "sameAsCurrentPassword", "현재 비밀번호와 동일한 비밀번호입니다.");
-//            return "mypage/changePw";
-//        }
-//
-//        if (!passwordResetForm.getNewPw().equals(passwordResetForm.getNewPwConfirm())) {
-//            bindingResult.rejectValue("newPwConfirm", "passwordInCorrect", "2개의 패스워드가 일치하지 않습니다.");
-//            return "mypage/changePw";
-//        }
-//
-//        try {
-//            userService.resetPassword(user, passwordResetForm.getNewPw());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            bindingResult.reject("modifyPasswordFailed", e.getMessage());
-//            return "mypage/changePw";
-//        }
-//
-//        model.addAttribute("data", new Message("비밀번호 변경 되었습니다.", "/"));
-//        return "mypage/changePw"; // 변경 성공
-//    }
-//
-//
-//}
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/mypage/changePw")
 
