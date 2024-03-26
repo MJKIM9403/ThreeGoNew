@@ -66,7 +66,7 @@ public class UserService {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
-                .profileImg("../assets/img/profileimg/" + user.getU_sfile())
+                .profileImg(user.getU_sfile())
                 .about(user.getAbout())
                 .build();
     }

@@ -20,6 +20,169 @@
     <link href="../../../assets/css/commonstyle.css?after" rel="stylesheet"/>
 
     <title>Three Go</title>
+
+
+
+    <style>
+        *::-webkit-scrollbar {
+            width: 5px !important;
+        }
+
+        .container-fluid {
+            overflow-y: hidden !important;
+        }
+        ul {
+            padding-left: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        .row > * {
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+        .search-scroll {
+            overflow: auto;
+            height: calc(100vh - 112px);
+            padding: 10px;
+        }
+        .scroll {
+            overflow: auto;
+            height: calc(100vh - 79px);
+            height: calc(100vh - 114px);
+        }
+        .default {
+            width: calc(100% - 380px);
+            /* 기본 너비 상태 */
+        }
+        .plus, .delete {
+            background: #fff;
+            border: 0px;
+            width: 30px;
+            height: 30px;
+            border-radius: 100%;
+        }
+        .list-group-item {
+            border-width: 0 0 1px 0 !important;
+        }
+
+        .toggle-btn {
+            border: 0 !important;
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 50vh;
+            left: 0px;
+            z-index: 1000;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .d-flex:has(.toggle-btn) {
+            position: relative;
+        }
+
+        #areabox {
+            position:relative;
+        }
+
+        .select-title {
+            width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 1.5rem;
+        }
+
+        .wide {
+            width: 100% !important;
+        }
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin: 8px;
+            align-items: center;
+            justify-content: center;
+            width: 350px;
+        }
+        .search-input {
+            width: 300px;
+            border: none;
+            outline: none;
+        }
+        .search-btn {
+            width: 20px;
+            height: 20px;
+            background: none;
+            border: none;
+        }
+        #your_item {
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100vh;
+            max-height: 100vh;
+        }
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .overflow-x-hidden {
+            overflow-x: hidden;
+        }
+
+        .map-result {
+            z-index: 1001;
+        }
+        img.thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+        .content-title {
+            font-weight: bold;
+            width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 1.5rem;
+        }
+        .content-address {
+            font-size: 0.8rem;
+            width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 1.5rem;
+        }
+        .day {
+            width: calc(100% - 480px);
+        }
+        #day {
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .nav-container {
+            justify-content: center;
+            padding-top: 10px;
+        }
+        .nav-item {
+            padding: 0 !important;
+        }
+        .btn-2, .btn-3 {
+            width: 110px;
+            padding: 10px 0px;
+            margin: 0 0 10px 0px;
+        }
+    </style>
 </head>
 <body>
 
@@ -78,6 +241,20 @@
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
     console.log(days);
+
+    // 도시명 바꾸기
+
+
+    function updateCityName() {
+        $('.areaSelect').change(function() {
+            // 변경된 라디오 버튼의 label 요소를 찾습니다.
+            var cityName = $(this).next('label').text();
+
+            // $('.city-name')의 텍스트를 변경된 label의 텍스트로 설정합니다.
+            $('.city-name').text(cityName);
+        });
+    }
+
 
     // 검색기능
     function searchItems(){
@@ -337,6 +514,7 @@
         // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
         $(document).on('click', '.areaSelect', function() {
             selectedAreaCode = $(this).val();
+            updateCityName();
         });
         checkCategory();
         checkSigungu();
@@ -361,7 +539,7 @@
     // 마커 추가하기 함수
     function addMarker(status, info) {
         // status 에 따라 아이콘 바꾸기
-        imgUrl = `http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_${status}.png`;
+        imgUrl = `https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_${status}.png`;
 
         // 관광지 목록에 추가한 대로 marker 생성
         marker = new Tmapv2.Marker({
@@ -731,11 +909,6 @@
         // 각 탭에 대해 클릭 이벤트 리스너 추가
         tabs.forEach(function (tab, tabIndex) {
             tab.addEventListener('click', function () {
-                // 현재 탭이 비어있는지 확인
-                if (places[index].length === 0) { // 수정: 현재 탭의 장소 배열이 비어있으면
-                    alert('장소를 추가해주세요.');
-                    return; // 수정: 장소를 추가하지 않았으므로 다음으로 이동하지 않음
-                }
 
                 // 모든 탭에서 'active' 클래스 제거
                 tabs.forEach(function(otherTab) {
@@ -760,6 +933,7 @@
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+
                 } else if (previousTabIndex === -1) {
                     // 첫 번째 탭에서 다른 탭으로 이동하는 경우
                     // 첫 번째 탭의 마커와 경로가 이미 있을 경우에만 제거
@@ -787,6 +961,22 @@
                 })
                 // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
                 $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+
+                // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                if (viaMarkers[index].length === 1) {
+                    map.setCenter(marker.getPosition());
+                    map.setZoom(10); // 기본 줌 레벨 설정
+                } else {
+                    // 모든 마커를 포함하는 경계를 계산
+                    var PTbounds = new Tmapv2.LatLngBounds();
+                    for (var i = 0; i < viaMarkers[index].length; i++) {
+                        var markerPosition = viaMarkers[index][i].getPosition();
+                        PTbounds.extend(markerPosition);
+                    }
+
+                    // 지도를 경계에 맞게 확대/축소
+                    map.fitBounds(PTbounds);
+                }
 
                 // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
                 previousTabIndex = index;
@@ -834,16 +1024,8 @@
                     alert('모든 탭에서 장소를 추가해주세요.');
                 }
             }
-
-            // 현재 탭에서 장소를 추가한 경우에만 다음 탭으로 이동
-            if (places[index].length > 0 && viaMarkers[index].length > 0) {
-                // 다음 탭으로 이동
-                var nextTab = tabs[index + 1];
-                nextTab.click(); // 다음 탭으로 이동하는 클릭 이벤트 발생시킴
-            } else {
-                alert('장소를 추가해주세요.');
-            }
         });
+
     });
 
 
@@ -856,176 +1038,14 @@
 <!--유효한 날짜값을 받았다면 end day - start day + 1 을 해서 일자 수를 계산합니다.-->
 <!--계산한 일자수를 토대로 day1, day2... 등을 출력합니다.-->
 <!--day1을 클릭하면 그 날짜의 장소를 검색하고 선택해서 가져오면, 빈칸에는 장소에 해당하는 지도가 출력됩니다.-->
-<style>
-    *::-webkit-scrollbar {
-        width: 5px !important;
-    }
-    *::-webkit-scrollbar-thumb {
-        height: 30%; /* 스크롤바의 길이 */
-        background: #ddd; /* 스크롤바의 색상 */
-        border-radius: 10px;
-    }
-    *::-webkit-scrollbar-track {
-        background: #fff;  /*스크롤바 뒷 배경 색상*/
-    }
 
-    .container-fluid {
-        overflow-y: hidden !important;
-    }
-    ul {
-        padding-left: 0 !important;
-        margin-bottom: 0 !important;
-    }
-    .row > * {
-        padding-right: 0 !important;
-        padding-left: 0 !important;
-    }
-    .search-scroll {
-        overflow: auto;
-        height: calc(100vh - 112px);
-        padding: 10px;
-    }
-    .scroll {
-        overflow: auto;
-        height: calc(100vh - 79px);
-        height: calc(100vh - 114px);
-    }
-    .default {
-        width: calc(100% - 380px);
-        /* 기본 너비 상태 */
-    }
-    .plus, .delete {
-        background: #fff;
-        border: 0px;
-        width: 30px;
-        height: 30px;
-        border-radius: 100%;
-    }
-    .list-group-item {
-        border-width: 0 0 1px 0 !important;
-    }
-
-    .toggle-btn {
-        border: 0 !important;
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        top: 50vh;
-        left: 0px;
-        z-index: 1000;
-        border-radius: 0 5px 5px 0;
-    }
-
-    .d-flex:has(.toggle-btn) {
-        position: relative;
-    }
-
-    #areabox {
-        position:relative;
-    }
-
-    .select-title {
-        width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        line-height: 1.5;
-        height: 1.5rem;
-    }
-
-    .wide {
-        width: 100% !important;
-    }
-    .search-bar {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        margin: 8px;
-        align-items: center;
-        justify-content: center;
-        width: 350px;
-    }
-    .search-input {
-        width: 300px;
-        border: none;
-        outline: none;
-    }
-    .search-btn {
-        width: 20px;
-        height: 20px;
-        background: none;
-        border: none;
-    }
-    #your_item {
-        position: relative;
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: 100vh;
-        max-height: 100vh;
-    }
-    .overflow-y-auto {
-        overflow-y: auto;
-    }
-
-    .overflow-x-hidden {
-        overflow-x: hidden;
-    }
-
-    .map-result {
-        z-index: 1001;
-    }
-    img.thumbnail {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-    }
-    .content-title {
-        font-weight: bold;
-        width: 220px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        line-height: 1.5;
-        height: 1.5rem;
-    }
-    .content-address {
-        font-size: 0.8rem;
-        width: 220px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        line-height: 1.5;
-        height: 1.5rem;
-    }
-    .day {
-        width: calc(100% - 480px);
-    }
-    #day {
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-
-    .nav-container {
-        justify-content: center;
-        padding-top: 10px;
-    }
-    .nav-item {
-        padding: 0 !important;
-    }
-</style>
 
 
 <div class="container-fluid">
 
     <!-- Modal -->
     <div class="modal fade" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog  modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">검색설정</h5>
@@ -1059,12 +1079,15 @@
                             <div id="category">
                                 <div id="cat1Selector">
                                     <h5>- 대분류 -</h5>
-                                    <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
-                                    <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
-                                    <th:block th:each="cat1, idx : ${cat1List}">
-                                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
-                                        <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
-                                    </th:block>
+                                    <div>
+                                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
+                                        <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
+                                        <th:block th:each="cat1, idx : ${cat1List}">
+                                            <input type="radio" class="catSelect btn-check select-btn" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
+                                            <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
+                                        </th:block>
+                                    </div>
+
                                 </div>
 
                                 <div id="category-middle">
@@ -1106,7 +1129,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -1152,7 +1174,7 @@
             <!--장소찾기-->
             <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
                 <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
-                    <span class="fs-5 fw-semibold">도시명</span>
+                    <span class="city-name fs-5 fw-semibold">도시명</span>
                     <span class="fx-6">이전화면에서 선택한 날짜</span>
                 </a>
                 <div class="search-bar">

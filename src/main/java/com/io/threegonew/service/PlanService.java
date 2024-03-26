@@ -42,9 +42,13 @@ public class PlanService {
                 .planId(plan.getPlanId())
                 .plannerId(plan.getPlannerId())
                 .day(plan.getDay())
-                .tourItem(tourItemMapper(plan.getTourItem()))
+                .tourItem(TourItemSimpleResponse.builder()
+                                    .contentid(plan.getTourItem().getContentid())
+                                    .title(plan.getTourItem().getTitle())
+                                    .build())
                 .build();
     }
+
 
     public TreeMap<String, List<Plan>> findByPlannerGroupByDay(Long plannerId) {
         List<Plan> planList = planRepository.findByPlannerId(plannerId);
@@ -74,7 +78,8 @@ public class PlanService {
     }
 
     public List<PlanDTO> findByPlannerIdAndDay(PlanRequest planRequest) {
-        Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId());
+        Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId())
+                .orElseThrow(() -> new IllegalArgumentException("Planner not found"));
         List<Plan> plans = planRepository.findByPlannerIdAndDay(planner.getPlannerId(), planRequest.getDay());
 
         // Plan 엔티티 리스트를 PlanDto 리스트로 변환

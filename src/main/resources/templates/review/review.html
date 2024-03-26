@@ -12,13 +12,13 @@
           rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
 
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="assets/css/style.css?after" rel="stylesheet"/>
-    <link href="assets/css/commonstyle.css?after" rel="stylesheet"/>
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../assets/css/style.css?after" rel="stylesheet"/>
+    <link href="../assets/css/commonstyle.css?after" rel="stylesheet"/>
 
     <!--swiper-->
-    <link href="assets/swiper/swiper-bundle.min.css" rel="stylesheet" />
-    <script src="assets/swiper/swiper-bundle.min.js"></script>
+    <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <script src="../assets/swiper/swiper-bundle.min.js"></script>
     <title>Three Go</title>
 
     <style>
@@ -477,13 +477,9 @@
     }
 
     function showSelectList(){
-        let loginUSer = [[${loginUserId}]];
         $.ajax({
             url : '/review/show_list',
             type : 'GET',
-            data : {
-                userId : loginUSer
-            },
             contentType : 'application/json; charset=UTF-8',
             success : function (result) {
                 const plannerList = result.plannerList;
@@ -614,7 +610,7 @@
                 success : function (result) {
                     const planList = result.planList;
                     for(let plan of planList){
-                        let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
+                        let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
                 },
@@ -644,10 +640,10 @@
                 success : function (result) {
                     const planList = result.planList;
                     for(let plan of planList){
-                        let template = `<option value=${plan.tourItem.contentid}>${plan.tourItem.title}</option>`;
+                        let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
-                        resolve();
                     }
+                    resolve();
                 },
                 error : function (err) {
                     console.log(err);
@@ -664,9 +660,8 @@
     function selectTouritem(){
         let item = $('#select-touritem-info option:selected');
         let title = item.text();
-        let contentId = item.val();
-        console.log(title);
-        console.log(contentId);
+        let startTitleIdx = title.indexOf(']') +2;
+        title = title.substring(startTitleIdx);
         let titleInput = $('#selected-touritem-name');
         titleInput.attr('disabled',false);
         titleInput.val(title)
@@ -677,7 +672,7 @@
             alert("사진을 반드시 한 장 이상 첨부해주세요.")
         }else if($('#select-touritem-info option:selected').val() === 'hint'){
             alert("관광지 정보를 선택해주세요.")
-        }else if($('#selected-touritem-name').val() === ''){
+        }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
             alert('관광지 이름을 작성해주세요.')
         }else if($('#review-contents').val() === ''){
             alert('본문 내용을 입력해주세요.')
@@ -690,16 +685,19 @@
     function saveReview(){
         let formData = new FormData();
         let loginUser = [[${loginUserId}]]
+        let touritemId = $('#select-touritem-info option:selected').val();
 
-        formData.append("bookId", selectedBookId); /*test*/
+        if(selectedBookId !== null) formData.append("bookId", selectedBookId);
         formData.append("userId", `${loginUser}`);
-        formData.append("touritemId", $('#select-touritem-info option:selected').val());
+        if(touritemId !== 'direct') formData.append("touritemId", touritemId);
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());
 
         for(let image of images){
             formData.append("photoList", image);
         }
+
+        console.log(formData)
 
         $.ajax({
             url : '/review/create',
@@ -708,10 +706,10 @@
             processData : false,
             contentType : false,
             success : function (response) {
-                alert("리뷰를 등록하였습니다.") /*test*/
+                alert("리뷰를 등록하였습니다.")
             },
             error : function (err) {
-                console.log(err)
+                alert("리뷰 등록에 실패했습니다.")
             }
         })
     }

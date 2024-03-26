@@ -5,6 +5,12 @@
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 테이블 생성 --
+CREATE TABLE `PLANNER_SHARE` (
+                                 s_id bigint(20) auto_increment NOT null PRIMARY KEY,
+                                 p_id bigint(20) NOT NULL,
+                                 u_id varchar(40) NOT null,
+                                 constraint planner_share_FK FOREIGN KEY (p_id) REFERENCES test.planner(p_id)
+);
 --플래너 테이블 추가--
 -- CREATE TABLE 'PLANNER' (
 --     u_id varchar(40) NOT NULL,

@@ -16,7 +16,7 @@ img {
     padding: 0rem 2rem 0rem calc(2rem + 280px);
 }
 
-.btn {
+.profile-user-settings .btn {
     display: inline-block;
     font: inherit;
     background: none;
@@ -26,9 +26,9 @@ img {
     cursor: pointer;
 }
 
-.btn:focus {
-    outline: 0.5rem auto #4d90fe;
-}
+/*.profile-user-settings .btn:focus {*/
+/*    outline: 0.5rem auto #4d90fe;*/
+/*}*/
 
 .visually-hidden {
     position: absolute !important;

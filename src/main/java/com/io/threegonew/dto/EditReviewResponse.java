@@ -1,8 +1,5 @@
 package com.io.threegonew.dto;
 
-import com.io.threegonew.domain.ReviewBook;
-import com.io.threegonew.domain.ReviewPhoto;
-import com.io.threegonew.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,15 +11,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewResponse {
+public class EditReviewResponse {
     private Long reviewId;
     private Long reviewBookId;
     private String reviewBookTitle;
-    private String reviewBookCoverImg;
-    private UserInfoResponse userInfo;
     private String tourItemId;
     private String tourItemTitle;
     private String reviewContent;
-    private Long viewCount;
     private List<ReviewPhotoResponse> reviewPhotoList;
 }

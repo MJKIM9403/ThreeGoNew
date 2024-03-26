@@ -142,7 +142,6 @@ public class TourItemService {
         return pageResponse;
     }
 
-    @Transactional(readOnly = true)
     public PageResponse findMyBookmarkByArea(MyBookmarkByAreaRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
@@ -160,7 +159,6 @@ public class TourItemService {
         return pageResponse;
     }
 
-    @Transactional(readOnly = true)
     public PageResponse findMyBookmark(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
@@ -176,6 +174,26 @@ public class TourItemService {
                 .build();
 
         return pageResponse;
+    }
+
+    public TourItemSimpleResponse findTourItemSimpleInfo(String contentid){
+        TourItem tourItem = tourItemRepository.findById(contentid).orElseThrow(
+                () -> new IllegalArgumentException("관광지 정보를 찾을 수 없습니다."));
+
+        String firstImg;
+        if(tourItem.getFirstimage() == null || tourItem.getFirstimage().isEmpty()){
+            firstImg = "../assets/img/no_img.jpg";
+        }else {
+            firstImg = tourItem.getFirstimage();
+        }
+
+        return TourItemSimpleResponse.builder()
+                                    .contentid(tourItem.getContentid())
+                                    .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
+                                    .address(getAddress(tourItem))
+                                    .firstimage(firstImg)
+                                    .title(tourItem.getTitle())
+                                    .build();
     }
 
 

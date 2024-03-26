@@ -25,18 +25,20 @@ public class MyPageController {
             return "mypage/notfounduser";
         }
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String loginUserId = "";
+        UserInfoResponse loginUserInfo;
 
-        if (principal.equals("anonymousUser")) {
-            loginUserId = "anonymousUser";
-        } else {
-            UserDetails userDetails = (UserDetails) principal;
-            loginUserId = userDetails.getUsername();
+        try{
+            String loginUserId = userService.getCurrentUserId();
+            loginUserInfo = userService.findUserInfo(loginUserId);
+        }catch (IllegalArgumentException e){
+            loginUserInfo = UserInfoResponse.builder()
+                                        .id("anonymousUser")
+                                        .build();
         }
+
         UserInfoResponse findUserInfo = userService.findUserInfo(userId);
         model.addAttribute("findUser", findUserInfo);
-        model.addAttribute("loginUserId", loginUserId);
+        model.addAttribute("loginUser", loginUserInfo);
         return "mypage/mypage";
     }
 }

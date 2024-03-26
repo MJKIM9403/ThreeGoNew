@@ -90,7 +90,7 @@
         }
 
         .datepicker table tr td.today, span.focused {
-            border-radius: 50% !important;
+            border-radius: 5% !important;
             background-image: linear-gradient(#FFF3E0, #FFE0B2);
         }
 
@@ -113,18 +113,12 @@
         }
 
         .old-day:hover, .day:hover, .new-day:hover, .month:hover, .year:hover, .decade:hover, .century:hover {
-            border-radius: 50% !important;
+            border-radius: 5% !important;
             background-color: #eee;
         }
 
-        .active {
-            border-radius: 50% !important;
-            background-image: linear-gradient(#90CAF9, #64B5F6) !important;
-            color: #fff !important;
-        }
-
         .range-start, .range-end {
-            border-radius: 50% !important;
+            border-radius: 5% !important;
             background-image: linear-gradient(#FFA726, #FFA726) !important;
         }
 
@@ -151,33 +145,160 @@
             color: #fff !important;
             background-color: #000 !important;
         }
+
+        /** plannerList 출력 **/
+        #new-planner-btn {
+            bottom: 5%;
+            right: 5%;
+        }
+
+        .card {
+            box-shadow: 0 10px 10px 0 rgb(0 0 0 / 5%);
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 0 solid rgba(0,0,0,.125);
+            border-radius: 1rem;
+        }
+
+        .card-body {
+            -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 1.5rem 1.5rem;
+        }
+
+        .img {
+            width: 3rem !important;
+            height: 3rem !important;
+        }
+        .row {
+            margin-left: 0;
+        }
     </style>
 </head>
+<!-- Modal -->
+<div class="modal fade" id="newPlannerModal" tabindex="-1" role="dialog" aria-labelledby="newPlannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">여행 정보를 입력해주세요.</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/planner/add">
 
-    <!--header-->
-    <th:block th:replace="fragments/header"></th:block>
-    <div class="sub-header">
-        <div class="container pt-5 pl-5">
-            <h3 class="display-6 text-white">캘린더 샘플</h3>
+
+                    <input id="plannerName2" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
+                    <div class="flex-sm-row flex-column d-flex">
+                        <div class="col-sm-9 col-12 px-0 mb-2">
+                            <div class="input-group input-daterange">
+                                <input id="startDate2" name="startDate" type="date" class="form-control" placeholder="Arriving Date">
+                                <input id="endDate2" name="endDate" type="date" class="form-control" placeholder="Leaving Date">
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-12 px-0">
+                            <button type="submit" class="btn btn-black">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="container px-1 px-sm-5 mx-auto">
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+    <!--로그인한 유저 아이디로 등록된 planner가 있으면 조회화면을 보여줌-->
+    <div class="container mt-5" th:if="${plannerList.size() > 0 || sharedPlannerList.size() > 0}">
+
+        <div class="text-center mb-5">
+            <h2 class="display-6 text-center pb-5">등록한 여행일정을 확인해보세요.</h2>
+        </div>
+
+        <p>내가 작성한 여행</p>
+        <th:block th:if="${plannerList.size() > 0}">
+            <th:block th:each="planner, idx : ${plannerList}">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
+                            <div class="d-flex flex-column flex-lg-row">
+                                <img class="img " src="../../assets/img/no_img.jpg">
+                                <div class="row flex-fill">
+                                    <div class="col-sm-10">
+                                        <h4 class="h5" th:text="${planner.plannerName}"></h4>
+                                        <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
+                                        <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
+                                    </div>
+                                    <div class="col-sm-2 text-lg-end">
+                                        <div class="btn btn-primary">확인하기</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </th:block>
+        </th:block>
+
+        <th:block th:unless="${plannerList.size() > 0}">
+            <p>내가 작성한 일정이 없습니다.</p>
+        </th:block>
+
+
+        <p>공유받은 여행</p>
+        <th:block th:if="${sharedPlannerList.size() > 0}">
+            <th:block th:each="planner, idx : ${sharedPlannerList}">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
+                            <div class="d-flex flex-column flex-lg-row">
+                                <img class="img " src="../../assets/img/no_img.jpg">
+                                <div class="row flex-fill">
+                                    <div class="col-sm-10">
+                                        <h4 class="h5" th:text="${planner.plannerName}"></h4>
+                                        <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
+                                        <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
+                                    </div>
+                                    <div class="col-sm-2 text-lg-end">
+                                        <div class="btn btn-primary">확인하기</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </th:block>
+        </th:block>
+
+        <th:block th:unless="${sharedPlannerList.size() > 0}">
+            <p>공유받은 일정이 없습니다.</p>
+        </th:block>
+
+        <button type="button" id="new-planner-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newPlannerModal">
+            <i class="bi bi-plus"></i>
+        </button>
+    </div>
+
+
+    <!--로그인한 유저 아이디로 등록된 planner나 공유받은 planner가 없으면 등록화면부터 보여줌-->
+    <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() == 0 && sharedPlannerList.size() == 0}">
         <div class="pt-5 pb-5">
 
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
             <form method="post" action="/planner/add">
-                <select name="areaCode" id="areaCode" onchange="updateSigunguList()">
-                    <option value="">여행장소 선택</option>
-                    <th:block th:each="area : ${areaList}">
-                        <option th:value="${area.areaCode}" th:text="${area.areaName}"></option>
-                    </th:block>
-                </select>
-
-                <select name="sigunguCode" id="sigunguCode">
-                    <option value="">시군구 선택</option>
-                    <!-- 여기는 JavaScript를 통해 동적으로 업데이트될 예정 -->
-                </select>
 
 
                 <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
@@ -196,57 +317,19 @@
                 </div>
             </form>
         </div>
-
     </div>
-    <div class="result"></div>
+</div>
     <script>
-        function updateSigunguList() {
-            const areaCode = document.getElementById('areaCode').value;
-            const sigunguSelect = document.getElementById('sigunguCode');
-
-            // 시군구 선택 드롭다운 초기화
-            sigunguSelect.innerHTML = '<option value="">시군구 선택</option>';
-
-            if (areaCode) {
-                fetch(`/planner/sigungu?areaCode=${areaCode}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        data.forEach(sigungu => {
-                            const option = new Option(sigungu.sigunguName, sigungu.sigunguCode);
-                            sigunguSelect.add(option);
-                        });
-                    })
-                    .catch(error => console.error('Error loading sigungu data:', error));
-            }
-        }
-
-
+        // datepicker 설정
         $(document).ready(function(){
-
             $('.input-daterange').datepicker({
                 format: 'yyyy-mm-dd',
                 todayHighlight: true,
-                startDate: '0d'
+                autoclose: true,
+                startDate: '0d',
+                language: "ko"
             });
-
         });
-
-        function test() {
-            // 시작일 value 가져오기
-            const startday = document.getElementById('startDate').value;
-            document.querySelector('.result').innerText = startday;
-
-            // 종료일 value 가져오기
-            const endday = document.getElementById('endDate').value;
-            document.querySelector('.result').innerText = endday;
-        }
-
-        // 장소 가져오기 테스트
-        $(document).ready(function() {
-            $("#area").change(function() {
-                location.href = $("#area").val();
-            })
-        })
 
     </script>
 
