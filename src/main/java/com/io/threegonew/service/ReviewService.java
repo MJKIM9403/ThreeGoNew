@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,37 @@ public class ReviewService {
         return savedReview;
     }
 
+    @Transactional
+    public void updateReview(ReviewBook reviewBook, TourItem tourItem, UpdateReviewRequest request) throws Exception{
+        Review review = reviewRepository.findById(request.getReviewId()).orElseThrow(
+                () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        List<ReviewPhoto> copyPhotoList = new ArrayList<>();
+        copyPhotoList.addAll(review.getReviewPhotoList());
+
+        for(Long deleteId : request.getDeletePhotoId()){
+            ReviewPhoto deletePhoto = reviewPhotoRepository.findById(deleteId).orElseThrow(
+                    () -> new IllegalArgumentException("삭제할 사진 정보를 찾을 수 없습니다."));
+            copyPhotoList.remove(deletePhoto);
+            reviewPhotoRepository.delete(deletePhoto);
+        }
+
+        List<ReviewPhoto> addPhotoList = fileHandler.parseFileInfo(review, request.getPhotoList());
+
+        if(!addPhotoList.isEmpty()) {
+            for(ReviewPhoto photo : addPhotoList) {
+                // 파일을 DB에 저장
+                copyPhotoList.add(reviewPhotoRepository.save(photo));
+            }
+        }
+
+        review.update(reviewBook, tourItem, request.getTouritemTitle(), request.getReviewContent(), copyPhotoList);
+    }
+
+    public void deleteReview(Long reviewId){
+        reviewRepository.deleteById(reviewId);
+    }
+
     public PageResponse findMyReview(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
@@ -66,6 +99,13 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
         return reviewMapper(findReview);
+    }
+
+    public EditReviewResponse findEditReview(Long reviewId){
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        return editReviewMapper(findReview);
     }
 
     private MyReviewResponse myReviewMapper(Review review){
@@ -101,6 +141,27 @@ public class ReviewService {
                 .viewCount(review.getViewCount())
                 .reviewPhotoList( review.getReviewPhotoList().stream()
                                 .map(this::reviewPhotoMapper).collect(Collectors.toList()))
+                .build();
+    }
+
+    private EditReviewResponse editReviewMapper(Review review){
+        Long bookId = null;
+        String bookTitle = null;
+        if(review.getReviewBook() != null) {
+            bookId = review.getReviewBook().getBookId();
+            bookTitle = review.getReviewBook().getBookTitle();
+        }
+        String touritemId = review.getTourItem() == null ? null : review.getTourItem().getContentid();
+
+        return EditReviewResponse.builder()
+                .reviewId(review.getReviewId())
+                .reviewBookId(bookId)
+                .reviewBookTitle(bookTitle)
+                .tourItemId(touritemId)
+                .tourItemTitle(review.getTourItemTitle())
+                .reviewContent(review.getReviewContent())
+                .reviewPhotoList( review.getReviewPhotoList().stream()
+                        .map(this::reviewPhotoMapper).collect(Collectors.toList()))
                 .build();
     }
 

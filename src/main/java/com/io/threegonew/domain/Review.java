@@ -42,8 +42,7 @@ public class Review extends BaseTimeEntity {
 
     @OneToMany(
             mappedBy = "review",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            orphanRemoval = true
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
     private List<ReviewPhoto> reviewPhotoList = new ArrayList<>();
 
@@ -68,5 +67,13 @@ public class Review extends BaseTimeEntity {
     public Long viewCountUp(){
         this.viewCount += 1;
         return viewCount;
+    }
+
+    public void update(ReviewBook reviewBook, TourItem tourItem, String tourItemTitle, String reviewContent, List<ReviewPhoto> reviewPhotoList){
+        this.reviewBook = reviewBook;
+        this.tourItem = tourItem;
+        this.tourItemTitle = tourItemTitle;
+        this.reviewContent = reviewContent;
+        this.reviewPhotoList = reviewPhotoList;
     }
 }

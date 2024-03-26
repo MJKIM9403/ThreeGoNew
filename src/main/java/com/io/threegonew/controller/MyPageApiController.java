@@ -25,14 +25,14 @@ public class MyPageApiController {
         return ResponseEntity.ok().body(myPageResponse);
     }
 
-    @PostMapping("/review")
-    public ResponseEntity<MyPageResponse> getMyReviewBook(@RequestBody MyPageRequest request){
-        MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
-                MyPageResponse.builder()
-                        .type("review")
-                        .pageResponse(reviewService.findMyReview(request))
-                        .build();
-
-        return ResponseEntity.ok().body(myPageResponse);
-    }
+//    @PostMapping("/review")
+//    public ResponseEntity<MyPageResponse> getMyReviewBook(@RequestBody MyPageRequest request){
+//        MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
+//                MyPageResponse.builder()
+//                        .type("review")
+//                        .pageResponse(reviewService.findMyReview(request))
+//                        .build();
+//
+//        return ResponseEntity.ok().body(myPageResponse);
+//    }
 }

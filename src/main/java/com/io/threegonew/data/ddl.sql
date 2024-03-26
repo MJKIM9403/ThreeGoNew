@@ -84,7 +84,7 @@ CREATE TABLE `review_photo` (
 
 -- 플래너 테이블 추가 --
 create table `PLAN` (
-                        plan_id int AUTO_INCREMENT PRIMARY KEY,
+                        plan_id bigint(20) AUTO_INCREMENT PRIMARY KEY,
                         u_id  varchar(40) not null,
                         p_id int not null,
                         plan_day int not null,
@@ -97,7 +97,7 @@ ALTER TABLE test.plan CHANGE plan_contentid contentid varchar(40) CHARACTER SET 
 
 
 create table `PLANNER` (
-                           p_id int AUTO_INCREMENT PRIMARY KEY,
+                           p_id bigint(20) AUTO_INCREMENT PRIMARY KEY,
                            u_id  varchar(40) not null,
                            p_name varchar(200) not null,
                            start_date DATE not null,

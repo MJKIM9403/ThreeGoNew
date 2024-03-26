@@ -16,5 +16,5 @@ public class SelectPlanResponse {
     private Long plannerId;
     private Integer day;
     private Integer order;
-    private TourItemResponse tourItem;
+    private TourItemSimpleResponse tourItem;
 }

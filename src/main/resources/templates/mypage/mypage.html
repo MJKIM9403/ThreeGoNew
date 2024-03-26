@@ -61,6 +61,11 @@
         height: 25px;
     }
 
+    #new-post-btn {
+        bottom: 5%;
+        right: 5%;
+    }
+
     #review-book-info {
         position: absolute;
         z-index: 100;
@@ -105,7 +110,7 @@
         resize: none;
     }
     #comment-btn {
-        border: 1px solid #AAA;
+        padding: 5px;
         width: 70px;
     }
     #touritem-wrap {
@@ -126,6 +131,14 @@
         right: 110%;
         display: none;
     }
+    #touritem-info-title {
+        margin-bottom: 0;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    #touritem-info-category {
+        font-size: 0.8rem;
+    }
     #touritem-name {
         font-size: 18px;
         color: #FFFFFF;
@@ -136,37 +149,21 @@
                 0px -2px rgba(0, 0, 0, 0.5);
     }
 
-    .delete-img-btn {
-        position: absolute;
-        z-index: 101;
-        top: 5%;
-        right: 5%;
-    }
-    .add-file {
-        position: absolute;
-        bottom: 5%;
-        right: 5%;
-        z-index: 100;
-    }
-    #img-uploader {
-        display: none;
-    }
-    .uploader {
-        padding: 10px;
-        color: #136DF8;
+    #writer-info{
         cursor: pointer;
     }
-    .uploader:hover {
-        background-color: #136DF8;
-        color: #FFFFFF;
-        transition: all 0.2s;
+    #writer-id {
+        color: #999999;
     }
-    .select-hint{
-        display: none;
-    }
-    #review-contents {
-        height: 380px;
-        resize: none;
+
+    #review-more-btn{
+        display: inline-block;
+        font: inherit;
+        background: none;
+        border: none;
+        color: inherit;
+        padding: 0;
+        cursor: pointer;
     }
 
     /* swiper */
@@ -263,7 +260,7 @@
                                 <div id="touritem-info" class="card">
                                     <img id="touritem-info-img" src="../assets/img/no_img.jpg" class="card-img-top" alt="...">
                                     <div class="card-body">
-                                        <strong id="touritem-info-title" class="card-text">관광지 이름</strong>
+                                        <p id="touritem-info-title" class="card-text">관광지 이름</p>
                                         <p id="touritem-info-address" class="card-text">관광지 주소</p>
                                         <p id="touritem-info-category" class="card-text">관광지 카테고리</p>
                                     </div>
@@ -284,43 +281,24 @@
                         </div>
                         <div class="col-md-5 d-flex align-items-start">
                             <div class="modal-body">
-                                <div id="writer-info" class="mb-2 d-flex align-items-center">
-                                    <img id="writer-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
-                                    <span id="writer-name" class="ms-2">작성자 이름</span>
-                                    <span id="writer-id" class="ms-2">@writerId</span>
+                                <div id="writer-wrap" class="mb-2 d-flex align-items-center justify-content-between">
+                                    <div id="writer-info" class="d-flex align-items-center">
+                                        <img id="writer-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                        <strong id="writer-name" class="ms-2">작성자 이름</strong>
+                                        <span id="writer-id" class="ms-2">@writerId</span>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button id="review-more-btn" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-cog" aria-hidden="true"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a id="review-edit" class="dropdown-item" href="#">수정</a></li>
+                                            <li><span id="review-delete" class="dropdown-item">삭제</span></li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div id="contents-wrap" class="mb-3">
                                     <div id="content" class="mb-2">
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
-                                        본문<br/>
                                     </div>
                                     <div id="comment-wrap">
                                         <div class="comment-info d-flex justify-content-start mb-1">
@@ -352,17 +330,14 @@
             </div>
         </div>
     </div>
+    <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
+        <i class="bi bi-plus-lg"></i>
+    </button>
 
     <!-- End of container -->
 </div>
 <script th:inline="javascript">
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
-    let deleteFile = []; // 기존 저장된 이미지 파일 중 삭제할 id를 저장할 배열
-    let uploadFile = []; // 새로 업로드 할 파일의 정보를 저장할 배열
-
-    function calcFileLength() {
-        return savedFile.length - deleteFile.length + uploadFile.length;
-    }
 
     // swiper 설정
     var swiper = new Swiper(".mySwiper", {
@@ -390,7 +365,7 @@
     }
     function loadDetailReview(reviewId){
         $.ajax({
-            url : '/review/detail',
+            url : '/api/review/detail',
             type : 'GET',
             data : {
                 reviewId : reviewId
@@ -399,8 +374,20 @@
             success : function (findReview) {
                 let writer = findReview.userInfo;
                 let photoList = findReview.reviewPhotoList;
+                $('#writer-info').click(function (){
+                    location.href = `/mypage/${writer.id}`
+                })
                 $('#writer-name').text(writer.name);
                 $('#writer-id').text('@' + writer.id);
+                if(writer.id === [[${loginUser.id}]]){
+                    $('#writer-wrap .btn-group').addClass('d-flex').show();
+                    $('#review-edit').attr('href',`../review/edit/${reviewId}`);
+                    $('#review-delete').off('click').on('click', function (){
+                        deleteReview(reviewId);
+                    })
+                }else {
+                    $('#writer-wrap .btn-group').removeClass('d-flex').hide();
+                }
                 if(writer.profileImg != null){
                     $('#writer-profile-img').attr('src','/api/review-photo/' + writer.profileImg);
                 }
@@ -420,15 +407,12 @@
                 for(let photo of photoList){
                     savedFile.push(photo.fileId);
                     const tempHtml = `<div class="swiper-slide">` +
-                        `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
-                        `<i class="bi bi-x-lg"></i>` +
-                        `</button>` +
                         `<img class="preview-img" data-file-id="${photo.fileId}" src="/api/review-photo/${photo.filePath}" style="object-fit: contain"/>` +
                         `</div>`;
                     swiper.appendSlide(tempHtml);
                     swiper.update();
                 }
-                let fileLength = calcFileLength();
+                let fileLength = savedFile.length;
                 if(fileLength > 1){
                     $('.swiper-controller').show()
                 }else {
@@ -464,7 +448,7 @@
 
     function showTourItemSimpleInfo(tourItemId){
         $.ajax({
-            url : '/review/simple-touritem',
+            url : '/api/review/simple-touritem',
             type : 'GET',
             data : {
                 tourItemId : tourItemId
@@ -483,42 +467,27 @@
         })
     }
 
-
-    function goLastSlide() {
-        let fileLength = calcFileLength();
-        swiper.slideTo(fileLength-1,300,false);
-    }
-
-    function deleteImg() {
-        $(document).on('click','.delete-img-btn',function () {
-            let idx = $(".delete-img-btn").index(this);
-            let deleteFileId = $('.swiper-wrapper .swiper-slide').eq(idx).find('img').attr('data-file-id');
-            if(deleteFileId !== undefined){
-                deleteFile.push(deleteFileId);
-            }
-            swiper.slideTo(idx-1,300,false);
-            swiper.removeSlide(idx);
-            swiper.update();
-
-            let fileLength = calcFileLength();
-
-            if(fileLength > 1){
-                $('.swiper-controller').show()
-            }else {
-                $('.swiper-controller').hide()
-            };
-
-            if(fileLength === 0){
-                const tempHtml = `<div class="swiper-slide">` +
-                    `사진을 추가해주세요.` +
-                    `</div>`;
-                swiper.appendSlide(tempHtml);
-                swiper.update();
-            }
-            if($('.uploader').css('display') === 'none' && fileLength < 4){
-                $('.uploader').show()
-            }
-        })
+    function deleteReview(reviewId){
+        const deleteConfirm = confirm("리뷰를 삭제하시겠습니까?");
+        if(deleteConfirm){
+            $.ajax({
+                url : '/api/review/delete',
+                type : 'DELETE',
+                data : {
+                    reviewId : reviewId
+                },
+                success : function (){
+                    alert('삭제 되었습니다.')
+                    savePage();
+                    $('#viewer').modal('toggle');
+                    changeTab(tabType);
+                    setScrollByMyPageInfo();
+                },
+                error : function (){
+                    alert('삭제에 실패했습니다.')
+                }
+            })
+        }
     }
 </script>
 
@@ -535,7 +504,6 @@
         $('#load-point').hide(); // 옵저버 관측 타이밍을 컨트롤하기 위해 hide
         loadPage();
         $('.swiper-controller').hide();
-        deleteImg();
     })
 
     const observer = new IntersectionObserver((entries, observer) => {
@@ -649,7 +617,7 @@
             back = false;
         }
         $.ajax({
-            url : '/api/review',
+            url : '/api/review/my-review',
             type : 'POST',
             contentType : 'application/json; charset=UTF-8',
             data : JSON.stringify({
@@ -708,7 +676,41 @@
         myPageInfo.scrollPage = scrollPage;
         myPageInfo.scrollPosition = window.scrollY.toString();
         sessionStorage.setItem("myPageInfo", JSON.stringify(myPageInfo));
-        observer.disconnect();
+    }
+
+    function setScrollByMyPageInfo(){
+        let session_myPageInfo = JSON.parse(sessionStorage.getItem("myPageInfo"));
+        let tabType = session_myPageInfo.tabType;
+        let sessionPage = Number(session_myPageInfo.scrollPage);
+        let scrollPosition = Number(session_myPageInfo.scrollPosition);
+        changeTab(tabType)
+        console.log(sessionPage);
+        console.log(scrollPosition);
+        for(let page = 0; page <= sessionPage; page++){
+            back = true;
+            console.log(`${scrollPage}, ${page}`);
+            switch (tabType){
+                case "bookmark":
+                    showBookmark();
+                    break;
+                case "review":
+                    showReview();
+                    break;
+                // 탭 메뉴의 타입을 추가하여 사용
+            }
+        }
+        setTimeout(() => {
+            var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+            if(scrollPosition > scrollBottom){
+                window.scrollTo(0, scrollBottom);
+            }else {
+                window.scrollTo(0, scrollPosition);
+            }
+        }, 100);
+        // sessionStorage.removeItem("myPageInfo");
+        setTimeout(() => {
+            $('#load-point').show();
+        }, 550)
     }
 
     function loadPage() {
@@ -717,33 +719,7 @@
                 if(sessionStorage.getItem("myPageInfo") != null){
                     // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
                     console.log("back")
-                    let session_myPageInfo = JSON.parse(sessionStorage.getItem("myPageInfo"));
-                    let tabType = session_myPageInfo.tabType;
-                    let sessionPage = Number(session_myPageInfo.scrollPage);
-                    let scrollPosition = Number(session_myPageInfo.scrollPosition);
-                    changeTab(tabType)
-                    console.log(sessionPage);
-                    console.log(scrollPosition);
-                    for(let page = 0; page <= sessionPage; page++){
-                        back = true;
-                        console.log(`${scrollPage}, ${page}`);
-                        switch (tabType){
-                            case "bookmark":
-                                showBookmark();
-                                break;
-                            case "review":
-                                showReview();
-                                break;
-                            // 탭 메뉴의 타입을 추가하여 사용
-                        }
-                    }
-                    setTimeout(() => {
-                        window.scrollTo(0, scrollPosition);
-                    }, 100);
-                    // sessionStorage.removeItem("myPageInfo");
-                    setTimeout(() => {
-                        $('#load-point').show();
-                    }, 550)
+                    setScrollByMyPageInfo();
                 }else {
                     $('#load-point').show();
                 }

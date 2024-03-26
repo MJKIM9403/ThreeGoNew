@@ -42,9 +42,13 @@ public class PlanService {
                 .planId(plan.getPlanId())
                 .plannerId(plan.getPlannerId())
                 .day(plan.getDay())
-                .tourItem(tourItemMapper(plan.getTourItem()))
+                .tourItem(TourItemSimpleResponse.builder()
+                                    .contentid(plan.getTourItem().getContentid())
+                                    .title(plan.getTourItem().getTitle())
+                                    .build())
                 .build();
     }
+
 
     public TreeMap<String, List<Plan>> findByPlannerGroupByDay(Long plannerId) {
         List<Plan> planList = planRepository.findByPlannerId(plannerId);
