@@ -1,6 +1,7 @@
 package com.io.threegonew.util;
 
 import com.io.threegonew.domain.Review;
+import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.domain.ReviewPhoto;
 import com.io.threegonew.domain.User;
 import org.springframework.stereotype.Component;
@@ -22,13 +23,9 @@ public class FileHandler {
     private final String absolutePath = "C://threeGo/";
     private final String reviewPhotoPath = "images/";
     private final String userProfilePath = "profile/";
+    private final String bookCoverPath = "bookcover/";
 
-    public boolean deleteReviewPhoto(ReviewPhoto deletePhoto){
-        File deleteFile = new File(absolutePath + reviewPhotoPath + deletePhoto.getFilePath());
-        return deleteFile.delete();
-    }
-
-    public boolean deleteUserProfile(User user) throws Exception {
+    public boolean deleteUserProfile(User user) {
         File deleteFile = new File(absolutePath + userProfilePath + user.getU_sfile());
         user.updateProfileImg(null, null);
         return deleteFile.delete();
@@ -81,6 +78,66 @@ public class FileHandler {
             saveFile.setWritable(true);
             saveFile.setReadable(true);
         }
+    }
+
+    public boolean deleteBookCover(ReviewBook reviewBook) {
+        File deleteFile = new File(absolutePath + bookCoverPath + reviewBook.getCoverFilePath());
+        reviewBook.updateCover(null, null);
+        return deleteFile.delete();
+    }
+
+    public void updateBookCover(ReviewBook reviewBook, MultipartFile newBookCover) throws Exception {
+        if(reviewBook.getCoverFilePath() != null){
+            deleteBookCover(reviewBook);
+        }
+        if(!newBookCover.isEmpty()){
+            File file = new File(absolutePath + bookCoverPath);
+
+            if(!file.exists()) {
+                boolean wasSuccessful = file.mkdirs();
+
+                // 디렉터리 생성에 실패했을 경우
+                if(!wasSuccessful){
+                    throw new IOException("file: was not successful");
+                }
+            }
+
+            // 파일의 확장자 추출
+            String oFileExtension = "";
+            String contentType = newBookCover.getContentType();
+
+            // 확장자명이 존재하지 않을 경우 처리 x
+            if(ObjectUtils.isEmpty(contentType)) {
+                return;
+            }
+            else {  // 확장자가 jpeg, png인 파일들만 받아서 처리
+                if(contentType.contains("image/jpeg")) {
+                    oFileExtension = ".jpg";
+                }else if(contentType.contains("image/png")) {
+                    oFileExtension = ".png";
+                }else if(contentType.contains("image/gif")) {
+                    oFileExtension = ".gif";
+                }else {
+                    return; // 다른 확장자일 경우 처리 x
+                }
+            }
+
+            // 저장할 파일 이름 생성
+            String oFileName = newBookCover.getName();
+            String sFileName = UUID.randomUUID() + oFileExtension;
+            reviewBook.updateCover(oFileName, sFileName);
+            File saveFile = new File(absolutePath + bookCoverPath + sFileName);
+            newBookCover.transferTo(saveFile);
+
+            // 파일 권한 설정(쓰기, 읽기)
+            saveFile.setWritable(true);
+            saveFile.setReadable(true);
+        }
+    }
+
+    public boolean deleteReviewPhoto(ReviewPhoto deletePhoto){
+        File deleteFile = new File(absolutePath + reviewPhotoPath + deletePhoto.getFilePath());
+        return deleteFile.delete();
     }
 
     public List<ReviewPhoto> parseReviewPhoto(Review review, List<MultipartFile> multipartFiles) throws Exception {
