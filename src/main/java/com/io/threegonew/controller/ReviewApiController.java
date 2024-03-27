@@ -8,6 +8,7 @@ import com.io.threegonew.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,6 +87,17 @@ public class ReviewApiController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/view_count")
+    public ResponseEntity<Long> viewCountUp(@RequestParam("reviewId") Long reviewId){
+        System.out.println("--------------------" + reviewId);
+        try{
+            Long viewCount = reviewService.viewCountUp(reviewId);
+            return ResponseEntity.ok(viewCount);
+        }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -2,18 +2,14 @@ package com.io.threegonew.service;
 
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
-import com.io.threegonew.dto.LoginRequest;
 import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -48,7 +44,7 @@ public class UserService {
         User findUser = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
 
-        return userInfoResponse(findUser);
+        return userInfoMapper(findUser);
     }
 
     public User findUser(String userId) {
@@ -57,7 +53,7 @@ public class UserService {
     }
 
 
-    private UserInfoResponse userInfoResponse(User user) {
+    private UserInfoResponse userInfoMapper(User user) {
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
