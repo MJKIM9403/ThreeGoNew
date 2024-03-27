@@ -13,7 +13,6 @@ import java.util.*;
 @Table(name="users")
 @NoArgsConstructor
 @Getter
-@Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class User /*implements UserDetails*/ {
@@ -57,6 +56,10 @@ public class User /*implements UserDetails*/ {
     public void update(String name, String about/*, String u_ofile, String u_sfile*/){
         this.name = name;
         this.about = about;
+    }
+
+    public void updatePw(String pw){
+        this.pw = pw;
     }
 
 

@@ -69,7 +69,7 @@
         </div>
 
         <div class="w3-container w3-card-4">
-        <form id="findPwForm" >
+<!--        <form id="findPwForm" >-->
 <!--                  action="/findPw" method="post" onsubmit="return validateForm()">-->
 
                 <div class="form-group userInput mb-5">
@@ -87,9 +87,9 @@
 <!--                <div class="text-center small mt-2" id="checkMsg" style="color: red"></div>-->
 
                 <div class="col text-center">
-                    <button class="btn btn-primary btn-md" type="submit" id="findPwBtn">비밀번호 찾기</button>
+                    <button class="btn btn-primary btn-md" id="findPwBtn">아이디 찾기</button>
                 </div>
-            </form>
+<!--            </form>-->
 
         </div>
     </div>
@@ -111,19 +111,20 @@
 
         $.ajax({
             type: "POST",
-            url: "/findPw",
-            data: {
+            url: "/findPw/sendEmail",
+            data: JSON.stringify({
                 "userId": id,
                 "email": email
-            },
+            }),
+            contentType: 'application/json; charset=UTF-8',
             success: function (res) {
                     alert("발송 완료! 입력하신 이메일로 임시비밀번호가 발송되었습니다.")
                     window.location = "/login";
                 }
-        ,error: function () {
-            console.log('오류가 발생!!');
+            ,error: function () {
+                console.log('오류가 발생!!');
                 alert("오류가 발생했습니다."); // 오류 시 알림
-        }
+            }
         })
     })
 </script>

@@ -14,20 +14,19 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("")
 @RequiredArgsConstructor
 public class ChangePwController {
     private final UserService userService;
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/mypage/changePw")
+    @GetMapping("/changePw")
     public String resetPassword(Model model) {
         model.addAttribute("passwordResetForm", new PasswordResetForm());
         return "mypage/changePw"; // 비밀번호 변경 페이지를 랜더링
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/mypage/changePw")
+    @PostMapping("/changePw")
 
     public ResponseEntity<String> changePassword(@RequestParam("currentPw") String currentPassword,
                                                  @RequestParam("newPw") String newPassword,

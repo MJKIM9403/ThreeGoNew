@@ -28,7 +28,7 @@ public class TempPassword {
         String randomPw = stringBuilder.toString();
 
         // 최소 8자리에 대문자, 소문자, 숫자, 특수문자 각 1개 이상 포함
-        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$";
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8}$";
         if (!Pattern.matches(pattern, randomPw)) {
             return makeRandomPw(length);    //비밀번호 조건(패턴)에 맞지 않는 경우 메서드 재실행
         }

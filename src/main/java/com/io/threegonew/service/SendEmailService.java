@@ -1,62 +1,63 @@
 package com.io.threegonew.service;
 
+import com.io.threegonew.ApiKey;
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.JavaMailSenderImpl;
 import com.io.threegonew.util.TempPassword;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.mail.MessagingException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SendEmailService {
 
-    @Autowired
-    UserRepository userRepository;
-    UserService userService;
-    BCryptPasswordEncoder bCryptPasswordEncoder;
-    JavaMailSenderImpl javaMailSenderImpl;
-    private static final String FROM_ADDRESS = "t3reego@gmail.com";
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JavaMailSenderImpl javaMailSenderImpl;
+    private static final String FROM_ADDRESS = ApiKey.GMAIL;
 
+    @Transactional
     public MailDTO createMailAndChangePassword(String email, String id) {
-        String str = getTempPassword();
+        String tempPw = TempPassword.makeRandomPw(8);
         MailDTO dto = new MailDTO();
         dto.setAddress(email);
         dto.setTitle(id + "님의 임시 비밀번호 안내 이메일 입니다.");
-        dto.setMessage("안녕하세요. 임시 비밀번호 안내 관련 이메일입니다." + "[" + id + "}" + "님의 " + str + "입니다.");
-        updatePassword(str, email);
+        dto.setMessage("안녕하세요. 임시 비밀번호 안내 관련 이메일입니다." + "[" + id + "]" + "님의 " + tempPw + "입니다.");
+        userService.updateUserPassword(id, tempPw);
         return dto;
     }
 
-    public void updatePassword(String str, String email) {
-        String pw = bCryptPasswordEncoder.encode(str);
-        userService.updateUserPassword(email, pw); // updateUserPassword 메서드 사용하여 비밀번호 업데이트
-    }
+//    public String getTempPassword(){
+//        char[] charSet = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+//                'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+//
+//        String str = "";
+//
+//        int idx = 0;
+//        for (int i = 0; i < 10; i++) {
+//            idx = (int) (charSet.length * Math.random());
+//            str += charSet[idx];
+//        }
+//        return str;
+//
+//    }
 
-    public String getTempPassword(){
-        char[] charSet = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
-                'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-
-        String str = "";
-
-        int idx = 0;
-        for (int i = 0; i < 10; i++) {
-            idx = (int) (charSet.length * Math.random());
-            str += charSet[idx];
-        }
-        return str;
-
-    }
-
-    // STMP mailSend
+//    STMP mailSend
     public void mailSend(MailDTO mailDto){
         System.out.println("이멜 전송 완료!");
         Map<String, String> mailInfo = new HashMap<>();

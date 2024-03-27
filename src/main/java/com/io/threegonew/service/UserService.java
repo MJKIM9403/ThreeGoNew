@@ -18,9 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    @Autowired
     private final UserRepository userRepository;
-    @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> findAll(){
@@ -86,18 +84,18 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 
-//    회원 수정 업데이트 처리.
-@Transactional
-public void modifyUserProfile(String userId, String name, String about) {
-    // userId를 사용하여 사용자 정보를 조회합니다.
-    User user = userRepository.findById(userId).orElseThrow(() ->
-            new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
-    user.update(name, about);
-}
+    //    회원 수정 업데이트 처리.
+    @Transactional
+    public void modifyUserProfile(String userId, String name, String about) {
+        // userId를 사용하여 사용자 정보를 조회합니다.
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
+        user.update(name, about);
+    }
 
+    @Transactional
     public void resetPassword(User modifyUser, String password){
-        modifyUser.setPw(bCryptPasswordEncoder.encode(password));
-        this.userRepository.save(modifyUser);
+        modifyUser.updatePw(bCryptPasswordEncoder.encode(password));
     }
 
     public boolean isSamePassword(User user, String password){
@@ -111,11 +109,10 @@ public void modifyUserProfile(String userId, String name, String about) {
         return userOptional.isPresent() && userOptional.get().getId().equals(userId);
     }
 
+    @Transactional
     public void updateUserPassword(String id, String newPw) {
-        userRepository.findById(id).ifPresent(user -> {
-            user.setPw(bCryptPasswordEncoder.encode(newPw));
-            userRepository.save(user);
-        });
+        userRepository.findById(id).ifPresent(user ->
+            user.updatePw(bCryptPasswordEncoder.encode(newPw)));
     }
 
 
