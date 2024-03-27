@@ -2,6 +2,7 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
+import com.io.threegonew.repository.TeamRepository;
 import com.io.threegonew.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class PlanController {
     private final TourItemContentService tourItemContentService;
     private final HttpSession httpSession;
     private final TeamService teamService;
+    private final TeamRepository teamRepository;
+    private final PlannerService plannerService;
 
     @PostMapping("/api/search")
     public String searchTourItems(@RequestBody TourItemSelectRequest request, Model model) {
@@ -235,16 +238,57 @@ public class PlanController {
             planList.add(plan.getTourItem());
         }
 
+        // 사용자의 아이디와 동일한 Planner가 있는지 확인
+        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+
+        // 사용자가 해당 플래너를 작성한 사람인지 확인
+        boolean exists = plannerService.isUserPlannerOwner(userId, plannerId);
+
+        // 내가 작성한 plannerList
+        if(!userId.equals("anonymousUser")) {
+            model.addAttribute("plannerList", plannerList);
+        } else {
+            model.addAttribute("plannerList", new ArrayList<Planner>());
+        }
+
+
+
+
+        // 게스트+호스트 조회
+        List<User> memberList = teamService.getAllMembersOfPlanner(plannerId);
+
+        // 게스트 리스트 조회
         List<User> guestList = teamService.getGuestsOfPlanner(plannerId);
+
+        // 전체 팀 리스트 조회
+        List<Team> teamList = teamRepository.findByPlannerPlannerId(plannerId);
+
+
+        // 팀 리스트중에 로그인한 유저와 아이디가 같다면 팀 멤버 개인을 모델에 넣어 전달
+        for(Team teamMember: teamList) {
+            if(teamMember.getUser().getId().equals(userId)) {
+                model.addAttribute("teamMember",teamMember);
+            }
+        }
 
         // 모델에 groupedPlans와 Plan과 TourItem 정보를 넣어서 view로 전달
         model.addAttribute("userId", userId);
         model.addAttribute("plans", plans);
         model.addAttribute("plannerId", plannerId);
-        model.addAttribute("planList", planList);
         model.addAttribute("maxDay", maxDay);
         model.addAttribute("guestList", guestList);
+        model.addAttribute("teamList", teamList);
+        model.addAttribute("exists", exists);
 
+        // 접근권한 확인하고 없으면 login 페이지로 돌리기
+//        if(!teamService.hasAccessToPlanner(userId, plannerId)) {
+//            return "redirect:/login";
+//        }
+
+        // 로그인 안되어있으면 login 페이지로 돌리기
+        if(userId.equals("anonymousUser")) {
+            return "redirect:/login";
+        }
 
         return "plan/showplan";
     }

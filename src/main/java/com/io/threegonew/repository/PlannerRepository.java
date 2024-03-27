@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface PlannerRepository extends JpaRepository<Planner, Long> {
 
+    boolean existsByUserIdAndPlannerId(String userId, Long plannerId);
     Optional<Planner> findByPlannerId(Long plannerId);
 
     List<Planner> findByUserId(String userId);
