@@ -46,6 +46,9 @@
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #dee2e6;
+            flex-direction: row;
+            display: flex;
+            justify-content: space-between;
         }
 
         .info {
@@ -84,7 +87,7 @@
             width: 100%;
         }
 
-        #new-planner-btn {
+        #open-share-btn {
             bottom: 5%;
             right: 5%;
         }
@@ -94,13 +97,13 @@
             right: 10px;
         }
 
-        .delete-user-btn {
+        .delete-user-btn, .delete-list-btn {
             background: #808080;
             padding: 0;
             border: none;
             color: #fff;
         }
-        .delete-user-btn:hover {
+        .delete-user-btn:hover, .delete-list-btn:hover {
             background-color: #808080;
             color: #fff;
         }
@@ -109,11 +112,29 @@
             display: flex;
             gap: 0.5rem;
         }
+        .touritem-img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .grant {
+            background: #808080;
+            color: #fff;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
 <script th:inline="javascript">
+    // 로그인 된 나의 아이디
+    var myId = [[${userId}]];
+
+    // 플래너의 ID
+    var plannerId = [[${plannerId}]];
+
     // 날짜
     var days = [[${maxDay}]];
 
@@ -156,12 +177,18 @@
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
-
-    //
+    // 검색창에 입력한 아이디
     let typedText = "";
+
+    // 로드된 plannerId를 작성한 유저가 지금 로그인한 유저가 맞는지
+    let isWriter = [[${exists}]];
 
     // 검색을 위한 변수
     var searchTimer;
+
+
+
+
 
     // 페이지 로드 시 실행되는 코드
     $(document).ready(function() {
@@ -174,11 +201,24 @@
             loadPlanForDay(day);
         });
 
+        openModal();
         searchUser();
         share();
-        deleteUser();
+        deleteList();
         hideModal();
+        deleteGuest();
     });
+
+    // 공유하기 모달창 열기
+    function openModal() {
+        $('#open-share-btn').click(function () {
+            if(isWriter == false){
+                alert("플랜을 작성한 사람만 공유할 수 있습니다.")
+            } else {
+                $('#shareModal').modal('show');
+            }
+        })
+    }
 
     function searchUser() {
         $('#searchInput').on('keyup', function () {
@@ -196,34 +236,43 @@
                 type: "GET",
                 success: function (result) {
                     console.log(result);
-                    var myId = [[${userId}]]; // 로그인 된 나의 아이디
-                    var plannerId = [[${plannerId}]]; // 플래너의 ID
+
                     let button = "<button id='right-btn' class='btn btn-sm btn-outline-dark' ";
                     if (result.id == typedText) {
-                        // 이미 초대받은 게스트인지 확인
-                        $.ajax({
-                            url: "/api/checkInvitation/" + plannerId + "/" + result.id,
-                            type: "GET",
-                            success: function (response) {
-                                if (!response.invited) { // 초대되지 않은 게스트일 경우에만 버튼 추가
-                                    button += "onclick='printUser(\"" + result.id + "\")'>추가하기</button>";
-                                    $('#searchResult').append(button);
-                                } else {
-                                    alert("이미 초대된 게스트입니다.");
+                        // 나 자신은 추가할 수 없다
+                        if(result.id == myId) {
+                            alert("본인은 추가할 수 없습니다.");
+                            $('#right-btn').remove();
+                        } else {
+                            // 입력한 아이디가 내 아이디가 아니라면
+                            // 이미 초대받은 게스트인지 확인
+                            $.ajax({
+                                url: `/api/checkInvitation/${plannerId}/${result.id}`,
+                                type: "GET",
+                                success: function (response) {
+                                    if (!response.invited) { // 초대되지 않은 게스트일 경우에만 버튼 추가
+                                        button += "onclick='printUser(\"" + result.id + "\")'>추가하기</button>";
+                                        $('#searchResult').append(button);
+                                    } else {
+                                        alert("이미 초대된 게스트입니다.");
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("에러 발생:", error);
+                                    $('#right-btn').remove();
                                 }
-                            },
-                            error: function (xhr, status, error) {
-                                console.error("에러 발생:", error);
-                            }
-                        });
+                            });
+                        }
                     }
                 },
                 error: function (xhr, status, error) {
                     if (xhr.status == 404) { // 서버에서 유저 정보가 없는 경우
                         $('#typedText').text("유저정보가 없습니다.");
+                        $('#right-btn').remove();
                     } else { // 그 외의 서버 통신 오류
                         console.error("에러 발생:", error);
                         $('#typedText').text("서버와의 통신 중 문제가 발생했습니다.");
+                        $('#right-btn').remove();
                     }
                 }
             });
@@ -233,7 +282,7 @@
     function printUser(id) {
         let button = `<div>
                         <button class='btn btn-sm btn-dark user-btn' data-user-id='${id}'>${id}</button>
-                        <button class='btn delete-user-btn'>
+                        <button class='btn delete-list-btn'>
                             <i class='bi bi-x'></i>
                         </button>
                        </div>`;
@@ -241,10 +290,34 @@
         $('#resultBox').prepend(button);
     }
 
-    function deleteUser() {
-        $('#resultBox').on('click', '.delete-user-btn', function() {
+    function deleteList() {
+        $('#resultBox').on('click', '.delete-list-btn', function() {
             $(this).closest('div').remove();
         });
+    }
+
+    function deleteGuest() {
+        $('.delete-user-btn').on('click', function() {
+            const guestId = this.previousElementSibling.getAttribute('data-user-id');
+            if(confirm(`삭제하면 더 이상 일정을 공유할 수 없게 됩니다. 정말 ${guestId} 님을 초대받은 친구에서 삭제하시겠습니까?`)) {
+                $.ajax({
+                    url: `/api/removeGuest/${plannerId}/${guestId}`,
+                    type: 'DELETE',
+                    data: {
+                        plannerId: plannerId,
+                        guestId: guestId
+                    },
+                    success: function (response) {
+                        alert(`초대받은 친구에서 ${guestId}님이 성공적으로 삭제되었습니다.`);
+                        $('#shareModal').modal('hide');
+                        location.reload(); // 페이지를 새로고침하여 변경사항 반영
+                    },
+                    error: function(xhr, status, error) {
+                        alert("오류가 발생했습니다:" + error);
+                    }
+                })
+            }
+        })
     }
 
 
@@ -278,7 +351,7 @@
                     success: function (response) { // 요청 성공 시 수행할 함수
                         alert('초대가 성공적으로 완료되었습니다.');
                         $('#shareModal').modal('hide');
-                        // hideModal();
+                        location.reload();
                     },
                     error: function (xhr, status, error) { // 요청 실패 시 수행할 함수
                         alert('초대 과정에서 오류가 발생했습니다: ' + error);
@@ -357,14 +430,17 @@
                                 <div class="timeline" data-pid="${plan.plannerId}">
                                     <div class="outer planContainer">
                                         <div>
-                                            <a href="" class="list-group-item list-group-item-action" aria-current="true">
+                                            <a href="/info/content/${dto.contentid}" class="list-group-item list-group-item-action" aria-current="true">
                                                 <div class="content">
                                                     <div class="info">
                                                         <h5 class="mb-1 title">${dto.title}</h5>
-                                                        <p class="mb-1">${dto.contentid}</p>
+                                                        <p class="mb-1">${dto.address}</p>
                                                         <p class="mb-1">${dto.fullCategoryName}</p>
                                                         <input type="hidden" value="${dto.mapx}">
                                                         <input type="hidden" value="${dto.mapy}">
+                                                    </div>
+                                                    <div class="img">
+                                                        <img class="touritem-img" src="${dto.firstimage}">
                                                     </div>
                                                 </div>
                                             </a>
@@ -797,6 +873,24 @@
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <div class="container mt-5">
+        <div class="d-flex flex-row gap-2">
+            <th:block th:each="member, idx : ${teamList}">
+                <div th:if="${member.teamLevel == 9}">
+                    <a th:href="@{/mypage/{userId}(userId=${member.user.id})}">
+                        <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></button>
+                        <div class="grant rounded-pill d-flex justify-content-center">host</div>
+                    </a>
+                </div>
+                <div th:if="${member.teamLevel == 0}">
+                    <a th:href="@{/mypage/{userId}(userId=${member.user.id})}">
+                        <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></button>
+                        <div class="grant rounded-pill d-flex justify-content-center">guest</div>
+                    </a>
+                </div>
+            </th:block>
+        </div>
+
+        <p class="team-list" th:title="${teamList}"></p>
         <div id="map" class="d-flex flex-column align-items-stretch default">
             <div class="map-result position-absolute">
                 <p class="result"></p>
@@ -813,7 +907,7 @@
             <div id="list">
                 <div id="day-btns">
                     <th:block th:each="i : ${#numbers.sequence(1, maxDay)}">
-                        <button class="btn btn-dark dayButton" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
+                        <button class="btn btn-dark dayButton active" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
                     </th:block>
                 </div>
 
@@ -837,9 +931,11 @@
                 </div>
             </div>
         </div>
-        <button type="button" id="new-planner-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shareModal">
+
+        <button type="button" id="open-share-btn" class="position-fixed rounded-pill btn btn-outline-primary">
             <i class="bi bi-share-fill"></i>
         </button>
+
     </div>
 
 

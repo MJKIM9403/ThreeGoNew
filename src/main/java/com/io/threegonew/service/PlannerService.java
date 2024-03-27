@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,10 @@ public class PlannerService {
 //        return plannerShareRepository.existsByPlannerAndUser(planner, user);
 //    }
 
-
+    // 특정 유저가 특정 플래너를 작성했는지 확인하는 메서드
+    public boolean isUserPlannerOwner(String userId, Long plannerId) {
+        return plannerRepository.existsByUserIdAndPlannerId(userId, plannerId);
+    }
 
     public Planner findPlanner(Long plannerId) {
         return plannerRepository.findById(plannerId)
@@ -46,6 +50,7 @@ public class PlannerService {
         List<PlannerResponse> plannerResponseList =
                 plannerRepository.findByUserId(userId).stream()
                         .map(planner -> modelMapper.map(planner, PlannerResponse.class))
+                        .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
                         .collect(Collectors.toList());
         return plannerResponseList;
     }

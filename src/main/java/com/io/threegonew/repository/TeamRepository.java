@@ -13,7 +13,10 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     List<Team> findByPlannerPlannerId(Long PlannerId);
 
-    // 일단은 host를 반환하는데 씁니다
     Optional<Team> findByPlannerAndUserAndTeamLevel(Planner planner, User user, Integer teamLevel);
+
+    // 접근 권한 확인하기
+    Optional<Team> findByPlannerPlannerIdAndUserId(Long plannerId, String userId);
+
 
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +23,12 @@ public class TeamService {
     private final PlannerRepository plannerRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+
+    // 플래너에 접근권한 확인하기
+    public boolean hasAccessToPlanner(String userId, Long plannerId) {
+        return teamRepository.findByPlannerPlannerIdAndUserId(plannerId, userId).isPresent();
+    }
+
 
     // 특정 Planner를 다른 유저와 공유
     public void sharePlanner(Long plannerId, String hostId, List<String> guests) {
@@ -67,8 +74,21 @@ public class TeamService {
                         // 게스트인 경우만 필터링
                         .filter(team -> team.getTeamLevel() == 0) // 게스트인 경우만 필터링
                         .map(team -> modelMapper.map(team.getPlanner(), PlannerResponse.class))
+                        .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
                         .collect(Collectors.toList());
         return sharedPlannerResponseList;
+    }
+
+    // 특정 플래너의 멤버들을 전부 조회합니다.
+    public List<User> getAllMembersOfPlanner(Long plannerId) {
+        // 특정 플래너에 속한 모든 팀 멤버를 조회합니다.
+        List<Team> teamMembers = teamRepository.findByPlannerPlannerId(plannerId);
+        // 호스트를 필터링 하여 호스트를 제외한 게스트들만 선택합니다.
+        List<User> teamList = teamMembers.stream()
+                .map(Team::getUser) // 사용자로 매핑
+                .collect(Collectors.toList());
+
+        return teamList;
     }
 
     // 특정 플래너의 게스트들을 조회합니다.
@@ -85,6 +105,7 @@ public class TeamService {
         return guests;
     }
 
+    // 특정 플래너의 호스트를 조회합니다.
     public Optional<User> getHostOfPlanner(Long plannerId) {
         // 특정 플래너에 대한 모든 팀 멤버를 조회합니다.
         List<Team> teamMembers = teamRepository.findByPlannerPlannerId(plannerId);
@@ -98,11 +119,35 @@ public class TeamService {
         return host;
     }
 
+
+
+
+    // 특정 게스트가 특정 플래너에 이미 초대되었는지 확인합니다.
     public boolean isGuestAlreadyInvited(Long plannerId, String guestId) {
         List<User> guests = getGuestsOfPlanner(plannerId);
         return guests.stream().anyMatch(guest -> guest.getId().equals(guestId));
     }
 
+    // 특정 게스트를 삭제합니다.
+    public void removeGuestFromPlanner(Long plannerId, String guestId) {
+        // 플래너 조회
+        Planner planner = plannerRepository.findById(plannerId)
+                .orElseThrow(() -> new RuntimeException("Planner not found"));
+
+        // 게스트(유저) 조회
+        User guest = userRepository.findById(guestId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 특정 플래너와 특정 게스트가 존재하는지 조회
+        Optional<Team> teamOptional = teamRepository.findByPlannerAndUserAndTeamLevel(planner, guest, 0);
+
+        if (teamOptional.isPresent()) {
+            // 존재하면 삭제
+            teamRepository.delete(teamOptional.get());
+        } else {
+            throw new RuntimeException("Guest not part of the planner");
+        }
+    }
 
 // 이전에 썼던거 밀고 다시 짭니다..
 //    @Transactional

@@ -45,10 +45,28 @@ public class MyPlanApiController {
     @PostMapping("/sharePlanner")
     public ResponseEntity<?> sharePlanner(@RequestBody SharePlannerRequest request) {
         try {
-            teamService.sharePlanner(request.getPlannerId(), request.getOwnerId(), request.getSharedWithUserIds());
-            return ResponseEntity.ok().body("플래너가 성공적으로 공유되었습니다.");
+            boolean isWriter = plannerService.isUserPlannerOwner(request.getOwnerId(), request.getPlannerId());
+            if(isWriter == true) {
+                teamService.sharePlanner(request.getPlannerId(), request.getOwnerId(), request.getSharedWithUserIds());
+                return ResponseEntity.ok().body("플래너가 성공적으로 공유되었습니다.");
+            } else {
+                return ResponseEntity.badRequest().body("플래너는 작성자만 공유할 수 있습니다.");
+            }
+
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("플래너 공유 실패: " + e.getMessage());
+        }
+    }
+
+    // 플래너에서 게스트 삭제하기
+    @DeleteMapping("/removeGuest/{plannerId}/{guestId}")
+    public ResponseEntity<?> removeGuestFromPlanner(@PathVariable Long plannerId, @PathVariable String guestId) {
+        try {
+            teamService.removeGuestFromPlanner(plannerId, guestId);
+            return ResponseEntity.ok().body(Map.of("success", true));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 }
