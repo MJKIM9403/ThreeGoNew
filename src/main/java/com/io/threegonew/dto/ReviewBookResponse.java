@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewBookResponse {
     private Long bookId;
-    private User user;
-    private Planner planner;
+    private UserInfoResponse user;
+    private PlannerResponse planner;
     private String bookTitle;
     private String bookContent;
     private String coverOfile;

@@ -50,18 +50,56 @@
         padding: 0 !important;
         height: 100%;
     }
+    .delete-img-btn {
+        position: absolute;
+        top: 5%;
+        right: 5%;
+    }
+    .add-file {
+        position: absolute;
+        bottom: 5%;
+        right: 5%;
+        z-index: 100;
+    }
+    #img-uploader {
+        display: none;
+    }
 
     .icon-img {
         width: 35px;
         height: 35px;
+    }
+    .uploader {
+        padding: 10px;
+        color: #136DF8;
+        cursor: pointer;
+    }
+    .uploader:hover {
+        background-color: #136DF8;
+        color: #FFFFFF;
+        transition: all 0.2s;
+    }
+    .select-hint{
+        display: none;
     }
 
     .comment-profile{
         width: 25px;
         height: 25px;
     }
+    #review-contents {
+        height: 380px;
+        resize: none;
+    }
+    #create-book-btn{
+        --bs-btn-padding-y: 0.25rem;
+        --bs-btn-padding-x: 0.5rem;
+        --bs-btn-font-size: 0.875rem;
+        --bs-btn-border-radius: 0.25rem;
+    }
 
-    #new-post-btn {
+    #new-review-btn,
+    #new-book-btn {
         bottom: 5%;
         right: 5%;
     }
@@ -245,6 +283,7 @@
         <div id="load-point"></div>
         <div class="loader"></div>
     </div>
+    <!-- 리뷰 상세 조회 폼 -->
     <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -268,7 +307,7 @@
                                 <i class="fa-solid fa-location-dot"></i>
                                 <span id="touritem-name">관광지 이름</span>
                             </div>
-                            <div class="swiper mySwiper">
+                            <div class="swiper viewSwiper">
                                 <div class="swiper-wrapper">
                                     <div class="swiper-slide">사진을 추가해주세요.</div>
                                 </div>
@@ -330,8 +369,111 @@
             </div>
         </div>
     </div>
-    <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
-        <i class="bi bi-plus-lg"></i>
+
+    <!-- 리뷰 작성 폼 -->
+    <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="selectBookLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="selectBookLabel">리뷰북 선택</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1" value="1">
+                        <label class="form-check-label" for="selectReviewBook1">
+                            새 리뷰북 생성 <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1" onclick="createBook()">생성</button>
+                            <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example" onchange="writeBookTitle()">
+                                <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
+                            </select>
+                            <input id="new-book-title" class="book-input form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2" value="2">
+                        <label class="form-check-label" for="selectReviewBook2">
+                            기존 리뷰북에 추가
+                            <select id="exist-book-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example">
+                                <option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3" value="3">
+                        <label class="book-input form-check-label" for="selectReviewBook3">
+                            리뷰북을 선택하지 않고 리뷰 작성
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="goEdit()">다음</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editorLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="preview-container col-md-7">
+                            <div class="add-file">
+                                <label for="img-uploader" class="uploader border border-primary rounded-pill">사진 추가</label>
+                                <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()" multiple/>
+                            </div>
+                            <div class="swiper editSwiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">사진을 추가해주세요.</div>
+                                </div>
+                                <div class="swiper-controller">
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center">
+                            <div class="modal-body">
+                                <div class="mb-2">
+                                    <label for="selected-review-book" class="form-label">리뷰북</label>
+                                    <input type="text" class="form-control form-control-sm" id="selected-review-book" readonly>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="select-touritem-info" class="form-label">관광지 정보 불러오기</label>
+                                    <select class="form-select form-select-sm" id="select-touritem-info" onchange="selectTouritem()">
+                                        <option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
+                                        <option value="direct">직접 입력</option>
+                                        <option value="contentid1">집가기</option>
+                                        <option value="contentid2">밥먹기</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="selected-touritem-name" class="form-label">관광지 이름 작성</label>
+                                    <input type="text" class="form-control form-control-sm" id="selected-touritem-name" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="review-contents" class="form-label">본문</label>
+                                    <textarea class="form-control form-control-sm" id="review-contents"></textarea>
+                                </div>
+                                <div class="editor-btn-group d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#select-book">이전</button>
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="createPost()">완료</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="new-review-btn" class="create-btn position-fixed rounded-pill btn btn-outline-primary">
+        <i class="bi bi-vector-pen"></i>
+    </button>
+    <button type="button" id="new-book-btn" class="create-btn position-fixed rounded-pill btn btn-outline-primary">
+        <i class="bi bi-book"></i>
     </button>
 
     <!-- End of container -->
@@ -340,7 +482,7 @@
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
 
     // swiper 설정
-    var swiper = new Swiper(".mySwiper", {
+    var viewSwiper = new Swiper(".viewSwiper", {
         observer: true,
         observeParents: true,
         navigation: {
@@ -356,12 +498,30 @@
     function openViewer(reviewId) {
         let loginUserName = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]]
         let loginUserProfile = [[${loginUser.profileImg}]]
-        $('#viewer').modal('show');
-        $('#login-user-name').text(loginUserName);
-        if(loginUserProfile != null){
-            $('#login-user-profile-img').attr('src','/api/review-photo/' + loginUserProfile);
-        }
-        loadDetailReview(reviewId);
+        let promise = new Promise((resolve) => {
+            $.ajax({
+                url : '/api/review/view_count',
+                type : 'PUT',
+                data : {
+                    reviewId : reviewId
+                },
+                success : function (viewCount) {
+                    console.log(viewCount);
+                    resolve();
+                },
+                error : function (err) {
+                    console.log(err)
+                }
+            })
+        });
+        promise.then(() => {
+            $('#viewer').modal('show');
+            $('#login-user-name').text(loginUserName);
+            if(loginUserProfile != null){
+                $('#login-user-profile-img').attr('src','/api/review-photo/' + loginUserProfile);
+            }
+            loadDetailReview(reviewId)
+        });
     }
     function loadDetailReview(reviewId){
         $.ajax({
@@ -409,14 +569,14 @@
                     const tempHtml = `<div class="swiper-slide">` +
                         `<img class="preview-img" data-file-id="${photo.fileId}" src="/api/review-photo/${photo.filePath}" style="object-fit: contain"/>` +
                         `</div>`;
-                    swiper.appendSlide(tempHtml);
-                    swiper.update();
+                    viewSwiper.appendSlide(tempHtml);
+                    viewSwiper.update();
                 }
                 let fileLength = savedFile.length;
                 if(fileLength > 1){
-                    $('.swiper-controller').show()
+                    $('.viewSwiper .swiper-controller').show()
                 }else {
-                    $('.swiper-controller').hide()
+                    $('.viewSwiper .swiper-controller').hide()
                 };
             },
             error : function (){
@@ -490,14 +650,363 @@
         }
     }
 
-    $('#new-post-btn').mouseenter(function (){
+    $('#new-review-btn').mouseenter(function (){
         let tempHtml = "<span>리뷰 작성</span>";
-        $('#new-post-btn').append(tempHtml)
+        $('#new-review-btn').append(tempHtml)
     })
 
-    $('#new-post-btn').mouseleave(function (){
-        $('#new-post-btn span').remove()
+    $('#new-review-btn').mouseleave(function (){
+        $('#new-review-btn span').remove()
     })
+
+    $('#new-book-btn').mouseenter(function (){
+        let tempHtml = "<span>리뷰북 작성</span>";
+        $('#new-book-btn').append(tempHtml)
+    })
+
+    $('#new-book-btn').mouseleave(function (){
+        $('#new-book-btn span').remove()
+    })
+
+</script>
+
+<!--리뷰 작성 관련 설정-->
+<script th:inline="javascript">
+    let createBookFlag = false;
+    let selectedReviewBook;
+    let selectedBookId;
+    const fileInput = $('#img-uploader')[0];
+    const images = [];
+
+    var editSwiper = new Swiper(".editSwiper", {
+        observer: true,
+        observeParents: true,
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
+        mousewheel: true,
+        keyboard: true,
+    });
+
+
+
+    $('#new-review-btn').click(function () {
+        editorReset();
+        let login = [[${loginUser.id}]];
+        if(login === "anonymousUser"){
+            alert("리뷰는 로그인 후 작성할 수 있습니다.")
+        }else {
+            showSelectList();
+            $('#select-book').modal('show');
+        }
+    })
+
+    function editorReset() {
+        //사진 미리보기 초기화
+        images.length = 0;
+        fileInput.files.length = 0;
+        $('.swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
+        $('.uploader').show()
+        // 리뷰북 선택 정보 초기화
+        createBookFlag = false;
+        $('input:radio[name=selectReviewBook]').prop('checked', false);
+        $('#new-book-item-select').html('<option value="hint" class="select-hint" disabled selected>리뷰북에 기록할 여행정보를 선택하세요.</option>');
+        $('#new-book-title').val('');
+        $('#exist-book-select').html('<option value="hint" class="select-hint" disabled selected>리뷰를 작성할 리뷰북을 선택하세요.</option>');
+        // 에디터 내용 초기화
+        selectedReviewBook = null;
+        selectedBookId = null;
+        $('.book-input').attr('disabled', true);
+        $('#selected-review-book').val('');
+        $('#select-touritem-info').html(
+            '<option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>' +
+            '<option value="direct">직접 입력</option>'
+        );
+        $('#selected-touritem-name').val('');
+        $('#review-contents').val('');
+    }
+
+    function showSelectList(){
+        $.ajax({
+            url : '/api/review/show_list',
+            type : 'GET',
+            contentType : 'application/json; charset=UTF-8',
+            success : function (result) {
+                const plannerList = result.plannerList;
+                const reviewBookList = result.reviewBookList;
+
+                if(plannerList.length > 0){
+                    for(let planner of plannerList){
+                        let template = `<option value=${planner.plannerId}>${planner.plannerName}</option>`;
+                        $('#new-book-item-select').append(template)
+                    }
+                }else {
+                    let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
+                    $('#new-book-item-select').append(template)
+                }
+
+                if(reviewBookList.length > 0){
+                    for(let reviewBook of reviewBookList){
+                        let template = `<option value=${reviewBook.bookId}>${reviewBook.bookTitle}</option>`;
+                        $('#exist-book-select').append(template)
+                    }
+                }else {
+                    let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
+                    $('#exist-book-select').append(template)
+                }
+            },
+            error : function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    function selectBook() {
+        $("input:radio[name=selectReviewBook]").click(function (){
+            let select = Number($("input[name=selectReviewBook]:checked").val());
+            $(".book-input").attr('disabled', true);
+            switch (select){
+                case 1:
+                    $("#new-book-item-select").attr('disabled',false);
+                    if($("#new-book-item-select option:selected").val() != "hint"){
+                        writeBookTitle()
+                    }
+                    break;
+                case 2:
+                    $("#exist-book-select").attr('disabled',false);
+                    break;
+            }
+        })
+    }
+
+    function writeBookTitle() {
+        createBookFlag = false;
+        $("#new-book-title").attr('disabled',false);
+    }
+
+
+    function goEdit(){
+        let select = $("input[name=selectReviewBook]:checked").val();
+        if(select == undefined){
+            alert("리뷰북 설정을 완료해주세요.");
+        }else {
+            switch (Number(select)){
+                case 1:
+                    if($("#new-book-item-select option:selected").val() == 'hint'){
+                        alert("리뷰북에 기록할 여행정보를 선택해주세요.")
+                    }else if($("#new-book-title").val() == ''){
+                        alert("생성할 리뷰북의 제목을 입력해주세요.")
+                    }else if(!createBookFlag){
+                        alert("생성 버튼을 눌러 리뷰북을 생성해주세요.")
+                    }else {
+                        selectedReviewBook = $("#new-book-title").val();
+                        AddPlanList();
+                    }
+                    break;
+                case 2:
+                    if($("#exist-book-select option:selected").val() == 'hint'){
+                        alert("리뷰를 작성할 리뷰북을 선택해주세요.")
+                    }else {
+                        selectedBookId = $('#exist-book-select option:selected').val();
+                        selectedReviewBook = $("#exist-book-select option:checked").text();
+                        AddPlanList();
+                    }
+                    break;
+                case 3:
+                    selectedReviewBook = "선택하지 않음";
+                    $('#selected-review-book').val(selectedReviewBook);
+                    $('#select-book, #editor').modal('toggle');
+                    break;
+            }
+        }
+    }
+
+    function createBook(){
+        $.ajax({
+            url : '/book/create',
+            type : 'POST',
+            data : JSON.stringify({
+                userId : [[${loginUser.id}]],
+                plannerId : $("#new-book-item-select option:selected").val(),
+                bookTitle : $("#new-book-title").val()
+            }),
+            contentType : 'application/json; charset=UTF-8',
+            success : function (createdBookId) {
+                createBookFlag = true;
+                selectedBookId = createdBookId;
+                let title = $("#new-book-title").val();
+                alert(`[${title}] 리뷰북이 생성되었습니다.`);
+            },
+            error : function (err) {
+                alert("리뷰북 생성에 실패하였습니다.");
+                console.log(err);
+            }
+        })
+    }
+
+    function AddPlanList(){
+        let promise = new Promise((resolve) => {
+            $.ajax({
+                url : '/api/review/show_plan',
+                type : 'GET',
+                data : {
+                    bookId : selectedBookId
+                },
+                contentType : 'application/json; charset=UTF-8',
+                success : function (result) {
+                    const planList = result.planList;
+                    for(let plan of planList){
+                        let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
+                        $('#select-touritem-info').append(template);
+                    }
+                    resolve();
+                },
+                error : function (err) {
+                    console.log(err);
+                }
+            })
+        })
+
+        promise.then(() => {
+            $('#selected-review-book').val(selectedReviewBook);
+            $('#select-book, #editor').modal('toggle');
+        })
+    }
+
+    function selectTouritem(){
+        let item = $('#select-touritem-info option:selected');
+        let title = item.text();
+        if(title !== '직접 입력'){
+            let startTitleIdx = title.indexOf(']') +2;
+            title = title.substring(startTitleIdx);
+        }
+        let titleInput = $('#selected-touritem-name');
+        titleInput.attr('disabled',false);
+        titleInput.val(title)
+    }
+
+    function createPost(){
+        if(images.length < 1){
+            alert("사진을 반드시 한 장 이상 첨부해주세요.")
+        }else if($('#select-touritem-info option:selected').val() === 'hint'){
+            alert("관광지 정보를 선택해주세요.")
+        }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
+            alert('관광지 이름을 작성해주세요.')
+        }else if($('#review-contents').val() === ''){
+            alert('본문 내용을 입력해주세요.')
+        }else {
+            saveReview();
+            $('#editor').modal('hide');
+        }
+    }
+
+    function saveReview(){
+        let formData = new FormData();
+        let loginUser = [[${loginUser.id}]]
+        let touritemId = $('#select-touritem-info option:selected').val();
+
+        if(selectedBookId !== null) formData.append("bookId", selectedBookId);
+        formData.append("userId", `${loginUser}`);
+        if(touritemId !== 'direct') formData.append("touritemId", touritemId);
+        formData.append("touritemTitle", $('#selected-touritem-name').val());
+        formData.append("reviewContent", $('#review-contents').val());
+
+        for(let image of images){
+            formData.append("photoList", image);
+        }
+
+        console.log(formData)
+
+        $.ajax({
+            url : '/api/review/create',
+            type : 'POST',
+            data : formData,
+            processData : false,
+            contentType : false,
+            success : function (response) {
+                alert("리뷰를 등록하였습니다.")
+                changeTab('REVIEW');
+            },
+            error : function (err) {
+                alert("리뷰 등록에 실패했습니다.")
+            }
+        })
+    }
+
+    function setPreview(){
+        let files = fileInput.files;
+        if(files.length + images.length > 4){
+            files.length = 0;
+            alert("사진은 4장까지 첨부할 수 있습니다.")
+        }else {
+            if(files.length > 0 && images.length === 0) {
+                $('.swiper-wrapper').html("");
+            }
+            if(files.length > 0){
+                for (let file of files) {
+                    images.push(file);
+
+                    let reader = new FileReader();
+
+                    reader.onload = function(data) {
+                        const tempHtml = `<div class="swiper-slide">` +
+                            `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
+                            `<i class="bi bi-x-lg"></i>` +
+                            `</button>` +
+                            `<img class="preview-img" src="${data.target.result}" style="object-fit: contain" onload="goLastSlide()"/>` +
+                            `</div>`;
+                        editSwiper.appendSlide(tempHtml);
+                        editSwiper.update();
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+            if(images.length > 1){
+                $('.editSwiper .swiper-controller').show()
+            }else {
+                $('.editSwiper .swiper-controller').hide()
+            }
+            if(images.length >= 4){
+                $('.uploader').hide()
+            }
+        }
+    }
+
+    function goLastSlide() {
+        editSwiper.slideTo(images.length-1,300,false);
+    }
+
+    function deleteImg() {
+        $(document).on('click','.delete-img-btn',function () {
+            let idx = $(".delete-img-btn").index(this);
+            editSwiper.slideTo(idx-1,300,false);
+            editSwiper.removeSlide(idx);
+            editSwiper.update();
+            editSwiper.splice(idx,1);
+
+            if(images.length > 1){
+                $('.editSwiper .swiper-controller').show()
+            }else {
+                $('.editSwiper .swiper-controller').hide()
+            };
+
+            if(images.length === 0){
+                const tempHtml = `<div class="swiper-slide">` +
+                    `사진을 추가해주세요.` +
+                    `</div>`;
+                editSwiper.appendSlide(tempHtml);
+                editSwiper.update();
+            }
+            if($('.uploader').css('display') === 'none' && images.length < 4){
+                $('.uploader').show()
+            }
+        })
+    }
 </script>
 
 <script th:inline="javascript">
@@ -508,11 +1017,21 @@
     let tabType = "REVIEW"; // 화면에 보여줄 탭
     let back = false;
     $(document).ready(function (){
+        /*무한스크롤 & 페이지 로드 설정*/
         gallery.html("")
         observer.observe(document.getElementById('load-point'));
         $('#load-point').hide(); // 옵저버 관측 타이밍을 컨트롤하기 위해 hide
         loadPage();
+        /* 리뷰 상세 조회 관련 설정 */
         $('.swiper-controller').hide();
+        /* 새 글 작성 버튼 관련 설정 */
+        $('.create-btn').hide();
+        if([[${findUser.id == loginUser.id}]]){
+            $('#new-review-btn').show()
+        }
+        /* 리뷰 작성 관련 설정 */
+        selectBook();
+        deleteImg();
     })
 
     const observer = new IntersectionObserver((entries, observer) => {
@@ -543,6 +1062,17 @@
         scrollCheck = false;
         firstLoad = true;
         back = false;
+        if([[${findUser.id == loginUser.id}]]){
+            $('.create-btn').hide();
+            switch (tabType){
+                case 'REVIEW':
+                    $('#new-review-btn').show();
+                    break;
+                case 'REVIEWBOOK':
+                    $('#new-book-btn').show();
+                    break;
+            }
+        }
         gallery.html("")
         // 옵저버 타겟 관측 시작
         observer.observe(document.getElementById('load-point'));
@@ -553,9 +1083,7 @@
     function showBookmark() {
         let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
-        if(firstLoad){
-            firstLoad = false;
-        }else {
+        if(!firstLoad){
             scrollPage += 1;
         }
         if(firstLoad || back) {
@@ -573,30 +1101,41 @@
             async: false,
             success : function (response) {
                 let bookmarkList = response.pageResponse.dtoList;
-                // 로더를 일정시간 이상 노출하기 위한 setTimeout
-                setTimeout(() => {
+
+                if(firstLoad && bookmarkList.length <= 0){
+                    firstLoad = false;
                     $(".loader").hide()
-                    $.each(bookmarkList, function (index, bookmark){
-                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
-                            `<a href="/info/content/${bookmark.contentid}">` +
-                            `<img src="${bookmark.firstimage}"` +
-                            `class="gallery-image" alt="">` +
-                            `<div class="gallery-item-info d-flex">` +
-                            `<div class="bookmark-info-wrap">` +
-                            `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
-                            `<div class="bookmark-title"><strong>${bookmark.title}</strong></div>` +
-                            `<div class="bookmark-address">${bookmark.address}</div>` +
-                            `</div>` +
-                            `</div>` +
-                            `</a>` +
-                            `</div>`
-                        gallery.append(tempHtml).trigger("create")
-                    })
-                    window.scrollTo({top: loadScroll, behavior: "instant"});
-                }, time)
-                if(bookmarkList.length < 12){
-                    // 다음페이지가 없다면 관측을 종료
-                    observer.unobserve(document.getElementById('load-point'));
+                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                                    '<h4>등록된 북마크가 없습니다.</h4>' +
+                                    '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    firstLoad = false;
+                    // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                    setTimeout(() => {
+                        $(".loader").hide()
+                        $.each(bookmarkList, function (index, bookmark){
+                            let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
+                                `<a href="/info/content/${bookmark.contentid}">` +
+                                `<img src="${bookmark.firstimage}"` +
+                                `class="gallery-image" alt="">` +
+                                `<div class="gallery-item-info d-flex">` +
+                                `<div class="bookmark-info-wrap">` +
+                                `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
+                                `<div class="bookmark-title"><strong>${bookmark.title}</strong></div>` +
+                                `<div class="bookmark-address">${bookmark.address}</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</a>` +
+                                `</div>`
+                            gallery.append(tempHtml).trigger("create")
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(bookmarkList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
                 }
             },
             error : function (err) {
@@ -616,9 +1155,7 @@
     function showReview() {
         let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
-        if(firstLoad){
-            firstLoad = false;
-        }else {
+        if(!firstLoad){
             scrollPage += 1;
         }
         if(firstLoad || back) {
@@ -637,32 +1174,43 @@
             success : function (response) {
                 let reviewList = response.pageResponse.dtoList;
                 // 로더를 일정시간 이상 노출하기 위한 setTimeout
-                setTimeout(() => {
+
+                if(firstLoad && reviewList.length <= 0){
+                    firstLoad = false;
                     $(".loader").hide()
-                    $.each(reviewList, function (index, review){
-                        let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="openViewer(${review.reviewId})">`
-                        if(review.photoCount > 1){
-                            tempHtml += '<div class="gallery-item-type">' +
-                                '<i class="fas fa-clone" aria-hidden="true"></i>' +
-                                '</div>'
-                        }
-                        tempHtml +=
-                            `<img src="/api/review-photo/${review.firstPhoto.filePath}" class="gallery-image" alt="">` +
-                            `<div class="gallery-item-info">` +
-                            `<ul>` +
-                            `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> ${review.likeCount}</li>` +
-                            `<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> ${review.commentCount}</li>` +
-                            `</ul>` +
-                            `</div>` +
-                            `</div>` +
-                            `</div>`;
-                        gallery.append(tempHtml).trigger("create")
-                    })
-                    window.scrollTo({top: loadScroll, behavior: "instant"});
-                }, time)
-                if(reviewList.length < 12){
-                    // 다음페이지가 없다면 관측을 종료
-                    observer.unobserve(document.getElementById('load-point'));
+                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                        '<h4>등록된 리뷰가 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    setTimeout(() => {
+                        firstLoad = false;
+                        $(".loader").hide()
+                        $.each(reviewList, function (index, review){
+                            let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="openViewer(${review.reviewId})">`
+                            if(review.photoCount > 1){
+                                tempHtml += '<div class="gallery-item-type">' +
+                                    '<i class="fas fa-clone" aria-hidden="true"></i>' +
+                                    '</div>'
+                            }
+                            tempHtml +=
+                                `<img src="/api/review-photo/${review.firstPhoto.filePath}" class="gallery-image" alt="">` +
+                                `<div class="gallery-item-info">` +
+                                `<ul>` +
+                                `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> ${review.likeCount}</li>` +
+                                `<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> ${review.commentCount}</li>` +
+                                `</ul>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>`;
+                            gallery.append(tempHtml).trigger("create")
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(reviewList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
                 }
             },
             error : function (err) {

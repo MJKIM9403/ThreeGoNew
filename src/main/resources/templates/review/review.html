@@ -419,7 +419,7 @@
             </div>
         </div>
         <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
-            <i class="bi bi-send-plus"></i>
+            <i class="bi bi-vector-pen"></i>
         </button>
     </div>
 </div>
@@ -645,8 +645,10 @@
     function selectTouritem(){
         let item = $('#select-touritem-info option:selected');
         let title = item.text();
-        let startTitleIdx = title.indexOf(']') +2;
-        title = title.substring(startTitleIdx);
+        if(title !== '직접 입력'){
+            let startTitleIdx = title.indexOf(']') +2;
+            title = title.substring(startTitleIdx);
+        }
         let titleInput = $('#selected-touritem-name');
         titleInput.attr('disabled',false);
         titleInput.val(title)

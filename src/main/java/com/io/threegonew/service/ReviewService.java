@@ -89,6 +89,14 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    @Transactional
+    public Long viewCountUp(Long reviewId){
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        return review.viewCountUp();
+    }
+
     public PageResponse findMyReview(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
