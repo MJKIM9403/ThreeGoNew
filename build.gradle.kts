@@ -78,6 +78,7 @@ dependencies {
 
     //비밀번호 찾기
     implementation ("org.springframework.boot:spring-boot-starter-mail")
+
 }
 
 tasks.withType<Test> {

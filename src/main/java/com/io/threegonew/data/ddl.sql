@@ -6,7 +6,7 @@ ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 테이블 생성 --
 CREATE TABLE `TEAM` (
-                        s_id bigint(20) auto_increment NOT null PRIMARY KEY,
+                        t_id bigint(20) auto_increment NOT null PRIMARY KEY,
                         p_id bigint(20) NOT NULL,
                         u_id varchar(40) NOT null,
                         team_level int not null

@@ -2,6 +2,7 @@ package com.io.threegonew.service;
 
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
+import com.io.threegonew.util.JavaMailSenderImpl;
 import com.io.threegonew.util.TempPassword;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -18,9 +23,8 @@ public class SendEmailService {
     UserRepository userRepository;
     UserService userService;
     BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private JavaMailSender mailSender;
-    private static final String FROM_ADDRESS = "본인의 이메일 주소를 입력하세요";
+    JavaMailSenderImpl javaMailSenderImpl;
+    private static final String FROM_ADDRESS = "t3reego@gmail.com";
 
     public MailDTO createMailAndChangePassword(String email, String id) {
         String str = getTempPassword();
@@ -52,15 +56,19 @@ public class SendEmailService {
 
     }
 
-//    STMP mailSend
+    // STMP mailSend
     public void mailSend(MailDTO mailDto){
         System.out.println("이멜 전송 완료!");
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailDto.getAddress());
-        message.setFrom(SendEmailService.FROM_ADDRESS);
-        message.setSubject(mailDto.getTitle());
-        message.setText(mailDto.getMessage());
-
-        mailSender.send(message);
+        Map<String, String> mailInfo = new HashMap<>();
+        mailInfo.put("from", FROM_ADDRESS);
+        mailInfo.put("to", mailDto.getAddress());
+        mailInfo.put("subject", mailDto.getTitle());
+        mailInfo.put("content", mailDto.getMessage());
+        mailInfo.put("format", "text/plain");
+        try {
+            javaMailSenderImpl.emailSending(mailInfo); // JavaMailSenderImpl 인스턴스를 통해 이메일 전송
+        } catch (MessagingException e) {
+            e.printStackTrace(); // 에러 발생 시 에러 메시지 출력
+        }
     }
 }

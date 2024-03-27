@@ -23,10 +23,6 @@
 </head>
 
 <style>
-    #find-info {
-        margin-top: 20px;
-    }
-
     #find-info a:first-of-type {
         margin-right: 15px;
         position: relative;
@@ -88,10 +84,10 @@
                            maxlength="20" placeholder="가입시 등록한 이메일을 입력하세요">
                 </div>
 
-                <div class="text-center small mt-2" id="checkMsg" style="color: red"></div>
+<!--                <div class="text-center small mt-2" id="checkMsg" style="color: red"></div>-->
 
                 <div class="col text-center">
-                    <button class="btn btn-primary btn-md" type="submit" id="findPwBtn">아이디 찾기</button>
+                    <button class="btn btn-primary btn-md" type="submit" id="findPwBtn">비밀번호 찾기</button>
                 </div>
             </form>
 
@@ -125,7 +121,7 @@
                     window.location = "/login";
                 }
         ,error: function () {
-            console.log('에러 체크!!')
+            console.log('오류가 발생!!');
                 alert("오류가 발생했습니다."); // 오류 시 알림
         }
         })
