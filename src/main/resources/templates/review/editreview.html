@@ -110,7 +110,7 @@
                                 <button class="delete-img-btn btn btn-dark rounded-pill opacity-50">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
-                                <img class="preview-img" th:data-file-id="${photo.fileId}" th:src="|@{/api/review-photo/}${photo.filePath}|" style="object-fit: contain"/>
+                                <img class="preview-img" th:data-file-id="${photo.fileId}" th:src="|@{/api/image/review/}${photo.filePath}|" style="object-fit: contain"/>
                             </div>
                         </th:block>
                     </div>

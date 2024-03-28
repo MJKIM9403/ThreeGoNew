@@ -28,7 +28,7 @@ public class ReviewApiController {
     private final ReviewService reviewService;
 
     @PostMapping("/my-review")
-    public ResponseEntity<MyPageResponse> getMyReviewBook(@RequestBody MyPageRequest request){
+    public ResponseEntity<MyPageResponse> getMyReview(@RequestBody MyPageRequest request){
         MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
                 MyPageResponse.builder()
                         .type("review")
