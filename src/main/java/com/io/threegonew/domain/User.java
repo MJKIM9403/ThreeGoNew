@@ -42,12 +42,12 @@ public class User /*implements UserDetails*/ {
     private Set<Team> sharedPlanners = new HashSet<>();
 
     // 내가 팔로우하는 사람들
-    @OneToMany(mappedBy = "toUser")
-    private Set<Follow> toUser = new HashSet<>();
+//    @OneToMany(mappedBy = "toUser")
+//    private Set<Follow> toUser = new HashSet<>();
 
     // 나를 팔로우하는 사람들
-    @OneToMany(mappedBy = "fromUser")
-    private Set<Follow> fromUser = new HashSet<>();
+//    @OneToMany(mappedBy = "fromUser")
+//    private Set<Follow> fromUser = new HashSet<>();
 
     @Builder
     public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String about){

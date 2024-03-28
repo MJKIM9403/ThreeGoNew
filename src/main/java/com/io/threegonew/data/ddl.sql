@@ -11,13 +11,13 @@ CREATE TABLE `TEAM` (
                         u_id varchar(40) NOT null,
                         team_level int not null
 );
---플래너 테이블 추가--
--- CREATE TABLE 'PLANNER' (
---     u_id varchar(40) NOT NULL,
---     p_title varchar(200) NOT NULL,
---     p_startdate DATETIME NOT NULL,
---     p_enddate DATETIME NOT NULL
--- );
+-- 팔로우 테이블 --
+CREATE TABLE follows (
+                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         to_user_id VARCHAR(255) NOT NULL,
+                         from_user_id VARCHAR(255) NOT NULL,
+                         UNIQUE (to_user_id, from_user_id) -- 동일한 팔로우 관계를 중복으로 생성하지 못하게 함
+);
 -- 지역
 CREATE TABLE `T_AREA` (
                           j_areacode   INT      NOT NULL,
