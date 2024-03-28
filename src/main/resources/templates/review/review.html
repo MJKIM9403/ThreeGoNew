@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -11,14 +12,15 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
-
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="../assets/css/style.css?after" rel="stylesheet"/>
     <link href="../assets/css/commonstyle.css?after" rel="stylesheet"/>
 
     <!--swiper-->
-    <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet"/>
     <script src="../assets/swiper/swiper-bundle.min.js"></script>
+    <!--  review 적용 템플릿 스타일 시트  -->
+    <link href="../assets/css/reviewstyle.css" rel="stylesheet"/>
     <title>Three Go</title>
 
     <style>
@@ -111,22 +113,37 @@
             display: block;
         }*/
 
+        /*.container-box {*/
+        /*    margin-left: auto;*/
+        /*    margin-right: auto;*/
+        /*}*/
+        .container {
+            padding-left: 12px;
+            width: calc(100% - 528px);
+
+            overflow-x: hidden;
+        }
 
         /*card*/
         .card {
-            width: 478px;
+            width: 600px;
+            margin-bottom: 2em;
+
         }
+
         .card .card-header img {
             width: 24px;
             height: 24px;
         }
+
         .card .card-body img {
-            height: 585px;
+            height: 480px;
+            /*height: 585px;*/
         }
+
         .card-header {
             background-color: transparent;
         }
-
 
         /*  리뷰작성 관련  */
         #new-post-btn {
@@ -159,33 +176,40 @@
             top: 5%;
             right: 5%;
         }
+
         .add-file {
             position: absolute;
             bottom: 5%;
             right: 5%;
             z-index: 100;
         }
+
         #img-uploader {
             display: none;
         }
+
         .uploader {
             padding: 10px;
             color: #136DF8;
             cursor: pointer;
         }
+
         .uploader:hover {
             background-color: #136DF8;
             color: #FFFFFF;
             transition: all 0.2s;
         }
-        .select-hint{
+
+        .select-hint {
             display: none;
         }
+
         #review-contents {
             height: 380px;
             resize: none;
         }
-        #create-book-btn{
+
+        #create-book-btn {
             --bs-btn-padding-y: 0.25rem;
             --bs-btn-padding-x: 0.5rem;
             --bs-btn-font-size: 0.875rem;
@@ -218,221 +242,256 @@
             height: 100%;
             object-fit: contain;
         }
+
+
     </style>
 
 </head>
 <body>
 
-<div class="d-flex flex-nowrap">
+<div class="d-flex">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
-<!--    <nav id="sidebar" class="">-->
-<!--        <div class="pt-5">-->
-<!--            &lt;!&ndash;유저 프로필 사진을 누르면 마이페이지로 이동&ndash;&gt;-->
-<!--            <a href="#" class="mb-5">-->
-<!--                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" class="logo rounded-circle">-->
-<!--            </a>-->
 
-<!--            <div class="text-center p-5">-->
-<!--                <span class="fs-5 fw-semibold">농담곰</span>-->
-<!--            </div>-->
+    <div class="container d-flex justify-content-center">
+        <div class="d-flex flex-column align-items-center">
+<!--            TODO: 배너 고쳐야함.-->
+            <!--배너-->
+            <!--swiper-->
+            <div class="swiper-container">
+                <section class="slider-1">
+                    <div class="swiper" id="swiper-1">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <div class="cards cards-1">
 
-<!--            <div class="counter d-flex justify-content-center text-center pb-5">-->
-<!--                <div class="col column">-->
-<!--                    <strong class="number">892</strong>-->
-<!--                    <span class="number-label">게시글</span>-->
-<!--                </div>-->
-<!--                <div class="col column">-->
-<!--                    <strong class="number">22.5k</strong>-->
-<!--                    <span class="number-label">팔로워</span>-->
-<!--                </div>-->
-<!--                <div class="col column">-->
-<!--                    <strong class="number">150</strong>-->
-<!--                    <span class="number-label">팔로잉</span>-->
-<!--                </div>-->
-<!--            </div>-->
+                                    <p></p>
+                                </div>
+                            </div><!--end swiper-slide-->
+                            <div class="swiper-slide">
+                                <div class="cards cards-2">
 
-<!--            <ul class="list-unstyled components mb-5">-->
-<!--                <li class="active">-->
-<!--                    <a href="#">-->
-<!--                        <i class="bi bi-house-door-fill icon"></i>-->
-<!--                        피드-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li>-->
-<!--                    <a href="#">-->
-<!--                        <i class="bi bi-speedometer2 icon"></i>-->
-<!--                        여행정보-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li>-->
-<!--                    <a href="#">-->
-<!--                        <i class="bi bi-card-checklist icon"></i>-->
-<!--                        여행일정-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li>-->
-<!--                    <a href="#">-->
-<!--                        <i class="bi bi-columns icon"></i>-->
-<!--                        커뮤니티-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li>-->
-<!--                    <a href="#">-->
-<!--                        <i class="bi bi-people-fill icon"></i>-->
-<!--                        마이페이지-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li>-->
-<!--                    <a href="#">-->
-<!--                        <i class="bi bi-people-fill icon"></i>-->
-<!--                        로그아웃-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--            <div class="footer">-->
-<!--                <p>-->
-<!--                    푸터에쓸내용-->
-<!--                </p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </nav>-->
+                                    <p></p>
+                                </div>
+                            </div><!--end swiper-slide-->
+                            <div class="swiper-slide">
+                                <div class="cards cards-3">
 
-    <div class="container">
-        <div id="content" class="p-4 p-md-5">
-            <div class="card">
-                <!--유저 정보-->
-                <div class="d-flex card-header gap-3">
-                    <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo" class="rounded-circle">
-                    <span>nongdamgom</span>
-                    <span>농담곰</span>
-                </div>
-                <div class="card-body">
-                    <!--유저가 업로드한 이미지-->
-                    <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="Card image cap">
-                    <!--좋아요와 댓글 -->
-                    <div class="d-flex gap-3">
-                        <i class="bi bi-heart"></i>
-                        <i class="bi bi-chat"></i>
+                                    <p></p>
+                                </div>
+                            </div><!--end swiper-slide-->
+                            <div class="swiper-slide">
+                                <div class="cards cards-4">
+
+                                    <p></p>
+                                </div>
+                            </div><!--end swiper-slide-->
+                            <div class="swiper-slide">
+                                <div class="cards cards-5">
+
+                                    <p></p>
+                                </div>
+                            </div><!--end swiper-slide-->
+                            <div class="swiper-slide">
+                                <div class="cards cards-6">
+
+                                    <p></p>
+                                </div>
+                            </div><!--end swiper-slide-->
+                        </div><!--end swipper-wrapper-->
+                        <div class="swiper-pagination">
+
+                        </div>
                     </div>
-
-
-                    <p class="card-text">좋아요 몇개</p>
-                    <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
-                </div>
+                </section>
             </div>
         </div>
-        <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="selectBookLabel" aria-hidden="true">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="selectBookLabel">리뷰북 선택</h1>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1" value="1">
-                            <label class="form-check-label" for="selectReviewBook1">
-                                새 리뷰북 생성 <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1" onclick="createBook()">생성</button>
-                                <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example" onchange="writeBookTitle()">
-                                    <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
-                                </select>
-                                <input id="new-book-title" class="book-input form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
-                            </label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2" value="2">
-                            <label class="form-check-label" for="selectReviewBook2">
-                                기존 리뷰북에 추가
-                                <select id="exist-book-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example">
-                                    <option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3" value="3">
-                            <label class="book-input form-check-label" for="selectReviewBook3">
-                                리뷰북을 선택하지 않고 리뷰 작성
-                            </label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="goEdit()">다음</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editorLabel" aria-hidden="true">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="modal-dialog modal-dialog-centered modal-xl">
-                <div class="modal-content">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="preview-container col-md-7">
-                                <div class="add-file">
-                                    <label for="img-uploader" class="uploader border border-primary rounded-pill">사진 추가</label>
-                                    <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()" multiple/>
-                                </div>
-                                <div class="swiper mySwiper">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide">사진을 추가해주세요.</div>
-                                    </div>
-                                    <div class="swiper-controller">
-                                        <div class="swiper-button-next"></div>
-                                        <div class="swiper-button-prev"></div>
-                                        <div class="swiper-pagination"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-5 d-flex align-items-center">
-                                <div class="modal-body">
-                                    <div class="mb-2">
-                                        <label for="selected-review-book" class="form-label">리뷰북</label>
-                                        <input type="text" class="form-control form-control-sm" id="selected-review-book" readonly>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="select-touritem-info" class="form-label">관광지 정보 불러오기</label>
-                                        <select class="form-select form-select-sm" id="select-touritem-info" onchange="selectTouritem()">
-                                            <option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
-                                            <option value="direct">직접 입력</option>
-                                            <option value="contentid1">집가기</option>
-                                            <option value="contentid2">밥먹기</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="selected-touritem-name" class="form-label">관광지 이름 작성</label>
-                                        <input type="text" class="form-control form-control-sm" id="selected-touritem-name" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="review-contents" class="form-label">본문</label>
-                                        <textarea class="form-control form-control-sm" id="review-contents"></textarea>
-                                    </div>
-                                    <div class="editor-btn-group d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#select-book">이전</button>
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="createPost()">완료</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
-            <i class="bi bi-vector-pen"></i>
-        </button>
     </div>
 </div>
 
 
-    <!-- Bootstrap core JS-->
+<div class="container justify-content-center">
+    <div id="content" class="p-4 p-md-5">
+        <div class="card">
+            <!--유저 정보-->
+            <div class="d-flex card-header gap-3">
+                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo"
+                     class="rounded-circle">
+                <span>nongdamgom</span>
+                <span>농담곰</span>
+            </div>
+            <div class="card-body">
+                <!--유저가 업로드한 이미지-->
+                <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg"
+                     alt="Card image cap">
+                <!--좋아요와 댓글 -->
+                <div class="d-flex gap-3">
+                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-chat"></i>
+                </div>
+
+                <p class="card-text">좋아요 몇개</p>
+                <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <!--유저 정보-->
+            <div class="d-flex card-header gap-3">
+                <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo"
+                     class="rounded-circle">
+                <span>nongdamgom</span>
+                <span>농담곰</span>
+            </div>
+            <div class="card-body">
+                <!--유저가 업로드한 이미지-->
+                <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg"
+                     alt="Card image cap">
+                <!--좋아요와 댓글 -->
+                <div class="d-flex gap-3">
+                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-chat"></i>
+                </div>
+
+                <p class="card-text">좋아요 몇개</p>
+                <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="selectBookLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="selectBookLabel">리뷰북 선택</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1"
+                               value="1">
+                        <label class="form-check-label" for="selectReviewBook1">
+                            새 리뷰북 생성
+                            <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1"
+                                    onclick="createBook()">생성
+                            </button>
+                            <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2"
+                                    aria-label="Default select example" onchange="writeBookTitle()">
+                                <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
+                            </select>
+                            <input id="new-book-title" class="book-input form-control form-control-sm mt-2"
+                                   type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook2"
+                               value="2">
+                        <label class="form-check-label" for="selectReviewBook2">
+                            기존 리뷰북에 추가
+                            <select id="exist-book-select" class="book-input form-select form-select-sm mt-2"
+                                    aria-label="Default select example">
+                                <option value="hint" class="select-hint" selected>리뷰를 작성할 리뷰북을 선택하세요.</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook3"
+                               value="3">
+                        <label class="book-input form-check-label" for="selectReviewBook3">
+                            리뷰북을 선택하지 않고 리뷰 작성
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="goEdit()">다음</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="editorLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="preview-container col-md-7">
+                            <div class="add-file">
+                                <label for="img-uploader" class="uploader border border-primary rounded-pill">사진
+                                    추가</label>
+                                <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()"
+                                       multiple/>
+                            </div>
+                            <div class="swiper mySwiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">사진을 추가해주세요.</div>
+                                </div>
+                                <div class="swiper-controller">
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-center">
+                            <div class="modal-body">
+                                <div class="mb-2">
+                                    <label for="selected-review-book" class="form-label">리뷰북</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           id="selected-review-book" readonly>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="select-touritem-info" class="form-label">관광지 정보 불러오기</label>
+                                    <select class="form-select form-select-sm" id="select-touritem-info"
+                                            onchange="selectTouritem()">
+                                        <option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.
+                                        </option>
+                                        <option value="direct">직접 입력</option>
+                                        <option value="contentid1">집가기</option>
+                                        <option value="contentid2">밥먹기</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="selected-touritem-name" class="form-label">관광지 이름 작성</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                           id="selected-touritem-name" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="review-contents" class="form-label">본문</label>
+                                    <textarea class="form-control form-control-sm" id="review-contents"></textarea>
+                                </div>
+                                <div class="editor-btn-group d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal"
+                                            data-bs-target="#select-book">이전
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="createPost()">완료
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
+        <i class="bi bi-vector-pen"></i>
+    </button>
+</div>
+</div>
+
+
+<!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <!--카드 -->
 <script th:inline="javascript">
     // 버튼 누르면 더보기
-    $(document).ready(function() {
+    $(document).ready(function () {
         selectBook();
         $('.swiper-controller').hide();
         deleteImg();
@@ -462,9 +521,9 @@
     $('#new-post-btn').click(function () {
         editorReset();
         let login = [[${loginUserId}]];
-        if(login == "anonymousUser"){
+        if (login == "anonymousUser") {
             alert("리뷰는 로그인 후 작성할 수 있습니다.")
-        }else {
+        } else {
             showSelectList();
             $('#select-book').modal('show');
         }
@@ -495,54 +554,54 @@
         $('#review-contents').val('');
     }
 
-    function showSelectList(){
+    function showSelectList() {
         $.ajax({
-            url : '/api/review/show_list',
-            type : 'GET',
-            contentType : 'application/json; charset=UTF-8',
-            success : function (result) {
+            url: '/api/review/show_list',
+            type: 'GET',
+            contentType: 'application/json; charset=UTF-8',
+            success: function (result) {
                 const plannerList = result.plannerList;
                 const reviewBookList = result.reviewBookList;
 
-                if(plannerList.length > 0){
-                    for(let planner of plannerList){
+                if (plannerList.length > 0) {
+                    for (let planner of plannerList) {
                         let template = `<option value=${planner.plannerId}>${planner.plannerName}</option>`;
                         $('#new-book-item-select').append(template)
                     }
-                }else {
+                } else {
                     let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
                     $('#new-book-item-select').append(template)
                 }
 
-                if(reviewBookList.length > 0){
-                    for(let reviewBook of reviewBookList){
+                if (reviewBookList.length > 0) {
+                    for (let reviewBook of reviewBookList) {
                         let template = `<option value=${reviewBook.bookId}>${reviewBook.bookTitle}</option>`;
                         $('#exist-book-select').append(template)
                     }
-                }else {
+                } else {
                     let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
                     $('#exist-book-select').append(template)
                 }
             },
-            error : function (err) {
+            error: function (err) {
                 console.log(err);
             }
         })
     }
 
     function selectBook() {
-        $("input:radio[name=selectReviewBook]").click(function (){
+        $("input:radio[name=selectReviewBook]").click(function () {
             let select = Number($("input[name=selectReviewBook]:checked").val());
             $(".book-input").attr('disabled', true);
-            switch (select){
+            switch (select) {
                 case 1:
-                    $("#new-book-item-select").attr('disabled',false);
-                    if($("#new-book-item-select option:selected").val() != "hint"){
+                    $("#new-book-item-select").attr('disabled', false);
+                    if ($("#new-book-item-select option:selected").val() != "hint") {
                         writeBookTitle()
                     }
                     break;
                 case 2:
-                    $("#exist-book-select").attr('disabled',false);
+                    $("#exist-book-select").attr('disabled', false);
                     break;
             }
         })
@@ -550,32 +609,32 @@
 
     function writeBookTitle() {
         createBookFlag = false;
-        $("#new-book-title").attr('disabled',false);
+        $("#new-book-title").attr('disabled', false);
     }
 
 
-    function goEdit(){
+    function goEdit() {
         let select = $("input[name=selectReviewBook]:checked").val();
-        if(select == undefined){
+        if (select == undefined) {
             alert("리뷰북 설정을 완료해주세요.");
-        }else {
-            switch (Number(select)){
+        } else {
+            switch (Number(select)) {
                 case 1:
-                    if($("#new-book-item-select option:selected").val() == 'hint'){
+                    if ($("#new-book-item-select option:selected").val() == 'hint') {
                         alert("리뷰북에 기록할 여행정보를 선택해주세요.")
-                    }else if($("#new-book-title").val() == ''){
+                    } else if ($("#new-book-title").val() == '') {
                         alert("생성할 리뷰북의 제목을 입력해주세요.")
-                    }else if(!createBookFlag){
+                    } else if (!createBookFlag) {
                         alert("생성 버튼을 눌러 리뷰북을 생성해주세요.")
-                    }else {
+                    } else {
                         selectedReviewBook = $("#new-book-title").val();
                         AddPlanList();
                     }
                     break;
                 case 2:
-                    if($("#exist-book-select option:selected").val() == 'hint'){
+                    if ($("#exist-book-select option:selected").val() == 'hint') {
                         alert("리뷰를 작성할 리뷰북을 선택해주세요.")
-                    }else {
+                    } else {
                         selectedBookId = $('#exist-book-select option:selected').val();
                         selectedReviewBook = $("#exist-book-select option:checked").text();
                         AddPlanList();
@@ -590,47 +649,47 @@
         }
     }
 
-    function createBook(){
+    function createBook() {
         $.ajax({
-            url : '/book/create',
-            type : 'POST',
-            data : JSON.stringify({
-                userId : [[${loginUserId}]],
-                plannerId : $("#new-book-item-select option:selected").val(),
-                bookTitle : $("#new-book-title").val()
+            url: '/book/create',
+            type: 'POST',
+            data: JSON.stringify({
+                userId: [[${loginUserId}]],
+                plannerId: $("#new-book-item-select option:selected").val(),
+                bookTitle: $("#new-book-title").val()
             }),
-            contentType : 'application/json; charset=UTF-8',
-            success : function (createdBookId) {
+            contentType: 'application/json; charset=UTF-8',
+            success: function (createdBookId) {
                 createBookFlag = true;
                 selectedBookId = createdBookId;
                 let title = $("#new-book-title").val();
                 alert(`[${title}] 리뷰북이 생성되었습니다.`);
             },
-            error : function (err) {
+            error: function (err) {
                 alert("리뷰북 생성에 실패하였습니다.");
                 console.log(err);
             }
         })
     }
 
-    function AddPlanList(){
+    function AddPlanList() {
         let promise = new Promise((resolve) => {
             $.ajax({
-                url : '/api/review/show_plan',
-                type : 'GET',
-                data : {
-                    bookId : selectedBookId
+                url: '/api/review/show_plan',
+                type: 'GET',
+                data: {
+                    bookId: selectedBookId
                 },
-                contentType : 'application/json; charset=UTF-8',
-                success : function (result) {
+                contentType: 'application/json; charset=UTF-8',
+                success: function (result) {
                     const planList = result.planList;
-                    for(let plan of planList){
+                    for (let plan of planList) {
                         let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
                     resolve();
                 },
-                error : function (err) {
+                error: function (err) {
                     console.log(err);
                 }
             })
@@ -642,81 +701,81 @@
         })
     }
 
-    function selectTouritem(){
+    function selectTouritem() {
         let item = $('#select-touritem-info option:selected');
         let title = item.text();
-        if(title !== '직접 입력'){
-            let startTitleIdx = title.indexOf(']') +2;
+        if (title !== '직접 입력') {
+            let startTitleIdx = title.indexOf(']') + 2;
             title = title.substring(startTitleIdx);
         }
         let titleInput = $('#selected-touritem-name');
-        titleInput.attr('disabled',false);
+        titleInput.attr('disabled', false);
         titleInput.val(title)
     }
 
-    function createPost(){
-        if(images.length < 1){
+    function createPost() {
+        if (images.length < 1) {
             alert("사진을 반드시 한 장 이상 첨부해주세요.")
-        }else if($('#select-touritem-info option:selected').val() === 'hint'){
+        } else if ($('#select-touritem-info option:selected').val() === 'hint') {
             alert("관광지 정보를 선택해주세요.")
-        }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
+        } else if ($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력') {
             alert('관광지 이름을 작성해주세요.')
-        }else if($('#review-contents').val() === ''){
+        } else if ($('#review-contents').val() === '') {
             alert('본문 내용을 입력해주세요.')
-        }else {
+        } else {
             saveReview();
             $('#editor').modal('hide');
         }
     }
 
-    function saveReview(){
+    function saveReview() {
         let formData = new FormData();
         let loginUser = [[${loginUserId}]]
         let touritemId = $('#select-touritem-info option:selected').val();
 
-        if(selectedBookId !== null) formData.append("bookId", selectedBookId);
+        if (selectedBookId !== null) formData.append("bookId", selectedBookId);
         formData.append("userId", `${loginUser}`);
-        if(touritemId !== 'direct') formData.append("touritemId", touritemId);
+        if (touritemId !== 'direct') formData.append("touritemId", touritemId);
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());
 
-        for(let image of images){
+        for (let image of images) {
             formData.append("photoList", image);
         }
 
         console.log(formData)
 
         $.ajax({
-            url : '/api/review/create',
-            type : 'POST',
-            data : formData,
-            processData : false,
-            contentType : false,
-            success : function (response) {
+            url: '/api/review/create',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
                 alert("리뷰를 등록하였습니다.")
             },
-            error : function (err) {
+            error: function (err) {
                 alert("리뷰 등록에 실패했습니다.")
             }
         })
     }
 
-    function setPreview(){
+    function setPreview() {
         let files = fileInput.files;
-        if(files.length + images.length > 4){
+        if (files.length + images.length > 4) {
             files.length = 0;
             alert("사진은 4장까지 첨부할 수 있습니다.")
-        }else {
-            if(files.length > 0 && images.length === 0) {
+        } else {
+            if (files.length > 0 && images.length === 0) {
                 $('.swiper-wrapper').html("");
             }
-            if(files.length > 0){
+            if (files.length > 0) {
                 for (let file of files) {
                     images.push(file);
 
                     let reader = new FileReader();
 
-                    reader.onload = function(data) {
+                    reader.onload = function (data) {
                         const tempHtml = `<div class="swiper-slide">` +
                             `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
                             `<i class="bi bi-x-lg"></i>` +
@@ -730,47 +789,83 @@
                     reader.readAsDataURL(file);
                 }
             }
-            if(images.length > 1){
+            if (images.length > 1) {
                 $('.swiper-controller').show()
-            }else {
+            } else {
                 $('.swiper-controller').hide()
             }
-            if(images.length >= 4){
+            if (images.length >= 4) {
                 $('.uploader').hide()
             }
         }
     }
 
     function goLastSlide() {
-        swiper.slideTo(images.length-1,300,false);
+        swiper.slideTo(images.length - 1, 300, false);
     }
 
     function deleteImg() {
-        $(document).on('click','.delete-img-btn',function () {
+        $(document).on('click', '.delete-img-btn', function () {
             let idx = $(".delete-img-btn").index(this);
-            swiper.slideTo(idx-1,300,false);
+            swiper.slideTo(idx - 1, 300, false);
             swiper.removeSlide(idx);
             swiper.update();
-            images.splice(idx,1);
+            images.splice(idx, 1);
 
-            if(images.length > 1){
+            if (images.length > 1) {
                 $('.swiper-controller').show()
-            }else {
+            } else {
                 $('.swiper-controller').hide()
-            };
+            }
+            ;
 
-            if(images.length === 0){
+            if (images.length === 0) {
                 const tempHtml = `<div class="swiper-slide">` +
                     `사진을 추가해주세요.` +
                     `</div>`;
                 swiper.appendSlide(tempHtml);
                 swiper.update();
             }
-            if($('.uploader').css('display') === 'none' && images.length < 4){
+            if ($('.uploader').css('display') === 'none' && images.length < 4) {
                 $('.uploader').show()
             }
         })
     }
+
+        // 헤더 스와이프
+    //     new Swiper("#swiper-1",{
+    //     autoplay:{
+    //     delay: 3500,
+    //     disableOnInteraction: false
+    // },
+    //     pagination:{
+    //     el: "#swiper-1 .swiper-pagination",
+    //     clickable:true,
+    // },
+    //     lazyLoading: true,
+    //     loop: true,
+    //     keyboard:{
+    //     enabled:true,
+    // }
+    // });
+
+    var swiper2 = new Swiper("#swiper-1", {
+        autoplay:{
+            delay: 3500,
+            disableOnInteraction: false
+        },
+        pagination:{
+            el: "#swiper-1 .swiper-pagination",
+            clickable:true,
+        },
+        lazyLoading: true,
+        loop: true,
+        keyboard:{
+            enabled:true,
+        }
+    });
 </script>
+
+    </script>
 </body>
 </html>
