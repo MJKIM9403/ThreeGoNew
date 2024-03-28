@@ -44,6 +44,9 @@ public class TourItem {
     @Column(name = "title")
     private String title;
 
-    @OneToMany(mappedBy = "tourItem")
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "tourItem"
+    )
     private List<Bookmark> bookmarkList = new ArrayList<>();
 }

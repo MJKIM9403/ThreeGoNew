@@ -166,6 +166,36 @@
                 1px 0px rgba(0, 0, 0, 0.8),
                 0px -1px rgba(0, 0, 0, 0.8);
     }
+    /* 리뷰북 목록 */
+    .review-book-item {
+        position: relative;
+        width: 100%;
+        height: 20rem;
+        margin-bottom: 3rem;
+        overflow: hidden;
+    }
+
+    .review-book-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .review-book-item p {
+        font-size: 2rem;
+        font-weight: 700;
+        position: absolute;
+        z-index: 100;
+        margin-bottom: 0;
+        bottom: 1rem;
+        right: 1rem;
+        color: #FFFFFF;
+        text-shadow:
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
+    }
 
     /*리뷰 뷰어*/
 
@@ -342,6 +372,7 @@
         </ul>
 
         <div class="gallery">
+
         </div>
         <!-- End of gallery -->
 
@@ -595,6 +626,8 @@
 
     <!-- End of container -->
 </div>
+
+<!-- 리뷰 뷰어 관련 스크립트 -->
 <script th:inline="javascript">
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
 
@@ -777,7 +810,8 @@
     })
 </script>
 
-<!-- 리뷰북 작성 관련-->
+
+<!-- 리뷰북 작성 관련 스크립트 -->
 <script th:inline="javascript">
     $('#new-book-btn').click(function () {
         resetBookEditor();
@@ -909,6 +943,7 @@
             contentType : false,
             success : function () {
                 alert(`[${bookTitle}] 리뷰북이 생성되었습니다.`);
+                changeTab(tabType);
             },
             error : function (err) {
                 alert("리뷰북 생성에 실패하였습니다.");
@@ -921,7 +956,8 @@
 
 </script>
 
-<!--리뷰 작성 관련 설정-->
+
+<!--리뷰 작성 관련 스크립트-->
 <script th:inline="javascript">
     let createBookFlag = false;
     let selectedReviewBook;
@@ -1265,6 +1301,7 @@
     }
 </script>
 
+<!-- 마이페이지 무한스크롤 관련 스크립트 -->
 <script th:inline="javascript">
     let scrollPage = 0; // 무한스크롤로 불러올 페이지
     let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
@@ -1303,12 +1340,15 @@
             observer.observe(document.getElementById('load-point'));
             // 페이지를 불러오는 함수 호출.
             switch (tabType){
+                case "REVIEW" :
+                    showReview();
+                    break;
+                case "REVIEWBOOK" :
+                    showReviewBook();
+                    break;
                 case "BOOKMARK" :
                     showBookmark();
                     break;
-                case "REVIEW" :
-                    showReview();
-                    break
             }
         });
     });
@@ -1486,6 +1526,70 @@
         })
     }
 
+    function showReviewBook(){
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(!firstLoad){
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/book/my-reviewbook',
+            type : 'POST',
+            contentType : 'application/json; charset=UTF-8',
+            data : JSON.stringify({
+                userId : [[${findUser.id}]],
+                page : scrollPage
+            }),
+            async: false,
+            success : function (response) {
+                let reviewBookList = response.pageResponse.dtoList;
+                // 로더를 일정시간 이상 노출하기 위한 setTimeout
+
+                if(firstLoad && reviewBookList.length <= 0){
+                    firstLoad = false;
+                    $(".loader").hide()
+                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                        '<h4>등록된 리뷰가 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    setTimeout(() => {
+                        firstLoad = false;
+                        $(".loader").hide()
+                        $.each(reviewBookList, function (index, reviewBook){
+                            let coverPath = reviewBook.coverFilePath == null ? '../assets/img/review_book_cover.jpg' : `/api/image/book/${reviewBook.coverFilePath}`;
+                            let tempHtml = '<div class="review-book-item" tabIndex="0" onclick="">' +
+                                        `<img src="${coverPath}"/>` +
+                                        `<p>${reviewBook.bookTitle}</p>` +
+                                        '</div>';
+                            gallery.append(tempHtml).trigger("create")
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(reviewBookList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
+                }
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
+    }
+
     function savePage() {
         let myPageInfo = {};
         myPageInfo.tabType = tabType;
@@ -1511,6 +1615,9 @@
                     break;
                 case "REVIEW":
                     showReview();
+                    break;
+                case "REVIEWBOOK":
+                    showReviewBook();
                     break;
                 // 탭 메뉴의 타입을 추가하여 사용
             }

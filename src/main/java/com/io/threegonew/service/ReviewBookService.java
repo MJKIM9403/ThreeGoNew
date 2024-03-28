@@ -45,24 +45,32 @@ public class ReviewBookService {
         );
     }
 
-//    public PageResponse findMyReviewBook(MyPageRequest request){
-//        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-//
-//        Page<MyReviewBookResponse> page = reviewBookRepository.findMyReviewBook(pageable, request.getUserId())
-//                .map(this::myReviewMapper);
-//
-//        PageResponse<MyReviewResponse> pageResponse = PageResponse.<MyReviewResponse>withAll()
-//                .dtoList(page.getContent())
-//                .page(page.getNumber())
-//                .size(page.getSize())
-//                .totalPages(page.getTotalPages())
-//                .total(page.getTotalElements())
-//                .build();
-//
-//        return pageResponse;
-//    }
+    public PageResponse findMyReviewBook(MyPageRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-    public List<ReviewBookResponse> findMyReviewBookList(User user){
+        Page<MyReviewBookResponse> page = reviewBookRepository.findMyReviewBook(pageable, request.getUserId())
+                .map(this::myReviewBookMapper);
+
+        PageResponse<MyReviewBookResponse> pageResponse = PageResponse.<MyReviewBookResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+    private MyReviewBookResponse myReviewBookMapper(ReviewBook reviewBook){
+        return MyReviewBookResponse.builder()
+                                    .bookId(reviewBook.getBookId())
+                                    .bookTitle(reviewBook.getBookTitle())
+                                    .coverFilePath(reviewBook.getCoverFilePath())
+                                    .build();
+    }
+
+    public List<ReviewBookResponse> findReviewBookByUser(User user){
         List<ReviewBookResponse> bookResponseList =
                 reviewBookRepository.findByUser(user).stream()
                         .map(this::reviewBookMapper)

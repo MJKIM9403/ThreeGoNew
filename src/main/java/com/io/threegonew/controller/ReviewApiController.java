@@ -8,8 +8,6 @@ import com.io.threegonew.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -107,7 +105,7 @@ public class ReviewApiController {
         String userId = userService.getCurrentUserId();
         User loginUser = userService.findUser(userId);
         List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
-        List<ReviewBookResponse> reviewBookList = reviewBookService.findMyReviewBookList(loginUser);
+        List<ReviewBookResponse> reviewBookList = reviewBookService.findReviewBookByUser(loginUser);
         Map<String, Object> result = new HashMap<>();
         result.put("plannerList", plannerList);
         result.put("reviewBookList", reviewBookList);

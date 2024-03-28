@@ -1,13 +1,9 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.domain.ReviewBook;
-import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -15,9 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -51,7 +45,7 @@ public class ReviewController {
 
         EditReviewResponse reviewResponse = reviewService.findEditReview(reviewId);
 
-        List<ReviewBookResponse> reviewBookList = reviewBookService.findMyReviewBookList(loginUser);;
+        List<ReviewBookResponse> reviewBookList = reviewBookService.findReviewBookByUser(loginUser);;
         List<SelectPlanResponse> planList;
 
         if(reviewResponse.getReviewBookId() != null){
