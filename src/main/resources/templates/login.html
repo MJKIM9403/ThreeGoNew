@@ -6,9 +6,11 @@
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Bootstrap icons-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+          type="text/css"/>
     <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
@@ -18,34 +20,34 @@
     <title>로그인</title>
 
 </head>
-<body>
-
-
+<body class="body-form">
 
 <script>
-    $(document).ready(function (){
+    $(document).ready(function () {
         // let prevUrl = document.referrer;
         // $('input[name=prevUrl]').val(prevUrl);
     })
 
     // 아이디 찾기
-    $(function (){
+    $(function () {
 
-        $("#findId_btn").click(function (){
+        $("#findId_btn").click(function () {
             console.log("findidbtn")
-            location.href='findId';
+            location.href = 'findId';
         })
     })
 </script>
 <style>
-    #find-info{
+    #find-info {
         margin-top: 20px;
     }
-    #find-info a:first-of-type{
+
+    #find-info a:first-of-type {
         margin-right: 15px;
         position: relative;
     }
-    #find-info a:first-of-type:after{
+
+    #find-info a:first-of-type:after {
         width: 1px;
         height: 20px;
         position: absolute;
@@ -57,67 +59,90 @@
         cursor: default;
     }
 
+    .container{
+        padding-left: 0;
+    }
+    .body-form{
+        background-image: url('/assets/img/mainimg/gangwon.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+       }
+
+    .body-form::before {
+        position: absolute;
+        content: "";
+        top:0px;
+        left:0px;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.1);}
+
+    .login-form{
+        margin-top: 10em;
+        padding: 5em;
+        border-radius: 30px;
+        background-color: #ffffff;
+        background-color: rgba( 255, 255, 255, 0.9);
+        width: 50%;
+    }
+
 
 </style>
 
 <!--사이드바-->
-<div class="d-flex flex-nowrap">
-    <th:block th:replace="~{fragments/sidebar}"></th:block>
+<!--<div class="d-flex flex-nowrap">-->
+<!--    <th:block th:replace="~{fragments/sidebar}"></th:block>-->
 
     <div class="w3-content w3-container w3-margin-top container position-relative pb-5">
 
-        <!--허전해서 이미지-->
-        <div class="w3-content w3-container container position-relative pb-5 headerImg"
-             style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
-         background-size: cover;
-         height: 15em;
-         margin-bottom: 3em;">
-        </div>
+
+        <form action="/loginProcess" method="POST" name="loginFrm" onsubmit="return validateForm(this)">
+            <!-- 오류 확인 -->
+            <div th:if="${param.error}">
+                <div class="alert alert-danger">
+                    사용자ID 또는 비밀번호를 확인해 주세요.
+
+                </div>
+            </div>
 
 
-<form action="/loginProcess" method="POST" name="loginFrm" onsubmit="return validateForm(this)">
-    <!-- 오류 확인 -->
-    <div th:if="${param.error}">
-        <div class="alert alert-danger">
-            사용자ID 또는 비밀번호를 확인해 주세요.
+            <div class="login-form w3-content w3-container w3-margin-top container-fluid position-relative pb-5">
 
-        </div>
-    </div>
-    <div class="w3-content w3-container w3-margin-top container-fluid position-relative pb-5">
-
-    <h1 class="text-center">로그인</h1>
-        <div id="header">
-            <p class="text-center">로그인에 필요한 정보를 기입해주세요.</p>
-        </div>
+                <h1 class="text-center">로그인</h1>
+                <div id="header">
+                    <p class="text-center">로그인에 필요한 정보를 기입해주세요.</p>
+                </div>
 
 
-        <!--아이디-->
-        <div class="userInput mb-5">
-            <h4 class="list">아이디</h4>
-            <input type="text" name="id" class="form-control form-control-sm" maxlength="20" placeholder="아이디를 입력하세요."><br/>
-        </div>
-        <!--비밀번호-->
-        <div class="userInput mb-5">
-            <h4 class="list">비밀번호</h4>
-            <input type="password" name="pw" class="form-control form-control-sm" maxlength="20" placeholder="비밀번호를 입력하세요."><br/>
-        </div>
-        <!--로그인 버튼-->
-        <div class="col text-center">
-            <input type="hidden" name="prevUrl" value="">
-            <input type="submit" value="로그인" class="btn btn-primary btn-md"><br/>
-        </div>
-        <div id="find-info" class="text-center">
-            <span id="findId_btn"><a href="/findId">아이디 찾기</a></span>
-            <a href="/findPw">비밀번호 찾기</a>
-        </div>
-    </div>
-</form>
+                <!--아이디-->
+                <div class="userInput mb-5">
+                    <h4 class="list">아이디</h4>
+                    <input type="text" name="id" class="form-control form-control-sm" maxlength="20"
+                           placeholder="아이디를 입력하세요."><br/>
+                </div>
+                <!--비밀번호-->
+                <div class="userInput mb-5">
+                    <h4 class="list">비밀번호</h4>
+                    <input type="password" name="pw" class="form-control form-control-sm" maxlength="20"
+                           placeholder="비밀번호를 입력하세요."><br/>
+                </div>
+                <!--로그인 버튼-->
+                <div class="col text-center">
+                    <input type="hidden" name="prevUrl" value="">
+                    <input type="submit" value="로그인" class="btn btn-primary btn-md"><br/>
+                </div>
+                <div id="find-info" class="text-center">
+                    <span id="findId_btn"><a href="/findId">아이디 찾기</a></span>
+                    <a href="/findPw">비밀번호 찾기</a>
+                </div>
+            </div>
+        </form>
 
 
-<!--footer-->
-<th:block th:replace="~{fragments/footer}"></th:block>
-<!-- Bootstrap core JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!--footer-->
+<!--        <th:block th:replace="~{fragments/footer}"></th:block>-->
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
     </div>
 </div>

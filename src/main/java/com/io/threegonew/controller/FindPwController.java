@@ -42,18 +42,6 @@ public class FindPwController {
 //    }
 
 
-//    이메일과 아이디 일치여부 check
-//    @GetMapping("/findPw")
-//    public @ResponseBody Map<String, Boolean> pw_find(@RequestParam(value = "email") String email,
-//                                                      @RequestParam(value = "userId") String userId){
-//        Map<String, Boolean> json = new HashMap<>();
-//        boolean pwFindCheck = userService.userEmailCheck(email, userId);
-//        json.put("check", pwFindCheck);
-//        return json;
-//    }
-
-
-
     //등록된 이메일로 임시비밀번호를 발송하고 발송된 임시비밀번호로 사용자의 pw를 변경하는 컨트롤러
     @PostMapping("/findPw/sendEmail")
     @ResponseBody
