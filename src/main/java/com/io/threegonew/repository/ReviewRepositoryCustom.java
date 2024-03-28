@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 public interface ReviewRepositoryCustom {
     Page<Review> findMyReview(Pageable pageable, String userId);
 
-    Long countMyReview(String userId);
+    Long countMyReviewBook(String userId);
 }

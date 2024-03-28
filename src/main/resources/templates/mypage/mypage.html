@@ -66,8 +66,14 @@
     }
 
     .icon-img {
+        overflow: hidden;
         width: 35px;
         height: 35px;
+    }
+    .icon-img img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
     }
     .uploader {
         padding: 10px;
@@ -102,7 +108,66 @@
     #new-book-btn {
         bottom: 5%;
         right: 5%;
+        z-index: 200;
     }
+
+    /* 리뷰북 작성 */
+    #book-cover-wrap {
+        background: #333333 ;
+        position: relative;
+        height: 10rem;
+        overflow: hidden;
+    }
+
+    #book-preview-img {
+        width: 100%;
+        object-fit: cover;
+    }
+
+    #book-img-uploader {
+        display: none;
+    }
+
+    .cursor-default {
+        cursor: default !important;
+    }
+    .cursor-pointer {
+        cursor: pointer !important;
+    }
+
+    #book-img-uploader-label {
+        padding: 2px;
+    }
+
+    #book-contents {
+        height: 80px;
+    }
+
+    #select-book-img {
+        margin-bottom: 0;
+    }
+
+    #book-img-delete-btn {
+        display: none;
+    }
+
+    #book-preview-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        position: absolute;
+        z-index: 100;
+        margin-bottom: 0;
+        bottom: 1rem;
+        right: 1rem;
+        color: #FFFFFF;
+        text-shadow:
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
+    }
+
+    /*리뷰 뷰어*/
 
     #review-book-info {
         position: absolute;
@@ -111,10 +176,10 @@
         left: 1rem;
         color: #FFFFFF;
         text-shadow:
-                -2px 0px rgba(0, 0, 0, 0.5),
-                0px 2px rgba(0, 0, 0, 0.5),
-                2px 0px rgba(0, 0, 0, 0.5),
-                0px -2px rgba(0, 0, 0, 0.5);
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
     }
     .modal-body {
         width: 100%;
@@ -181,10 +246,10 @@
         font-size: 18px;
         color: #FFFFFF;
         text-shadow:
-                -2px 0px rgba(0, 0, 0, 0.5),
-                0px 2px rgba(0, 0, 0, 0.5),
-                2px 0px rgba(0, 0, 0, 0.5),
-                0px -2px rgba(0, 0, 0, 0.5);
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
     }
 
     #writer-info{
@@ -292,7 +357,9 @@
                     <div class="row">
                         <div class="preview-container col-md-7">
                             <div id="review-book-info" class="d-flex align-items-center">
-                                <img id="review-book-cover" src="../assets/img/no_image.png" class="rounded-3 icon-img" alt="...">
+                                <div class="rounded-3 icon-img">
+                                    <img id="review-book-cover" src="../assets/img/no_image.png" alt="...">
+                                </div>
                                 <span id="review-book-title" class="ms-2">리뷰 북 타이틀</span>
                             </div>
                             <div id="touritem-wrap" class="d-flex align-items-center gap-2">
@@ -322,7 +389,9 @@
                             <div class="modal-body">
                                 <div id="writer-wrap" class="mb-2 d-flex align-items-center justify-content-between">
                                     <div id="writer-info" class="d-flex align-items-center">
-                                        <img id="writer-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                        <div class="rounded-circle icon-img">
+                                            <img id="writer-profile-img" src="../assets/img/profile.jpg" alt="...">
+                                        </div>
                                         <strong id="writer-name" class="ms-2">작성자 이름</strong>
                                         <span id="writer-id" class="ms-2">@writerId</span>
                                     </div>
@@ -341,19 +410,25 @@
                                     </div>
                                     <div id="comment-wrap">
                                         <div class="comment-info d-flex justify-content-start mb-1">
-                                            <img src="../assets/img/profile.jpg" class="comment-profile rounded-circle icon-img" alt="...">
+                                            <div class="rounded-circle icon-img comment-profile">
+                                                <img src="../assets/img/profile.jpg" alt="...">
+                                            </div>
                                             <span class="comment-writer ms-2">댓글1</span>
                                             <span class="comment-text ms-4">우와~</span>
                                         </div>
                                         <div class="comment-info  d-flex justify-content-start mb-1">
-                                            <img src="../assets/img/profile.jpg" class="comment-profile rounded-circle icon-img" alt="...">
+                                            <div class="rounded-circle icon-img comment-profile">
+                                                <img src="../assets/img/profile.jpg" alt="...">
+                                            </div>
                                             <span class="comment-writer ms-2">댓글2</span>
                                             <span class="comment-text ms-4">정말 데단해</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div id="my-comment-wrap" class="d-flex align-items-start">
-                                    <img id="login-user-profile-img" src="../assets/img/profile.jpg" class="rounded-circle icon-img" alt="...">
+                                    <div class="rounded-circle icon-img">
+                                        <img id="login-user-profile-img" src="../assets/img/profile.jpg" alt="...">
+                                    </div>
                                     <div id="comment-area" class="ms-2">
                                         <div id="login-user-name" class="mb-2">작성자 이름</div>
                                         <div class="d-flex gap-1">
@@ -382,9 +457,9 @@
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="selectReviewBook" id="selectReviewBook1" value="1">
                         <label class="form-check-label" for="selectReviewBook1">
-                            새 리뷰북 생성 <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1" onclick="createBook()">생성</button>
+                            새 리뷰북 생성 <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1" onclick="createSimpleBook()">생성</button>
                             <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2" aria-label="Default select example" onchange="writeBookTitle()">
-                                <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행정보를 선택하세요.</option>
+                                <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행일정을 선택하세요.</option>
                             </select>
                             <input id="new-book-title" class="book-input form-control form-control-sm mt-2" type="text" placeholder="제목을 입력해주세요." aria-label=".form-control-sm example">
                         </label>
@@ -445,8 +520,6 @@
                                     <select class="form-select form-select-sm" id="select-touritem-info" onchange="selectTouritem()">
                                         <option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>
                                         <option value="direct">직접 입력</option>
-                                        <option value="contentid1">집가기</option>
-                                        <option value="contentid2">밥먹기</option>
                                     </select>
                                 </div>
                                 <div class="mb-2">
@@ -469,7 +542,49 @@
         </div>
     </div>
     <!--  리뷰북 작성  -->
-
+    <div id="book-editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="bookEditorLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="bookEditorLabel">리뷰북 생성</h1>
+                </div>
+                <div class="modal-body">
+                    <div id="book-cover-wrap" class="d-flex align-items-center justify-content-center mb-3">
+                        <img id="book-preview-img" src="../assets/img/review_book_cover.jpg"/>
+                        <p id="book-preview-title">리뷰북 제목</p>
+                    </div>
+                    <div class="mb-2">
+                        <label for="book-select-planner" class="form-label">여행일정 선택</label>
+                        <select class="form-select form-select-sm" id="book-select-planner" onchange="selectTouritem()">
+                            <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행일정을 선택하세요.</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <span for="book-img-uploader" class="form-label cursor-default">커버 이미지 선택</span>
+                        <label for="book-img-uploader" id="book-img-uploader-label cursor-pointer" class="ms-1"><i class="bi bi-camera-fill"></i></label>
+                        <input type="file" id="book-img-uploader" accept="image/*" onchange="setBookCoverPreview()"/>
+                        <div class="mt-1 ms-2">
+                            <sapn id="select-book-img">선택된 파일이 없습니다.</sapn>
+                            <i id="book-img-delete-btn" class="bi bi-x ms-1 p-1 cursor-pointer" onclick="deleteBookCoverImg()"></i>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="book-title" class="form-label">제목</label>
+                        <input type="text" class="form-control form-control-sm" id="book-title" maxlength="21" placeholder="제목을 입력해주세요.">
+                    </div>
+                    <div class="mb-3">
+                        <label for="book-contents" class="form-label">상세정보</label>
+                        <textarea class="form-control form-control-sm" id="book-contents" maxlength="101"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="createFullBook()">생성</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <button type="button" id="new-review-btn" class="create-btn position-fixed rounded-pill btn btn-outline-primary">
         <i class="bi bi-vector-pen"></i>
@@ -520,7 +635,7 @@
             $('#viewer').modal('show');
             $('#login-user-name').text(loginUserName);
             if(loginUserProfile != null){
-                $('#login-user-profile-img').attr('src','/api/review-photo/' + loginUserProfile);
+                $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
             loadDetailReview(reviewId)
         });
@@ -551,7 +666,7 @@
                     $('#writer-wrap .btn-group').removeClass('d-flex').hide();
                 }
                 if(writer.profileImg != null){
-                    $('#writer-profile-img').attr('src','/api/review-photo/' + writer.profileImg);
+                    $('#writer-profile-img').attr('src','/api/image/profile/' + writer.profileImg);
                 }
                 $('#content').html(findReview.reviewContent);
                 if(findReview.reviewBookId == null){
@@ -560,7 +675,7 @@
                     $('#review-book-info').addClass('d-flex').show();
                     $('#review-book-title').text(findReview.reviewBookTitle);
                     if(findReview.reviewBookCoverImg != null){
-                        $('#review-book-cover').attr('src','/api/review-photo/' + findReview.reviewBookCoverImg);
+                        $('#review-book-cover').attr('src','/api/image/book/' + findReview.reviewBookCoverImg);
                     }
                 }
                 $('#touritem-name').text(findReview.tourItemTitle);
@@ -569,7 +684,7 @@
                 for(let photo of photoList){
                     savedFile.push(photo.fileId);
                     const tempHtml = `<div class="swiper-slide">` +
-                        `<img class="preview-img" data-file-id="${photo.fileId}" src="/api/review-photo/${photo.filePath}" style="object-fit: contain"/>` +
+                        `<img class="preview-img" data-file-id="${photo.fileId}" src="/api/image/review/${photo.filePath}" style="object-fit: contain"/>` +
                         `</div>`;
                     viewSwiper.appendSlide(tempHtml);
                     viewSwiper.update();
@@ -660,15 +775,149 @@
     $('#new-review-btn').mouseleave(function (){
         $('#new-review-btn span').remove()
     })
+</script>
 
+<!-- 리뷰북 작성 관련-->
+<script th:inline="javascript">
+    $('#new-book-btn').click(function () {
+        resetBookEditor();
+        showPlannerList();
+        $('#book-editor').modal('show');
+    })
     $('#new-book-btn').mouseenter(function (){
-        let tempHtml = "<span>리뷰북 작성</span>";
+        let tempHtml = "<span>리뷰북 생성</span>";
         $('#new-book-btn').append(tempHtml)
     })
 
     $('#new-book-btn').mouseleave(function (){
         $('#new-book-btn span').remove()
     })
+
+    const bookFileInput = $('#book-img-uploader')[0];
+
+    function setBookCoverPreview(){
+        let files = bookFileInput.files;
+
+        if(files.length > 0){
+            let file = files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = function(data) {
+                $('#book-preview-img').attr('src',data.target.result);
+            };
+
+            reader.readAsDataURL(file);
+            $('#select-book-img').html(file.name);
+            $('#book-img-delete-btn').show();
+        }else {
+            return
+        }
+    }
+
+    function deleteBookCoverImg(){
+        $('#book-preview-img').attr('src','../assets/img/review_book_cover.jpg');
+        $('#select-book-img').html('선택된 파일이 없습니다.');
+        $('#book-img-delete-btn').hide();
+        let files = bookFileInput.files;
+        files.length = 0;
+    }
+
+    function resetBookEditor() {
+        deleteBookCoverImg()
+        $('#book-select-planner').html('<option value="hint" class="select-hint" selected>리뷰북에 기록할 여행일정을 선택하세요.</option>');
+        $('#book-title').val('');
+        $('#book-contents').val('');
+        $('#book-preview-title').html();
+    }
+
+    function showPlannerList() {
+        $.ajax({
+            url : '/api/book/show_planner',
+            type : 'GET',
+            success : function (plannerList) {
+                if(plannerList.length > 0){
+                    for(let planner of plannerList){
+                        let template = `<option value=${planner.plannerId}>${planner.plannerName}</option>`;
+                        $('#book-select-planner').append(template)
+                    }
+                }else {
+                    let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
+                    $('#book-select-planner').append(template)
+                }
+            },
+            error : function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    function changeBookTitle() {
+        $("#book-title").on("propertychange change paste input", function() {
+            let title = $(this).val();
+            if(title.length > 20) {
+                title = title.substring(0, 20);
+                $("#book-title").val(title);
+                alert("제목은 20자까지 입력할 수 있습니다.");
+            }
+            $('#book-preview-title').html(title);
+        });
+    }
+
+    function checkBookContents() {
+        $("#book-contents").on("propertychange change paste input", function() {
+            let contents = $(this).val();
+            if(contents.length > 100) {
+                contents = contents.substring(0, 100);
+                $("#book-contents").val(contents);
+                alert("상세정보는 100자까지 입력할 수 있습니다.");
+            }
+        });
+    }
+
+    function createFullBook() {
+        const userId = [[${loginUser.id}]]
+        const plannerId = $("#book-select-planner option:selected").val();
+        const bookTitle = $("#book-title").val();
+        const bookContent = $("#book-contents").val();
+        const coverFile = bookFileInput.files[0];
+
+        if(plannerId === 'hint') {
+            alert("여행일정을 선택해주세요.");
+            return;
+        }else if(bookTitle === ''){
+            alert('리뷰북의 제목을 입력해주세요.')
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("userId", userId);
+        formData.append("plannerId", plannerId);
+        formData.append("bookTitle", bookTitle);
+        if(bookContent != null){
+            formData.append("bookContent", bookContent);
+        }
+        if(coverFile != null){
+            formData.append("coverFile", coverFile);
+        }
+
+        $.ajax({
+            url : '/api/book/create',
+            type : 'POST',
+            data : formData,
+            processData : false,
+            contentType : false,
+            success : function () {
+                alert(`[${bookTitle}] 리뷰북이 생성되었습니다.`);
+            },
+            error : function (err) {
+                alert("리뷰북 생성에 실패하였습니다.");
+                console.log(err);
+            }
+        })
+
+        $('#book-editor').modal('hide');
+    }
 
 </script>
 
@@ -827,21 +1076,26 @@
         }
     }
 
-    function createBook(){
+    function createSimpleBook(){
+        const userId = [[${loginUser.id}]]
+        const plannerId = $("#new-book-item-select option:selected").val();
+        const bookTitle = $("#new-book-title").val();
+
+        let formData = new FormData();
+        formData.append("userId", userId);
+        formData.append("plannerId", plannerId);
+        formData.append("bookTitle", bookTitle);
+
         $.ajax({
-            url : '/book/create',
+            url : '/api/book/create',
             type : 'POST',
-            data : JSON.stringify({
-                userId : [[${loginUser.id}]],
-                plannerId : $("#new-book-item-select option:selected").val(),
-                bookTitle : $("#new-book-title").val()
-            }),
-            contentType : 'application/json; charset=UTF-8',
+            data : formData,
+            processData : false,
+            contentType : false,
             success : function (createdBookId) {
                 createBookFlag = true;
                 selectedBookId = createdBookId;
-                let title = $("#new-book-title").val();
-                alert(`[${title}] 리뷰북이 생성되었습니다.`);
+                alert(`[${bookTitle}] 리뷰북이 생성되었습니다.`);
             },
             error : function (err) {
                 alert("리뷰북 생성에 실패하였습니다.");
@@ -1034,6 +1288,9 @@
         /* 리뷰 작성 관련 설정 */
         selectBook();
         deleteImg();
+        /*리뷰 북 작성 관련 설정*/
+        changeBookTitle();
+        checkBookContents();
     })
 
     const observer = new IntersectionObserver((entries, observer) => {
@@ -1196,7 +1453,7 @@
                                     '</div>'
                             }
                             tempHtml +=
-                                `<img src="/api/review-photo/${review.firstPhoto.filePath}" class="gallery-image" alt="">` +
+                                `<img src="/api/image/review/${review.firstPhoto.filePath}" class="gallery-image" alt="">` +
                                 `<div class="gallery-item-info">` +
                                 `<ul>` +
                                 `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> ${review.likeCount}</li>` +

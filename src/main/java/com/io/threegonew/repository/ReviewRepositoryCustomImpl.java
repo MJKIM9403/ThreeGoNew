@@ -26,11 +26,11 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        return new PageImpl<>(reviewList, pageable, countMyReview(userId));
+        return new PageImpl<>(reviewList, pageable, countMyReviewBook(userId));
     }
 
     @Override
-    public Long countMyReview(String userId) {
+    public Long countMyReviewBook(String userId) {
         Long count = jpaQueryFactory
                 .select(review.count())
                 .from(review)
