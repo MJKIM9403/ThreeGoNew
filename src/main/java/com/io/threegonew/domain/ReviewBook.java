@@ -41,7 +41,7 @@ public class ReviewBook extends BaseTimeEntity{
 
     @OneToMany(
             mappedBy = "reviewBook",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            cascade = {CascadeType.ALL},
             orphanRemoval = true
     )
     private List<Review> reviewList = new ArrayList<>();
@@ -55,5 +55,16 @@ public class ReviewBook extends BaseTimeEntity{
         this.coverOfile = coverOfile;
         this.coverFilePath = coverFilePath;
         this.reviewList = reviewList;
+    }
+
+    public void update(Planner planner, String bookTitle, String bookContent){
+        this.planner = planner;
+        this.bookTitle = bookTitle;
+        this.bookContent = bookContent;
+    }
+
+    public void updateCover(String coverOfile, String coverFilePath){
+        this.coverOfile = coverOfile;
+        this.coverFilePath = coverFilePath;
     }
 }

@@ -53,13 +53,18 @@ public class User /*implements UserDetails*/ {
         this.about = about;
     }
 
-    public void update(String name, String about/*, String u_ofile, String u_sfile*/){
+    public void update(String name, String about){
         this.name = name;
         this.about = about;
     }
 
     public void updatePw(String pw){
         this.pw = pw;
+    }
+
+    public void updateProfileImg(String u_ofile, String u_sfile){
+        this.u_ofile = u_ofile;
+        this.u_sfile = u_sfile;
     }
 
 
