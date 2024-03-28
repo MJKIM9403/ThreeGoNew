@@ -95,7 +95,7 @@ body, * {
 }
 .swiper-slide{
     width: 100%;
-    height: 40rem;
+    height: 20rem;
 }
 .swiper-cards {
     overflow: hidden;
@@ -147,7 +147,7 @@ body, * {
     background-blend-mode: multiply;
     object-fit: cover;
 }
-#swiper-1 .swiper-pagination{
+#swiper-1 .header-swiper-pagination{
     bottom: 2rem;
 }
 

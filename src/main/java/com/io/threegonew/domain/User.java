@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.*;
@@ -41,6 +40,14 @@ public class User /*implements UserDetails*/ {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Team> sharedPlanners = new HashSet<>();
+
+    // 내가 팔로우하는 사람들
+    @OneToMany(mappedBy = "toUser")
+    private Set<Follow> toUser = new HashSet<>();
+
+    // 나를 팔로우하는 사람들
+    @OneToMany(mappedBy = "fromUser")
+    private Set<Follow> fromUser = new HashSet<>();
 
     @Builder
     public User(String id, String pw, String name, String email, String u_ofile, String u_sfile, String about){
