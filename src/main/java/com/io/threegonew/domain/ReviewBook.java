@@ -40,6 +40,7 @@ public class ReviewBook extends BaseTimeEntity{
     private String coverFilePath;
 
     @OneToMany(
+            fetch = FetchType.LAZY,
             mappedBy = "reviewBook",
             cascade = {CascadeType.ALL},
             orphanRemoval = true

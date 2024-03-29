@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReviewBookRepository extends JpaRepository<ReviewBook, Long> {
+public interface ReviewBookRepository extends JpaRepository<ReviewBook, Long>, ReviewBookRepositoryCustom {
 
     List<ReviewBook> findByUser(User user);
 }

@@ -26,6 +26,9 @@ public class Cat2 {
     @JoinColumn(name = "cat1")
     private Cat1 cat1;
 
-    @OneToMany(mappedBy = "cat2")
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "cat2"
+    )
     private List<Cat3> cat3List = new ArrayList<>();
 }

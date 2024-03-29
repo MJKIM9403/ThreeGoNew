@@ -22,6 +22,9 @@ public class Cat1 {
     @Column(name = "cat1_name")
     private String cat1Name;
 
-    @OneToMany(mappedBy = "cat1")
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "cat1"
+    )
     private List<Cat2> cat2List = new ArrayList<>();
 }

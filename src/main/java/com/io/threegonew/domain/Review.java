@@ -41,6 +41,7 @@ public class Review extends BaseTimeEntity {
     private Long viewCount;
 
     @OneToMany(
+            fetch = FetchType.LAZY,
             mappedBy = "review",
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )

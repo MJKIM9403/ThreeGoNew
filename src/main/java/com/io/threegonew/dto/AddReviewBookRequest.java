@@ -1,12 +1,10 @@
 package com.io.threegonew.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class AddReviewBookRequest {
     private String userId;
@@ -22,7 +20,7 @@ public class AddReviewBookRequest {
         this.userId = userId;
         this.plannerId = plannerId;
         this.bookTitle = bookTitle;
-        this.bookContent = bookContent.replace("\r\n", "<br>");
+        this.bookContent = bookContent;
         this.coverFile = coverFile;
     }
 }

@@ -68,7 +68,7 @@ public class FileHandler {
             }
 
             // 저장할 파일 이름 생성
-            String oFileName = newProfileImg.getName();
+            String oFileName = newProfileImg.getOriginalFilename();
             String sFileName = UUID.randomUUID() + oFileExtension;
             user.updateProfileImg(oFileName, sFileName);
             File saveFile = new File(absolutePath + userProfilePath + sFileName);
@@ -123,7 +123,7 @@ public class FileHandler {
             }
 
             // 저장할 파일 이름 생성
-            String oFileName = newBookCover.getName();
+            String oFileName = newBookCover.getOriginalFilename();
             String sFileName = UUID.randomUUID() + oFileExtension;
             reviewBook.updateCover(oFileName, sFileName);
             File saveFile = new File(absolutePath + bookCoverPath + sFileName);
