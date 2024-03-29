@@ -79,6 +79,9 @@ dependencies {
     //비밀번호 찾기
     implementation ("org.springframework.boot:spring-boot-starter-mail")
 
+    //url 암호화 인코딩/디코딩을 위한 codec
+    implementation("commons-codec:commons-codec:1.15")
+
 }
 
 tasks.withType<Test> {

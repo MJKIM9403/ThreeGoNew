@@ -5,6 +5,7 @@ import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.ReviewBookRepository;
+import com.io.threegonew.util.AesUtil;
 import com.io.threegonew.util.FileHandler;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -45,11 +46,21 @@ public class ReviewBookService {
         );
     }
 
+    public ReviewBookResponse findReviewBookResponse(Long reviewBookId){
+        return reviewBookMapper(findReviewBook(reviewBookId));
+    }
+
     public PageResponse findMyReviewBook(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         Page<MyReviewBookResponse> page = reviewBookRepository.findMyReviewBook(pageable, request.getUserId())
-                .map(this::myReviewBookMapper);
+                .map(reviewBook -> {
+                    try {
+                        return myReviewBookMapper(reviewBook);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
         PageResponse<MyReviewBookResponse> pageResponse = PageResponse.<MyReviewBookResponse>withAll()
                 .dtoList(page.getContent())
@@ -62,9 +73,9 @@ public class ReviewBookService {
         return pageResponse;
     }
 
-    private MyReviewBookResponse myReviewBookMapper(ReviewBook reviewBook){
+    private MyReviewBookResponse myReviewBookMapper(ReviewBook reviewBook) throws Exception {
         return MyReviewBookResponse.builder()
-                                    .bookId(reviewBook.getBookId())
+                                    .bookId(AesUtil.aesCBCEncode(reviewBook.getBookId().toString()))
                                     .bookTitle(reviewBook.getBookTitle())
                                     .coverFilePath(reviewBook.getCoverFilePath())
                                     .build();
@@ -84,7 +95,7 @@ public class ReviewBookService {
                 .user(userInfoMapper(reviewBook.getUser()))
                 .planner(plannerMapper(reviewBook.getPlanner()))
                 .bookTitle(reviewBook.getBookTitle())
-                .bookContent(reviewBook.getBookContent())
+                .bookContent(reviewBook.getBookContent().replace("\r\n","<br>"))
                 .coverOfile(reviewBook.getCoverOfile())
                 .coverFilePath(reviewBook.getCoverFilePath())
                 .build();
