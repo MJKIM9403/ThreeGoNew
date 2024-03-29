@@ -45,6 +45,10 @@ public class PrincipalDetails implements UserDetails {
         return user.getEmail();
     }
     // 계정이 만료 되었는지 (true: 만료X)
+
+    public String getProfileImg() {
+        return user.getU_sfile();
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;

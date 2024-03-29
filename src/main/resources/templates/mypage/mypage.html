@@ -339,7 +339,8 @@
     <div class="container">
         <div class="profile">
             <div class="profile-image">
-                <img src="https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces" alt="">
+                <img th:if="${findUser.profileImg == null}" src="/assets/img/profile.jpg" alt="프로필 이미지">
+                <img th:unless="${findUser.profileImg == null}" th:src="|@{/api/image/profile/}${findUser.profileImg}|" alt="프로필 이미지">
             </div>
 
             <div class="profile-user-settings">

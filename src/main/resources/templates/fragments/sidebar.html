@@ -31,6 +31,11 @@
     .align-items-start{
       align-items: initial !important;
     }
+
+    .profile-img {
+        width: 25px;
+        height: 25px;
+    }
 </style>
 
 <body>
@@ -86,7 +91,8 @@
                class=" d-flex justify-content-center align-items-center text-decoration-none dropdown-toggle nav-link"
                data-bs-toggle="dropdown" aria-expanded="false">
               <th:block sec:authorize="isAuthenticated()">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                  <img th:if="${#authentication.principal.profileImg == null}" src="/assets/img/profile.jpg" class="profile-img rounded-circle me-2" alt="프로필 이미지">
+                  <img th:unless="${#authentication.principal.profileImg == null}" th:src="|@{/api/image/profile/}${#authentication.principal.profileImg}|" class="profile-img rounded-circle me-2" alt="프로필 이미지">
                 <strong th:text="${#authentication.principal.name}"></strong>
               </th:block>
               <th:block sec:authorize="isAnonymous()">
