@@ -1,10 +1,9 @@
 package com.io.threegonew.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.io.threegonew.ApiKey;
+import com.io.threegonew.Key;
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.dto.MoreTourItemDTO;
-import com.io.threegonew.dto.MoreTourItemInterface;
 import com.io.threegonew.dto.TourItemContentResponse;
 import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.repository.TourItemRepository;
@@ -14,8 +13,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,8 +23,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Service
@@ -127,7 +122,7 @@ public class TourItemContentService {
         }
 
         uriBuilder.queryParam("contentId",tourItemResponse.getContentid())
-                .queryParam("serviceKey", ApiKey.TOURAPI_KEY_1)
+                .queryParam("serviceKey", Key.TOURAPI_KEY_1)
                 .queryParam("_type","json")
                 .build();
 

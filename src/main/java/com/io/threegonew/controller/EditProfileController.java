@@ -1,5 +1,6 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.dto.UpdateUserProfileRequest;
 import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -36,17 +37,13 @@ public class EditProfileController {
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity updateProfile(@RequestParam(value = "id") String userId,
-                                                @RequestParam(value = "name") String name,
-                                                @RequestParam(value = "about") String about)
-    {
-        System.out.println("id: " + userId);
-        System.out.println("name: " + name);
-        System.out.println("about: " + about);
+    public ResponseEntity updateProfile(@ModelAttribute UpdateUserProfileRequest request) {
+        System.out.println(request.getName());
+        System.out.println(request.getNewProfileImg());
         try{
-            userService.modifyUserProfile(userId, name, about);
-        }catch (IllegalArgumentException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            userService.modifyUserProfile(request);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

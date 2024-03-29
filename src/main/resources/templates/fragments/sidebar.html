@@ -31,6 +31,11 @@
     .align-items-start{
       align-items: initial !important;
     }
+
+    .profile-img {
+        width: 25px;
+        height: 25px;
+    }
 </style>
 
 <body>
@@ -43,37 +48,37 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="/review" class="nav-link py-2 border-bottom" aria-current="page">
+                <a href="/review" class="nav-link-act nav-link py-2 border-bottom" aria-current="page">
                     <i class="bi bi-house-door-fill icon"></i>
                     메인화면
                 </a>
             </li>
             <li >
-                <a href="/info/area" class="nav-link py-2 border-bottom">
+                <a href="/info/area" class="nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-speedometer2 icon"></i>
                     여행정보
                 </a>
             </li>
             <li>
-                <a href="/planner" class="nav-link py-2 border-bottom">
+                <a href="/planner" class="nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-card-checklist icon"></i>
                     여행일정
                 </a>
             </li>
-            <li>
-                <a href="#" class="nav-link py-2 border-bottom">
-                    <i class="bi bi-columns icon"></i>
-                    검색(개발중)
-                </a>
-            </li>
+<!--            <li>-->
+<!--                <a href="#" class="nav-link py-2 border-bottom">-->
+<!--                    <i class="bi bi-columns icon"></i>-->
+<!--                    검색(개발중)-->
+<!--                </a>-->
+<!--            </li>-->
                 <li>
-        <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class="nav-link py-2 border-bottom">
+        <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class=" nav-link py-2 border-bottom">
         <i class="bi bi-people-fill icon"></i>
         마이페이지
         </span>
                 <a sec:authorize="isAuthenticated()"
                    th:href="@{/mypage/{userId}(userId=${#authentication.principal.username})}"
-                   class="nav-link py-2 border-bottom">
+                   class="nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-people-fill icon"></i>
                     마이페이지
                 </a>
@@ -86,7 +91,8 @@
                class=" d-flex justify-content-center align-items-center text-decoration-none dropdown-toggle nav-link"
                data-bs-toggle="dropdown" aria-expanded="false">
               <th:block sec:authorize="isAuthenticated()">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                  <img th:if="${#authentication.principal.profileImg == null}" src="/assets/img/profile.jpg" class="profile-img rounded-circle me-2" alt="프로필 이미지">
+                  <img th:unless="${#authentication.principal.profileImg == null}" th:src="|@{/api/image/profile/}${#authentication.principal.profileImg}|" class="profile-img rounded-circle me-2" alt="프로필 이미지">
                 <strong th:text="${#authentication.principal.name}"></strong>
               </th:block>
               <th:block sec:authorize="isAnonymous()">
@@ -113,40 +119,7 @@
             </ul>
           </div>
         </ul>
-<!--        <hr>-->
 
-<!--        <div class="login-drop dropdown mt-auto">-->
-<!--            <hr>-->
-<!--            <a href="#"-->
-<!--               class=" d-flex justify-content-center align-items-center text-decoration-none dropdown-toggle nav-link"-->
-<!--               data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                <th:block sec:authorize="isAuthenticated()">-->
-<!--                    <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">-->
-<!--                    <strong th:text="${#authentication.principal.name}"></strong>-->
-<!--                </th:block>-->
-<!--                <th:block sec:authorize="isAnonymous()">-->
-<!--                    <i class="bi bi-person-circle text-dark"></i>-->
-<!--                    <strong>로그인</strong>-->
-<!--                </th:block>-->
-<!--            </a>-->
-<!--            <ul class="dropdown-menu text-small shadow">-->
-<!--                <th:block sec:authorize="isAnonymous()">-->
-<!--                    <li><a class="dropdown-item" href="/login">로그인</a></li>-->
-<!--                    <li>-->
-<!--                        <hr class="dropdown-divider">-->
-<!--                    </li>-->
-<!--                    <li><a class="dropdown-item" href="/join">회원가입</a></li>-->
-<!--                </th:block>-->
-<!--                <th:block sec:authorize="isAuthenticated()">-->
-<!--                    <li><a class="dropdown-item" href="/editprofile">profile</a></li>-->
-<!--                    <li><a class="dropdown-item" href="/changePw">setting</a></li>-->
-<!--                    <li>-->
-<!--                        <hr class="dropdown-divider">-->
-<!--                    </li>-->
-<!--                    <li><a class="dropdown-item" href="/logout">로그아웃</a></li>-->
-<!--                </th:block>-->
-<!--            </ul>-->
-<!--        </div>-->
     </div>
 </th:block>
 <script>
@@ -155,30 +128,20 @@
         location.replace("/login")
     }
 
-    // 클릭 액티브
-    // $('.nav-link').click(function(){
-    //     // 클릭된 버튼에만 active 클래스 추가
-    //     if($(this).hasClass('active')){
-    //         $(this).removeClass('active');
-    //     } else {
-    //         $('.nav-link').removeClass('active');
-    //         $(this).addClass('active');
-    //     }
-    // });
     $(document).ready(function() {
         // 페이지가 로드될 때 활성화된 메뉴에 active 클래스를 적용
         var activeMenu = localStorage.getItem('activeMenu');
         if (activeMenu) {
-            $('.nav-link').removeClass('active');
+            $('.nav-link-act').removeClass('active');
             $('a[href="' + activeMenu + '"]').addClass('active');
         } else {
             // 만약 로컬 스토리지에 저장된 활성화된 메뉴가 없으면 첫 번째 메뉴에 active 클래스를 적용
-            $('.nav-link:first').addClass('active');
+            $('.nav-link-act:first').addClass('active');
         }
 
         // 메뉴를 클릭할 때마다 active 클래스를 적용하고, 활성화된 메뉴를 로컬 스토리지에 저장
-        $('.nav-link').click(function() {
-            $('.nav-link').removeClass('active');
+        $('.nav-link-act').click(function() {
+            $('.nav-link-act').removeClass('active');
             $(this).addClass('active');
             var href = $(this).attr('href');
             localStorage.setItem('activeMenu', href);

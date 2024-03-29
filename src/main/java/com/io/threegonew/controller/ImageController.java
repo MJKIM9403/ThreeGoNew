@@ -24,4 +24,11 @@ public class ImageController {
         String fullPath = absolutePath + "/" + imagename;
         return new UrlResource("file:" + fullPath);
     }
+
+    @GetMapping("/profile/{imagename}")
+    public Resource showProfileImage(@PathVariable String imagename) throws MalformedURLException {
+        String absolutePath = "C://threeGo/profile/";
+        String fullPath = absolutePath + "/" + imagename;
+        return new UrlResource("file:" + fullPath);
+    }
 }

@@ -39,6 +39,12 @@
         height: 100%;
     }
 
+    .no-data-msg {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
     .btn-close {
         position: absolute;
         top: 5%;
@@ -115,7 +121,7 @@
     #book-cover-wrap {
         background: #333333 ;
         position: relative;
-        height: 10rem;
+        height: 8rem;
         overflow: hidden;
     }
 
@@ -168,11 +174,18 @@
     }
     /* 리뷰북 목록 */
     .review-book-item {
+        cursor: pointer;
+        box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
         position: relative;
-        width: 100%;
-        height: 20rem;
-        margin-bottom: 3rem;
+        width: 80%;
+        min-width: 720px;
+        aspect-ratio: 3.7;
         overflow: hidden;
+    }
+
+    .review-book-item:hover {
+        width: 81%;
+        transition: width 0.1s linear;
     }
 
     .review-book-item img {
@@ -182,14 +195,15 @@
     }
 
     .review-book-item p {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
         position: absolute;
         z-index: 100;
         margin-bottom: 0;
-        bottom: 1rem;
-        right: 1rem;
+        bottom: 10%;
+        right: 5%;
         color: #FFFFFF;
+        transition: all 0.2s linear;
         text-shadow:
                 -1px 0px rgba(0, 0, 0, 0.8),
                 0px 1px rgba(0, 0, 0, 0.8),
@@ -331,7 +345,8 @@
     <div class="container">
         <div class="profile">
             <div class="profile-image">
-                <img src="https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces" alt="">
+                <img th:if="${findUser.profileImg == null}" src="/assets/img/profile.jpg" alt="프로필 이미지">
+                <img th:unless="${findUser.profileImg == null}" th:src="|@{/api/image/profile/}${findUser.profileImg}|" alt="프로필 이미지">
             </div>
 
             <div class="profile-user-settings">
@@ -1404,7 +1419,7 @@
                 if(firstLoad && bookmarkList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
                                     '<h4>등록된 북마크가 없습니다.</h4>' +
                                     '</div>';
                     gallery.append(messageHtml);
@@ -1477,7 +1492,7 @@
                 if(firstLoad && reviewList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
                         '<h4>등록된 리뷰가 없습니다.</h4>' +
                         '</div>';
                     gallery.append(messageHtml);
@@ -1552,8 +1567,8 @@
                 if(firstLoad && reviewBookList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
-                        '<h4>등록된 리뷰가 없습니다.</h4>' +
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
+                        '<h4>등록된 리뷰북이 없습니다.</h4>' +
                         '</div>';
                     gallery.append(messageHtml);
                 }else {
@@ -1562,9 +1577,11 @@
                         $(".loader").hide()
                         $.each(reviewBookList, function (index, reviewBook){
                             let coverPath = reviewBook.coverFilePath == null ? '../assets/img/review_book_cover.jpg' : `/api/image/book/${reviewBook.coverFilePath}`;
-                            let tempHtml = '<div class="review-book-item" tabIndex="0" onclick="">' +
+                            let tempHtml = `<div class="review-book-item" tabIndex="0">` +
+                                        `<a href="/book?bookId=${reviewBook.bookId}">` +
                                         `<img src="${coverPath}"/>` +
                                         `<p>${reviewBook.bookTitle}</p>` +
+                                        `</a>`
                                         '</div>';
                             gallery.append(tempHtml).trigger("create")
                         })

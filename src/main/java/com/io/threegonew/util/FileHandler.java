@@ -26,15 +26,19 @@ public class FileHandler {
     private final String bookCoverPath = "bookcover/";
 
     public boolean deleteUserProfile(User user) {
-        File deleteFile = new File(absolutePath + userProfilePath + user.getU_sfile());
-        user.updateProfileImg(null, null);
-        return deleteFile.delete();
+        if(user.getU_sfile() == null){
+            return false;
+        }else {
+            File deleteFile = new File(absolutePath + userProfilePath + user.getU_sfile());
+            user.updateProfileImg(null, null);
+            return deleteFile.delete();
+        }
     }
 
+
     public void updateUserProfile(User user, MultipartFile newProfileImg) throws Exception {
-        if(user.getU_sfile() != null){
-            deleteUserProfile(user);
-        }
+        deleteUserProfile(user);
+
         if(!newProfileImg.isEmpty()){
             File file = new File(absolutePath + userProfilePath);
 

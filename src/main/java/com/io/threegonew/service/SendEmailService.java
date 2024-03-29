@@ -1,16 +1,12 @@
 package com.io.threegonew.service;
 
-import com.io.threegonew.ApiKey;
+import com.io.threegonew.Key;
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.JavaMailSenderImpl;
 import com.io.threegonew.util.TempPassword;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +23,7 @@ public class SendEmailService {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JavaMailSenderImpl javaMailSenderImpl;
-    private static final String FROM_ADDRESS = ApiKey.GMAIL;
+    private static final String FROM_ADDRESS = Key.GMAIL;
 
     @Transactional
     public MailDTO createMailAndChangePassword(String email, String id) {

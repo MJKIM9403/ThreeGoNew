@@ -1,7 +1,7 @@
 package com.io.threegonew.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.io.threegonew.ApiKey;
+import com.io.threegonew.Key;
 import com.io.threegonew.domain.*;
 import com.io.threegonew.repository.*;
 import lombok.AllArgsConstructor;
@@ -63,7 +63,7 @@ public class InsertData {
             uriBuilder.queryParam("areaCode",params.get("Area"));
         }
 
-        uriBuilder.queryParam("serviceKey",ApiKey.TOURAPI_KEY_1)
+        uriBuilder.queryParam("serviceKey", Key.TOURAPI_KEY_1)
                 .queryParam("_type","json")
                 .build();
 

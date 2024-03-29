@@ -2,16 +2,23 @@ package com.io.threegonew.service;
 
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddUserRequest;
+import com.io.threegonew.dto.UpdateUserProfileRequest;
 import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.repository.UserRepository;
+import com.io.threegonew.util.FileHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +27,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserDetailService userDetailService;
+    private final FileHandler fileHandler;
 
     public List<User> findAll(){
         return userRepository.findAll();
@@ -86,11 +95,24 @@ public class UserService {
 
     //    회원 수정 업데이트 처리.
     @Transactional
-    public void modifyUserProfile(String userId, String name, String about) {
+    public void modifyUserProfile(UpdateUserProfileRequest request) throws Exception {
         // userId를 사용하여 사용자 정보를 조회합니다.
-        User user = userRepository.findById(userId).orElseThrow(() ->
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() ->
                 new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
-        user.update(name, about);
+        user.update(request.getName(), request.getAbout());
+        if(request.getNewProfileImg() != null){
+            fileHandler.updateUserProfile(user, request.getNewProfileImg());
+        }
+        sessionReset(user);
+    }
+
+    public  void sessionReset(User user) {
+        Collection authorities = new ArrayList<>();
+//        authorities.add(() -> user.getRole().toString());
+
+        UserDetails userDetails = userDetailService.loadUserByUsername(user.getId());
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
     }
 
     @Transactional
