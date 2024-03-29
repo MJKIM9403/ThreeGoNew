@@ -133,24 +133,22 @@
             opacity: 1;
         }
 
+        .areadiv{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 90vh;
+        }
 
 
     </style>
 </head>
 <body>
-<!-- header-->
-<!--<th:block th:replace="~{fragments/header}"></th:block>-->
 
-
-<!--<div class="sub-header">-->
-<!--    <div class="container pt-5 pl-5">-->
-<!--        <h3 class="display-6 text-white">여행지</h3>-->
-<!--    </div>-->
-<!--</div>-->
 
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
-    <div class="container mt-5">
+    <div class="container areadiv">
         <h2 id="test">여행을 떠날 지역을 골라보세요!</h2>
         <div id="area">
             <!--           <table border="1" width="70%" align="center"> -->
