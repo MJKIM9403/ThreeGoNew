@@ -64,6 +64,9 @@ public class MyPageController {
             myId = userDetails.getUsername();
             User toUser = userService.findUser(myId);
 
+            boolean isFollowing = followService.isFollowing(toUser, fromUser);
+            model.addAttribute("isFollowing", isFollowing);
+
             // 팔로잉리스트
             List<Follow> followingList = followService.findFollowingsByFollower(fromUser);
             Map<String, Boolean> isFollowingMap = new HashMap<>();
@@ -84,18 +87,13 @@ public class MyPageController {
                 isFollowedMap.put(otherUserId, isFollow);
             }
 
-            model.addAttribute("myId", myId);
             model.addAttribute("followingList", followingList);
             model.addAttribute("followerList", followerList);
 
             model.addAttribute("isFollowingMap", isFollowingMap);
             model.addAttribute("isFollowedMap", isFollowedMap);
 
-//            Optional<Follow> follow = followService.findFollowing(FollowDTO.builder()
-//                    .toUser(toUser)
-//                    .fromUser(fromUser)
-//                    .build());
-//            isFollowed = follow.isPresent();
+
         }
 
 

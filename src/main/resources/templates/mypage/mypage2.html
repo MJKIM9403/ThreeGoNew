@@ -246,6 +246,10 @@
                     <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
                 </th:block>
             </div>
+            <div class="follow-state" th:unless="${findUser.id == loginUser.id}">
+                <button class="btn btn-secondary unfollow-btn" th:if="${isFollowing}" th:data-user-id="${findUser.id}">언팔로우</button>
+                <button class="btn btn-primary follow-btn" th:unless="${isFollowing}" th:data-user-id="${findUser.id}">팔로우</button>
+            </div>
 
             <div class="profile-stats">
                 <ul>
