@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +69,16 @@ public class FollowService {
                 .orElseThrow(() -> new IllegalArgumentException("팔로우하지 않은 사용자입니다."));
         followRepository.delete(follow);
     }
+
+    public Optional<Follow> findFollowing(FollowDTO followDTO) {
+        User toUser = userRepository.findById(followDTO.getToUser().getId()).orElseThrow(()->
+                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
+        User fromUser = userRepository.findById(followDTO.getToUser().getId()).orElseThrow(()->
+                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
+
+        return followRepository.findByToUserAndFromUser(toUser, fromUser);
+    }
+
 
     // 팔로우중인지 확인하기
     public boolean isFollowing(User toUser, User fromUser) {

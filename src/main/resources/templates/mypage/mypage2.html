@@ -492,15 +492,18 @@
                     <div th:if="${followerList.size() > 0}">
                         <div id="follower-list">
                             <div class="list-group">
-                            <th:block th:each="follower, idx : ${followerList}">
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p th:text="${follower.toUser.id}"></p>
-                                        <p th:text="${follower.toUser.name}"></p>
+                                <th:block th:each="follower, idx : ${followerList}">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p th:text="${follower.toUser.id}"></p>
+                                            <p th:text="${follower.toUser.name}"></p>
+                                        </div>
+                                        <div class="follow-state" th:unless="${follower.toUser.id == myId}">
+                                            <button class="btn btn-secondary unfollow-btn" th:if="${isFollowedMap[__${follower.toUser.id}__]}" th:data-user-id="${follower.toUser.id}">언팔로우</button>
+                                            <button class="btn btn-primary follow-btn" th:unless="${isFollowedMap[__${follower.toUser.id}__]}" th:data-user-id="${follower.toUser.id}">팔로우</button>
+                                        </div>
                                     </div>
-                                    <button class="btn btn-primary follow-btn" th:data-user-id="${follower.toUser.id}">팔로우</button>
-                                </div>
-                            </th:block>
+                                </th:block>
                             </div>
                         </div>
                     </div>
@@ -532,7 +535,10 @@
                                             <p th:text="${following.fromUser.id}"></p>
                                             <p th:text="${following.fromUser.name}"></p>
                                         </div>
-                                        <button class="btn btn-primary" th:if="${following.fromUser.id == }" th:data-user-id="${following.fromUser.id}">팔로우</button>
+                                        <div class="follow-state" th:unless="${following.fromUser.id == myId}">
+                                            <button class="btn btn-secondary unfollow-btn" th:if="${isFollowingMap[__${following.fromUser.id}__]}" th:data-user-id="${following.fromUser.id}">언팔로우</button>
+                                            <button class="btn btn-primary follow-btn" th:unless="${isFollowingMap[__${following.fromUser.id}__]}" th:data-user-id="${following.fromUser.id}">팔로우</button>
+                                        </div>
                                     </div>
                                 </th:block>
                             </div>
@@ -545,6 +551,7 @@
             </div>
         </div>
     </div>
+
     <!-- End of container -->
 </div>
 <script th:inline="javascript">
@@ -1359,6 +1366,8 @@
         });
     }
 
+    let followState = [[${isFollowed}]];
+    console.log(followState);
     // 팔로워, 팔로잉 리스트 모달창 열기
     $('#followers').click(function() {
         $('#followersModal').modal('show');
@@ -1367,20 +1376,49 @@
         $('#followingModal').modal('show');
     });
 
-    $('.follow-btn').on('click', function (){
+    $(document).on('click', '.follow-btn', function (){
         const userId = this.getAttribute('data-user-id');
+        var $button = $(this);
         $.ajax({
             url: '/api/follow/' + userId,
             type: 'POST',
             contentType : 'application/json; charset=UTF-8',
             success: function(response) {
                 alert(userId + '님을 팔로우햇슴~');
+                $button.removeClass('btn-primary')
+                    .addClass('btn-secondary')
+                    .addClass('unfollow-btn')
+                    .html('언팔로우')
+                    .removeClass('follow-btn');
             },
             error: function (xhr, status, error) {
                 alert('팔로우실패~~');
             }
         })
-    })
+    });
+
+    $(document).on('click', '.unfollow-btn', function () {
+        const userId = this.getAttribute('data-user-id');
+        var $button = $(this);
+        $.ajax({
+            url: '/api/unfollow/' + userId,
+            type: 'DELETE',
+            contentType : 'application/json; charset=UTF-8',
+            success: function(response) {
+                alert(userId + '님을 언팔로우햇슴~');
+                $button.removeClass('btn-secondary')
+                    .addClass('btn-primary')
+                    .addClass('follow-btn')
+                    .html('팔로우')
+                    .removeClass('unfollow-btn');
+            },
+            error: function (xhr, status, error) {
+                alert('언팔로우실패~~');
+            }
+        })
+    });
+
+
 
 </script>
 

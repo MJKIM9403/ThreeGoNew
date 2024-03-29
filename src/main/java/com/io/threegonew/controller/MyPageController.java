@@ -14,7 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,13 +51,55 @@ public class MyPageController {
         model.addAttribute("loginUser", loginUserInfo);
 
         // 팔로우, 팔로워 기능 관련 추가
-//        User user = userService.findUser(userId);
-//        List<Follow> followingList = followService.findFollowingsByFollower(user);
-//        List<Follow> followerList = followService.findFollowersByFollowing(user);
-//        model.addAttribute("followingList", followingList);
-//        model.addAttribute("followerList", followerList);
+        User fromUser = userService.findUser(userId);
+
+        String myId = "";
+        boolean isFollowed = false;
+        // 로그인 중인 유저
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.equals("anonymousUser")) {
+            myId = "anonymousUser";
+        } else {
+            UserDetails userDetails = (UserDetails)principal;
+            myId = userDetails.getUsername();
+            User toUser = userService.findUser(myId);
+
+            // 팔로잉리스트
+            List<Follow> followingList = followService.findFollowingsByFollower(fromUser);
+            Map<String, Boolean> isFollowingMap = new HashMap<>();
+            for(Follow follow : followingList) {
+                User otherUser = follow.getFromUser();
+                String otherUserId = otherUser.getId();
+                boolean isFollow = followService.isFollowing(toUser,otherUser);
+                isFollowingMap.put(otherUserId, isFollow);
+            }
+
+            // 팔로워리스트
+            List<Follow> followerList = followService.findFollowersByFollowing(fromUser);
+            Map<String, Boolean> isFollowedMap = new HashMap<>();
+            for(Follow follow : followerList) {
+                User otherUser = follow.getToUser();
+                String otherUserId = otherUser.getId();
+                boolean isFollow = followService.isFollowing(toUser,otherUser);
+                isFollowedMap.put(otherUserId, isFollow);
+            }
+
+            model.addAttribute("myId", myId);
+            model.addAttribute("followingList", followingList);
+            model.addAttribute("followerList", followerList);
+
+            model.addAttribute("isFollowingMap", isFollowingMap);
+            model.addAttribute("isFollowedMap", isFollowedMap);
+
+//            Optional<Follow> follow = followService.findFollowing(FollowDTO.builder()
+//                    .toUser(toUser)
+//                    .fromUser(fromUser)
+//                    .build());
+//            isFollowed = follow.isPresent();
+        }
 
 
-        return "mypage/mypage";
+
+        return "mypage/mypage2";
     }
 }
