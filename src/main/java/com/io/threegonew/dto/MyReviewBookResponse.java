@@ -6,11 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class MyReviewBookResponse {
-    private Long bookId;
+    private String bookId;
     private String bookTitle;
     private String coverFilePath;
+
+    @Builder
+    public MyReviewBookResponse(String bookId, String bookTitle, String coverFilePath) {
+        this.bookId = bookId;
+        this.bookTitle = bookTitle;
+        this.coverFilePath = coverFilePath;
+    }
 }

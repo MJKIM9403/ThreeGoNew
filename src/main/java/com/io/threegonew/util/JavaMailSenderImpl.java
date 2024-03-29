@@ -1,6 +1,6 @@
 package com.io.threegonew.util;
 
-import com.io.threegonew.ApiKey;
+import com.io.threegonew.Key;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class JavaMailSenderImpl {
-    private final String user = ApiKey.GMAIL;
-    private final String pwd = ApiKey.GMAIL_PWD;
+    private final String user = Key.GMAIL;
+    private final String pwd = Key.GMAIL_PWD;
     private final Properties serverInfo;
 
     public JavaMailSenderImpl() {

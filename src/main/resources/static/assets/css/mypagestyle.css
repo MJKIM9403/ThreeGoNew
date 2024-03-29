@@ -131,6 +131,7 @@ img {
 
 .gallery {
     display: flex;
+    gap: 1rem;
     flex-wrap: wrap;
     margin: -1rem -1rem;
     padding-bottom: 4rem;
@@ -138,7 +139,9 @@ img {
 
 .gallery-item {
     position: relative;
-    flex: 1 0 22rem;
+    width: calc(100% / 3 - 2rem);
+    aspect-ratio: 1;
+    /*flex: 1 0 22rem;*/
     margin: 1rem;
     color: #fff;
     cursor: pointer;
@@ -338,19 +341,24 @@ Remove or comment-out the code block below to see how the browser will fall-back
         grid-row: 1 / -1;
     }
 
-    .gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-        grid-gap: 2rem;
-    }
+    /*.gallery {*/
+    /*    display: grid;*/
+    /*    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));*/
+    /*    grid-gap: 1rem;*/
+    /*}*/
 
     .profile-image,
     .profile-user-settings,
     .profile-stats,
     .profile-bio,
-    .gallery-item,
     .gallery {
         width: auto;
+        margin: 0;
+    }
+
+    .gallery-item {
+        width: calc(100% / 3 - 2rem);
+        aspect-ratio: 1;
         margin: 0;
     }
 
