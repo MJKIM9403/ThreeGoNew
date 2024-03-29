@@ -42,12 +42,12 @@
         margin-top: 20px;
     }
 
-    #find-info a:first-of-type {
+    #find-info span:first-of-type {
         margin-right: 15px;
         position: relative;
     }
 
-    #find-info a:first-of-type:after {
+    #find-info span:first-of-type:after {
         width: 1px;
         height: 20px;
         position: absolute;
@@ -132,8 +132,9 @@
                     <input type="submit" value="로그인" class="btn btn-primary btn-md"><br/>
                 </div>
                 <div id="find-info" class="text-center">
-                    <span id="findId_btn"><a href="/findId">아이디 찾기</a></span>
-                    <a href="/findPw">비밀번호 찾기</a>
+                    <span id="findId_btn">
+                        <a href="/findId">아이디 찾기</a></span>
+                    <span><a href="/findPw">비밀번호 찾기</a></span>
                 </div>
             </div>
         </form>
