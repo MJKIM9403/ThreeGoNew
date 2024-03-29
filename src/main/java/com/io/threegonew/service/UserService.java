@@ -100,11 +100,8 @@ public class UserService {
         User user = userRepository.findById(request.getUserId()).orElseThrow(() ->
                 new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
         user.update(request.getName(), request.getAbout());
-        if(!request.getNewProfileImg().isEmpty()){
+        if(request.getNewProfileImg() != null){
             fileHandler.updateUserProfile(user, request.getNewProfileImg());
-        }
-        if(request.getNewProfileImg() == null){
-            fileHandler.deleteUserProfile(user);
         }
         sessionReset(user);
     }

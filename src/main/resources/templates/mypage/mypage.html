@@ -39,6 +39,12 @@
         height: 100%;
     }
 
+    .no-data-msg {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
     .btn-close {
         position: absolute;
         top: 5%;
@@ -1370,11 +1376,6 @@
         scrollCheck = false;
         firstLoad = true;
         back = false;
-        if(tabType === "REVIEWBOOK"){
-            gallery.css('justify-content', 'center');
-        }else {
-            gallery.css('justify-content', 'flex-start');
-        }
         if([[${findUser.id == loginUser.id}]]){
             $('.create-btn').hide();
             switch (tabType){
@@ -1418,7 +1419,7 @@
                 if(firstLoad && bookmarkList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
                                     '<h4>등록된 북마크가 없습니다.</h4>' +
                                     '</div>';
                     gallery.append(messageHtml);
@@ -1491,7 +1492,7 @@
                 if(firstLoad && reviewList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
                         '<h4>등록된 리뷰가 없습니다.</h4>' +
                         '</div>';
                     gallery.append(messageHtml);
@@ -1566,8 +1567,8 @@
                 if(firstLoad && reviewBookList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="d-flex justify-content-center mt-5">' +
-                        '<h4>등록된 리뷰가 없습니다.</h4>' +
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
+                        '<h4>등록된 리뷰북이 없습니다.</h4>' +
                         '</div>';
                     gallery.append(messageHtml);
                 }else {

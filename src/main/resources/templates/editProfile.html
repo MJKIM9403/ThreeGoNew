@@ -40,13 +40,12 @@
         margin-right: 20px;
     }
 
-    .editprofilediv{
+    .editprofilediv {
         padding-left: 12px;
+    }
 
     .form-group{
         width: auto;
-    }
-
     }
 </style>
 <body>
@@ -73,7 +72,7 @@
                     <p>메일주소: <span th:text="${loginUser.email}"></span></p>
                 </div>
 
-                <input id="uploadFile" type="file" accept="image/*"/>
+                <input id="uploadFile" type="file" accept="image/*" onchange="setProfileImage()"/>
             </div>
 
             <form id="editForm" action="/editProfile" method="post" >
@@ -99,15 +98,26 @@
 
 <script th:inline="javascript">
 
+    function setProfileImage(){
+        let fileInput = $("#uploadFile")[0];
+        let profileImg = fileInput.files[0];
+
+        let reader = new FileReader();
+        reader.onload = function (data) {
+            $('.profile-info img').attr('src', data.target.result);
+        };
+        reader.readAsDataURL(profileImg);
+    }
+
     function saveProfile(){
         console.log("저장 버튼이 클릭되었습니다.");
         let formData = new FormData();
 
-        var id = [[${loginUser.id}]];
-        var name = $("#name").val();
-        var about = $("#about").val();
-        var fileInput = $("#uploadFile")[0];
-        var profileImg = fileInput.files[0];
+        let id = [[${loginUser.id}]];
+        let name = $("#name").val();
+        let about = $("#about").val();
+        let fileInput = $("#uploadFile")[0];
+        let profileImg = fileInput.files[0];
 
         formData.append("userId", id);
         formData.append("name", name);
@@ -124,6 +134,7 @@
             contentType: false,
             success: function () {
                 alert("프로필 업데이트 성공");
+                location.reload();
             },
             error: function (err) {
                 alert("프로필 업데이트에 실패했습니다.")

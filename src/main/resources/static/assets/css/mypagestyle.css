@@ -137,6 +137,7 @@ img {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: flex-start;
     margin: -1rem -1rem;
     padding-bottom: 4rem;
 }
@@ -335,7 +336,7 @@ Remove or comment-out the code block below to see how the browser will fall-back
 @supports (display: grid) {
     .profile {
         display: grid;
-        grid-template-columns: 1fr 2fr;
+        grid-template-columns: 0.5fr 2fr;
         grid-template-rows: repeat(3, auto);
         grid-column-gap: 3rem;
         align-items: center;
