@@ -119,6 +119,11 @@ public class ReviewService {
         return reviewMapper(findReview);
     }
 
+    public List<ReviewResponse> findReviewByReviewBook(ReviewBook reviewBook){
+        return reviewRepository.findByReviewBook(reviewBook).stream()
+                .map(this::reviewMapper).collect(Collectors.toList());
+    }
+
     public EditReviewResponse findEditReview(Long reviewId){
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));

@@ -90,12 +90,13 @@ public class ReviewBookService {
     }
 
     private ReviewBookResponse reviewBookMapper(ReviewBook reviewBook){
+        String content = reviewBook.getBookContent() == null ? null : reviewBook.getBookContent().replace("\r\n","<br>");
         return ReviewBookResponse.builder()
                 .bookId(reviewBook.getBookId())
                 .user(userInfoMapper(reviewBook.getUser()))
                 .planner(plannerMapper(reviewBook.getPlanner()))
                 .bookTitle(reviewBook.getBookTitle())
-                .bookContent(reviewBook.getBookContent().replace("\r\n","<br>"))
+                .bookContent(content)
                 .coverOfile(reviewBook.getCoverOfile())
                 .coverFilePath(reviewBook.getCoverFilePath())
                 .build();
