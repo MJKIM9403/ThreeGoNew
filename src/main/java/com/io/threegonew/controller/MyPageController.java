@@ -98,6 +98,6 @@ public class MyPageController {
 
 
 
-        return "mypage/mypage2";
+        return "mypage/mypage";
     }
 }

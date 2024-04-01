@@ -339,21 +339,31 @@
         height: 100%;
         object-fit: contain;
     }
+
+    .profile-img{
+        object-fit: cover;
+        width: 100%; /* 부모 요소에 꽉 차도록 설정 */
+        height: 100%; /* 부모 요소에 꽉 차도록 설정 */
+    }
+    .profile-image {
+        width: 200px; /* 원하는 크기로 조정 */
+        height: 200px; /* 원하는 크기로 조정 */
+    }
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <div class="container">
         <div class="profile">
             <div class="profile-image">
-                <img th:if="${findUser.profileImg == null}" src="/assets/img/profile.jpg" alt="프로필 이미지">
-                <img th:unless="${findUser.profileImg == null}" th:src="|@{/api/image/profile/}${findUser.profileImg}|" alt="프로필 이미지">
+                <img th:if="${findUser.profileImg == null}" src="/assets/img/profile.jpg" alt="프로필 이미지" class="profile-img rounded-circle me-2">
+                <img th:unless="${findUser.profileImg == null}" th:src="|@{/api/image/profile/}${findUser.profileImg}|" alt="프로필 이미지" class="profile-img rounded-circle me-2">
             </div>
 
             <div class="profile-user-settings">
                 <h1 class="profile-user-name" th:text="${findUser.name}"></h1>
                 <th:block th:if="${findUser.id == loginUser.id}">
                     <button class="btn profile-edit-btn" onclick="location.href = '/editprofile'" >Edit Profile</button>
-                    <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
+                    <button class="btn profile-settings-btn" aria-label="profile settings"  onclick="location.href = '/changePw'" ><i class="fas fa-cog" aria-hidden="true"></i></button>
                 </th:block>
             </div>
 
