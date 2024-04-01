@@ -37,6 +37,7 @@
     }
 
     .book-cover-wrap {
+        position: relative;
         min-width: 800px;
     }
     .book-cover-image-wrap {
@@ -50,16 +51,34 @@
         height: 100%;
     }
     .book-title {
-        text-align: center;
-        font-size: 3.6rem;
+        position: absolute;
+        top: 8%;
+        left: 4%;
+        color: #FFFFFF;
+        text-shadow:
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
+        text-align: left;
+        font-size: 4.6rem;
         font-weight: 700;
-        margin: 2rem 0;
+        margin: 0;
     }
     .book-content {
-        text-align: center;
-        font-size: 1.6rem;
+        position: absolute;
+        bottom: 8%;
+        right: 4%;
+        color: #FFFFFF;
+        text-shadow:
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
+        text-align: right;
+        font-size: 2rem;
         font-weight: 700;
-        margin: 2rem 0;
+        margin: 0;
     }
 
     .fixed-book-cover {
@@ -84,6 +103,9 @@
         order: 1;
     }
     .fixed-book-cover .book-title {
+        position: static;
+        color: #000000;
+        text-shadow: none;
         text-align: left;
         font-size: 1.6rem;
         order: 2;
@@ -146,14 +168,32 @@
         height: 24px;
     }
 
-    .card .card-body img {
-        height: 480px;
-        /*height: 585px;*/
+    .simple-view-swiper{
+        height: 480px !important;
+        overflow: hidden;
+    }
+
+    /*.simple-view-swiper*/
+    /*.swiper-wrapper {*/
+    /*    width: 100%;*/
+    /*    height: 100%;*/
+
+    /*}*/
+
+    /*.swiper-slide {*/
+    /*    width: 100%;*/
+    /*    height: 100%;*/
+    /*}*/
+
+    .simple-view-img {
+        object-fit: cover !important;
+        width: 100%;
+        height: 100%;
     }
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
-    <main  data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" tabindex="0">
+    <main  data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" tabindex="1">
         <div class="book-cover-wrap">
             <h2 class="book-title" th:text="${reviewBook.bookTitle}"></h2>
             <div class="book-cover-image-wrap">
@@ -165,7 +205,7 @@
         <div class="review-container">
             <div class="gallery">
                 <th:block th:each="review, reviewState : ${reviewList}">
-                    <div th:id="|list-item-${reviewState.count}|" class="card gallery-item" th:onclick="openViewer([[${review.reviewId}]])">
+                    <div th:id="|list-item-${reviewState.count}|" class="card gallery-item">
                         <!--유저 정보-->
                         <div class="d-flex card-header gap-3">
                             <img th:src="|@{/api/image/profile/}${review.userInfo.profileImg}|" alt="mdo"
@@ -175,8 +215,20 @@
                         </div>
                         <div class="card-body">
                             <!--유저가 업로드한 이미지-->
-                            <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg"
-                                 alt="Card image cap">
+                            <div th:class="|swiper simple-view-swiper simple-view-swiper${reviewState.index}|">
+                                <div class="swiper-wrapper">
+                                    <th:block th:each="photo : ${review.reviewPhotoList}">
+                                        <div class="swiper-slide">
+                                            <img class="simple-view-img" th:src="|@{/api/image/review/}${photo.filePath}|"/>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <div class="swiper-controller">
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </div>
                             <!--좋아요와 댓글 -->
                             <div class="d-flex gap-3">
                                 <i class="bi bi-heart"></i>
@@ -184,7 +236,7 @@
                             </div>
 
                             <p class="card-text">좋아요 몇개</p>
-                            <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
+                            <p class="card-text" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">댓글 더 보기</small></p>
                         </div>
                     </div>
                 </th:block>
@@ -304,7 +356,7 @@
         let galleyTop = $(".gallery").offset().top;
         let scrollTop = $(this).scrollTop();
 
-        if(!isCoverFixed && scrollTop > (galleyTop/3) * 2) {
+        if(!isCoverFixed && scrollTop > (galleyTop/3)) {
             isCoverFixed = true;
             window.scrollTo(0, 20);
             $('.book-cover-wrap').addClass('fixed-book-cover');
@@ -349,11 +401,39 @@
     }
 
 </script>
+<!-- 리뷰 간단 뷰 관련 스크립트 -->
+<script th:inline="javascript">
+    let simpleViewSwiper = [];
+    let reviewList = [[${reviewList}]];
+    function createSimpleViewSwiper(){
+        for(let idx = 0; idx < reviewList.length; idx++){
+            var swiper = new Swiper(`.simple-view-swiper${idx}`, {
+                observer: true,
+                observeParents: true,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+                pagination: {
+                    el: ".swiper-pagination",
+                },
+                mousewheel: true,
+                keyboard: true,
+            });
+            simpleViewSwiper.push(swiper);
+        }
+    }
+</script>
 <!-- 리뷰 뷰어 관련 스크립트 -->
 <script th:inline="javascript">
     $(document).ready(function (){
         /* 리뷰 상세 조회 관련 설정 */
-        $('.swiper-controller').hide();
+        $('.viewSwiper .swiper-controller').hide();
+        for(let idx = 0; idx < reviewList.length; idx++){
+            if(reviewList[idx].reviewPhotoList.length <= 1){
+                $(`.simple-view-swiper:eq(${idx}) .swiper-controller`).hide();
+            }
+        }
     });
 
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
@@ -440,7 +520,7 @@
                 }
                 $('#touritem-name').text(findReview.tourItemTitle);
                 $('#touritem-name').attr('data-touritem-id', findReview.tourItemId);
-                $('.swiper-wrapper').html("");
+                $('.viewSwiper .swiper-wrapper').html("");
                 for(let photo of photoList){
                     savedFile.push(photo.fileId);
                     const tempHtml = `<div class="swiper-slide">` +

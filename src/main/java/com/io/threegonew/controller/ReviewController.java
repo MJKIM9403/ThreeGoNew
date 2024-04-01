@@ -24,16 +24,18 @@ public class ReviewController {
 
     @GetMapping("")
     public String getReviews(Model model) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String loginUserId = "";
+        UserInfoResponse loginUserInfo;
 
-        if (principal.equals("anonymousUser")) {
-            loginUserId = "anonymousUser";
-        } else {
-            UserDetails userDetails = (UserDetails) principal;
-            loginUserId = userDetails.getUsername();
+        try{
+            String loginUserId = userService.getCurrentUserId();
+            loginUserInfo = userService.findUserInfo(loginUserId);
+        }catch (IllegalArgumentException e){
+            loginUserInfo = UserInfoResponse.builder()
+                    .id("anonymousUser")
+                    .build();
         }
-        model.addAttribute("loginUserId", loginUserId);
+
+        model.addAttribute("loginUser", loginUserInfo);
 
         return "review/review";
     }

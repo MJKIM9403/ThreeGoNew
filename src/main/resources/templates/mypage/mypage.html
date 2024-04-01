@@ -1011,7 +1011,7 @@
         //사진 미리보기 초기화
         images.length = 0;
         fileInput.files.length = 0;
-        $('.swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
+        $('.editSwiper .swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
         $('.uploader').show()
         // 리뷰북 선택 정보 초기화
         createBookFlag = false;
@@ -1029,6 +1029,7 @@
             '<option value="direct">직접 입력</option>'
         );
         $('#selected-touritem-name').val('');
+        $('#selected-touritem-name').prop('disabled',true);
         $('#review-contents').val('');
     }
 
@@ -1254,20 +1255,25 @@
                 $('.swiper-wrapper').html("");
             }
             if(files.length > 0){
-                for (let file of files) {
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
                     images.push(file);
 
                     let reader = new FileReader();
 
+                    const tempHtml = `<div class="swiper-slide">` +
+                        `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
+                        `<i class="bi bi-x-lg"></i>` +
+                        `</button>` +
+                        `<img class="preview-img" style="object-fit: contain" onload="goLastSlide()"/>` +
+                        `</div>`;
+                    editSwiper.appendSlide(tempHtml);
+                    editSwiper.update();
+
                     reader.onload = function(data) {
-                        const tempHtml = `<div class="swiper-slide">` +
-                            `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
-                            `<i class="bi bi-x-lg"></i>` +
-                            `</button>` +
-                            `<img class="preview-img" src="${data.target.result}" style="object-fit: contain" onload="goLastSlide()"/>` +
-                            `</div>`;
-                        editSwiper.appendSlide(tempHtml);
-                        editSwiper.update();
+                        const swiperSlides = $('.editSwiper .swiper-wrapper .swiper-slide');
+                        const targetSlide = $(swiperSlides[images.length - files.length + i]);
+                        targetSlide.find('.preview-img').attr('src', data.target.result);
                     };
 
                     reader.readAsDataURL(file);
@@ -1294,7 +1300,7 @@
             editSwiper.slideTo(idx-1,300,false);
             editSwiper.removeSlide(idx);
             editSwiper.update();
-            editSwiper.splice(idx,1);
+            images.splice(idx,1);
 
             if(images.length > 1){
                 $('.editSwiper .swiper-controller').show()
@@ -1376,6 +1382,11 @@
         scrollCheck = false;
         firstLoad = true;
         back = false;
+        if(tabType === 'REVIEWBOOK'){
+            gallery.css('justify-content','center');
+        }else {
+            gallery.css('justify-content','flex-start');
+        }
         if([[${findUser.id == loginUser.id}]]){
             $('.create-btn').hide();
             switch (tabType){

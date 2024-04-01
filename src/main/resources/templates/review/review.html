@@ -147,7 +147,7 @@
         }
 
         /*  리뷰작성 관련  */
-        #new-post-btn {
+        #new-review-btn {
             bottom: 5%;
             right: 5%;
         }
@@ -376,7 +376,7 @@
                         <label class="form-check-label" for="selectReviewBook1">
                             새 리뷰북 생성
                             <button id="create-book-btn" type="button" class="btn btn-outline-primary btn-sm ms-1"
-                                    onclick="createBook()">생성
+                                    onclick="createSimpleBook()">생성
                             </button>
                             <select id="new-book-item-select" class="book-input form-select form-select-sm mt-2"
                                     aria-label="Default select example" onchange="writeBookTitle()">
@@ -426,7 +426,7 @@
                                 <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()"
                                        multiple/>
                             </div>
-                            <div class="swiper mySwiper">
+                            <div class="swiper editSwiper">
                                 <div class="swiper-wrapper">
                                     <div class="swiper-slide">사진을 추가해주세요.</div>
                                 </div>
@@ -478,7 +478,7 @@
             </div>
         </div>
     </div>
-    <button type="button" id="new-post-btn" class="position-fixed rounded-pill btn btn-outline-primary">
+    <button type="button" id="new-review-btn" class="position-fixed rounded-pill btn btn-outline-primary">
         <i class="bi bi-vector-pen"></i>
     </button>
 </div>
@@ -491,15 +491,19 @@
 
 <!--카드 -->
 <script th:inline="javascript">
-    // 버튼 누르면 더보기
     $(document).ready(function () {
         selectBook();
         $('.swiper-controller').hide();
         deleteImg();
     });
 
-    // swiper 설정
-    var swiper = new Swiper(".mySwiper", {
+    let createBookFlag = false;
+    let selectedReviewBook;
+    let selectedBookId;
+    const fileInput = $('#img-uploader')[0];
+    const images = [];
+
+    var editSwiper = new Swiper(".editSwiper", {
         observer: true,
         observeParents: true,
         navigation: {
@@ -513,18 +517,14 @@
         keyboard: true,
     });
 
-    let createBookFlag = false;
-    let selectedReviewBook;
-    let selectedBookId;
-    const fileInput = $('#img-uploader')[0];
-    const images = [];
 
-    $('#new-post-btn').click(function () {
+
+    $('#new-review-btn').click(function () {
         editorReset();
-        let login = [[${loginUserId}]];
-        if (login == "anonymousUser") {
+        let login = [[${loginUser.id}]];
+        if(login === "anonymousUser"){
             alert("리뷰는 로그인 후 작성할 수 있습니다.")
-        } else {
+        }else {
             showSelectList();
             $('#select-book').modal('show');
         }
@@ -534,7 +534,7 @@
         //사진 미리보기 초기화
         images.length = 0;
         fileInput.files.length = 0;
-        $('.swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
+        $('.editSwiper .swiper-wrapper').html('<div class="swiper-slide">사진을 추가해주세요.</div>');
         $('.uploader').show()
         // 리뷰북 선택 정보 초기화
         createBookFlag = false;
@@ -552,57 +552,58 @@
             '<option value="direct">직접 입력</option>'
         );
         $('#selected-touritem-name').val('');
+        $('#selected-touritem-name').prop('disabled',true);
         $('#review-contents').val('');
     }
 
-    function showSelectList() {
+    function showSelectList(){
         $.ajax({
-            url: '/api/review/show_list',
-            type: 'GET',
-            contentType: 'application/json; charset=UTF-8',
-            success: function (result) {
+            url : '/api/review/show_list',
+            type : 'GET',
+            contentType : 'application/json; charset=UTF-8',
+            success : function (result) {
                 const plannerList = result.plannerList;
                 const reviewBookList = result.reviewBookList;
 
-                if (plannerList.length > 0) {
-                    for (let planner of plannerList) {
+                if(plannerList.length > 0){
+                    for(let planner of plannerList){
                         let template = `<option value=${planner.plannerId}>${planner.plannerName}</option>`;
                         $('#new-book-item-select').append(template)
                     }
-                } else {
+                }else {
                     let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
                     $('#new-book-item-select').append(template)
                 }
 
-                if (reviewBookList.length > 0) {
-                    for (let reviewBook of reviewBookList) {
+                if(reviewBookList.length > 0){
+                    for(let reviewBook of reviewBookList){
                         let template = `<option value=${reviewBook.bookId}>${reviewBook.bookTitle}</option>`;
                         $('#exist-book-select').append(template)
                     }
-                } else {
+                }else {
                     let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
                     $('#exist-book-select').append(template)
                 }
             },
-            error: function (err) {
+            error : function (err) {
                 console.log(err);
             }
         })
     }
 
     function selectBook() {
-        $("input:radio[name=selectReviewBook]").click(function () {
+        $("input:radio[name=selectReviewBook]").click(function (){
             let select = Number($("input[name=selectReviewBook]:checked").val());
             $(".book-input").attr('disabled', true);
-            switch (select) {
+            switch (select){
                 case 1:
-                    $("#new-book-item-select").attr('disabled', false);
-                    if ($("#new-book-item-select option:selected").val() != "hint") {
+                    $("#new-book-item-select").attr('disabled',false);
+                    if($("#new-book-item-select option:selected").val() != "hint"){
                         writeBookTitle()
                     }
                     break;
                 case 2:
-                    $("#exist-book-select").attr('disabled', false);
+                    $("#exist-book-select").attr('disabled',false);
                     break;
             }
         })
@@ -610,32 +611,32 @@
 
     function writeBookTitle() {
         createBookFlag = false;
-        $("#new-book-title").attr('disabled', false);
+        $("#new-book-title").attr('disabled',false);
     }
 
 
-    function goEdit() {
+    function goEdit(){
         let select = $("input[name=selectReviewBook]:checked").val();
-        if (select == undefined) {
+        if(select == undefined){
             alert("리뷰북 설정을 완료해주세요.");
-        } else {
-            switch (Number(select)) {
+        }else {
+            switch (Number(select)){
                 case 1:
-                    if ($("#new-book-item-select option:selected").val() == 'hint') {
+                    if($("#new-book-item-select option:selected").val() == 'hint'){
                         alert("리뷰북에 기록할 여행정보를 선택해주세요.")
-                    } else if ($("#new-book-title").val() == '') {
+                    }else if($("#new-book-title").val() == ''){
                         alert("생성할 리뷰북의 제목을 입력해주세요.")
-                    } else if (!createBookFlag) {
+                    }else if(!createBookFlag){
                         alert("생성 버튼을 눌러 리뷰북을 생성해주세요.")
-                    } else {
+                    }else {
                         selectedReviewBook = $("#new-book-title").val();
                         AddPlanList();
                     }
                     break;
                 case 2:
-                    if ($("#exist-book-select option:selected").val() == 'hint') {
+                    if($("#exist-book-select option:selected").val() == 'hint'){
                         alert("리뷰를 작성할 리뷰북을 선택해주세요.")
-                    } else {
+                    }else {
                         selectedBookId = $('#exist-book-select option:selected').val();
                         selectedReviewBook = $("#exist-book-select option:checked").text();
                         AddPlanList();
@@ -650,47 +651,52 @@
         }
     }
 
-    function createBook() {
+    function createSimpleBook(){
+        const userId = [[${loginUser.id}]]
+        const plannerId = $("#new-book-item-select option:selected").val();
+        const bookTitle = $("#new-book-title").val();
+
+        let formData = new FormData();
+        formData.append("userId", userId);
+        formData.append("plannerId", plannerId);
+        formData.append("bookTitle", bookTitle);
+
         $.ajax({
-            url: '/book/create',
-            type: 'POST',
-            data: JSON.stringify({
-                userId: [[${loginUserId}]],
-                plannerId: $("#new-book-item-select option:selected").val(),
-                bookTitle: $("#new-book-title").val()
-            }),
-            contentType: 'application/json; charset=UTF-8',
-            success: function (createdBookId) {
+            url : '/api/book/create',
+            type : 'POST',
+            data : formData,
+            processData : false,
+            contentType : false,
+            success : function (createdBookId) {
                 createBookFlag = true;
                 selectedBookId = createdBookId;
-                let title = $("#new-book-title").val();
-                alert(`[${title}] 리뷰북이 생성되었습니다.`);
+                alert(`[${bookTitle}] 리뷰북이 생성되었습니다.`);
             },
-            error: function (err) {
+            error : function (err) {
                 alert("리뷰북 생성에 실패하였습니다.");
                 console.log(err);
             }
         })
     }
 
-    function AddPlanList() {
+    function AddPlanList(){
         let promise = new Promise((resolve) => {
             $.ajax({
-                url: '/api/review/show_plan',
-                type: 'GET',
-                data: {
-                    bookId: selectedBookId
+                url : '/api/review/show_plan',
+                type : 'GET',
+                data : {
+                    bookId : selectedBookId
                 },
-                contentType: 'application/json; charset=UTF-8',
-                success: function (result) {
+                contentType : 'application/json; charset=UTF-8',
+                success : function (result) {
                     const planList = result.planList;
-                    for (let plan of planList) {
+                    for(let plan of planList){
                         let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
                     }
                     resolve();
                 },
-                error: function (err) {
+                error : function (err) {
                     console.log(err);
                 }
             })
@@ -702,132 +708,137 @@
         })
     }
 
-    function selectTouritem() {
+    function selectTouritem(){
         let item = $('#select-touritem-info option:selected');
         let title = item.text();
-        if (title !== '직접 입력') {
-            let startTitleIdx = title.indexOf(']') + 2;
+        if(title !== '직접 입력'){
+            let startTitleIdx = title.indexOf(']') +2;
             title = title.substring(startTitleIdx);
         }
         let titleInput = $('#selected-touritem-name');
-        titleInput.attr('disabled', false);
+        titleInput.attr('disabled',false);
         titleInput.val(title)
     }
 
-    function createPost() {
-        if (images.length < 1) {
+    function createPost(){
+        if(images.length < 1){
             alert("사진을 반드시 한 장 이상 첨부해주세요.")
-        } else if ($('#select-touritem-info option:selected').val() === 'hint') {
+        }else if($('#select-touritem-info option:selected').val() === 'hint'){
             alert("관광지 정보를 선택해주세요.")
-        } else if ($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력') {
+        }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
             alert('관광지 이름을 작성해주세요.')
-        } else if ($('#review-contents').val() === '') {
+        }else if($('#review-contents').val() === ''){
             alert('본문 내용을 입력해주세요.')
-        } else {
+        }else {
             saveReview();
             $('#editor').modal('hide');
         }
     }
 
-    function saveReview() {
+    function saveReview(){
         let formData = new FormData();
-        let loginUser = [[${loginUserId}]]
+        let loginUser = [[${loginUser.id}]]
         let touritemId = $('#select-touritem-info option:selected').val();
 
-        if (selectedBookId !== null) formData.append("bookId", selectedBookId);
+        if(selectedBookId !== null) formData.append("bookId", selectedBookId);
         formData.append("userId", `${loginUser}`);
-        if (touritemId !== 'direct') formData.append("touritemId", touritemId);
+        if(touritemId !== 'direct') formData.append("touritemId", touritemId);
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());
 
-        for (let image of images) {
+        for(let image of images){
             formData.append("photoList", image);
         }
 
         console.log(formData)
 
         $.ajax({
-            url: '/api/review/create',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
+            url : '/api/review/create',
+            type : 'POST',
+            data : formData,
+            processData : false,
+            contentType : false,
+            success : function (response) {
                 alert("리뷰를 등록하였습니다.")
+                changeTab('REVIEW');
             },
-            error: function (err) {
+            error : function (err) {
                 alert("리뷰 등록에 실패했습니다.")
             }
         })
     }
 
-    function setPreview() {
+    function setPreview(){
         let files = fileInput.files;
-        if (files.length + images.length > 4) {
+        if(files.length + images.length > 4){
             files.length = 0;
             alert("사진은 4장까지 첨부할 수 있습니다.")
-        } else {
-            if (files.length > 0 && images.length === 0) {
+        }else {
+            if(files.length > 0 && images.length === 0) {
                 $('.swiper-wrapper').html("");
             }
-            if (files.length > 0) {
-                for (let file of files) {
+            if(files.length > 0){
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
                     images.push(file);
 
                     let reader = new FileReader();
 
-                    reader.onload = function (data) {
-                        const tempHtml = `<div class="swiper-slide">` +
-                            `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
-                            `<i class="bi bi-x-lg"></i>` +
-                            `</button>` +
-                            `<img class="preview-img" src="${data.target.result}" style="object-fit: contain" onload="goLastSlide()"/>` +
-                            `</div>`;
-                        swiper.appendSlide(tempHtml);
-                        swiper.update();
+                    const tempHtml = `<div class="swiper-slide">` +
+                        `<button class="delete-img-btn btn btn-dark rounded-pill opacity-50">` +
+                        `<i class="bi bi-x-lg"></i>` +
+                        `</button>` +
+                        `<img class="preview-img" style="object-fit: contain" onload="goLastSlide()"/>` +
+                        `</div>`;
+                    editSwiper.appendSlide(tempHtml);
+                    editSwiper.update();
+
+                    reader.onload = function(data) {
+                        const swiperSlides = $('.editSwiper .swiper-wrapper .swiper-slide');
+                        const targetSlide = $(swiperSlides[images.length - files.length + i]);
+                        targetSlide.find('.preview-img').attr('src', data.target.result);
                     };
 
                     reader.readAsDataURL(file);
                 }
             }
-            if (images.length > 1) {
-                $('.swiper-controller').show()
-            } else {
-                $('.swiper-controller').hide()
+            if(images.length > 1){
+                $('.editSwiper .swiper-controller').show()
+            }else {
+                $('.editSwiper .swiper-controller').hide()
             }
-            if (images.length >= 4) {
+            if(images.length >= 4){
                 $('.uploader').hide()
             }
         }
     }
 
     function goLastSlide() {
-        swiper.slideTo(images.length - 1, 300, false);
+        editSwiper.slideTo(images.length-1,300,false);
     }
 
     function deleteImg() {
-        $(document).on('click', '.delete-img-btn', function () {
+        $(document).on('click','.delete-img-btn',function () {
             let idx = $(".delete-img-btn").index(this);
-            swiper.slideTo(idx - 1, 300, false);
-            swiper.removeSlide(idx);
-            swiper.update();
-            images.splice(idx, 1);
+            editSwiper.slideTo(idx-1,300,false);
+            editSwiper.removeSlide(idx);
+            editSwiper.update();
+            images.splice(idx,1);
 
-            if (images.length > 1) {
-                $('.swiper-controller').show()
-            } else {
-                $('.swiper-controller').hide()
-            }
-            ;
+            if(images.length > 1){
+                $('.editSwiper .swiper-controller').show()
+            }else {
+                $('.editSwiper .swiper-controller').hide()
+            };
 
-            if (images.length === 0) {
+            if(images.length === 0){
                 const tempHtml = `<div class="swiper-slide">` +
                     `사진을 추가해주세요.` +
                     `</div>`;
-                swiper.appendSlide(tempHtml);
-                swiper.update();
+                editSwiper.appendSlide(tempHtml);
+                editSwiper.update();
             }
-            if ($('.uploader').css('display') === 'none' && images.length < 4) {
+            if($('.uploader').css('display') === 'none' && images.length < 4){
                 $('.uploader').show()
             }
         })
