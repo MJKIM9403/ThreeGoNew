@@ -85,7 +85,7 @@ public class FollowController {
         User loggedInUser = userService.findUser(userService.getCurrentUserId());
         // 대상 유저
         User user = userService.findUser(userId);
-        List<FollowDTO> followings = followService.findFollowingsByFollowerWithFollowState(user, loggedInUser);
+        List<FollowDTO> followings = followService.findFollowingsByFollowerWithFollowState(loggedInUser, user);
         return ResponseEntity.ok(followings);
     }
 
@@ -96,7 +96,7 @@ public class FollowController {
         User loggedInUser = userService.findUser(userService.getCurrentUserId());
         // 대상 유저
         User user = userService.findUser(userId);
-        List<FollowDTO> followers = followService.findFollowersByFollowingWithFollowState(user, loggedInUser);
+        List<FollowDTO> followers = followService.findFollowersByFollowingWithFollowState(loggedInUser, user);
         return ResponseEntity.ok(followers);
     }
 
