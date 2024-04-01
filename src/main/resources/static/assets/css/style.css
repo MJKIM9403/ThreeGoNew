@@ -128,6 +128,7 @@ a {
 .btn-join {
     background: #0a53be;
     color: #fff;
+    width: 100px;
 }
 .btn-join:hover {
     background: #0c4ead;
