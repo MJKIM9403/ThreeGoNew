@@ -8,7 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowDTO {
-    private User toUser;
-    private User fromUser;
+    private Long id;
+    private UserInfoResponse toUser;
+    private UserInfoResponse fromUser;
     private int followState;
 }

@@ -493,24 +493,24 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div th:if="${followerList.size() > 0}">
-                        <div id="follower-list">
-                            <div class="list-group">
-                                <th:block th:each="follower, idx : ${followerList}">
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p th:text="${follower.toUser.id}"></p>
-                                            <p th:text="${follower.toUser.name}"></p>
-                                        </div>
-                                        <div class="follow-state" th:unless="${follower.toUser.id == myId}">
-                                            <button class="btn btn-secondary unfollow-btn" th:if="${isFollowedMap[__${follower.toUser.id}__]}" th:data-user-id="${follower.toUser.id}">언팔로우</button>
-                                            <button class="btn btn-primary follow-btn" th:unless="${isFollowedMap[__${follower.toUser.id}__]}" th:data-user-id="${follower.toUser.id}">팔로우</button>
-                                        </div>
-                                    </div>
-                                </th:block>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div th:if="${followerList.size() > 0}">-->
+<!--                        <div id="follower-list">-->
+<!--                            <div class="list-group">-->
+<!--                                <th:block th:each="follower, idx : ${followerList}">-->
+<!--                                    <div class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                                        <div>-->
+<!--                                            <p th:text="${follower.toUser.id}"></p>-->
+<!--                                            <p th:text="${follower.toUser.name}"></p>-->
+<!--                                        </div>-->
+<!--                                        <div class="follow-state" th:unless="${follower.toUser.id == myId}">-->
+<!--                                            <button class="btn btn-secondary unfollow-btn" th:if="${isFollowedMap[__${follower.toUser.id}__]}" th:data-user-id="${follower.toUser.id}">언팔로우</button>-->
+<!--                                            <button class="btn btn-primary follow-btn" th:unless="${isFollowedMap[__${follower.toUser.id}__]}" th:data-user-id="${follower.toUser.id}">팔로우</button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </th:block>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -530,24 +530,24 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div th:if="${followingList.size() > 0}">
-                        <div id="following-list">
-                            <div class="list-group">
-                                <th:block th:each="following, idx : ${followingList}">
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p th:text="${following.fromUser.id}"></p>
-                                            <p th:text="${following.fromUser.name}"></p>
-                                        </div>
-                                        <div class="follow-state" th:unless="${following.fromUser.id == myId}">
-                                            <button class="btn btn-secondary unfollow-btn" th:if="${isFollowingMap[__${following.fromUser.id}__]}" th:data-user-id="${following.fromUser.id}">언팔로우</button>
-                                            <button class="btn btn-primary follow-btn" th:unless="${isFollowingMap[__${following.fromUser.id}__]}" th:data-user-id="${following.fromUser.id}">팔로우</button>
-                                        </div>
-                                    </div>
-                                </th:block>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div th:if="${followingList.size() > 0}">-->
+<!--                        <div id="following-list">-->
+<!--                            <div class="list-group">-->
+<!--                                <th:block th:each="following, idx : ${followingList}">-->
+<!--                                    <div class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                                        <div>-->
+<!--                                            <p th:text="${following.fromUser.id}"></p>-->
+<!--                                            <p th:text="${following.fromUser.name}"></p>-->
+<!--                                        </div>-->
+<!--                                        <div class="follow-state" th:unless="${following.fromUser.id == myId}">-->
+<!--                                            <button class="btn btn-secondary unfollow-btn" th:if="${isFollowingMap[__${following.fromUser.id}__]}" th:data-user-id="${following.fromUser.id}">언팔로우</button>-->
+<!--                                            <button class="btn btn-primary follow-btn" th:unless="${isFollowingMap[__${following.fromUser.id}__]}" th:data-user-id="${following.fromUser.id}">팔로우</button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </th:block>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -1372,14 +1372,101 @@
 
     let followState = [[${isFollowed}]];
     console.log(followState);
+
     // 팔로워, 팔로잉 리스트 모달창 열기
     $('#followers').click(function() {
-        $('#followersModal').modal('show');
+        const userId = [[${findUser.id}]];
+        $.ajax({
+            url: '/api/show/followerList/' + userId,
+            type: 'GET',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(response) {
+                const modalBody = $('#followersModal .modal-body');
+                modalBody.empty();
+                response.forEach(function(follower) {
+                    // 버튼 생성
+                    var button = $('<button></button>').addClass('btn');
+                    // 팔로우 상태에 따라 버튼 속성 설정
+                    if (follower.followState == 1) {
+                        button.addClass('btn-secondary unfollow-btn').text('언팔로우');
+                    } else {
+                        button.addClass('btn-primary follow-btn').text('팔로우');
+                    }
+                    button.attr('data-user-id', follower.toUser.id);
+
+                    var template = `
+                                        <div id="follower-list">
+                                            <div class="list-group">
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <p>${follower.toUser.id}</p>
+                                                        <p>${follower.toUser.name}</p>
+                                                    </div>
+                                                    <div class="follow-state"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `
+                    modalBody.append(template);
+
+                    // follow-state 클래스를 가진 요소 선택 후 버튼 삽입
+                    var followStateDiv = $('.follow-state');
+                    followStateDiv.empty(); // 기존 내용 지우기
+                    followStateDiv.append(button); // 버튼 삽입
+
+                    $('#followersModal').modal('show');
+                })
+            }
+        });
     });
     $('#following').click(function() {
-        $('#followingModal').modal('show');
+        const userId = [[${findUser.id}]];
+        $.ajax({
+            url: '/api/show/followingList/' + userId,
+            type: 'GET',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(response) {
+                const modalBody = $('#followingModal .modal-body');
+                modalBody.empty();
+                response.forEach(function(following) {
+                    // 버튼 생성
+                    var button = $('<button></button>').addClass('btn');
+                    // 팔로우 상태에 따라 버튼 속성 설정
+                    if (following.followState == 1) {
+                        button.addClass('btn-secondary unfollow-btn').text('언팔로우');
+                    } else {
+                        button.addClass('btn-primary follow-btn').text('팔로우');
+                    }
+                    button.attr('data-user-id', following.fromUser.id);
+
+                    var template = `
+                    <div id="follower-list">
+                        <div class="list-group">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p>${following.fromUser.id}</p>
+                                    <p>${following.fromUser.name}</p>
+                                </div>
+                                <div class="follow-state">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    modalBody.append(template);
+
+                    // 팔로우 상태를 가진 요소에 버튼 삽입
+                    var followStateDiv = modalBody.find('.follow-state');
+                    followStateDiv.empty();
+                    followStateDiv.append(button);
+
+                    $('#followingModal').modal('show');
+                })
+            }
+        });
     });
 
+    // 팔로우 기능
     $(document).on('click', '.follow-btn', function (){
         const userId = this.getAttribute('data-user-id');
         var $button = $(this);
@@ -1401,6 +1488,8 @@
         })
     });
 
+
+    // 언팔로우 기능
     $(document).on('click', '.unfollow-btn', function () {
         const userId = this.getAttribute('data-user-id');
         var $button = $(this);
