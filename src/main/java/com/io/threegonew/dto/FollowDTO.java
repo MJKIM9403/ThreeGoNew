@@ -12,4 +12,5 @@ public class FollowDTO {
     private UserInfoResponse toUser;
     private UserInfoResponse fromUser;
     private int followState;
+    private int followCount;
 }

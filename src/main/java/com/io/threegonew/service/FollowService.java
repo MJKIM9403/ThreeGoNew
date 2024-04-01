@@ -20,7 +20,13 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
+    public int countFollower(String userId) {
+        return followRepository.countFollower(userId);
+    }
 
+    public int countFollowing(String userId) {
+        return followRepository.countFollowing(userId);
+    }
 
     // 팔로우하기
     @Transactional
@@ -105,21 +111,25 @@ public class FollowService {
     // 팔로우 상태를 함께 매핑하여 FollowDTO 객체 생성
     private FollowDTO followerMapper(Follow follow, User loggedInUser) {
         boolean isFollowing = isFollowing(loggedInUser, follow.getToUser());
+
         return FollowDTO.builder()
                 .id(follow.getId())
                 .toUser(userInfoMapper(follow.getToUser()))
                 .fromUser(userInfoMapper(follow.getFromUser()))
                 .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
+                .followCount(followRepository.countFollower(follow.getFromUser().getId())) // 로그인한 유저와 같은지 설정
                 .build();
     }
 
     private FollowDTO followingMapper(Follow follow, User loggedInUser) {
         boolean isFollowing = isFollowing(loggedInUser, follow.getFromUser());
+
         return FollowDTO.builder()
                 .id(follow.getId())
                 .toUser(userInfoMapper(follow.getToUser()))
                 .fromUser(userInfoMapper(follow.getFromUser()))
                 .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
+                .followCount(followRepository.countFollowing(follow.getToUser().getId())) // 로그인한 유저와 같은지 설정
                 .build();
     }
 

@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RestController
@@ -22,6 +24,17 @@ public class FollowController {
     private final UserService userService;
     private final FollowService followService;
 
+
+    @GetMapping("/api/userFollowCounts/{userId}")
+    public ResponseEntity<Map<String, Integer>> getUserFollowCounts(@PathVariable String userId) {
+        Map<String, Integer> followCounts;
+        followCounts = new HashMap<>();
+        int followerCount = followService.countFollower(userId);
+        int followingCount = followService.countFollowing(userId);
+        followCounts.put("followerCount", followerCount);
+        followCounts.put("followingCount", followingCount);
+        return ResponseEntity.ok(followCounts);
+    }
 
     // 팔로우하기
     @PostMapping("/api/follow/{friendName}")

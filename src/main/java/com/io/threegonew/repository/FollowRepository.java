@@ -28,5 +28,9 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query(value = "SELECT to_user_id =:loginId, from_user_id =:pageId, (SELECT COUNT(*) FROM follows f1 WHERE f1.from_user_id = f2.to_user_id AND f1.to_user_id = f2.to_user_id) from follows f2" , nativeQuery = true)
     int countFollowState(@Param("toUser") String loginId, @Param("fromUser") String pageId);
 
+    @Query(value = "SELECT COUNT(*) FROM follows WHERE to_user_id =:pageId", nativeQuery = true)
+    int countFollowing(@Param("toUser") String pageId);
 
+    @Query(value = "SELECT COUNT(*) FROM follows WHERE from_user_id =:pageId", nativeQuery = true)
+    int countFollower(@Param("fromUser") String pageId);
 }
