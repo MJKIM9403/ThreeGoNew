@@ -22,18 +22,6 @@ public class FollowController {
     private final UserService userService;
     private final FollowService followService;
 
-    @GetMapping("/checkFollowState/{userId}")
-    public ResponseEntity<FollowDTO> checkFollowState(@PathVariable("userId") String userId) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String currentUserId = userDetails.getUsername();
-
-        User toUser = userService.findUser(currentUserId);
-        User fromUser = userService.findUser(userId);
-
-        FollowDTO followDTO = followService.checkFollowState(toUser, fromUser);
-
-        return ResponseEntity.ok(followDTO);
-    }
 
     // 팔로우하기
     @PostMapping("/api/follow/{friendName}")
@@ -58,33 +46,60 @@ public class FollowController {
     }
 
     // 팔로우중인지 확인하기
-    @GetMapping("/api/isfollowing/{friendName}")
-    public ResponseEntity<Boolean> isFollowing(Authentication auth, @PathVariable("friendName") String friendName) {
-        // 로그인 된 유저
-        User toUser = userService.findUser(auth.getName());
-        // 확인할 대상
-        User fromUser = userService.findUser(friendName);
-        boolean isFollowing = followService.isFollowing(toUser, fromUser);
-        return ResponseEntity.ok(isFollowing);
-    }
+//    @GetMapping("/api/isfollowing/{friendName}")
+//    public ResponseEntity<Boolean> isFollowing(Authentication auth, @PathVariable("friendName") String friendName) {
+//        // 로그인 된 유저
+//        User toUser = userService.findUser(auth.getName());
+//        // 확인할 대상
+//        User fromUser = userService.findUser(friendName);
+//        boolean isFollowing = followService.isFollowing(toUser, fromUser);
+//        return ResponseEntity.ok(isFollowing);
+//    }
 
     // 유저의 팔로잉리스트를 뽑기
-    @GetMapping("/api/following/{userId}")
-    public ResponseEntity<List<Follow>> getFollowings(@PathVariable("userId") String userId) {
+//    @GetMapping("/api/show/followingList/{userId}")
+//    public ResponseEntity<List<FollowDTO>> getFollowings(@PathVariable("userId") String userId) {
+//        // 로그인 된 유저
+//        User loggedInUser = userService.findUser(userService.getCurrentUserId());
+//        // 대상 유저
+//        User user = userService.findUser(userId);
+//        List<FollowDTO> followings = followService.findFollowingsByFollower(user);
+//        return ResponseEntity.ok(followings);
+//    }
+//
+//    // 유저의 팔로워리스트를 뽑기
+//    @GetMapping("/api/show/followerList/{userId}")
+//    public ResponseEntity<List<FollowDTO>> getFollowers(@PathVariable("userId") String userId) {
+//        String loginUserId = userService.getCurrentUserId();
+//        // 로그인 된 유저
+//        User loggedInUser = userService.findUser(userService.getCurrentUserId());
+//        // 대상 유저
+//        User user = userService.findUser(userId);
+//        List<FollowDTO> followers = followService.findFollowersByFollowing(user);
+//        return ResponseEntity.ok(followers);
+//    }
+// 유저의 팔로잉리스트를 불러오고 팔로우 상태를 함께 반환
+    @GetMapping("/api/show/followingList/{userId}")
+    public ResponseEntity<List<FollowDTO>> getFollowingsWithFollowState(@PathVariable("userId") String userId) {
         // 로그인 된 유저
+        User loggedInUser = userService.findUser(userService.getCurrentUserId());
+        // 대상 유저
         User user = userService.findUser(userId);
-        List<Follow> followings = followService.findFollowingsByFollower(user);
+        List<FollowDTO> followings = followService.findFollowingsByFollowerWithFollowState(user, loggedInUser);
         return ResponseEntity.ok(followings);
     }
 
-    // 유저의 팔로워리스트를 뽑기
-    @GetMapping("/api/followers/{userId}")
-    public ResponseEntity<List<Follow>> getFollowers(@PathVariable("userId") String userId) {
+    // 유저의 팔로워리스트를 불러오고 팔로우 상태를 함께 반환
+    @GetMapping("/api/show/followerList/{userId}")
+    public ResponseEntity<List<FollowDTO>> getFollowersWithFollowState(@PathVariable("userId") String userId) {
         // 로그인 된 유저
+        User loggedInUser = userService.findUser(userService.getCurrentUserId());
+        // 대상 유저
         User user = userService.findUser(userId);
-        List<Follow> followers = followService.findFollowersByFollowing(user);
+        List<FollowDTO> followers = followService.findFollowersByFollowingWithFollowState(user, loggedInUser);
         return ResponseEntity.ok(followers);
     }
+
 
 
 }
