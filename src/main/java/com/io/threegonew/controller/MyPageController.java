@@ -50,6 +50,6 @@ public class MyPageController {
         model.addAttribute("findUser", findUserInfo);
         model.addAttribute("loginUser", loginUserInfo);
 
-        return "mypage/mypage2";
+        return "mypage/mypage";
     }
 }

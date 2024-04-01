@@ -29,7 +29,7 @@
     <meta charset="UTF-8">
     <title th:text="'Three Go | 리뷰북 :: ' + ${reviewBook.bookTitle}"></title>
 </head>
-<body>
+<body data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" data-bs-offset="10" tabindex="1">
 <style>
     main {
         margin-left: 280px;
@@ -121,7 +121,7 @@
     }
 
     .gallery {
-        margin-top: 40px;
+        margin-top: 100px;
     }
 
     .book-index {
@@ -143,9 +143,10 @@
         width: 0;
         display: block;
         position: fixed;
+        z-index: 200;
         top: 80px;
         right: 0;
-        transition: all ease-in 0.2s;
+        transition: all ease-in 0.3s;
     }
 
     #index-btn {
@@ -154,7 +155,7 @@
         position: fixed;
         top: calc(50vh + 25px);
         right: 30px;
-        transition: all ease-in 0.2s;
+        transition: all ease-in 0.3s;
     }
 
     .card {
@@ -193,7 +194,7 @@
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
-    <main  data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" tabindex="1">
+    <main>
         <div class="book-cover-wrap">
             <h2 class="book-title" th:text="${reviewBook.bookTitle}"></h2>
             <div class="book-cover-image-wrap">
@@ -207,11 +208,11 @@
                 <th:block th:each="review, reviewState : ${reviewList}">
                     <div th:id="|list-item-${reviewState.count}|" class="card gallery-item">
                         <!--유저 정보-->
-                        <div class="d-flex card-header gap-3">
+                        <div class="d-flex card-header gap-2">
                             <img th:src="|@{/api/image/profile/}${review.userInfo.profileImg}|" alt="mdo"
                                  class="rounded-circle">
-                            <span th:text="${review.userInfo.id}"></span>
                             <span th:text="${review.userInfo.name}"></span>
+                            <span th:text="|@${review.userInfo.id}|"></span>
                         </div>
                         <div class="card-body">
                             <!--유저가 업로드한 이미지-->
@@ -223,10 +224,10 @@
                                         </div>
                                     </th:block>
                                 </div>
-                                <div class="swiper-controller">
-                                    <div class="swiper-button-next"></div>
-                                    <div class="swiper-button-prev"></div>
-                                    <div class="swiper-pagination"></div>
+                                <div th:class="|swiper-controller swiper-controller${reviewState.index}|">
+                                    <div th:class="|swiper-button-next swiper-button-next${reviewState.index}|"></div>
+                                    <div th:class="|swiper-button-prev swiper-button-prev${reviewState.index}|"></div>
+                                    <div th:class="|swiper-pagination swiper-pagination${reviewState.index}|"></div>
                                 </div>
                             </div>
                             <!--좋아요와 댓글 -->
@@ -350,42 +351,59 @@
     </div>
 </div>
 <script th:inline="javascript">
-    let isCoverFixed = false;
+    let lastScroll = 0;
+    let galleyTopThird = $(".gallery").offset().top / 3;
 
-    $(window).on('scroll', function (){
-        let galleyTop = $(".gallery").offset().top;
+    $(window).on('scroll', function () {
         let scrollTop = $(this).scrollTop();
 
-        if(!isCoverFixed && scrollTop > (galleyTop/3)) {
-            isCoverFixed = true;
-            window.scrollTo(0, 20);
-            $('.book-cover-wrap').addClass('fixed-book-cover');
-            $('.book-cover-image-wrap, .book-title').css({
-                'opacity' : '0%',
-                'visibility' : 'hidden'
-            })
-            setTimeout(function (){
-                $('.book-cover-image-wrap, .book-title').css({
-                    'opacity' : '100%',
-                    'visibility' : 'visible'
-                })
-            }, 200)
-            $('.review-container').css('margin-top','80px');
-            $('.book-index').addClass('fixed-book-index');
-            $('#index-btn').css({
-                'opacity' : '100%',
-                'visibility' : 'visible'
-            });
-        }else if(isCoverFixed && scrollTop === 0) {
-            isCoverFixed = false;
+        // 최상단에서 크게 보이는 기능
+        if (scrollTop <= 0) {
             $('.book-cover-wrap').removeClass('fixed-book-cover');
-            $('.review-container').css('margin-top','');
+            $('.book-cover-wrap').css('height','');
+            $('.book-cover-image-wrap, .book-title').css({
+                'opacity': '100%',
+                'visibility': 'visible'
+            });
+            $('.review-container').css('margin-top', '');
             $('.book-index').removeClass('fixed-book-index');
             $('#index-btn').css({
-                'opacity' : '0%',
-                'visibility' : 'hidden'
+                'opacity': '0%',
+                'visibility': 'hidden'
+            });
+        } else if(scrollTop > galleyTopThird){
+            // 스크롤이 galleyTop/3 지점 아래로 내려왔을 때 간략하게 보이도록 처리
+            $('.book-cover-wrap').addClass('fixed-book-cover');
+            $('.review-container').css('margin-top', '80px');
+            $('.book-index').addClass('fixed-book-index');
+            $('#index-btn').css({
+                'opacity': '100%',
+                'visibility': 'visible'
             });
         }
+
+        if(scrollTop > 0){
+            // 스크롤 방향에 따른 처리
+            if (scrollTop < lastScroll) {
+                // 스크롤을 올릴 때
+                $('.book-cover-wrap').css({
+                    'height': '80px',
+                    'opacity': '100%',
+                    'visibility': 'visible'
+                });
+                $('.book-index').css('top', '80px');
+            } else if (scrollTop > lastScroll) {
+                // 스크롤을 내릴 때
+                $('.book-cover-wrap').css({
+                    'height': '0px',
+                    'opacity': '0%',
+                    'visibility': 'hidden'
+                });
+                $('.book-index').css('top', '0px');
+            }
+        }
+
+        lastScroll = scrollTop;
     })
 
     function openIndex(){
@@ -411,16 +429,19 @@
                 observer: true,
                 observeParents: true,
                 navigation: {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
+                    nextEl: `.swiper-button-next${idx}`,
+                    prevEl: `.swiper-button-prev${idx}`,
                 },
                 pagination: {
-                    el: ".swiper-pagination",
+                    el: `.swiper-pagination${idx}`,
                 },
                 mousewheel: true,
                 keyboard: true,
             });
             simpleViewSwiper.push(swiper);
+            if(reviewList[idx].reviewPhotoList.length <= 1){
+                $(`.swiper-controller${idx}`).hide();
+            }
         }
     }
 </script>
@@ -429,11 +450,12 @@
     $(document).ready(function (){
         /* 리뷰 상세 조회 관련 설정 */
         $('.viewSwiper .swiper-controller').hide();
-        for(let idx = 0; idx < reviewList.length; idx++){
-            if(reviewList[idx].reviewPhotoList.length <= 1){
-                $(`.simple-view-swiper:eq(${idx}) .swiper-controller`).hide();
-            }
-        }
+        createSimpleViewSwiper();
+        // for(let idx = 0; idx < reviewList.length; idx++){
+        //     if(reviewList[idx].reviewPhotoList.length <= 1){
+        //         $(`.simple-view-swiper:eq(${idx}) .swiper-controller`).hide();
+        //     }
+        // }
     });
 
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
@@ -450,7 +472,7 @@
             el: ".swiper-pagination",
         },
         mousewheel: true,
-        keyboard: true,
+        keyboard: false,
     });
     function openViewer(reviewId) {
         let loginUserName = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
