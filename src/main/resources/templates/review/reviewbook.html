@@ -352,6 +352,7 @@
 </div>
 <script th:inline="javascript">
     let lastScroll = 0;
+    let isScrollDown = true;
     let galleyTopThird = $(".gallery").offset().top / 3;
 
     $(window).on('scroll', function () {
@@ -384,7 +385,8 @@
 
         if(scrollTop > 0){
             // 스크롤 방향에 따른 처리
-            if (scrollTop < lastScroll) {
+            if (!isScrollDown && scrollTop < lastScroll) {
+                isScrollDown = true;
                 // 스크롤을 올릴 때
                 $('.book-cover-wrap').css({
                     'height': '80px',
@@ -392,7 +394,8 @@
                     'visibility': 'visible'
                 });
                 $('.book-index').css('top', '80px');
-            } else if (scrollTop > lastScroll) {
+            } else if (isScrollDown && scrollTop > lastScroll) {
+                isScrollDown = false;
                 // 스크롤을 내릴 때
                 $('.book-cover-wrap').css({
                     'height': '0px',
@@ -451,11 +454,6 @@
         /* 리뷰 상세 조회 관련 설정 */
         $('.viewSwiper .swiper-controller').hide();
         createSimpleViewSwiper();
-        // for(let idx = 0; idx < reviewList.length; idx++){
-        //     if(reviewList[idx].reviewPhotoList.length <= 1){
-        //         $(`.simple-view-swiper:eq(${idx}) .swiper-controller`).hide();
-        //     }
-        // }
     });
 
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
