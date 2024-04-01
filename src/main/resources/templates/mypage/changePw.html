@@ -4,6 +4,7 @@
 
 <!-- 코드언어 표시 == 웹 표준지침 준수 -->
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Bootstrap icons-->
@@ -19,7 +20,6 @@
     <link href="../../assets/css/style.css?after" rel="stylesheet"/>
     <link href="../../assets/css/commonstyle.css?after" rel="stylesheet"/>
     <title>비밀번호 변경</title>
-    <link rel="icon" href="image/wave.ico">
 
 </head>
 <style>
@@ -37,9 +37,7 @@
         padding-left: 12px;
     }
 
-    .btn_align {
-        text-align: center;
-    }
+
 </style>
 <body>
 <!--사이드바-->
@@ -109,7 +107,7 @@
 
                         <div class="btn_align">
 
-                            <button class="col text-center mb-5 btn btn-primary2" id="saveCancel" onclick="cancel()">취소
+                            <button class="col text-center mb-5 btn btn-primary2" onclick="cancel()">취소
                             </button>
 
                             <button id="changePassword" class="col text-center mb-5 btn btn-primary btn-md"
@@ -140,14 +138,20 @@
         if (currentPassword === "" || newPassword === "" || newPasswordConfirm === "") {
             alert("모든 항목을 입력해주세요.");
             return false;
-        } // 유효성 검사
+        }
+        // 현재 비밀번호와 비교해본 다음 맞는 지 확인.
+        // else if (currentPassword !== currentPassword){
+        //     alert("현재 비밀번호가 틀립니다.");
+        //     return false;
+        // }
+        // 유효성 검사
         else if (!reg_pw.test(newPassword)) {
             alert("비밀번호는 8~16자리수여야 합니다. 영문 대문자, 소문자, 숫자, 특수문자를 1개 이상 포함해야 합니다.");
             console.log(event.target);
             document.getElementsByName('newPw')[0].focus();
             return false;
         } else if (currentPassword === newPassword) {
-            alert("현재 비밀번호와 같습니다.");
+            alert("바꾸려는 비밀번호가 현재 비밀번호와 같습니다.");
             return false;
         }
 
@@ -174,6 +178,7 @@
                 }
             });
         }
+
     }
 
 
