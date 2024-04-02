@@ -40,7 +40,7 @@
         position: absolute;
         width: 150px;
         left: calc(50% - 75px);
-        bottom: -15%;
+        bottom: -20%;
     }
 
     .no-item-msg {
@@ -52,6 +52,12 @@
         color: grey;
         font-size: 1.8rem;
         text-align: center;
+    }
+
+    .book-more {
+        position: absolute;
+        top: -5%;
+        right: -5%;
     }
 
     .book-cover-wrap {
@@ -233,6 +239,15 @@
                 <h4 class="book-content" th:utext="${reviewBook.bookContent}"></h4>
                 <img th:if="${reviewList.size() > 0}" class="scroll-guide" src="../assets/img/scroll_down.gif">
                 <p th:unless="${reviewList.size() > 0}" class="no-item-msg">아직 리뷰북에<br/>등록된 리뷰가 없습니다.</p>
+<!--                <div class="book-more">-->
+<!--                    <button id="book-more-btn" type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                        <i class="fas fa-cog" aria-hidden="true"></i>-->
+<!--                    </button>-->
+<!--                    <ul class="dropdown-menu">-->
+<!--                        <li><a id="book-edit" class="dropdown-item" href="#">수정</a></li>-->
+<!--                        <li><span id="book-delete" class="dropdown-item">삭제</span></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
             </div>
             <div class="reviews-wrap">
                 <th:block th:each="review, reviewState : ${reviewList}">
