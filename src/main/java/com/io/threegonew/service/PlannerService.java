@@ -8,7 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,12 @@ public class PlannerService {
 //
 //        return plannerShareRepository.existsByPlannerAndUser(planner, user);
 //    }
+
+    // 날짜 간의 차이를 계산하는 메서드 추가
+    public long getDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
+        return ChronoUnit.DAYS.between(startDate, endDate);
+    }
+
 
     // 특정 유저가 특정 플래너를 작성했는지 확인하는 메서드
     public boolean isUserPlannerOwner(String userId, Long plannerId) {

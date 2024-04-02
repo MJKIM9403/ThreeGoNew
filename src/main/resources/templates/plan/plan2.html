@@ -199,7 +199,7 @@
     var index;
     // 이전에 선택된 탭의 인덱스를 저장하는 변수
     var previousTabIndex = -1; // 초기값 설정, 아무런 탭도 선택되지 않았음을 나타냄
-
+    var prevIndex;
     // tmap api
     var map;
 
@@ -933,7 +933,8 @@
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
-
+                    // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
+                    previousTabIndex = index;
                 } else if (previousTabIndex === -1) {
                     // 첫 번째 탭에서 다른 탭으로 이동하는 경우
                     // 첫 번째 탭의 마커와 경로가 이미 있을 경우에만 제거
@@ -947,6 +948,7 @@
                             line.setMap(null);
                         });
                     }
+                    previousTabIndex = 0;
                 }
 
                 // 현재탭의 목록 불러오기
@@ -978,8 +980,7 @@
                     map.fitBounds(PTbounds);
                 }
 
-                // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
-                previousTabIndex = index;
+
             });
         });
 

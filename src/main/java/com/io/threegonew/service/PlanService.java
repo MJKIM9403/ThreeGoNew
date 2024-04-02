@@ -101,9 +101,7 @@ public class PlanService {
         return planDTOs;
     }
 
-    public Optional<Plan> findTopByPlannerIdOrderByDayDesc(Long plannerId) {
-        return planRepository.findTopByPlannerIdOrderByDayDesc(plannerId);
-    }
+
 
     public List<Area> findAllAreas() {
         return areaRepository.findAll();

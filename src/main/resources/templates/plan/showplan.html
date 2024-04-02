@@ -136,7 +136,7 @@
     var plannerId = [[${plannerId}]];
 
     // 날짜
-    var days = [[${maxDay}]];
+    var days = [[${daysBetween+1}]];
 
     // 인덱스
     var index;
@@ -488,12 +488,16 @@
         Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
         console.log(Points[index]);
         PTbounds = new Tmapv2.LatLngBounds();
-        for(var i in Points[index]) {
-            var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-            PTbounds.extend(linePt);
+        if(Points[index]) {
+            for(var i in Points[index]) {
+                var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+                PTbounds.extend(linePt);
+            }
+            map.fitBounds(PTbounds);
         }
 
-        map.fitBounds(PTbounds);
+
+
     }
 
 
@@ -906,8 +910,8 @@
         <div class="container-fluid">
             <div id="list">
                 <div id="day-btns">
-                    <th:block th:each="i : ${#numbers.sequence(1, maxDay)}">
-                        <button class="btn btn-dark dayButton active" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
+                    <th:block th:each="i : ${#numbers.sequence(0, daysBetween)}">
+                        <button class="btn btn-dark dayButton active" th:data-day="${i + 1}" th:text="'Day ' + ${i + 1}">Day${i + 1}</button>
                     </th:block>
                 </div>
 

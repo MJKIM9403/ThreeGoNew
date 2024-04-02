@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,18 +28,18 @@ public class Planner {
     private String plannerName;
 
     @Column(name = "start_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+//    @Temporal(TemporalType.DATE)
+    private LocalDate startDate;
 
     @Column(name = "end_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date endDate;
+//    @Temporal(TemporalType.DATE)
+    private LocalDate endDate;
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Team> sharedUsers = new HashSet<>();
 
     @Builder
-    public Planner(String userId, String plannerName, Date startDate, Date endDate) {
+    public Planner(String userId, String plannerName, LocalDate startDate, LocalDate endDate) {
         this.userId = userId;
         this.plannerName = plannerName;
         this.startDate = startDate;

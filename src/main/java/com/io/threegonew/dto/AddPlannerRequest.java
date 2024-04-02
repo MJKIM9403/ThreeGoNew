@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -17,10 +18,10 @@ public class AddPlannerRequest {
     private String plannerName;
 
     @NotNull(message = "여행 시작일자를 선택해주세요.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
 
     @NotNull(message = "여행 종료일자를 선택해주세요.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 }

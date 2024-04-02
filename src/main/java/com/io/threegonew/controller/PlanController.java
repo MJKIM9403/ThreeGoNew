@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -168,19 +169,6 @@ public class PlanController {
                 .build();
     }
 
-
-//    private TourItemSelectRequest buildTourItemSelectRequest(Integer areaCode, Integer sigunguCode) {
-//        String AreaCode = (areaCode == null ) ? null : String.valueOf(areaCode);
-//        String SigunguCode = (sigunguCode == null) ? null : String.valueOf(sigunguCode);
-//
-//        return TourItemSelectRequest.builder()
-//                .areaCode(AreaCode)
-//                .sigunguCode(SigunguCode)
-//                .build();
-//    }
-
-
-
     @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE) // consumes 설정 추가
     public ResponseEntity<Map<String, Long>> savePlan(@RequestBody List<AddPlanRequest> places) {
         // places 데이터를 처리하고 데이터베이스에 저장하는 로직
@@ -229,9 +217,15 @@ public class PlanController {
         System.out.println("plannerId : " + plannerId);
         List<Plan> plans = planService.findByPlannerId(plannerId);
 
-        Optional<Plan> maxDayOptional = planService.findTopByPlannerIdOrderByDayDesc(plannerId);
-        int maxDay = maxDayOptional.isPresent() ? maxDayOptional.get().getDay() : 0;
 
+        // plannerId에 해당하는 planner의 날짜 계산하기
+        Planner optionalPlanner = plannerService.findPlanner(plannerId);
+        LocalDate startLocalDate = optionalPlanner.getStartDate();
+        LocalDate endLocalDate = optionalPlanner.getEndDate();
+        long daysBetween = plannerService.getDaysBetweenDates(startLocalDate, endLocalDate);
+
+
+        // plannerId가 일치하는 planList 찾기
         List<TourItem> planList = new ArrayList<>();
 
         for (Plan plan : plans) {
@@ -275,7 +269,7 @@ public class PlanController {
         model.addAttribute("userId", userId);
         model.addAttribute("plans", plans);
         model.addAttribute("plannerId", plannerId);
-        model.addAttribute("maxDay", maxDay);
+        model.addAttribute("daysBetween", daysBetween);
         model.addAttribute("guestList", guestList);
         model.addAttribute("teamList", teamList);
         model.addAttribute("exists", exists);

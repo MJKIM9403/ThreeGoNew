@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,9 +92,12 @@ public class PlannerController {
         Long plannerId = plannerService.save(request, userId).getPlannerId();
         httpSession.setAttribute("plannerId", plannerId);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String startDate = dateFormat.format(request.getStartDate());
-        String endDate = dateFormat.format(request.getEndDate());
+        // 날짜 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 날짜 문자열로 변환
+        String startDate = request.getStartDate().format(formatter);
+        String endDate = request.getEndDate().format(formatter);
 
         // RedirectAttributes 를 사용해 URL에 파라미터 추가
         rttr.addAttribute("plannerName",request.getPlannerName());
