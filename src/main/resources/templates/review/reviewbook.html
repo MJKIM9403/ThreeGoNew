@@ -29,20 +29,41 @@
     <meta charset="UTF-8">
     <title th:text="'Three Go | 리뷰북 :: ' + ${reviewBook.bookTitle}"></title>
 </head>
-<body data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" data-bs-offset="10" tabindex="1">
+<body data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" data-bs-offset="0" tabindex="1">
 <style>
-    main {
+    .review-container {
         margin-left: 280px;
         flex: 1 0 auto;
     }
 
+    .scroll-guide {
+        position: absolute;
+        width: 150px;
+        left: calc(50% - 75px);
+        bottom: -15%;
+    }
+
+    .no-item-msg {
+        position: absolute;
+        width: 300px;
+        left: calc(50% - 150px);
+        bottom: -17%;
+        font-weight: 700;
+        color: grey;
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
     .book-cover-wrap {
         position: relative;
-        min-width: 800px;
+        width: 600px;
+        margin-top: calc((100vh - 750px)/2);
+        margin-bottom: calc((100vh - 750px)/2);
     }
+
     .book-cover-image-wrap {
         width: 100%;
-        aspect-ratio: 3.7;
+        aspect-ratio: 0.8;
         overflow: hidden;
     }
     .book-cover-image-wrap img {
@@ -51,24 +72,26 @@
         height: 100%;
     }
     .book-title {
+        word-break: break-word;
         position: absolute;
         top: 8%;
-        left: 4%;
+        padding: 0 40px;
         color: #FFFFFF;
         text-shadow:
                 -1px 0px rgba(0, 0, 0, 0.8),
                 0px 1px rgba(0, 0, 0, 0.8),
                 1px 0px rgba(0, 0, 0, 0.8),
                 0px -1px rgba(0, 0, 0, 0.8);
-        text-align: left;
-        font-size: 4.6rem;
+        text-align: center;
+        font-size: 68pt;
         font-weight: 700;
         margin: 0;
     }
     .book-content {
+        word-break: break-word;
         position: absolute;
-        bottom: 8%;
-        right: 4%;
+        bottom: 5%;
+        right: 0%;
         color: #FFFFFF;
         text-shadow:
                 -1px 0px rgba(0, 0, 0, 0.8),
@@ -76,12 +99,13 @@
                 1px 0px rgba(0, 0, 0, 0.8),
                 0px -1px rgba(0, 0, 0, 0.8);
         text-align: right;
-        font-size: 2rem;
+        font-size: 20pt;
         font-weight: 700;
-        margin: 0;
+        margin-right: 40px;
     }
 
     .fixed-book-cover {
+        margin: 0;
         display: flex;
         justify-content: start;
         align-items: center;
@@ -90,7 +114,8 @@
         top: 0;
         left: 280px;
         height: 80px;
-        background: rgba(200, 200, 200, 0.9);
+        background-color: rgba(230, 230, 230, 0.9);
+        background-image : linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
         z-index: 100;
         transition: all ease-in 0.3s;
     }
@@ -103,6 +128,7 @@
         order: 1;
     }
     .fixed-book-cover .book-title {
+        padding: 0;
         position: static;
         color: #000000;
         text-shadow: none;
@@ -120,8 +146,8 @@
         justify-content: center;
     }
 
-    .gallery {
-        margin-top: 100px;
+    .reviews-wrap {
+        margin-top: 150px;
     }
 
     .book-index {
@@ -131,7 +157,7 @@
         overflow-y: scroll;
         background: #F8F9FA;
     }
-    .book-index ul li{
+    .book-index{
         width: 100%;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -160,8 +186,8 @@
 
     .card {
         width: 600px;
-        margin-bottom: 2em;
-
+        margin-bottom: 25px;
+        cursor: default;
     }
 
     .card .card-header img {
@@ -174,37 +200,41 @@
         overflow: hidden;
     }
 
-    /*.simple-view-swiper*/
-    /*.swiper-wrapper {*/
-    /*    width: 100%;*/
-    /*    height: 100%;*/
-
-    /*}*/
-
-    /*.swiper-slide {*/
-    /*    width: 100%;*/
-    /*    height: 100%;*/
-    /*}*/
-
     .simple-view-img {
         object-fit: cover !important;
         width: 100%;
         height: 100%;
     }
+
+    .card,
+    .card *,
+    .card *::after,
+    .card *::before{
+        box-sizing: content-box !important;
+    }
+
+    .show-more {
+        width: 20%;
+        height: 30px;
+        vertical-align: center;
+    }
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
-    <main>
-        <div class="book-cover-wrap">
-            <h2 class="book-title" th:text="${reviewBook.bookTitle}"></h2>
-            <div class="book-cover-image-wrap">
-                <img th:if="${reviewBook.coverFilePath == null}" src="../assets/img/review_book_cover.jpg">
-                <img th:unless="${reviewBook.coverFilePath == null}" th:src="|@{/api/image/book/}${reviewBook.coverFilePath}|">
+
+    <div class="review-container">
+        <div class="gallery">
+            <div class="book-cover-wrap">
+                <h2 class="book-title" th:text="${reviewBook.bookTitle}"></h2>
+                <div class="book-cover-image-wrap">
+                    <img th:if="${reviewBook.coverFilePath == null}" src="../assets/img/review_book_cover.jpg">
+                    <img th:unless="${reviewBook.coverFilePath == null}" th:src="|@{/api/image/book/}${reviewBook.coverFilePath}|">
+                </div>
+                <h4 class="book-content" th:utext="${reviewBook.bookContent}"></h4>
+                <img th:if="${reviewList.size() > 0}" class="scroll-guide" src="../assets/img/scroll_down.gif">
+                <p th:unless="${reviewList.size() > 0}" class="no-item-msg">아직 리뷰북에<br/>등록된 리뷰가 없습니다.</p>
             </div>
-            <h4 class="book-content" th:utext="${reviewBook.bookContent}"></h4>
-        </div>
-        <div class="review-container">
-            <div class="gallery">
+            <div class="reviews-wrap">
                 <th:block th:each="review, reviewState : ${reviewList}">
                     <div th:id="|list-item-${reviewState.count}|" class="card gallery-item">
                         <!--유저 정보-->
@@ -233,25 +263,25 @@
                             <!--좋아요와 댓글 -->
                             <div class="d-flex gap-3">
                                 <i class="bi bi-heart"></i>
-                                <i class="bi bi-chat"></i>
+                                <i class="bi bi-chat" th:onclick="goComment([[${review.reviewId}]])"></i>
                             </div>
 
                             <p class="card-text">좋아요 몇개</p>
-                            <p class="card-text" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">댓글 더 보기</small></p>
+                            <div class="card-text show-more" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">자세히 보기</small></div>
                         </div>
                     </div>
                 </th:block>
             </div>
-            <button type="button" id="index-btn" class="rounded-pill btn btn-outline-primary" onclick="openIndex()">
-                <i class="fa-solid fa-book-bookmark"></i>
-            </button>
-            <div id="book-index" class="book-index list-group">
-                <th:block th:each="review, reviewState : ${reviewList}">
-                    <a class="list-group-item list-group-item-action" th:href="|#list-item-${reviewState.count}|" th:text="${review.tourItemTitle}"></a>
-                </th:block>
-            </div>
         </div>
-    </main>
+        <button type="button" id="index-btn" class="rounded-pill btn btn-outline-primary" onclick="openIndex()">
+            <i class="fa-solid fa-book-bookmark"></i>
+        </button>
+        <div id="book-index" class="book-index list-group">
+            <th:block th:each="review, reviewState : ${reviewList}">
+                <a class="list-group-item list-group-item-action" th:href="|#list-item-${reviewState.count}|" th:text="${review.tourItemTitle}"></a>
+            </th:block>
+        </div>
+    </div>
 
     <!-- 리뷰 상세 조회 폼 -->
     <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
@@ -263,7 +293,7 @@
                         <div class="preview-container col-md-7">
                             <div id="review-book-info" class="d-flex align-items-center">
                                 <div class="rounded-3 icon-img">
-                                    <img id="review-book-cover" src="../assets/img/no_image.png" alt="...">
+                                    <img id="review-book-cover" src="../assets/img/review_book_cover.jpg" alt="...">
                                 </div>
                                 <span id="review-book-title" class="ms-2">리뷰 북 타이틀</span>
                             </div>
@@ -337,7 +367,7 @@
                                     <div id="comment-area" class="ms-2">
                                         <div id="login-user-name" class="mb-2">작성자 이름</div>
                                         <div class="d-flex gap-1">
-                                            <textarea class="form-control"></textarea>
+                                            <textarea id="comment-content" class="form-control"></textarea>
                                             <button id="comment-btn" type="button" class="btn btn-outline-secondary">등록</button>
                                         </div>
                                     </div>
@@ -350,16 +380,43 @@
         </div>
     </div>
 </div>
+<!-- 스크롤 관련 이벤트 스크립트 -->
 <script th:inline="javascript">
     let lastScroll = 0;
     let isScrollDown = true;
-    let galleyTopThird = $(".gallery").offset().top / 3;
+    let isCoverClose = false;
+
+
+    function checkReviewHeight() {
+        let viewportHeight = window.innerHeight;
+        let reviewCardHeight = $('#list-item-1').outerHeight(true);
+        let reviewWrapStartMargin = $('.reviews-wrap').css('margin-top');
+        reviewWrapStartMargin = Number(reviewWrapStartMargin.split('px')[0]);
+        let reviewCount = reviewList.length;
+        let reviewHeight = reviewWrapStartMargin + (reviewCount * reviewCardHeight);
+
+        if(reviewCount === 0){
+            $('.reviews-wrap').css('margin-top', '0px');
+            $('.reviews-wrap').css('margin-bottom', '0px');
+        }else if(reviewHeight < viewportHeight){
+            let addMargin = (viewportHeight - (reviewCount * reviewCardHeight))/2;
+
+            $('.reviews-wrap').css('margin-top', addMargin + 'px');
+            $('.reviews-wrap').css('margin-bottom', addMargin + 'px');
+        }
+    }
+
 
     $(window).on('scroll', function () {
         let scrollTop = $(this).scrollTop();
 
-        // 최상단에서 크게 보이는 기능
-        if (scrollTop <= 0) {
+        if(scrollTop > 0){
+            $('.scroll-guide').hide();
+        }
+
+        if (isCoverClose && scrollTop <= 0) {
+            isCoverClose = false;
+            // 최상단에서 커버이미지가 크게 보이게 처리
             $('.book-cover-wrap').removeClass('fixed-book-cover');
             $('.book-cover-wrap').css('height','');
             $('.book-cover-image-wrap, .book-title').css({
@@ -372,8 +429,9 @@
                 'opacity': '0%',
                 'visibility': 'hidden'
             });
-        } else if(scrollTop > galleyTopThird){
-            // 스크롤이 galleyTop/3 지점 아래로 내려왔을 때 간략하게 보이도록 처리
+        } else if(!isCoverClose) {
+            isCoverClose = true;
+            // 스크롤이 일정 길이 아래로 내려왔을 때 간략하게 보이도록 처리
             $('.book-cover-wrap').addClass('fixed-book-cover');
             $('.review-container').css('margin-top', '80px');
             $('.book-index').addClass('fixed-book-index');
@@ -383,9 +441,9 @@
             });
         }
 
-        if(scrollTop > 0){
+        if(isCoverClose){
             // 스크롤 방향에 따른 처리
-            if (!isScrollDown && scrollTop < lastScroll) {
+            if ((!isScrollDown && scrollTop < lastScroll )|| scrollTop < 150) {
                 isScrollDown = true;
                 // 스크롤을 올릴 때
                 $('.book-cover-wrap').css({
@@ -439,7 +497,7 @@
                     el: `.swiper-pagination${idx}`,
                 },
                 mousewheel: true,
-                keyboard: true,
+                keyboard: false,
             });
             simpleViewSwiper.push(swiper);
             if(reviewList[idx].reviewPhotoList.length <= 1){
@@ -447,13 +505,28 @@
             }
         }
     }
+
+    let goCommentClick = false;
+
+    $('#viewer').on('shown.bs.modal', function () {
+        if(goCommentClick){
+            $('#comment-content').focus();
+        }
+        goCommentClick = false;
+    });
+    function goComment(reviewId){
+        goCommentClick = true;
+        openViewer(reviewId);
+    }
 </script>
+
 <!-- 리뷰 뷰어 관련 스크립트 -->
 <script th:inline="javascript">
     $(document).ready(function (){
         /* 리뷰 상세 조회 관련 설정 */
         $('.viewSwiper .swiper-controller').hide();
         createSimpleViewSwiper();
+        checkReviewHeight();
     });
 
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
@@ -470,7 +543,7 @@
             el: ".swiper-pagination",
         },
         mousewheel: true,
-        keyboard: false,
+        keyboard: true,
     });
     function openViewer(reviewId) {
         let loginUserName = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];

@@ -300,6 +300,10 @@
                 success : function (result) {
                     $('#select-touritem-info').html("");
                     const planList = result.planList;
+                    if(planList.length == 0){
+                        let template = `<option value='no-item'>리뷰북에 등록된 관광지 정보가 없습니다.</option>`;
+                        $('#select-touritem-info').append(template);
+                    }
                     for(let plan of planList){
                         let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
                         $('#select-touritem-info').append(template);
@@ -326,6 +330,8 @@
         let fileLength = calcFileLength();
         if(fileLength < 1){
             alert("사진을 반드시 한 장 이상 첨부해주세요.")
+        }else if($('#select-touritem-info option:selected').val() === 'no-item'){
+            alert('관광지 정보를 선택해주세요.')
         }else if($('#selected-touritem-name').val() === '' || $('#selected-touritem-name').val() === '직접 입력'){
             alert('관광지 이름을 작성해주세요.')
         }else if($('#review-contents').val() === ''){
