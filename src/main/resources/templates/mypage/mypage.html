@@ -349,6 +349,11 @@
         width: 200px; /* 원하는 크기로 조정 */
         height: 200px; /* 원하는 크기로 조정 */
     }
+
+    /*팔로우*/
+    .follow-state {
+        display: inline-block;
+    }
 </style>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
@@ -365,13 +370,18 @@
                     <button class="btn profile-edit-btn" onclick="location.href = '/editprofile'" >Edit Profile</button>
                     <button class="btn profile-settings-btn" aria-label="profile settings"  onclick="location.href = '/changePw'" ><i class="fas fa-cog" aria-hidden="true"></i></button>
                 </th:block>
+
+                <div class="follow-state" th:unless="${findUser.id == loginUser.id}">
+                    <button class="btn btn-secondary unfollow-btn" th:if="${isFollowing}" th:data-user-id="${findUser.id}">언팔로우</button>
+                    <button class="btn btn-primary follow-btn" th:unless="${isFollowing}" th:data-user-id="${findUser.id}">팔로우</button>
+                </div>
             </div>
 
             <div class="profile-stats">
                 <ul>
                     <li><span class="profile-stat-count">164</span> posts</li>
-                    <li><span class="profile-stat-count">188</span> followers</li>
-                    <li><span class="profile-stat-count">206</span> following</li>
+                    <li id="followers"><span class="profile-stat-count"></span> followers</li>
+                    <li id="following"><span class="profile-stat-count"></span> following</li>
                 </ul>
             </div>
 
@@ -649,6 +659,47 @@
         <i class="bi bi-book"></i>
     </button>
 
+    <!-- 팔로워 Modal -->
+    <div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="followersModalLabel">팔로워리스트</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="follower-list">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 팔로잉 Modal -->
+    <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="followingModalLabel">팔로잉리스트</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="following-list">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- End of container -->
 </div>
 
@@ -1698,6 +1749,186 @@
         });
     }
 
+
+</script>
+
+
+<script th:inline="javascript">
+    // 팔로워 팔로잉 수 동적으로 업데이트 하기
+    function updateFollowCounts() {
+        let userId = [[${findUser.id}]];
+
+        $.ajax({
+            url: '/api/userFollowCounts/' + userId,
+            type: 'GET',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(response) {
+                $('#followers .profile-stat-count').text(response.followerCount); // 팔로워 수 업데이트
+                $('#following .profile-stat-count').text(response.followingCount); // 팔로잉 수 업데이트
+            },
+            error: function(xhr, status, error) {
+                console.error('Failed to fetch follow counts:', error);
+            }
+        });
+    }
+    $(document).ready(function() {
+        updateFollowCounts(); // 페이지 로드 시 업데이트
+    });
+
+    // 팔로워리스트 모달창 열기
+    $('#followers').click(function() {
+        let userId = [[${findUser.id}]];
+        let loginId = [[${loginUser.id}]];
+
+        if(loginId === "anonymousUser") {
+            alert('로그인 후에 이용하실 수 있습니다.');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/show/followerList/' + userId,
+            type: 'GET',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(response) {
+                const modalBody = $('#followersModal .modal-body #follower-list');
+                modalBody.empty();
+                response.forEach(function(follower) {
+                    // 팔로우 상태에 따라 버튼 속성 설정
+                    var buttonClass = follower.followState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
+                    var buttonText = follower.followState == 1 ? '언팔로우' : '팔로우';
+                    var buttonDataId = follower.toUser.id;
+
+                    // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
+                    if (follower.toUser.id !== loginId) {
+                        var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
+                    } else {
+                        var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
+                    }
+
+
+                    var template = `
+                                    <div class="list-group">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <p>${follower.toUser.id}</p>
+                                                <p>${follower.toUser.name}</p>
+                                            </div>
+                                            <div class="follow-state">
+                                                ${buttonHTML}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `;
+
+                    modalBody.append(template);
+                });
+                $('#followersModal').modal('show');
+            }
+        });
+    });
+
+    // 팔로잉 리스트 모달창 열기
+    $('#following').click(function() {
+        let userId = [[${findUser.id}]];
+        let loginId = [[${loginUser.id}]];
+
+        if(loginId === "anonymousUser") {
+            alert('로그인 후에 이용하실 수 있습니다.');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/show/followingList/' + userId,
+            type: 'GET',
+            contentType: 'application/json; charset=UTF-8',
+            success: function(response) {
+                const modalBody = $('#followingModal .modal-body #following-list');
+                modalBody.empty();
+                response.forEach(function(following) {
+                    // 팔로우 상태에 따라 버튼 속성 설정
+                    var buttonClass = following.followState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
+                    var buttonText = following.followState == 1 ? '언팔로우' : '팔로우';
+                    var buttonDataId = following.fromUser.id;
+
+                    // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
+                    if (following.fromUser.id !== loginId) {
+                        var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
+                    } else {
+                        var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
+                    }
+
+                    var template = `
+                        <div class="list-group">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p>${following.fromUser.id}</p>
+                                    <p>${following.fromUser.name}</p>
+                                </div>
+                                <div class="follow-state">
+                                    ${buttonHTML}
+                                </div>
+                            </div>
+                        </div>
+                `;
+                    modalBody.append(template);
+                });
+                $('#followingModal').modal('show');
+            }
+        });
+    });
+
+    // 팔로우 기능
+    $(document).on('click', '.follow-btn', function (){
+        const userId = this.getAttribute('data-user-id');
+        let loginId = [[${loginUser.id}]];
+
+        if(loginId === "anonymousUser") {
+            alert('로그인 후에 이용하실 수 있습니다.');
+            return;
+        }
+        var $button = $(this);
+        $.ajax({
+            url: '/api/follow/' + userId,
+            type: 'POST',
+            contentType : 'application/json; charset=UTF-8',
+            success: function(response) {
+                alert(userId + '님을 팔로우햇슴~');
+                $button.removeClass('btn-primary')
+                    .addClass('btn-secondary')
+                    .addClass('unfollow-btn')
+                    .html('언팔로우')
+                    .removeClass('follow-btn');
+                updateFollowCounts();
+            },
+            error: function (xhr, status, error) {
+                alert('팔로우실패~~');
+            }
+        })
+    });
+
+
+    // 언팔로우 기능
+    $(document).on('click', '.unfollow-btn', function () {
+        const userId = this.getAttribute('data-user-id');
+        var $button = $(this);
+        $.ajax({
+            url: '/api/unfollow/' + userId,
+            type: 'DELETE',
+            contentType : 'application/json; charset=UTF-8',
+            success: function(response) {
+                alert(userId + '님을 언팔로우햇슴~');
+                $button.removeClass('btn-secondary')
+                    .addClass('btn-primary')
+                    .addClass('follow-btn')
+                    .html('팔로우')
+                    .removeClass('unfollow-btn');
+                updateFollowCounts();
+            },
+            error: function (xhr, status, error) {
+                alert('언팔로우실패~~');
+            }
+        })
+    });
 
 </script>
 

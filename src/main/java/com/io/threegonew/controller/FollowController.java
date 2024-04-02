@@ -3,6 +3,7 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.Follow;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.FollowDTO;
+import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.service.FollowService;
 import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -94,8 +95,17 @@ public class FollowController {
 // 유저의 팔로잉리스트를 불러오고 팔로우 상태를 함께 반환
     @GetMapping("/api/show/followingList/{userId}")
     public ResponseEntity<List<FollowDTO>> getFollowingsWithFollowState(@PathVariable("userId") String userId) {
+        User loggedInUser;
         // 로그인 된 유저
-        User loggedInUser = userService.findUser(userService.getCurrentUserId());
+        try{
+            String loginUserId = userService.getCurrentUserId();
+            loggedInUser = userService.findUser(loginUserId);
+        } catch (IllegalArgumentException e) {
+            loggedInUser = User.builder()
+                    .id("anonymousUser")
+                    .build();
+        }
+
         // 대상 유저
         User user = userService.findUser(userId);
         List<FollowDTO> followings = followService.findFollowingsByFollowerWithFollowState(loggedInUser, user);
@@ -105,8 +115,16 @@ public class FollowController {
     // 유저의 팔로워리스트를 불러오고 팔로우 상태를 함께 반환
     @GetMapping("/api/show/followerList/{userId}")
     public ResponseEntity<List<FollowDTO>> getFollowersWithFollowState(@PathVariable("userId") String userId) {
+        User loggedInUser;
         // 로그인 된 유저
-        User loggedInUser = userService.findUser(userService.getCurrentUserId());
+        try{
+            String loginUserId = userService.getCurrentUserId();
+            loggedInUser = userService.findUser(loginUserId);
+        } catch (IllegalArgumentException e) {
+            loggedInUser = User.builder()
+                    .id("anonymousUser")
+                    .build();
+        }
         // 대상 유저
         User user = userService.findUser(userId);
         List<FollowDTO> followers = followService.findFollowersByFollowingWithFollowState(loggedInUser, user);

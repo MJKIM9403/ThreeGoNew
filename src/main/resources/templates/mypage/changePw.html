@@ -37,6 +37,9 @@
         padding-left: 12px;
     }
 
+    #delete_btn{
+        color: red;
+    }
 
 </style>
 <body>
@@ -113,6 +116,11 @@
                             <button id="changePassword" class="col text-center mb-5 btn btn-primary btn-md"
                                     onclick="changePassword()"> 변경하기
                             </button>
+
+                            <div id="delete" class="text-center">
+                    <span id="delete_btn">
+                        <a href="/delete">탈퇴하기</a></span>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -127,7 +135,6 @@
     function cancel() {
         window.location.href = '/review';
     }
-
     let changePassword = function () {
         let reg_pw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
         let currentPassword = document.getElementsByName("currentPw")[0].value;
@@ -175,6 +182,7 @@
                 error: function (xhr, status, error) {
                     // 서버로부터의 오류 응답 처리
                     console.log("오류가 발생했습니다: " + error);
+                    alert("현재 비밀번호와 맞지 않습니다. ")
                 }
             });
         }

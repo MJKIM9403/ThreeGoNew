@@ -16,7 +16,8 @@ img {
     padding: 0rem 2rem 0rem calc(2rem + 280px);
 }
 
-.profile-user-settings .btn {
+.profile-user-settings .profile-edit-btn,
+.profile-user-settings .profile-settings-btn {
     display: inline-block;
     font: inherit;
     background: none;
@@ -399,5 +400,14 @@ Remove or comment-out the code block below to see how the browser will fall-back
         i.icon {
             padding-right: 10px !important;
         }
+    }
+
+
+    /* unfollow-btn과 follow-btn에 대한 기본 스타일 재설정 */
+    .profile-user-settings .unfollow-btn,
+    .profile-user-settings .follow-btn {
+        display: inline-block;
+        padding: 7px;
+        margin: 0 0 1rem 1rem;
     }
 }
