@@ -51,21 +51,22 @@ public class MyPageController {
         model.addAttribute("loginUser", loginUserInfo);
 
 //        // 팔로우, 팔로워 기능 관련 추가
-//        User fromUser = userService.findUser(userId);
-//
-//        String myId = "";
-//        boolean isFollowed = false;
-//        // 로그인 중인 유저
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if(principal.equals("anonymousUser")) {
-//            myId = "anonymousUser";
-//        } else {
-//            UserDetails userDetails = (UserDetails)principal;
-//            myId = userDetails.getUsername();
-//            User toUser = userService.findUser(myId);
-//
-//            boolean isFollowing = followService.isFollowing(toUser, fromUser);
-//            model.addAttribute("isFollowing", isFollowing);
+        User fromUser = userService.findUser(userId);
+
+        String myId = "";
+        boolean isFollowed = false;
+        // 로그인 중인 유저
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.equals("anonymousUser")) {
+            myId = "anonymousUser";
+        } else {
+            UserDetails userDetails = (UserDetails) principal;
+            myId = userDetails.getUsername();
+            User toUser = userService.findUser(myId);
+
+            boolean isFollowing = followService.isFollowing(toUser, fromUser);
+            model.addAttribute("isFollowing", isFollowing);
+        }
 //
 //            // 팔로잉리스트
 //            List<Follow> followingList = followService.findFollowingsByFollower(fromUser);

@@ -1341,7 +1341,9 @@
     let followState = [[${isFollowed}]];
     console.log(followState);
 
+</script>
 
+<script th:inline="javascript">
     // 팔로워 팔로잉 수 동적으로 업데이트 하기
     function updateFollowCounts() {
         let userId = [[${findUser.id}]];
@@ -1369,7 +1371,8 @@
         let loginId = [[${loginUser.id}]];
 
         if(loginId === "anonymousUser") {
-            alert('로그인 후에 이용하실 수 있습니다.')
+            alert('로그인 후에 이용하실 수 있습니다.');
+            return;
         }
 
         $.ajax({
@@ -1421,8 +1424,8 @@
 
 
         if(loginId === "anonymousUser") {
-            alert('로그인 후에 이용하실 수 있습니다.')
-            ㄱㄷ셔
+            alert('로그인 후에 이용하실 수 있습니다.');
+            return;
         }
 
         $.ajax({
@@ -1510,9 +1513,6 @@
         })
     });
 
-
-
 </script>
-
 </body>
 </html>
