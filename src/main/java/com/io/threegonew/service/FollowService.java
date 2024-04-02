@@ -67,30 +67,6 @@ public class FollowService {
         return followRepository.existsByToUserAndFromUser(toUser, fromUser);
     }
 
-    // 유저가 팔로우한 유저의 리스트를 뽑기
-//    public List<FollowDTO> findFollowingsByFollower(User toUser) {
-//        List<FollowDTO> followingList = followRepository.findByToUser(toUser).stream()
-//                .map(this::followMapper)
-//                .collect(Collectors.toList());
-//        return followingList;
-//    }
-
-    // 유저를 팔로우한 유저의 리스트를 뽑기
-//    public List<FollowDTO> findFollowersByFollowing(User fromUser) {
-//        List<FollowDTO> followingList = followRepository.findByFromUser(fromUser).stream()
-//                .map(this::followMapper)
-//                .collect(Collectors.toList());
-//        return followingList;
-//    }
-
-//    private FollowDTO followMapper(Follow follow) {
-//        return FollowDTO.builder()
-//                    .id(follow.getId())
-//                    .toUser(userInfoMapper(follow.getToUser()))
-//                    .fromUser(userInfoMapper(follow.getFromUser()))
-//                    .build();
-//    }
-
     // 로그인한 유저의 팔로우 상태 확인 + 마이페이지 유저가 팔로잉한 유저리스트를 뽑기
     public List<FollowDTO> findFollowingsByFollowerWithFollowState(User loggedInUser, User toUser) {
         List<FollowDTO> followingList = followRepository.findByToUser(toUser).stream()
