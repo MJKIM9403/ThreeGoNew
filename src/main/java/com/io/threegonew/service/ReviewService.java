@@ -4,6 +4,7 @@ import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.ReviewPhotoRepository;
 import com.io.threegonew.repository.ReviewRepository;
+import com.io.threegonew.util.AesUtil;
 import com.io.threegonew.util.FileHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -55,12 +56,14 @@ public class ReviewService {
         List<ReviewPhoto> copyPhotoList = new ArrayList<>();
         copyPhotoList.addAll(review.getReviewPhotoList());
 
-        for(Long deleteId : request.getDeletePhotoId()){
-            ReviewPhoto deletePhoto = reviewPhotoRepository.findById(deleteId).orElseThrow(
-                    () -> new IllegalArgumentException("삭제할 사진 정보를 찾을 수 없습니다."));
-            copyPhotoList.remove(deletePhoto);
-            reviewPhotoRepository.delete(deletePhoto);
-            fileHandler.deleteReviewPhoto(deletePhoto);
+        if(request.getDeletePhotoId() != null){
+            for(Long deleteId : request.getDeletePhotoId()){
+                ReviewPhoto deletePhoto = reviewPhotoRepository.findById(deleteId).orElseThrow(
+                        () -> new IllegalArgumentException("삭제할 사진 정보를 찾을 수 없습니다."));
+                copyPhotoList.remove(deletePhoto);
+                reviewPhotoRepository.delete(deletePhoto);
+                fileHandler.deleteReviewPhoto(deletePhoto);
+            }
         }
 
         List<ReviewPhoto> addPhotoList = fileHandler.parseReviewPhoto(review, request.getPhotoList());
@@ -116,12 +119,22 @@ public class ReviewService {
     public ReviewResponse findDetailReview(Long reviewId){
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
-        return reviewMapper(findReview);
+        try {
+            return reviewMapper(findReview);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<ReviewResponse> findReviewByReviewBook(ReviewBook reviewBook){
         return reviewRepository.findByReviewBook(reviewBook).stream()
-                .map(this::reviewMapper).collect(Collectors.toList());
+                .map(review -> {
+                    try {
+                        return reviewMapper(review);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList());
     }
 
     public EditReviewResponse findEditReview(Long reviewId){
@@ -141,7 +154,7 @@ public class ReviewService {
                 .build();
     }
 
-    private ReviewResponse reviewMapper(Review review){
+    private ReviewResponse reviewMapper(Review review) throws Exception {
         Long bookId = null;
         String bookTitle = null;
         String bookCoverImg = null;
@@ -154,7 +167,7 @@ public class ReviewService {
 
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())
-                .reviewBookId(bookId)
+                .reviewBookId(AesUtil.aesCBCEncode(bookId.toString()))
                 .reviewBookTitle(bookTitle)
                 .reviewBookCoverImg(bookCoverImg)
                 .userInfo(userInfoResponse(review.getUser()))

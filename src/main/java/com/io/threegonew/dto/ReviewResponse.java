@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewResponse {
     private Long reviewId;
-    private Long reviewBookId;
+    private String reviewBookId;
     private String reviewBookTitle;
     private String reviewBookCoverImg;
     private UserInfoResponse userInfo;
