@@ -37,6 +37,9 @@
         padding-left: 12px;
     }
 
+    #delete_btn{
+        color: red;
+    }
 
 </style>
 <body>
@@ -113,6 +116,11 @@
                             <button id="changePassword" class="col text-center mb-5 btn btn-primary btn-md"
                                     onclick="changePassword()"> 변경하기
                             </button>
+
+
+                                <button type="button" onclick="removeMember();"> 탈퇴하기 </button>
+                                <!-- //type을 button으로 꼭 적어줘야! submit이 되지 않는다!! 꼭 기억하기!
+                                     -->
                         </div>
                     </div>
                 </div>
@@ -122,12 +130,18 @@
 </div>
 </div>
 <script>
+<!--탈퇴-->
+function removeMember() {
+    if (window.confirm("탈퇴하시겠습니까?")) {
+        // 탈퇴하기 버튼 클릭시 /user/delete 페이지로 이동
+        window.location.href = "/delete";
+    }
+}
 
-    // "취소" 버튼 클릭
+// "취소" 버튼 클릭
     function cancel() {
         window.location.href = '/review';
     }
-
     let changePassword = function () {
         let reg_pw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
         let currentPassword = document.getElementsByName("currentPw")[0].value;
@@ -175,6 +189,7 @@
                 error: function (xhr, status, error) {
                     // 서버로부터의 오류 응답 처리
                     console.log("오류가 발생했습니다: " + error);
+                    alert("현재 비밀번호와 맞지 않습니다. ")
                 }
             });
         }

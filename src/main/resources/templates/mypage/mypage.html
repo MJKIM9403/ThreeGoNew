@@ -422,7 +422,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="preview-container col-md-7">
-                            <div id="review-book-info" class="d-flex align-items-center">
+                            <div id="review-book-info" class="d-flex align-items-center cursor-pointer">
                                 <div class="rounded-3 icon-img">
                                     <img id="review-book-cover" src="../assets/img/no_image.png" alt="...">
                                 </div>
@@ -804,6 +804,10 @@
                 }else {
                     $('.viewSwiper .swiper-controller').hide()
                 };
+
+                $('#review-book-info').off().click(function (){
+                    location.href = `../book?bookId=${findReview.reviewBookId}`;
+                })
             },
             error : function (){
                 alert("리뷰 정보 조회에 실패했습니다.")
