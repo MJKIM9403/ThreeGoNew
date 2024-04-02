@@ -550,6 +550,23 @@
             title: info.title
         })
         viaMarkers[index].push(marker);
+        // 마커 위치에 맞게 지도 줌
+        Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
+        // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+        if (viaMarkers[index].length === 1) {
+            map.setCenter(marker.getPosition());
+            map.setZoom(10); // 기본 줌 레벨 설정
+        } else {
+            // 모든 마커를 포함하는 경계를 계산
+            PTbounds = new Tmapv2.LatLngBounds();
+            for (var i in Points[index]) {
+                var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+                PTbounds.extend(linePt);
+            }
+
+            // 지도를 경계에 맞게 확대/축소
+            map.fitBounds(PTbounds);
+        }
     }
 
     function addPlace() {
@@ -598,21 +615,7 @@
                         for(var i = 0; i<places[index].length; i++) {
                             addMarker(i+1, places[index][i])
                         }
-                        // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-                        if (viaMarkers[index].length === 1) {
-                            map.setCenter(marker.getPosition());
-                            map.setZoom(10); // 기본 줌 레벨 설정
-                        } else {
-                            // 모든 마커를 포함하는 경계를 계산
-                            var PTbounds = new Tmapv2.LatLngBounds();
-                            for (var i = 0; i < viaMarkers[index].length; i++) {
-                                var markerPosition = viaMarkers[index][i].getPosition();
-                                PTbounds.extend(markerPosition);
-                            }
 
-                            // 지도를 경계에 맞게 확대/축소
-                            map.fitBounds(PTbounds);
-                        }
                     }
                 } else {
                     alert('이미 추가된 장소입니다.');
@@ -915,41 +918,33 @@
                     otherTab.classList.remove('active');
                 });
 
-                // 현재 클릭된 탭에 'active' 클래스 추가
+                // 현재 클릭된 탭에만 'active' 클래스 추가
                 tab.classList.add('active');
 
-                // 현재 선택한 탭의 일련 번호를 가져옴
+                // 다른 탭으로 이동할 경우
+                if(previousTabIndex !== index) {
+                    // 방금전까지의 현재 인덱스 값은 이제 이전의 인덱스 값이 된다
+                    // 초기값으로 줬던 -1은 탭을 이동할때마다 바뀐다
+                    previousTabIndex = index;
+                    // 이전 탭에서 마커와 경로가 이미 있다면 제거
+                    if(viaMarkers[previousTabIndex] && viaMarkers[previousTabIndex].length > 0) {
+                        viaMarkers[previousTabIndex].forEach(function(marker) {
+                            marker.setMap(null); // TMap에서 이전 탭 마커 제거
+                        });
+                    }
+                    if(resultInfoArr[previousTabIndex] && resultInfoArr[previousTabIndex].length > 0) {
+                        resultInfoArr[previousTabIndex].forEach(function(line) {
+                            line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
+                        })
+                        $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+                    }
+                }
+
+                // 현재 선택한 탭의 번호는 현재 인덱스가 됨
                 var dayNumber = tab.innerText.split(' ')[1]; // 탭 텍스트에서 'Day'를 제외하고 숫자만 추출
                 index = Number(dayNumber) - 1;
                 var yourDay = "DAY" + (index + 1).toString(); // 담은 장소가 몇일째인지 띄워줌
                 $('#your_day').html(yourDay);
-
-                // 다른 탭으로 이동할 경우
-                if(previousTabIndex !== -1 && previousTabIndex !== index) {
-                    viaMarkers[previousTabIndex].forEach(function(marker) {
-                        marker.setMap(null); // TMap에서 이전 탭 마커 제거
-                    });
-                    resultInfoArr[previousTabIndex].forEach(function(line) {
-                        line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
-                    })
-                    $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
-                    // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
-                    previousTabIndex = index;
-                } else if (previousTabIndex === -1) {
-                    // 첫 번째 탭에서 다른 탭으로 이동하는 경우
-                    // 첫 번째 탭의 마커와 경로가 이미 있을 경우에만 제거
-                    if (viaMarkers[0] && viaMarkers[0].length > 0) {
-                        viaMarkers[0].forEach(function(marker) {
-                            marker.setMap(null);
-                        });
-                    }
-                    if (resultInfoArr[0] && resultInfoArr[0].length > 0) {
-                        resultInfoArr[0].forEach(function(line) {
-                            line.setMap(null);
-                        });
-                    }
-                    previousTabIndex = 0;
-                }
 
                 // 현재탭의 목록 불러오기
                 addPrintDayList();
@@ -965,20 +960,25 @@
                 $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
 
                 // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-                if (viaMarkers[index].length === 1) {
-                    map.setCenter(marker.getPosition());
-                    map.setZoom(10); // 기본 줌 레벨 설정
-                } else {
-                    // 모든 마커를 포함하는 경계를 계산
-                    var PTbounds = new Tmapv2.LatLngBounds();
-                    for (var i = 0; i < viaMarkers[index].length; i++) {
-                        var markerPosition = viaMarkers[index][i].getPosition();
-                        PTbounds.extend(markerPosition);
-                    }
+                if(viaMarkers[index].length > 0) {
+                    if (viaMarkers[index].length === 1) {
+                        map.setCenter(marker.getPosition());
+                        map.setZoom(10); // 기본 줌 레벨 설정
+                    } else {
+                        // 모든 마커를 포함하는 경계를 계산
 
-                    // 지도를 경계에 맞게 확대/축소
-                    map.fitBounds(PTbounds);
+                        PTbounds = new Tmapv2.LatLngBounds();
+                        for (var i in Points[index]) {
+                            var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+                            PTbounds.extend(linePt);
+                        }
+
+                        // 지도를 경계에 맞게 확대/축소
+                        map.fitBounds(PTbounds);
+
+                    }
                 }
+
 
 
             });
