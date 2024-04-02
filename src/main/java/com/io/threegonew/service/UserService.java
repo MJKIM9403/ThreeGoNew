@@ -30,7 +30,7 @@ public class UserService {
     private final UserDetailService userDetailService;
     private final FileHandler fileHandler;
 
-    public List<User> findAll(){
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -75,7 +75,7 @@ public class UserService {
         return userRepository.existsById(userId);
     }
 
-    public User findUserByEmail(String email){
+    public User findUserByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         return userOptional.orElse(null); // 만약 사용자가 존재하지 않는다면 null 반환
     }
@@ -100,13 +100,13 @@ public class UserService {
         User user = userRepository.findById(request.getUserId()).orElseThrow(() ->
                 new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
         user.update(request.getName(), request.getAbout());
-        if(request.getNewProfileImg() != null){
+        if (request.getNewProfileImg() != null) {
             fileHandler.updateUserProfile(user, request.getNewProfileImg());
         }
         sessionReset(user);
     }
 
-    public  void sessionReset(User user) {
+    public void sessionReset(User user) {
         Collection authorities = new ArrayList<>();
 //        authorities.add(() -> user.getRole().toString());
 
@@ -116,16 +116,16 @@ public class UserService {
     }
 
     @Transactional
-    public void resetPassword(User modifyUser, String password){
+    public void resetPassword(User modifyUser, String password) {
         modifyUser.updatePw(bCryptPasswordEncoder.encode(password));
     }
 
-    public boolean isSamePassword(User user, String password){
+    public boolean isSamePassword(User user, String password) {
         return bCryptPasswordEncoder.matches(password, user.getPw());
     }
 
-//    비밀번호 찾기 이메일 체크
-    public boolean userEmailCheck(String email, String userId){
+    //    비밀번호 찾기 이메일 체크
+    public boolean userEmailCheck(String email, String userId) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         // 이메일이 존재하고 사용자 ID가 일치하는지 확인
         return userOptional.isPresent() && userOptional.get().getId().equals(userId);
@@ -134,10 +134,19 @@ public class UserService {
     @Transactional
     public void updateUserPassword(String id, String newPw) {
         userRepository.findById(id).ifPresent(user ->
-            user.updatePw(bCryptPasswordEncoder.encode(newPw)));
+                user.updatePw(bCryptPasswordEncoder.encode(newPw)));
     }
 
+    @Transactional
+    public void deleteUser(String userId) throws Exception {
+        // 사용자 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        // 사용자 삭제
+        userRepository.delete(user);
+
+    }
 }
 
 

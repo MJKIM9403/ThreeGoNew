@@ -117,10 +117,10 @@
                                     onclick="changePassword()"> 변경하기
                             </button>
 
-                            <div id="delete" class="text-center">
-                    <span id="delete_btn">
-                        <a href="/delete">탈퇴하기</a></span>
-                                </div>
+
+                                <button type="button" onclick="removeMember();"> 탈퇴하기 </button>
+                                <!-- //type을 button으로 꼭 적어줘야! submit이 되지 않는다!! 꼭 기억하기!
+                                     -->
                         </div>
                     </div>
                 </div>
@@ -130,8 +130,15 @@
 </div>
 </div>
 <script>
+<!--탈퇴-->
+function removeMember() {
+    if (window.confirm("탈퇴하시겠습니까?")) {
+        // 탈퇴하기 버튼 클릭시 /user/delete 페이지로 이동
+        window.location.href = "/delete";
+    }
+}
 
-    // "취소" 버튼 클릭
+// "취소" 버튼 클릭
     function cancel() {
         window.location.href = '/review';
     }
