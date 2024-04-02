@@ -990,7 +990,6 @@
     }
 
     function createFullBook() {
-        const userId = [[${loginUser.id}]]
         const plannerId = $("#book-select-planner option:selected").val();
         const bookTitle = $("#book-title").val();
         const bookContent = $("#book-contents").val();
@@ -1005,7 +1004,6 @@
         }
 
         let formData = new FormData();
-        formData.append("userId", userId);
         formData.append("plannerId", plannerId);
         formData.append("bookTitle", bookTitle);
         if(bookContent != null){
@@ -1194,12 +1192,10 @@
     }
 
     function createSimpleBook(){
-        const userId = [[${loginUser.id}]]
         const plannerId = $("#new-book-item-select option:selected").val();
         const bookTitle = $("#new-book-title").val();
 
         let formData = new FormData();
-        formData.append("userId", userId);
         formData.append("plannerId", plannerId);
         formData.append("bookTitle", bookTitle);
 
@@ -1279,11 +1275,9 @@
 
     function saveReview(){
         let formData = new FormData();
-        let loginUser = [[${loginUser.id}]]
         let touritemId = $('#select-touritem-info option:selected').val();
 
         if(selectedBookId !== null) formData.append("bookId", selectedBookId);
-        formData.append("userId", `${loginUser}`);
         if(touritemId !== 'direct') formData.append("touritemId", touritemId);
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());

@@ -56,8 +56,12 @@
 
     .book-more {
         position: absolute;
-        top: -5%;
-        right: -5%;
+        top: 1%;
+        right: 1%;
+        z-index: 250;
+    }
+    #book-more-btn {
+        font-size: 2rem;
     }
 
     .book-cover-wrap {
@@ -78,7 +82,7 @@
         height: 100%;
     }
     .book-title {
-        word-break: break-word;
+        word-break: keep-all;
         position: absolute;
         top: 8%;
         padding: 0 40px;
@@ -94,7 +98,7 @@
         margin: 0;
     }
     .book-content {
-        word-break: break-word;
+        word-break: keep-all;
         position: absolute;
         bottom: 5%;
         right: 0%;
@@ -193,7 +197,6 @@
     .card {
         width: 600px;
         margin-bottom: 25px;
-        cursor: default;
     }
 
     .card .card-header img {
@@ -216,18 +219,37 @@
     .card *,
     .card *::after,
     .card *::before{
+        cursor: default;
         box-sizing: content-box !important;
     }
 
     .show-more {
         width: 20%;
         height: 30px;
+        cursor: pointer !important;
         vertical-align: center;
     }
+
+    .show-more,
+    .show-more * {
+        width: 20%;
+        height: 30px;
+    }
 </style>
+
+<th:block sec:authorize="isAuthenticated()">
+    <div th:if="${#authentication.principal.username} == ${loginUser.id}" class="book-more">
+        <button id="book-more-btn" type="button" class="btn btn-light" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="book-edit" class="dropdown-item" href="#">수정</a></li>
+            <li><span id="book-delete" class="dropdown-item">삭제</span></li>
+        </ul>
+    </div>
+</th:block>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
-
     <div class="review-container">
         <div class="gallery">
             <div class="book-cover-wrap">
@@ -239,15 +261,6 @@
                 <h4 class="book-content" th:utext="${reviewBook.bookContent}"></h4>
                 <img th:if="${reviewList.size() > 0}" class="scroll-guide" src="../assets/img/scroll_down.gif">
                 <p th:unless="${reviewList.size() > 0}" class="no-item-msg">아직 리뷰북에<br/>등록된 리뷰가 없습니다.</p>
-<!--                <div class="book-more">-->
-<!--                    <button id="book-more-btn" type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                        <i class="fas fa-cog" aria-hidden="true"></i>-->
-<!--                    </button>-->
-<!--                    <ul class="dropdown-menu">-->
-<!--                        <li><a id="book-edit" class="dropdown-item" href="#">수정</a></li>-->
-<!--                        <li><span id="book-delete" class="dropdown-item">삭제</span></li>-->
-<!--                    </ul>-->
-<!--                </div>-->
             </div>
             <div class="reviews-wrap">
                 <th:block th:each="review, reviewState : ${reviewList}">

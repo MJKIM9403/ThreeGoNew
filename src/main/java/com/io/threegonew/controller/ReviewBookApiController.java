@@ -35,15 +35,38 @@ public class ReviewBookApiController {
 
     @PostMapping("/create")
     public ResponseEntity<Long> saveReviewBook(@ModelAttribute AddReviewBookRequest request) {
-        System.out.println(request);
+        String loginUserId = userService.getCurrentUserId();
         try {
-            User author = userService.findUser(request.getUserId());
+            User author = userService.findUser(loginUserId);
             Planner selectedPlanner = plannerService.findPlanner(request.getPlannerId());
 
             ReviewBook reviewBook = reviewBookService.createReviewBook(author,selectedPlanner,request);
 
             return ResponseEntity.ok().body(reviewBook.getBookId());
         } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @DeleteMapping("/{reviewBookId}")
+    public ResponseEntity deleteReviewBook(@PathVariable Long reviewBookId) {
+        try{
+            reviewBookService.deleteReviewBook(reviewBookId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{reviewBookId}")
+    public ResponseEntity updateReviewBook(@PathVariable Long reviewBookId, @ModelAttribute AddReviewBookRequest request) {
+        try{
+            reviewBookService.updateReviewBook(reviewBookId, request);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

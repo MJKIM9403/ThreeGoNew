@@ -40,6 +40,7 @@ public class ReviewApiController {
     public ResponseEntity saveReview(@ModelAttribute AddReviewRequest request) {
         ReviewBook selectedReviewBook = null;
         TourItem selectedTourItem = null;
+        String loginUserId = userService.getCurrentUserId();
         try {
             if(request.getBookId() != null){
                 selectedReviewBook = reviewBookService.findReviewBook(request.getBookId());
@@ -47,7 +48,7 @@ public class ReviewApiController {
             if(request.getTouritemId() != null){
                 selectedTourItem = tourItemService.findTourItem(request.getTouritemId());
             }
-            User author = userService.findUser(request.getUserId());
+            User author = userService.findUser(loginUserId);
 
             reviewService.saveReview(selectedReviewBook, author, selectedTourItem, request);
 

@@ -4,9 +4,11 @@ import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
+import com.io.threegonew.repository.PlannerRepository;
 import com.io.threegonew.repository.ReviewBookRepository;
 import com.io.threegonew.util.AesUtil;
 import com.io.threegonew.util.FileHandler;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class ReviewBookService {
 
     private final ReviewBookRepository reviewBookRepository;
+    private final PlannerRepository plannerRepository;
     private final FileHandler fileHandler;
     private final ModelMapper modelMapper;
 
@@ -38,6 +41,23 @@ public class ReviewBookService {
         }
 
         return reviewBookRepository.save(reviewBook);
+    }
+
+    @Transactional
+    public void updateReviewBook(Long reviewBookId, AddReviewBookRequest request){
+        ReviewBook reviewBook = reviewBookRepository.findById(reviewBookId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰북 정보를 찾을 수 없습니다."));
+        Planner reviewPlanner = plannerRepository.findByPlannerId(request.getPlannerId()).orElseThrow(
+                () -> new IllegalArgumentException("플래너 정보를 찾을 수 없습니다."));
+        reviewBook.update(reviewPlanner, reviewBook.getBookTitle(), reviewBook.getBookContent());
+    }
+
+    @Transactional
+    public void deleteReviewBook(Long reviewBookId){
+        ReviewBook reviewBook = reviewBookRepository.findById(reviewBookId).orElseThrow(
+                () -> new IllegalArgumentException("리뷰북 정보를 찾을 수 없습니다."));
+
+        reviewBookRepository.delete(reviewBook);
     }
 
     public ReviewBook findReviewBook(Long reviewBookId){

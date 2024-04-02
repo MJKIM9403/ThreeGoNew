@@ -84,8 +84,17 @@ public class UserService {
     // 현재 인증된 사용자의 아이디 반환
     public String getCurrentUserId() {
         // 현재 인증된 사용자의 정보를 SecurityContextHolder에서 가져와서 반환
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        // 인증된 유저일 경우 principal에서 유저 id를, 비인증 유저일 경우 anonymousUser 반환
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        }else {
+            username = principal.toString();
+        }
+        return username;
     }
 
     public User getUser(String id) {

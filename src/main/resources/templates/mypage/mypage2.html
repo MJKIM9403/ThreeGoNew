@@ -954,11 +954,9 @@
 
     function saveReview(){
         let formData = new FormData();
-        let loginUser = [[${loginUser.id}]]
         let touritemId = $('#select-touritem-info option:selected').val();
 
         if(selectedBookId !== null) formData.append("bookId", selectedBookId);
-        formData.append("userId", `${loginUser}`);
         if(touritemId !== 'direct') formData.append("touritemId", touritemId);
         formData.append("touritemTitle", $('#selected-touritem-name').val());
         formData.append("reviewContent", $('#review-contents').val());
