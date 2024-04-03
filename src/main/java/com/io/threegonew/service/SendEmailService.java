@@ -5,15 +5,15 @@ import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.JavaMailSenderImpl;
 import com.io.threegonew.util.TempPassword;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import javax.mail.MessagingException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.mail.MessagingException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +22,14 @@ public class SendEmailService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JavaMailSender javaMailSender;
     private final JavaMailSenderImpl javaMailSenderImpl;
     private static final String FROM_ADDRESS = Key.GMAIL;
+    //    인증번호
+    private static int number;
+    public static void createNumber(){
+        number = (int)(Math.random() * (90000)) + 100000;// (int) Math.random() * (최댓값-최소값+1) + 최소값
+    }
 
     @Transactional
     public MailDTO createMailAndChangePassword(String email, String id) {
@@ -35,21 +41,6 @@ public class SendEmailService {
         userService.updateUserPassword(id, tempPw);
         return dto;
     }
-
-//    public String getTempPassword(){
-//        char[] charSet = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
-//                'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-//
-//        String str = "";
-//
-//        int idx = 0;
-//        for (int i = 0; i < 10; i++) {
-//            idx = (int) (charSet.length * Math.random());
-//            str += charSet[idx];
-//        }
-//        return str;
-//
-//    }
 
 //    STMP mailSend
     public void mailSend(MailDTO mailDto){
@@ -65,5 +56,35 @@ public class SendEmailService {
         } catch (MessagingException e) {
             e.printStackTrace(); // 에러 발생 시 에러 메시지 출력
         }
+    }
+
+
+//    인증번호
+public MimeMessage CreateMail(String mail){
+    createNumber();
+    MimeMessage message = javaMailSender.createMimeMessage();
+    System.out.println("이멜 전송 완료!");
+
+//    try {
+//        message.setFrom(FROM_ADDRESS);
+//        message.setRecipients(MimeMessage.RecipientType.TO, mail);
+//        message.setSubject("이메일 인증");
+//        String body = "";
+//        body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
+//        body += "<h1>" + number + "</h1>";
+//        body += "<h3>" + "감사합니다." + "</h3>";
+//        message.setText(body,"UTF-8", "html");
+//    } catch (MessagingException e) {
+//        e.printStackTrace();
+//    }
+
+    return message;
+}
+
+    public int sendMail(String mail){
+        MimeMessage message = CreateMail(mail);
+        javaMailSender.send(message);
+
+        return number;
     }
 }
