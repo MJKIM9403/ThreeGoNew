@@ -242,9 +242,12 @@
 
     console.log(days);
 
+
+    var plannerName;
+    var startDate;
+    var endDate;
+
     // 도시명 바꾸기
-
-
     function updateCityName() {
         $('.areaSelect').change(function() {
             // 변경된 라디오 버튼의 label 요소를 찾습니다.
@@ -520,6 +523,18 @@
         checkSigungu();
         selectAndShow();
         showTourItems();
+
+        // 현재 URL에서 쿼리 파라미터 추출
+        var urlParams = new URLSearchParams(window.location.search);
+
+        // plannerName 가져오기
+        plannerName = urlParams.get('plannerName');
+
+        // startDate 가져오기
+        startDate = urlParams.get('startDate');
+
+        // endDate 가져오기
+        endDate = urlParams.get('endDate');
     })
 
     // 마커 삭제하기 함수
@@ -998,16 +1013,21 @@
                         type: "POST", // HTTP 요청 방식
                         url: "api/saveplans", // 데이터를 전송할 서버의 URL
                         contentType: "application/json", // 전송할 데이터의 타입
-                        data: JSON.stringify(places.flatMap(function(place, index) {
-                            return place.map(function(subPlace, subIndex) {
-                                return {
-                                    userId: subPlace.userId,
-                                    day: index + 1, // day 값 설정
-                                    order: subIndex + 1, // order 값 설정
-                                    contentId: subPlace.contentid
-                                };
-                            });
-                        })), // 전송할 데이터
+                        data: JSON.stringify({
+                            plannerName: plannerName,
+                            startDate: startDate,
+                            endDate: endDate,
+                            plans: places.flatMap(function(place, index) {
+                                return place.map(function(subPlace, subIndex) {
+                                    return {
+                                        userId: subPlace.userId,
+                                        day: index + 1, // day 값 설정
+                                        order: subIndex + 1, // order 값 설정
+                                        contentId: subPlace.contentid
+                                    };
+                                });
+                            })
+                        }), // 전송할 데이터
                         success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
                             var p_id = response.p_id; // 응답에서 p_id 추출
                             // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동

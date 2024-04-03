@@ -169,23 +169,34 @@ public class PlanController {
                 .build();
     }
 
-    @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE) // consumes 설정 추가
-    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody List<AddPlanRequest> places) {
-        // places 데이터를 처리하고 데이터베이스에 저장하는 로직
+    @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody CompletePlannerRequest request) {
+
+        String plannerName = request.getPlannerName();
+        LocalDate startDate = request.getStartDate();
+        LocalDate endDate = request.getEndDate();
+        List<AddPlanRequest> places = request.getPlans();
+
         try {
+            // 여기서 날짜와 플래너 이름을 받아서 사용할 수 있습니다.
+            System.out.println("Planner Name: " + plannerName);
+            System.out.println("Start Date: " + startDate);
+            System.out.println("End Date: " + endDate);
+
             // 현재 사용자의 인증 정보를 가져옴
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             // 인증 정보에서 사용자 아이디를 추출
             String userId = authentication.getName();
-
             System.out.println(userId);
-            Long plannerId = (Long) httpSession.getAttribute("plannerId");
+
+            // 플래너를 생성하고 식별자를 반환합니다.
+            Planner planner = plannerService.save(plannerName, startDate, endDate, userId);
+            Long plannerId = planner.getPlannerId();
 
             if (plannerId == null) {
                 // plannerId가 null인 경우 처리
                 System.out.println("plannerId 반환 실패~~~");
             }
-
 
             for(AddPlanRequest place: places) {
                 place.setUserId(userId);
@@ -196,8 +207,6 @@ public class PlanController {
             // 성공적으로 저장된 후의 로직 처리
             // JSON 객체로 p_id를 포함하여 반환
             return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
-
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));

@@ -68,42 +68,14 @@ public class PlannerController {
         return "plan/calendar";
     }
 
-    @PostMapping("/add")
-    public String addPlanner(@ModelAttribute AddPlannerRequest request,
-                             BindingResult result,
-                             RedirectAttributes rttr) {
-
-        if (result.hasErrors()) {
-            // 바인딩 오류 처리
-            System.out.println("error");; // 오류 페이지로 리다이렉트 또는 오류 메시지를 출력하는 뷰를 반환
-        }
-
-        // 현재 사용자의 인증 정보를 가져옴
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // 인증 정보에서 사용자 아이디를 추출
-        String userId = authentication.getName();
-
-        System.out.println(userId);
-        System.out.println(request.getPlannerName());
-        System.out.println(request.getStartDate());
-        System.out.println(request.getEndDate());
-
-        // Planner 저장 후 반환된 plannerId
-        Long plannerId = plannerService.save(request, userId).getPlannerId();
-        httpSession.setAttribute("plannerId", plannerId);
-
-        // 날짜 포맷 지정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // 날짜 문자열로 변환
-        String startDate = request.getStartDate().format(formatter);
-        String endDate = request.getEndDate().format(formatter);
-
-        // RedirectAttributes 를 사용해 URL에 파라미터 추가
-        rttr.addAttribute("plannerName",request.getPlannerName());
-        rttr.addAttribute("startDate",startDate);
-        rttr.addAttribute("endDate",endDate);
-        // 데이터 저장 후 원하는 페이지로 리다이렉트하거나 뷰 반환
+    @PostMapping("/city")
+    public String getSelectList(@RequestParam("plannerName") String plannerName,
+                                @RequestParam("startDate") String startDate,
+                                @RequestParam("endDate") String endDate,
+                                RedirectAttributes redirectAttributes){
+        redirectAttributes.addAttribute("plannerName", plannerName);
+        redirectAttributes.addAttribute("startDate", startDate);
+        redirectAttributes.addAttribute("endDate", endDate);
         return "redirect:/plan/city";
     }
 }

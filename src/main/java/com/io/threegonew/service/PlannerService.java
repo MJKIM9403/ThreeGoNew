@@ -1,18 +1,18 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
-import com.io.threegonew.dto.AddPlannerRequest;
+import com.io.threegonew.dto.AddPlanRequest;
+import com.io.threegonew.dto.CompletePlannerRequest;
 import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +26,8 @@ public class PlannerService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
+    private final TourItemRepository tourItemRepository;
+    private final PlanRepository planRepository;
 
 //    // 유저가 특정 Planner를 공유받았는지 확인
 //    public boolean isSharedUser(Long plannerId, String userId) {
@@ -73,12 +75,54 @@ public class PlannerService {
         return sigunguRepository.findByAreaCode(areaCode);
     }
 
-    public Planner save(AddPlannerRequest dto, String userId) {
+//    @Transactional
+//    public Plan saveCompletePlanner(CompletePlannerRequest comDto, String userId) {
+//        Plan lastSavedPlan = null;
+//        try {
+//            // Planner 저장
+//            Planner planner = savePlanner(comDto, userId);
+//
+//            // 각 Plan 저장
+//            for (AddPlanRequest addDto : comDto.getPlans()) {
+//                lastSavedPlan = savePlan(addDto, planner);
+//            }
+//        } catch (Exception e) {
+//            // 예외 처리
+//            e.printStackTrace();
+//            // 또는 다른 방법으로 예외를 처리합니다.
+//        }
+//        return lastSavedPlan;
+//    }
+//
+//    private Planner savePlanner(CompletePlannerRequest comDto, String userId) {
+//        return plannerRepository.save(Planner.builder()
+//                .userId(userId)
+//                .plannerName(comDto.getPlannerName())
+//                .startDate(comDto.getStartDate())
+//                .endDate(comDto.getEndDate())
+//                .build()
+//        );
+//    }
+//
+//    private Plan savePlan(AddPlanRequest addDto, Planner planner) {
+//        // tourItem을 찾아서 설정
+//        TourItem tourItem = tourItemRepository.findById(addDto.getContentId()).orElse(null);
+//
+//        return planRepository.save(Plan.builder()
+//                .userId(addDto.getUserId())
+//                .plannerId(planner.getPlannerId())
+//                .day(addDto.getDay())
+//                .order(addDto.getOrder())
+//                .tourItem(tourItem)
+//                .build());
+//    }
+
+    public Planner save(String plannerName, LocalDate startDate, LocalDate endDate, String userId) {
         Planner planner = plannerRepository.save(Planner.builder()
                 .userId(userId)
-                .plannerName(dto.getPlannerName())
-                .startDate(dto.getStartDate())
-                .endDate(dto.getEndDate())
+                .plannerName(plannerName)
+                .startDate(startDate)
+                .endDate(endDate)
                 .build()
         );
 
