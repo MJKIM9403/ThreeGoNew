@@ -118,9 +118,8 @@
                             </button>
 
 
-                                <button type="button" onclick="removeMember();"> 탈퇴하기 </button>
-                                <!-- //type을 button으로 꼭 적어줘야! submit이 되지 않는다!! 꼭 기억하기!
-                                     -->
+                                <button type="button" id="removeMember" class="col text-center mb-5 btn btn-primary2 btn-md" onclick="removeMember();"> 탈퇴하기 </button>
+
                         </div>
                     </div>
                 </div>
@@ -133,7 +132,6 @@
 <!--탈퇴-->
 function removeMember() {
     if (window.confirm("탈퇴하시겠습니까?")) {
-        // 탈퇴하기 버튼 클릭시 /user/delete 페이지로 이동
         window.location.href = "/delete";
     }
 }
@@ -153,11 +151,6 @@ function removeMember() {
             alert("모든 항목을 입력해주세요.");
             return false;
         }
-        // 현재 비밀번호와 비교해본 다음 맞는 지 확인.
-        // else if (currentPassword !== currentPassword){
-        //     alert("현재 비밀번호가 틀립니다.");
-        //     return false;
-        // }
         // 유효성 검사
         else if (!reg_pw.test(newPassword)) {
             alert("비밀번호는 8~16자리수여야 합니다. 영문 대문자, 소문자, 숫자, 특수문자를 1개 이상 포함해야 합니다.");
