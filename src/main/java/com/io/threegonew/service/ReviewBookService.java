@@ -1,8 +1,6 @@
 package com.io.threegonew.service;
 
-import com.io.threegonew.domain.Planner;
-import com.io.threegonew.domain.ReviewBook;
-import com.io.threegonew.domain.User;
+import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.PlannerRepository;
 import com.io.threegonew.repository.ReviewBookRepository;
@@ -16,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,18 +43,31 @@ public class ReviewBookService {
     }
 
     @Transactional
-    public void updateReviewBook(Long reviewBookId, AddReviewBookRequest request){
+    public void updateReviewBook(Long reviewBookId, AddReviewBookRequest request) throws Exception {
         ReviewBook reviewBook = reviewBookRepository.findById(reviewBookId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰북 정보를 찾을 수 없습니다."));
         Planner reviewPlanner = plannerRepository.findByPlannerId(request.getPlannerId()).orElseThrow(
                 () -> new IllegalArgumentException("플래너 정보를 찾을 수 없습니다."));
-        reviewBook.update(reviewPlanner, reviewBook.getBookTitle(), reviewBook.getBookContent());
+        reviewBook.update(reviewPlanner, request.getBookTitle(), request.getBookContent());
+        if(request.getCoverFile() != null){
+            fileHandler.updateBookCover(reviewBook, request.getCoverFile());
+        }
     }
 
     @Transactional
-    public void deleteReviewBook(Long reviewBookId){
+    public void deleteReviewBook(Long reviewBookId, String loginUserId) throws AccessDeniedException {
         ReviewBook reviewBook = reviewBookRepository.findById(reviewBookId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰북 정보를 찾을 수 없습니다."));
+
+        if(!reviewBook.getUser().getId().equals(loginUserId)){
+            throw new AccessDeniedException("권한이 존재하지 않습니다.");
+        }
+
+        for(Review review : reviewBook.getReviewList()){
+            for(ReviewPhoto photo : review.getReviewPhotoList()){
+                fileHandler.deleteReviewPhoto(photo);
+            }
+        }
 
         reviewBookRepository.delete(reviewBook);
     }

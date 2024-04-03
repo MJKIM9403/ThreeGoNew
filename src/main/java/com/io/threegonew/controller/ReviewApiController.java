@@ -94,8 +94,12 @@ public class ReviewApiController {
     public ResponseEntity<Long> viewCountUp(@RequestParam("reviewId") Long reviewId){
         System.out.println("--------------------" + reviewId);
         try{
-            Long viewCount = reviewService.viewCountUp(reviewId);
-            return ResponseEntity.ok(viewCount);
+            int updateState = reviewService.viewCountUp(reviewId);
+            if(updateState > 0){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

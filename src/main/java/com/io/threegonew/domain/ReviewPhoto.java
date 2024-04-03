@@ -44,9 +44,5 @@ public class ReviewPhoto{
         this.ofile = ofile;
         this.filePath = filePath;
         this.fileSize = fileSize;
-
-//        if(!review.getReviewPhotoList().contains(this)){
-//            review.getReviewPhotoList().add(this);
-//        }
     }
 }

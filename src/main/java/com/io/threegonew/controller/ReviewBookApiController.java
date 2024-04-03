@@ -7,6 +7,7 @@ import com.io.threegonew.dto.*;
 import com.io.threegonew.service.PlannerService;
 import com.io.threegonew.service.ReviewBookService;
 import com.io.threegonew.service.UserService;
+import com.io.threegonew.util.AesUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +53,9 @@ public class ReviewBookApiController {
 
     @DeleteMapping("/{reviewBookId}")
     public ResponseEntity deleteReviewBook(@PathVariable Long reviewBookId) {
+        String loginUserId = userService.getCurrentUserId();
         try{
-            reviewBookService.deleteReviewBook(reviewBookId);
+            reviewBookService.deleteReviewBook(reviewBookId, loginUserId);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
@@ -63,6 +65,7 @@ public class ReviewBookApiController {
 
     @PutMapping("/{reviewBookId}")
     public ResponseEntity updateReviewBook(@PathVariable Long reviewBookId, @ModelAttribute AddReviewBookRequest request) {
+        System.out.println(request);
         try{
             reviewBookService.updateReviewBook(reviewBookId, request);
             return new ResponseEntity<>(HttpStatus.OK);

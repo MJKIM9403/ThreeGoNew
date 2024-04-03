@@ -29,7 +29,7 @@
     <meta charset="UTF-8">
     <title th:text="'Three Go | 리뷰북 :: ' + ${reviewBook.bookTitle}"></title>
 </head>
-<body data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" data-bs-offset="0" tabindex="1">
+<body  data-bs-spy="scroll" data-bs-target="#book-index" data-bs-smooth-scroll="true" data-bs-offset="0" tabindex="1">
 <style>
     .review-container {
         margin-left: 280px;
@@ -56,8 +56,8 @@
 
     .book-more {
         position: absolute;
-        top: 1%;
-        right: 1%;
+        top: 0%;
+        right: 0%;
         z-index: 250;
     }
     #book-more-btn {
@@ -235,23 +235,79 @@
         width: 20%;
         height: 30px;
     }
+
+    /*  리뷰북 수정 폼 관련  */
+    #edit-book-cover-wrap {
+        background: #333333 ;
+        position: relative;
+        height: 8rem;
+        overflow: hidden;
+    }
+
+    #book-preview-img {
+        width: 100%;
+        object-fit: cover;
+    }
+
+    #book-img-uploader {
+        display: none;
+    }
+
+    .cursor-default {
+        cursor: default !important;
+    }
+    .cursor-pointer {
+        cursor: pointer !important;
+    }
+
+    #book-img-uploader-label {
+        padding: 2px;
+    }
+
+    #book-contents {
+        height: 80px;
+    }
+
+    #select-book-img {
+        margin-bottom: 0;
+    }
+
+    #book-img-delete-btn {
+        display: none;
+    }
+
+    #book-preview-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        position: absolute;
+        z-index: 100;
+        margin-bottom: 0;
+        bottom: 1rem;
+        right: 1rem;
+        color: #FFFFFF;
+        text-shadow:
+                -1px 0px rgba(0, 0, 0, 0.8),
+                0px 1px rgba(0, 0, 0, 0.8),
+                1px 0px rgba(0, 0, 0, 0.8),
+                0px -1px rgba(0, 0, 0, 0.8);
+    }
 </style>
 
-<th:block sec:authorize="isAuthenticated()">
-    <div th:if="${#authentication.principal.username} == ${loginUser.id}" class="book-more">
-        <button id="book-more-btn" type="button" class="btn btn-light" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a id="book-edit" class="dropdown-item" href="#">수정</a></li>
-            <li><span id="book-delete" class="dropdown-item">삭제</span></li>
-        </ul>
-    </div>
-</th:block>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <div class="review-container">
-        <div class="gallery">
+        <th:block sec:authorize="isAuthenticated()">
+            <div th:if="${#authentication.principal.username} == ${reviewBook.user.id}" class="book-more">
+                <button id="book-more-btn" type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><sapn id="book-edit" class="dropdown-item">수정</sapn></li>
+                    <li><span id="book-delete" class="dropdown-item" onclick="deleteBook()">삭제</span></li>
+                </ul>
+            </div>
+        </th:block>
+        <div class="gallery" >
             <div class="book-cover-wrap">
                 <h2 class="book-title" th:text="${reviewBook.bookTitle}"></h2>
                 <div class="book-cover-image-wrap">
@@ -407,13 +463,57 @@
             </div>
         </div>
     </div>
+
+    <!--  리뷰북 수정 폼  -->
+    <div id="book-editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="bookEditorLabel" aria-hidden="true">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="bookEditorLabel">리뷰북 생성</h1>
+                </div>
+                <div class="modal-body">
+                    <div id="edit-book-cover-wrap" class="d-flex align-items-center justify-content-center mb-3">
+                        <img id="book-preview-img" src="../assets/img/review_book_cover.jpg"/>
+                        <p id="book-preview-title">리뷰북 제목</p>
+                    </div>
+                    <div class="mb-2">
+                        <label for="book-select-planner" class="form-label">여행일정 선택</label>
+                        <select class="form-select form-select-sm" id="book-select-planner" onchange="selectTouritem()">
+                            <option value="hint" class="select-hint" selected>리뷰북에 기록할 여행일정을 선택하세요.</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <span for="book-img-uploader" class="form-label cursor-default">커버 이미지 선택</span>
+                        <label for="book-img-uploader" id="book-img-uploader-label cursor-pointer" class="ms-1"><i class="bi bi-camera-fill"></i></label>
+                        <input type="file" id="book-img-uploader" accept="image/*" onchange="setBookCoverPreview()"/>
+                        <div class="mt-1 ms-2">
+                            <sapn id="select-book-img">선택된 파일이 없습니다.</sapn>
+                            <i id="book-img-delete-btn" class="bi bi-x ms-1 p-1 cursor-pointer" onclick="deleteBookCoverImg()"></i>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="book-title" class="form-label">제목</label>
+                        <input type="text" class="form-control form-control-sm" id="book-title" maxlength="21" placeholder="제목을 입력해주세요.">
+                    </div>
+                    <div class="mb-3">
+                        <label for="book-contents" class="form-label">상세정보</label>
+                        <textarea class="form-control form-control-sm" id="book-contents" maxlength="101"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="updateBook()">수정</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- 스크롤 관련 이벤트 스크립트 -->
 <script th:inline="javascript">
     let lastScroll = 0;
     let isScrollDown = true;
     let isCoverClose = false;
-
 
     function checkReviewHeight() {
         let viewportHeight = window.innerHeight;
@@ -432,8 +532,18 @@
             $('.reviews-wrap').css('margin-top', addMargin + 'px');
             $('.reviews-wrap').css('margin-bottom', addMargin + 'px');
         }
+
+        const dataSpyList = document.querySelectorAll('[data-bs-spy="scroll"]');
+        setTimeout(() => {
+            dataSpyList.forEach(dataSpyEl => {
+                bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh();
+            });
+        },100)
     }
 
+    window.addEventListener('resize', function (){
+        checkReviewHeight();
+    });
 
     $(window).on('scroll', function () {
         let scrollTop = $(this).scrollTop();
@@ -457,6 +567,7 @@
                 'opacity': '0%',
                 'visibility': 'hidden'
             });
+            $('.book-more').show();
         } else if(!isCoverClose) {
             isCoverClose = true;
             // 스크롤이 일정 길이 아래로 내려왔을 때 간략하게 보이도록 처리
@@ -467,6 +578,7 @@
                 'opacity': '100%',
                 'visibility': 'visible'
             });
+            $('.book-more').hide();
         }
 
         if(isCoverClose){
@@ -736,6 +848,183 @@
     $('#new-review-btn').mouseleave(function (){
         $('#new-review-btn span').remove()
     })
+</script>
+
+<!-- 리뷰북 수정 관련 스크립트 -->
+<script th:inline="javascript">
+    $(document).ready(function (){
+        changeBookTitle();
+        checkBookContents();
+    })
+    // 기존 작성된 리뷰 북 데이터
+    let origin_book = {};
+    origin_book.author = [[${reviewBook.user.id}]];
+    origin_book.bookId = [[${reviewBook.bookId}]];
+    origin_book.bookTitle = [[${reviewBook.bookTitle}]];
+    origin_book.bookContent = [[${reviewBook.bookContent}]] == null ? null : [[${reviewBook.bookContent}]].replace(/<br>/g,'\r\n');
+    origin_book.coverOfile = [[${reviewBook.coverOfile}]] == null ? '선택된 파일이 없습니다.' : [[${reviewBook.coverOfile}]];
+    origin_book.coverFilePath = [[${reviewBook.coverFilePath}]] == null ? '../assets/img/review_book_cover.jpg' : '/api/image/book/' + [[${reviewBook.coverFilePath}]];
+
+    $('#book-edit').click(function () {
+        resetBookEditor();
+        showPlannerList();
+        $('#book-editor').modal('show');
+    })
+
+    const bookFileInput = $('#book-img-uploader')[0];
+
+    function setBookCoverPreview(){
+        let files = bookFileInput.files;
+
+        if(files.length > 0){
+            let file = files[0];
+
+            let reader = new FileReader();
+
+            reader.onload = function(data) {
+                $('#book-preview-img').attr('src',data.target.result);
+            };
+
+            reader.readAsDataURL(file);
+            $('#select-book-img').html(file.name);
+            $('#book-img-delete-btn').show();
+        }else {
+            return
+        }
+    }
+
+    function deleteBookCoverImg(){
+        $('#book-preview-img').attr('src','../assets/img/review_book_cover.jpg');
+        $('#select-book-img').html('선택된 파일이 없습니다.');
+        $('#book-img-delete-btn').hide();
+        let files = bookFileInput.files;
+        files.length = 0;
+    }
+
+    function resetBookEditor() {
+        if(origin_book.coverOfile === '선택된 파일이 없습니다.') {
+            $('#book-img-delete-btn').hide();
+        }else {
+            $('#book-img-delete-btn').show();
+        }
+        $('#book-title').val(origin_book.bookTitle);
+        $('#book-contents').val(origin_book.bookContent);
+        $('#book-preview-title').html(origin_book.bookTitle);
+        $('#select-book-img').html(origin_book.coverOfile);
+        $('#book-preview-img').attr('src',origin_book.coverFilePath);
+    }
+
+    function showPlannerList() {
+        $.ajax({
+            url : '/api/book/show_planner',
+            type : 'GET',
+            success : function (plannerList) {
+                if(plannerList.length > 0){
+                    for(let planner of plannerList){
+                        let template = `<option value=${planner.plannerId}`;
+
+                        if(planner.plannerId == [[${reviewBook.planner.plannerId}]]){
+                            template += ' selected';
+                        }
+
+                        template += `>${planner.plannerName}</option>`;
+                        $('#book-select-planner').append(template);
+                    }
+                }else {
+                    let template = '<option value="hint" disabled>등록된 정보가 없습니다.</option>';
+                    $('#book-select-planner').append(template)
+                }
+            },
+            error : function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    function changeBookTitle() {
+        $("#book-title").on("propertychange change paste input", function() {
+            let title = $(this).val();
+            if(title.length > 20) {
+                title = title.substring(0, 20);
+                $("#book-title").val(title);
+                alert("제목은 20자까지 입력할 수 있습니다.");
+            }
+            $('#book-preview-title').html(title);
+        });
+    }
+
+    function checkBookContents() {
+        $("#book-contents").on("propertychange change paste input", function() {
+            let contents = $(this).val();
+            if(contents.length > 100) {
+                contents = contents.substring(0, 100);
+                $("#book-contents").val(contents);
+                alert("상세정보는 100자까지 입력할 수 있습니다.");
+            }
+        });
+    }
+
+    function updateBook() {
+        const plannerId = $("#book-select-planner option:selected").val();
+        const bookTitle = $("#book-title").val();
+        const bookContent = $("#book-contents").val();
+        const coverFile = bookFileInput.files[0];
+
+        if(plannerId === 'hint') {
+            alert("여행일정을 선택해주세요.");
+            return;
+        }else if(bookTitle === ''){
+            alert('리뷰북의 제목을 입력해주세요.')
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("plannerId", plannerId);
+        formData.append("bookTitle", bookTitle);
+        if(bookContent != null){
+            formData.append("bookContent", bookContent);
+        }
+        if(coverFile != null){
+            formData.append("coverFile", coverFile);
+        }
+
+        $.ajax({
+            url : `/api/book/${origin_book.bookId}`,
+            type : 'PUT',
+            data : formData,
+            processData : false,
+            contentType : false,
+            success : function () {
+                alert("수정 되었습니다.");
+                $('#book-editor').modal('hide');
+                location.reload();
+            },
+            error : function (err) {
+                alert("리뷰북 수정에 실패했습니다.");
+                $('#book-editor').modal('hide');
+                console.log(err);
+            }
+        })
+    }
+
+    function deleteBook(){
+        if(confirm("리뷰북 삭제 시 이 리뷰북에 등록된 리뷰가 모두 삭제됩니다.\r\n정말 리뷰북을 삭제하시겠습니까?")){
+            $.ajax({
+                url : `/api/book/${origin_book.bookId}`,
+                type : 'DELETE',
+                success : function () {
+                    alert('삭제되었습니다.');
+                    location.href = '../mypage/' + [[${loginUser.id}]]
+                },
+                error : function (err) {
+                    alert("리뷰북 삭제에 실패했습니다.");
+                }
+            })
+        }else {
+            alert("취소하였습니다.")
+        }
+    }
+
 </script>
 </body>
 </html>
