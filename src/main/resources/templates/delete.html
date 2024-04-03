@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../../assets/css/style.css?after" rel="stylesheet"/>
+    <link href="../../assets/css/commonstyle.css?after" rel="stylesheet"/>
+    <title>탈퇴</title>
+</head>
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-group {
+        width: 50%;
+    }
+
+    .deleteDiv {
+        padding-left: 12px;
+    }
+
+    #delete_btn{
+        color: red;
+    }
+
+</style>
+<body>
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+    <div class="w3-content w3-container w3-margin-top container position-relative pb-5 justify-content-center"
+         style="margin: 0 auto;">
+
+        <div id="wrap" class="container position-relative pb-5 deleteDiv">
+            <div class="form-group userInput mb-5">
+                <div id="header" class="mb-5">
+                    <h1 class="text-center">회원 탈퇴</h1>
+                    <p class="text-center">회원 탈퇴 페이지입니다.</p>
+                </div>
+
+                <div id="container">
+                    <div class="row_group">
+
+                        <div class="userInput mb-5">
+                            <h4 class="list">비밀번호</h4>
+                            <div class="input-group">
+                                <input type="password" name="Pw" id="Pw" class="form-control form-control-sm"
+                                       maxlength="20" placeholder="비밀번호를 입력하세요."/>
+                            </div>
+                        </div>
+
+                        <form id="deleteForm">
+                        <div class="userInput mb-5">
+                            <h4 class="list">새 비밀번호 확인</h4>
+                            <div class="input-group">
+                                <input type="password" name="PwConfirm" id="PwConfirm"
+                                       class="form-control form-control-sm" maxlength="20"
+                                       placeholder="새 비밀번호 한 번 더 입력해주세요."/>
+                            </div>
+                        </div>
+                        </form>
+                        <div class="btn_align">
+
+                            <button class="col text-center mb-5 btn btn-primary"  id="delete_btn" type="button" onclick="removeMember();"> 탈퇴하기</button>
+
+                            <button class="col text-center mb-5 btn btn-primary2" onclick="cancel()">취소</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function removeMember() {
+        // 사용자에게 확인 메시지 표시
+        if (window.confirm("탈퇴하시겠습니까?")) {
+            // 비밀번호와 비밀번호 확인 입력란 값 가져오기
+            const pw = document.getElementById('Pw').value;
+            const pwConfirm = document.getElementById('PwConfirm').value;
+
+            // 비밀번호와 비밀번호 확인이 일치하는지 확인
+            if (pw !== pwConfirm) {
+                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                return;
+            }
+
+            // AJAX를 통해 탈퇴 요청 전송
+            $.ajax({
+                type: "DELETE",
+                url: "/delete",
+                data: { currentPassword: pw },
+                success: function (response) {
+                    alert("회원 탈퇴가 완료되었습니다.");
+                    // 탈퇴 완료 후 로그아웃 처리 및 리다이렉트
+                    logoutAndRedirect();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert("회원 탈퇴 중 오류가 발생하였습니다.");
+                }
+            });
+        }
+    }
+
+    // 로그아웃 및 리다이렉트 함수
+    function logoutAndRedirect() {
+        $.ajax({
+            type: "POST",
+            url: "/logout",
+            success: function (response) {
+                // 로그아웃 후 로그인 페이지로 리다이렉트
+                window.location.href = "/login";
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                alert("로그아웃 중 오류가 발생하였습니다.");
+            }
+        });
+    }
+
+
+
+    function cancel() {
+        window.location.href = '/review';
+    }
+
+
+</script>
+</body>
+</html>

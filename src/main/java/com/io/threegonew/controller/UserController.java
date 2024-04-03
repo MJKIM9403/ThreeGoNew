@@ -71,23 +71,6 @@ public class UserController {
     }
 
 
-//    @PostMapping("/delete")
-//    public ResponseEntity<String> deleteUser(HttpServletRequest request, HttpServletResponse response) {
-//        // 현재 인증된 사용자의 아이디 가져오기
-//        String userId = userService.getCurrentUserId();
-//
-//        // 탈퇴하기 기능 수행
-//        try {
-//            userService.deleteUser(userId); // UserService에서 deleteUser 메소드를 구현해야 함
-//            // 세션 무효화 및 로그아웃
-//            SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-//            logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-//            return ResponseEntity.ok("탈퇴가 완료되었습니다.");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("탈퇴 중 오류가 발생했습니다.");
-//        }
-//    }
 }
 
 
