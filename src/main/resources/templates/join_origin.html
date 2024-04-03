@@ -66,6 +66,16 @@
 
     <div class="w3-content w3-container w3-margin-top container position-relative pb-5 " style="margin: 0 auto;">
 
+
+        <!--    &lt;!&ndash;허전해서 이미지&ndash;&gt;-->
+        <!--        <div class="w3-content w3-container container position-relative pb-5 headerImg"-->
+        <!--             style="background-image: url('/assets/img/mainimg/daejeon2.jpg');-->
+        <!--         background-size: cover;-->
+        <!--         height: 15em;-->
+        <!--         margin-bottom: 3em;">-->
+        <!--        </div>-->
+
+
         <div id="wrap" class="container position-relative pb-5 joindiv ">
             <form th:action="@{/api/users/register}" th:method="post" onsubmit="return false" name="joinForm"
                   enctype="application/json">
@@ -127,23 +137,10 @@
                         <div class="userInput mb-5">
                             <h4 class="list">이메일</h4>
                             <div class="input-group">
-
-                                <!--                                새로운 이메일 인증-->
                                 <input type="email" name="email" id="emailCheck" class="form-control form-control-sm"
                                        placeholder="이메일을 입력해주세요.">
-                                <button type="button" id="sendBtn" name="sendBtn" onclick="sendNumber()">인증번호</button>
-                            </div>
-                            <br>
-                            <input type="text" id="Confirm" name="Confirm" style="display: none" value="">
-                            <div id="mail_number" name="mail_number" style="display: none">
-                                <input type="text" name="number" id="number" style="width:250px; margin-top: -10px"
-                                       placeholder="인증번호 입력">
-                                <button type="button" name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일
-                                    인증
-                                </button>
-
-                                <!--                                &lt;!&ndash;이메일 인증&ndash;&gt;-->
-                                <!--                                <input type="button" value="인증하기" class="btn btn-primary btn-sm" id="emailCheckBtn">-->
+                                <!--이메일 인증-->
+                                <input type="button" value="인증하기" class="btn btn-primary btn-sm" id="emailCheckBtn">
 
                                 <div id="emailAvailable" class="valid-feedback" style="display: none;"></div>
                                 <div id="emailNotAvailable" class="invalid-feedback" style="display: none;"></div>
@@ -151,19 +148,18 @@
                             </div>
 
                         </div>
+                        <!--                            버튼-->
+                        <div class="col text-center mb-5">
+                            <button type="button" value="취소" id="cancelBtn" class="btn btn-primary2 btn-md"
+                                    onClick="location.href='/review'">취소
+                            </button>
 
+                            <input type="submit" value="가입" id="joinBtn" class="btn-join btn btn-primary btn-md">
+                        </div>
 
                     </div>
                 </div>
             </form>
-            <!-- 버튼-->
-            <div class="col text-center mb-5">
-                <button type="button" value="취소" id="cancelBtn" class="btn btn-primary2 btn-md"
-                        onClick="location.href='/review'">취소
-                </button>
-
-                <input type="submit" value="가입" id="joinBtn" class="btn-join btn btn-primary btn-md">
-            </div>
         </div>
 
 
@@ -181,54 +177,54 @@
                 let pwconfirm = document.getElementsByName('pwconfirm')[0].value;
                 let name = document.getElementsByName('name')[0].value;
                 let email = document.getElementsByName('email')[0].value;
-                //
-                // if (id === "") {
-                //     alert('아이디를 입력해주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('id')[0].focus();
-                //     return false;
-                // } else if (pw === "") {
-                //     alert('비밀번호를 입력해주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('pw')[0].focus();
-                //     return false;
-                // } else if (pwconfirm === "") {
-                //     alert('비밀번호 재확인을 입력해주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('pwconfirm')[0].focus();
-                //     return false;
-                // } else if (name === "") {
-                //     alert('성명을 입력해주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('name')[0].focus();
-                //     return false;
-                // } else if (email === "") {
-                //     alert('이메일을 입력해주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('email')[0].focus();
-                //     return false;
-                // } else if (!idCheck) {
-                //     alert('아이디 중복을 확인하여 주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('id')[0].focus();
-                //     return false;
-                // } else if (!reg_pw.test(pw)) {
-                //     alert('비밀번호 양식을 다시 확인하여 주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     console.log(event.target);
-                //     document.getElementsByName('pw')[0].focus();
-                //     return false;
-                // } else if (pw !== pwconfirm) {
-                //     alert('비밀번호와 비밀번호 재입력 값이 같아야 합니다.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('pwconfirm')[0].focus();
-                //     return false;
-                // } else if (!emailCheck) {
-                //     alert('이메일을 인증하여 주십시오.');
-                //     event.preventDefault(); // 폼 제출 막기
-                //     document.getElementsByName('email')[0].focus();
-                //     return false;
-                // }
+
+                if (id === "") {
+                    alert('아이디를 입력해주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('id')[0].focus();
+                    return false;
+                } else if (pw === "") {
+                    alert('비밀번호를 입력해주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('pw')[0].focus();
+                    return false;
+                } else if (pwconfirm === "") {
+                    alert('비밀번호 재확인을 입력해주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('pwconfirm')[0].focus();
+                    return false;
+                } else if (name === "") {
+                    alert('성명을 입력해주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('name')[0].focus();
+                    return false;
+                } else if (email === "") {
+                    alert('이메일을 입력해주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('email')[0].focus();
+                    return false;
+                } else if (!idCheck) {
+                    alert('아이디 중복을 확인하여 주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('id')[0].focus();
+                    return false;
+                } else if (!reg_pw.test(pw)) {
+                    alert('비밀번호 양식을 다시 확인하여 주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    console.log(event.target);
+                    document.getElementsByName('pw')[0].focus();
+                    return false;
+                } else if (pw !== pwconfirm) {
+                    alert('비밀번호와 비밀번호 재입력 값이 같아야 합니다.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('pwconfirm')[0].focus();
+                    return false;
+                } else if (!emailCheck) {
+                    alert('이메일을 인증하여 주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    document.getElementsByName('email')[0].focus();
+                    return false;
+                }
 
                 // 데이터를 JSON 형식으로 구성
                 let userData = {
@@ -258,20 +254,23 @@
                 });
             });
 
+
+            // TODO : 이메일 체크
             //
-            // //원본
-            // document.getElementById('emailCheckBtn').addEventListener('click', function () {
-            //     let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-            //     let testEmails = document.getElementsByName('email')[0].value;
-            //
-            //     if (!regExp.test(testEmails)) {
-            //         emailCheck = false;
-            //         alert('이메일 형식이 올바르지 않습니다.');
-            //     } else {
-            //         emailCheck = true;
-            //         alert('적절한 이메일 주소 입니다.');
-            //     }
-            // });
+
+            //원본
+            document.getElementById('emailCheckBtn').addEventListener('click', function () {
+                let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+                let testEmails = document.getElementsByName('email')[0].value;
+
+                if (!regExp.test(testEmails)) {
+                    emailCheck = false;
+                    alert('이메일 형식이 올바르지 않습니다.');
+                } else {
+                    emailCheck = true;
+                    alert('적절한 이메일 주소 입니다.');
+                }
+            });
 
 
             document.getElementById('idCheckBtn').addEventListener('click', function () {
@@ -319,32 +318,6 @@
                 });
             });
 
-
-            //     이메일 인증
-            function sendNumber() {
-                $("#mail_number").css("display", "block");
-                $.ajax({
-                    url: "/mail",
-                    type: "post",
-                    dataType: "json",
-                    data: {"mail": $("#mail").val()},
-                    success: function (data) {
-                        alert("인증번호 발송");
-                        $("#Confirm").attr("value", data);
-                    },
-                });
-            }
-
-            function confirmNumber() {
-                var number1 = $("#number").val();
-                var number2 = $("#Confirm").val();
-
-                if (number1 == number2) {
-                    alert("인증되었습니다.");
-                } else {
-                    alert("번호가 다릅니다.");
-                }
-            }
 
         </script>
 
