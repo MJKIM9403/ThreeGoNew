@@ -5,7 +5,7 @@
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 좋아요 테이블 생성 --
-CREATE TABLE test.`like` (
+CREATE TABLE `like` (
                              like_id bigint(20) NOT NULL,
                              user_id varchar(40) NOT NULL,
                              review_id bigint(20) NOT NULL,
