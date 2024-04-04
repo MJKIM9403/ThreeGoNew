@@ -12,34 +12,32 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "like",
+@Table(name = "likes",
         uniqueConstraints={
         @UniqueConstraint(
                 name="like_un",
                 columnNames={"user_id", "review_id"}
         )}
 )
-public class Like {
+public class Likes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
     private Long likeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private String userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
-    private Review review;
+    @Column(name = "review_id")
+    private Long reviewId;
 
     @CreatedDate
     @Column(name = "reg_date")
     private LocalDateTime regDate;
 
     @Builder
-    public Like(User user, Review review) {
-        this.user = user;
-        this.review = review;
+    public Likes(String userId, Long reviewId) {
+        this.userId = userId;
+        this.reviewId = reviewId;
     }
 }

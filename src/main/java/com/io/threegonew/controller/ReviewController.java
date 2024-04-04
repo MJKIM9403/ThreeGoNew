@@ -4,8 +4,6 @@ import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +43,7 @@ public class ReviewController {
         String userId = userService.getCurrentUserId();
         User loginUser = userService.findUser(userId);
 
-        EditReviewResponse reviewResponse = reviewService.findEditReview(reviewId);
+        EditReviewResponse reviewResponse = reviewService.getEditReview(reviewId);
 
         List<ReviewBookResponse> reviewBookList = reviewBookService.findReviewBookByUser(loginUser);;
         List<SelectPlanResponse> planList;

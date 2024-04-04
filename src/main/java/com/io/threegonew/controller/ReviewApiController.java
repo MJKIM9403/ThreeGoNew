@@ -30,7 +30,7 @@ public class ReviewApiController {
         MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
                 MyPageResponse.builder()
                         .type("review")
-                        .pageResponse(reviewService.findMyReview(request))
+                        .pageResponse(reviewService.getMyReviews(request))
                         .build();
 
         return ResponseEntity.ok().body(myPageResponse);
@@ -135,7 +135,7 @@ public class ReviewApiController {
     @GetMapping("/detail")
     public ResponseEntity<ReviewResponse> showDetailReview(@RequestParam("reviewId") Long reviewId){
         try{
-            ReviewResponse findReview = reviewService.findDetailReview(reviewId);
+            ReviewResponse findReview = reviewService.getDetailReview(reviewId);
             return ResponseEntity.ok().body(findReview);
         }catch (IllegalArgumentException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
