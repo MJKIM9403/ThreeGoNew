@@ -68,14 +68,14 @@ public class PlannerController {
         return "plan/calendar";
     }
 
-    @PostMapping("/city")
-    public String getSelectList(@RequestParam("plannerName") String plannerName,
-                                @RequestParam("startDate") String startDate,
-                                @RequestParam("endDate") String endDate,
-                                RedirectAttributes redirectAttributes){
-        redirectAttributes.addAttribute("plannerName", plannerName);
-        redirectAttributes.addAttribute("startDate", startDate);
-        redirectAttributes.addAttribute("endDate", endDate);
-        return "redirect:/plan/city";
-    }
+//    @PostMapping("/city")
+//    public String getSelectList(@RequestParam("plannerName") String plannerName,
+//                                @RequestParam("startDate") String startDate,
+//                                @RequestParam("endDate") String endDate,
+//                                RedirectAttributes redirectAttributes){
+//        redirectAttributes.addAttribute("plannerName", plannerName);
+//        redirectAttributes.addAttribute("startDate", startDate);
+//        redirectAttributes.addAttribute("endDate", endDate);
+//        return "redirect:/plan/city";
+//    }
 }

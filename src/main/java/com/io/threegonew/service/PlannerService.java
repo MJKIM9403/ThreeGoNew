@@ -118,6 +118,10 @@ public class PlannerService {
 //    }
 
     public Planner save(String plannerName, LocalDate startDate, LocalDate endDate, String userId) {
+        if(plannerRepository.existsByUserIdAndPlannerNameAndStartDateAndEndDate(userId, plannerName, startDate, endDate)){
+            throw new IllegalArgumentException("같은 정보의 플래너가 이미 등록되어있습니다.");
+        }
+        // 이미 등록된 플래너가 아니라면 등록함
         Planner planner = plannerRepository.save(Planner.builder()
                 .userId(userId)
                 .plannerName(plannerName)
@@ -125,7 +129,6 @@ public class PlannerService {
                 .endDate(endDate)
                 .build()
         );
-
         return planner; // 저장된 엔터티 반환
     }
 }

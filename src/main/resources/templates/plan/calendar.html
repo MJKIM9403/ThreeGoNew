@@ -199,9 +199,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="/planner/city">
-
-
+                <form method="get" action="/plan/city">
                     <input id="plannerName2" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
                     <div class="flex-sm-row flex-column d-flex">
                         <div class="col-sm-9 col-12 px-0 mb-2">
@@ -260,7 +258,7 @@
         </th:block>
 
         <th:block th:unless="${plannerList.size() > 0}">
-            <p>내가 작성한 일정이 없습니다.</p>
+            <p>내가 작성한 일정이 없습니다. 일정을 작성해 보세요.</p>
         </th:block>
 
 
@@ -290,7 +288,7 @@
         </th:block>
 
         <th:block th:unless="${sharedPlannerList.size() > 0}">
-            <p>공유받은 일정이 없습니다.</p>
+            <p>공유받은 일정이 없습니다. 유저에게 일정을 공유받아 보세요.</p>
         </th:block>
 
         <button type="button" id="new-planner-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newPlannerModal">
@@ -304,7 +302,7 @@
         <div class="pt-5 pb-5">
 
             <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
-            <form method="post" action="/planner/city">
+            <form method="get" action="/plan/city">
 
 
                 <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">

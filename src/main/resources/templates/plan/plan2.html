@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <!--jquery-->
     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -182,6 +182,30 @@
             padding: 10px 0px;
             margin: 0 0 10px 0px;
         }
+        .btn-4 {
+            width: 87px;
+            padding: 10px 0px;
+            margin: 0 0 10px 10px;
+            font-size: 13px;
+        }
+
+        /*맨왼쪽 바*/
+        .nav-link {
+            flex-direction: column;
+            min-width: auto;
+        }
+        .login-drop {
+            padding: 1rem;
+        }
+        .profile-img {
+            object-fit: cover;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+        }
+        .dropdown-toggle::after {
+            margin-left: 0;
+        }
     </style>
 </head>
 <body>
@@ -243,9 +267,9 @@
     console.log(days);
 
 
-    var plannerName;
-    var startDate;
-    var endDate;
+    var plannerName = [[${plannerName}]];
+    var startDate = [[${startDate}]];
+    var endDate = [[${endDate}]];
 
     // 도시명 바꾸기
     function updateCityName() {
@@ -258,13 +282,64 @@
         });
     }
 
+    // 탭 이동시 변수 초기화
+    function switchTabType(type) {
+        switch (type) {
+            case "TOTAL" :
+                totalSearch();
+                break;
+            case "BOOKMARK" :
+                bookmarkSearch();
+                break;
+        }
+    }
+
+    function totalSearch() {
+        $.ajax({
+            url: '/plan/api/touritems',
+            type: 'POST',
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify({
+                page: 0
+            }),
+            success: function (data) {
+                $('#touritems').replaceWith(data);
+            },
+            error : function (err){
+                console.log(err)
+            }
+        });
+    }
+
+    function bookmarkSearch() {
+        $.ajax({
+            url: '/plan/api/bookmark',
+            type: 'POST',
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify({
+                page: 0,
+                userId: [[${userId}]],
+            }),
+            success: function (data) {
+                $('#touritems').replaceWith(data);
+            },
+            error : function (err){
+                console.log(err)
+            }
+        });
+
+    }
+
+
+
+
 
     // 검색기능
     function searchItems(){
         $('.search-btn').click(function () {
             let keyword = $('.search-input').val();
             $.ajax({
-                url: '/plan/api/search',
+                url: '/plan/api/touritems',
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
                 data: JSON.stringify({
@@ -523,18 +598,6 @@
         checkSigungu();
         selectAndShow();
         showTourItems();
-
-        // 현재 URL에서 쿼리 파라미터 추출
-        var urlParams = new URLSearchParams(window.location.search);
-
-        // plannerName 가져오기
-        plannerName = urlParams.get('plannerName');
-
-        // startDate 가져오기
-        startDate = urlParams.get('startDate');
-
-        // endDate 가져오기
-        endDate = urlParams.get('endDate');
     })
 
     // 마커 삭제하기 함수
@@ -1031,7 +1094,7 @@
                         success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
                             var p_id = response.p_id; // 응답에서 p_id 추출
                             // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
-                            window.location.href = '/plan/show?p_id=' + p_id;
+                            // window.location.href = '/plan/show?p_id=' + p_id;
                             console.log('성공');
                         },
                         error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
@@ -1177,16 +1240,39 @@
                 <button type="button" id="next-btn" class="btn btn-primary" >다음</button>
             </div>
             <div class="dropdown border-top">
-                <a href="" class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle" id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
-                </a>
-                <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser3">
-                    <li><a class="dropdown-item" href="#">New project...</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Sign out</a></li>
-                </ul>
+                <div class="login-drop dropdown mt-auto">
+                    <hr>
+                    <a href="#"
+                       class=" d-flex justify-content-center align-items-center text-decoration-none dropdown-toggle nav-link"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <th:block sec:authorize="isAuthenticated()">
+                            <img th:if="${#authentication.principal.profileImg == null}" src="/assets/img/profile.jpg" class="profile-img rounded-circle" alt="프로필 이미지">
+                            <img th:unless="${#authentication.principal.profileImg == null}" th:src="|@{/api/image/profile/}${#authentication.principal.profileImg}|" class="profile-img rounded-circle me-2" alt="프로필 이미지">
+                            <strong th:text="${#authentication.principal.name}"></strong>
+                        </th:block>
+                        <th:block sec:authorize="isAnonymous()">
+                            <i class="bi bi-person-circle text-dark"></i>
+                            <strong>로그인</strong>
+                        </th:block>
+                    </a>
+                    <ul class="dropdown-menu text-small shadow">
+                        <th:block sec:authorize="isAnonymous()">
+                            <li><a class="dropdown-item" href="/login">로그인</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/join">회원가입</a></li>
+                        </th:block>
+                        <th:block sec:authorize="isAuthenticated()">
+                            <li><a class="dropdown-item" href="/editprofile">profile</a></li>
+                            <li><a class="dropdown-item" href="/changePw">setting</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
+                        </th:block>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -1208,7 +1294,9 @@
                         <div class="flex-box">
                             <h2 id="areaName"></h2>
                             <!-- 선택하면 옵션을 설정하는 모달을 띄웁니다. -->
-                            <button type="button" class="btn btn-2 btn-primary2 btn-select-area " id="morebtn" data-bs-toggle="modal" data-bs-target="#selectModal">검색설정</button>
+                            <button type="button" class="btn btn-4 btn-primary2" id="show-all" onclick="switchTabType('TOTAL')">통합검색</button>
+                            <button type="button" class="btn btn-4 btn-primary2" id="show-bookmark" onclick="switchTabType('BOOKMARK')">내 북마크 검색</button>
+                            <button type="button" class="btn btn-4 btn-primary2 btn-select-area " id="morebtn" data-bs-toggle="modal" data-bs-target="#selectModal">검색설정</button>
                         </div>
                     </div>
                 </div>

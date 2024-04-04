@@ -4,18 +4,24 @@ import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.TeamRepository;
 import com.io.threegonew.service.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.connector.Request;
 import org.springframework.boot.web.embedded.netty.NettyWebServer;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -35,10 +41,11 @@ public class PlanController {
     private final TeamRepository teamRepository;
     private final PlannerService plannerService;
 
-    @PostMapping("/api/search")
-    public String searchTourItems(@RequestBody TourItemSelectRequest request, Model model) {
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
-        model.addAttribute("pageResponse", pageResponse);
+    @PostMapping("/api/bookmark")
+    public String getMyBookmark(@RequestBody MyPageRequest request, Model model){
+        PageResponse pageResponse = tourItemService.findMyBookmark(request);
+        model.addAttribute(pageResponse);
+
         return "plan/plan2 :: #touritems";
     }
 
@@ -91,14 +98,11 @@ public class PlanController {
         return "plan/plan2 :: #category-row";
     }
 
-
-
     @GetMapping("/city")
-    public String getSelectList(@RequestParam(name = "plannerName") String plannerName,
-                                @RequestParam(name = "startDate") String startDate,
-                                @RequestParam(name = "endDate") String endDate,
-                                Model model){
-
+    public String getSelectList(HttpServletRequest request, Model model){
+        String plannerName = request.getParameter("plannerName");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
         // String을 LocalDate로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate startLocalDate = LocalDate.parse(startDate, formatter);
@@ -107,6 +111,7 @@ public class PlanController {
         // 날짜 차이 계산 (+1을 해서 시작일과 종료일 포함)
         long daysBetween = ChronoUnit.DAYS.between(startLocalDate, endLocalDate) + 1;
 
+        System.out.println("플래너 이름 : " + plannerName);
         System.out.println("시작일 : " + startDate);
         System.out.println("시작일 : " + startLocalDate);
         System.out.println("종료일 : " + endDate);
@@ -128,27 +133,26 @@ public class PlanController {
         // 여기까지 날짜부분
 
 
-        TourItemSelectRequest request = buildTourItemSelectRequest();
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+        TourItemSelectRequest tourItemSelectRequest = buildTourItemSelectRequest();
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(tourItemSelectRequest);
 
 
         /* 선택한 지역의 내 북마크 목록 조회 테스트용 코드*/
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String userId = "";
-//
-//        if (principal.equals("anonymousUser")) {
-//            userId = "anonymousUser";
-//        }else {
-//            UserDetails userDetails = (UserDetails)principal;
-//            userId = userDetails.getUsername();
-//        }
-//        PageResponse pageResponse = tourItemService.findMyBookmarkByArea(MyBookmarkByAreaRequest.builder()
-//                        .areacode(String.valueOf(areaCode))
-//                        .userId(userId)
-//                        .build());
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = "";
 
+        if (principal.equals("anonymousUser")) {
+            userId = "anonymousUser";
+        }else {
+            UserDetails userDetails = (UserDetails)principal;
+            userId = userDetails.getUsername();
+        }
+        PageResponse myPageResponse = tourItemService.findMyBookmark(MyPageRequest.builder()
+                        .userId(userId)
+                        .build());
 
-
+        model.addAttribute("myPageResponse", myPageResponse);
+        model.addAttribute("userId", userId);
         model.addAttribute("areaList", tourItemService.findAreaList());
         model.addAttribute("cat1List", tourItemService.findCat1List());
         model.addAttribute("cat2List", new ArrayList<Cat2>());
@@ -196,16 +200,14 @@ public class PlanController {
             if (plannerId == null) {
                 // plannerId가 null인 경우 처리
                 System.out.println("plannerId 반환 실패~~~");
+            } else {
+                for(AddPlanRequest place: places) {
+                    place.setUserId(userId);
+                    place.setPlannerId(plannerId);
+                    planService.save(place, userId);
+                }
             }
 
-            for(AddPlanRequest place: places) {
-                place.setUserId(userId);
-                place.setPlannerId(plannerId);
-                planService.save(place, userId);
-            }
-
-            // 성공적으로 저장된 후의 로직 처리
-            // JSON 객체로 p_id를 포함하여 반환
             return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
         } catch (Exception e) {
             e.printStackTrace();
