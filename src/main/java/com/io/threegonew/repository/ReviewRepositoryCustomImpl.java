@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.io.threegonew.domain.QLikes.likes;
 import static com.io.threegonew.domain.QReview.review;
 
 @Repository
@@ -26,15 +27,42 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        return new PageImpl<>(reviewList, pageable, countMyReviewBook(userId));
+        return new PageImpl<>(reviewList, pageable, countMyReview(userId));
     }
 
     @Override
-    public Long countMyReviewBook(String userId) {
+    public Long countMyReview(String userId) {
         Long count = jpaQueryFactory
                 .select(review.count())
                 .from(review)
                 .where(review.user.id.eq(userId))
+                .fetchFirst();
+        return count;
+    }
+
+    @Override
+    public Page<Review> findMyLikeReviews(Pageable pageable, String userId) {
+        List<Review> likeReviewList = jpaQueryFactory
+                .select(review)
+                .from(review)
+                .join(likes)
+                .on(review.reviewId.eq(likes.reviewId))
+                .where(likes.userId.eq(userId))
+                .orderBy(likes.regDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        return new PageImpl<>(likeReviewList, pageable, countMyLikeReview(userId));
+    }
+
+    @Override
+    public Long countMyLikeReview(String userId) {
+        Long count = jpaQueryFactory
+                .select(review.count())
+                .from(review)
+                .join(likes)
+                .on(review.reviewId.eq(likes.reviewId))
+                .where(likes.userId.eq(userId))
                 .fetchFirst();
         return count;
     }

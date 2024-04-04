@@ -129,9 +129,9 @@
                             <div class="input-group">
 
                                 <!--                                새로운 이메일 인증-->
-                                <input type="email" name="email" id="emailCheck" class="form-control form-control-sm"
+                                <input type="email" name="email" id="email" class="form-control form-control-sm"
                                        placeholder="이메일을 입력해주세요.">
-                                <button type="button" id="sendBtn" name="sendBtn" onclick="sendNumber()">인증번호</button>
+                                <button type="button" id="sendBtn" name="sendBtn" onclick="sendNumber()">인증번호보내기</button>
                             </div>
                             <br>
                             <input type="text" id="Confirm" name="Confirm" style="display: none" value="">
@@ -319,19 +319,23 @@
                 });
             });
 
-
             //     이메일 인증
             function sendNumber() {
+                console.log("번호보내기클릭");
                 $("#mail_number").css("display", "block");
+
                 $.ajax({
-                    url: "/mail",
+                    url: "/join/sendEmail",
                     type: "post",
                     dataType: "json",
                     data: {"mail": $("#mail").val()},
                     success: function (data) {
                         alert("인증번호 발송");
                         $("#Confirm").attr("value", data);
-                    },
+                    }, error: function (err) {
+                        alert("인증번호 보내기에 실패했습니다.")
+                        console.error(err); // 오류 메시지 출력
+                    }
                 });
             }
 
@@ -342,7 +346,7 @@
                 if (number1 == number2) {
                     alert("인증되었습니다.");
                 } else {
-                    alert("번호가 다릅니다.");
+                    alert("인증번호가 다릅니다.");
                 }
             }
 

@@ -5,17 +5,14 @@
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 -- 좋아요 테이블 생성 --
-CREATE TABLE `like` (
-                             like_id bigint(20) NOT NULL,
-                             user_id varchar(40) NOT NULL,
-                             review_id bigint(20) NOT NULL,
-                             reg_date date NOT NULL,
-                             CONSTRAINT like_pk PRIMARY KEY (like_id),
-                             CONSTRAINT like_un UNIQUE KEY (user_id,review_id)
-)
-    ENGINE=InnoDB
-DEFAULT CHARSET=utf8
-COLLATE=utf8_general_ci;
+CREATE TABLE `likes` (
+                         `like_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                         `user_id` varchar(40) NOT NULL,
+                         `review_id` bigint(20) NOT NULL,
+                         `reg_date` date NOT NULL,
+                         PRIMARY KEY (`like_id`),
+                         UNIQUE KEY `like_un` (`user_id`,`review_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
 -- 테이블 생성 --
@@ -117,14 +114,6 @@ create table `PLANNER` (
                            start_date DATE not null,
                            end_date DATE not null
 );
--- -- 추천 테이블 추가 --
--- CREATE TABLE `LIKES` (
---                          l_id INT AUTO_INCREMENT,
---                          b_id DOUBLE NOT NULL,
---                          u_id varchar(40) NOT NULL,
---                          CONSTRAINT like_pk PRIMARY KEY (l_id),
---                          CONSTRAINT like_uq UNIQUE (b_id, u_id)
--- );
 
 -- 댓글 테이블 추가 --
 CREATE TABLE `REPLY`

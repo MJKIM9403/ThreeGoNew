@@ -160,6 +160,25 @@
         margin-top: 150px;
     }
 
+    .review-content {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        margin-bottom: 0.4rem;
+    }
+
+    .review-icons i::before {
+        cursor: pointer;
+    }
+
+    .review-icons {
+        margin-right: 5px;
+        justify-content: flex-end;
+        padding: 5pt 0;
+        font-size: 1.8rem;
+    }
+
     .book-index {
         display: none;
         width: 300px;
@@ -223,18 +242,14 @@
         box-sizing: content-box !important;
     }
 
-    .show-more {
+    .show-more,
+    .show-more * {
         width: 20%;
         height: 30px;
         cursor: pointer !important;
         vertical-align: center;
     }
 
-    .show-more,
-    .show-more * {
-        width: 20%;
-        height: 30px;
-    }
 
     /*  리뷰북 수정 폼 관련  */
     #edit-book-cover-wrap {
@@ -345,12 +360,14 @@
                                 </div>
                             </div>
                             <!--좋아요와 댓글 -->
-                            <div class="d-flex gap-3">
-                                <i class="bi bi-heart"></i>
-                                <i class="bi bi-chat" th:onclick="goComment([[${review.reviewId}]])"></i>
+                            <div class="review-icons d-flex gap-3">
+                                <i class="bi bi-chat-square-dots" th:onclick="goComment([[${review.reviewId}]])"></i>
+                                <i class="like-btn bi" th:classappend="${review.likeState ? 'bi-star-fill' : 'bi-star'}" th:data-review-id="${review.reviewId}"></i>
                             </div>
 
-                            <p class="card-text">좋아요 몇개</p>
+                            <p class="like-count text-muted card-text" th:text="|${review.likeCount} 명이 이 리뷰를 좋아합니다.|"></p>
+                            <div class="review-content" th:utext="${review.reviewContent}"></div>
+                            <div class="card-text"><small class="text-muted" th:text="|댓글 ${review.commentCount}개|"></small></div>
                             <div class="card-text show-more" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">자세히 보기</small></div>
                         </div>
                     </div>
@@ -658,6 +675,39 @@
         goCommentClick = true;
         openViewer(reviewId);
     }
+</script>
+<!-- 좋아요 관련 스크립트 -->
+<script th:inline="javascript">
+
+    $('.like-btn').click(function (){
+        let loginUserId = [[${loginUser.id}]]
+        let reviewId = $(this).data('review-id');
+        let idx = $(this).closest('.gallery-item').index();
+
+        if(loginUserId == 'anonymousUser'){
+            alert('좋아요는 로그인 후 사용하실 수 있습니다.')
+        }else {
+            $.ajax({
+                url : `/api/likes/${reviewId}`,
+                type : 'POST',
+                success : function (result){
+                    const likeCount = result.likeCount;
+                    const likeState = result.likeState;
+                    if(likeState){
+                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).removeClass("bi-star");
+                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).addClass("bi-star-fill");
+                    }else {
+                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).removeClass("bi-star-fill");
+                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).addClass("bi-star");
+                    }
+                    $(`.gallery-item:eq(${idx}) > .card-body > .like-count`).html(`${likeCount} 명이 이 리뷰를 좋아합니다.`);
+                },
+                error : function (err) {
+                    console.log(err)
+                }
+            })
+        }
+    })
 </script>
 
 <!-- 리뷰 뷰어 관련 스크립트 -->

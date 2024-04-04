@@ -13,6 +13,6 @@ public class MyReviewResponse {
     private Long reviewId;
     private ReviewPhotoResponse firstPhoto;
     private Integer photoCount;
-    private Integer likeCount;
-    private Integer commentCount;
+    private Long likeCount;
+    private Long commentCount;
 }

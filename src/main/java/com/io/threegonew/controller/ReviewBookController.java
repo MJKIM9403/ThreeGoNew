@@ -3,8 +3,8 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.ReviewBook;
 import com.io.threegonew.dto.ReviewBookResponse;
 import com.io.threegonew.dto.ReviewResponse;
+import com.io.threegonew.dto.SimpleReviewResponse;
 import com.io.threegonew.dto.UserInfoResponse;
-import com.io.threegonew.service.PlannerService;
 import com.io.threegonew.service.ReviewBookService;
 import com.io.threegonew.service.ReviewService;
 import com.io.threegonew.service.UserService;
@@ -29,7 +29,7 @@ public class ReviewBookController {
     public String showDetailReviewBook(@RequestParam Long bookId, Model model){
         ReviewBookResponse reviewBook = reviewBookService.findReviewBookResponse(bookId);
         ReviewBook book = reviewBookService.findReviewBook(bookId);
-        List<ReviewResponse> reviewList = reviewService.findReviewByReviewBook(book);
+        List<SimpleReviewResponse> reviewList = reviewService.getReviewsByReviewBook(book);
 
         UserInfoResponse loginUserInfo;
 

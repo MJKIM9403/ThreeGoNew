@@ -2,10 +2,12 @@ package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
+import com.io.threegonew.repository.LikesRepository;
 import com.io.threegonew.repository.ReviewPhotoRepository;
 import com.io.threegonew.repository.ReviewRepository;
 import com.io.threegonew.util.AesUtil;
 import com.io.threegonew.util.FileHandler;
+import com.io.threegonew.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final FileHandler fileHandler;
     private final ReviewPhotoRepository reviewPhotoRepository;
+    private final LikesRepository likesRepository;
 
     @Transactional
     public Review saveReview(ReviewBook reviewBook, User user, TourItem tourItem, AddReviewRequest request) throws Exception{
@@ -97,7 +100,7 @@ public class ReviewService {
         return reviewRepository.increaseViewCount(reviewId);
     }
 
-    public PageResponse findMyReview(MyPageRequest request){
+    public PageResponse getMyReviews(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         Page<MyReviewResponse> page = reviewRepository.findMyReview(pageable, request.getUserId())
@@ -114,7 +117,7 @@ public class ReviewService {
         return pageResponse;
     }
 
-    public ReviewResponse findDetailReview(Long reviewId){
+    public ReviewResponse getDetailReview(Long reviewId){
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
         try {
@@ -124,22 +127,56 @@ public class ReviewService {
         }
     }
 
-    public List<ReviewResponse> findReviewByReviewBook(ReviewBook reviewBook){
+    public List<SimpleReviewResponse> getReviewsByReviewBook(ReviewBook reviewBook){
         return reviewRepository.findByReviewBook(reviewBook).stream()
                 .map(review -> {
                     try {
-                        return reviewMapper(review);
+                        return simpleReviewMapper(review);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }).collect(Collectors.toList());
     }
 
-    public EditReviewResponse findEditReview(Long reviewId){
+    @Transactional
+    public PageResponse getMyLikeReview(MyPageRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        Page<MyReviewResponse> page = reviewRepository.findMyLikeReviews(pageable, request.getUserId())
+                .map(this::myReviewMapper);
+
+        PageResponse<MyReviewResponse> pageResponse = PageResponse.<MyReviewResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+    public EditReviewResponse getEditReview(Long reviewId){
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
 
         return editReviewMapper(findReview);
+    }
+
+    private SimpleReviewResponse simpleReviewMapper(Review review){
+        String loginUserId = SecurityUtils.getCurrentUsername();
+        return SimpleReviewResponse.builder()
+                .reviewId(review.getReviewId())
+                .userInfo(userInfoMapper(review.getUser()))
+                .tourItemTitle(review.getTourItemTitle())
+                .reviewContent(review.getReviewContent().replace("\r\n","<br/>"))
+                .reviewPhotoList(review.getReviewPhotoList().stream()
+                        .map(this::reviewPhotoMapper).collect(Collectors.toList()))
+                .viewCount(review.getViewCount())
+                .commentCount(0L) //TODO: 댓글 추가 후 수정
+                .likeCount(likesRepository.countByReviewId(review.getReviewId()))
+                .likeState(likesRepository.existsByUserIdAndReviewId(loginUserId ,review.getReviewId()))
+                .build();
     }
 
     private MyReviewResponse myReviewMapper(Review review){
@@ -147,8 +184,8 @@ public class ReviewService {
                 .reviewId(review.getReviewId())
                 .firstPhoto(reviewPhotoMapper(review.getReviewPhotoList().get(0)))
                 .photoCount(review.getReviewPhotoList().size())
-                .likeCount(0)   /* TODO: 좋아요, 댓글 구현 후 값 바꿀 것*/
-                .commentCount(0)
+                .likeCount(likesRepository.countByReviewId(review.getReviewId()))   /* TODO: 좋아요, 댓글 구현 후 값 바꿀 것*/
+                .commentCount(0L)
                 .build();
     }
 
@@ -168,12 +205,12 @@ public class ReviewService {
                 .reviewBookId(AesUtil.aesCBCEncode(bookId.toString()))
                 .reviewBookTitle(bookTitle)
                 .reviewBookCoverImg(bookCoverImg)
-                .userInfo(userInfoResponse(review.getUser()))
+                .userInfo(userInfoMapper(review.getUser()))
                 .tourItemId(touritemId)
                 .tourItemTitle(review.getTourItemTitle())
                 .reviewContent(review.getReviewContent().replace("\r\n", "<br>"))
                 .viewCount(review.getViewCount())
-                .reviewPhotoList( review.getReviewPhotoList().stream()
+                .reviewPhotoList(review.getReviewPhotoList().stream()
                                 .map(this::reviewPhotoMapper).collect(Collectors.toList()))
                 .build();
     }
@@ -206,7 +243,7 @@ public class ReviewService {
                 .build();
     }
 
-    private UserInfoResponse userInfoResponse(User user) {
+    private UserInfoResponse userInfoMapper(User user) {
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
