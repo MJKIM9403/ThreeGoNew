@@ -631,7 +631,7 @@
         // 마커 위치에 맞게 지도 줌
         Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
         // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-        if (viaMarkers[index].length === 1) {
+        if (Points[index].length === 1) {
             map.setCenter(marker.getPosition());
             map.setZoom(10); // 기본 줌 레벨 설정
         } else {
@@ -693,7 +693,28 @@
                         for(var i = 0; i<places[index].length; i++) {
                             addMarker(i+1, places[index][i])
                         }
+                        // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                        if (viaMarkers[index].length === 1) {
+                            map.setCenter(marker.getPosition());
+                            map.setZoom(10); // 기본 줌 레벨 설정
+                        } else {
+                            // 모든 마커를 포함하는 경계를 계산
+                            PTbounds = new Tmapv2.LatLngBounds();
+                            for (var i in Points[index]) {
+                                var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+                                PTbounds.extend(linePt);
+                            }
 
+
+                            var PTbounds = new Tmapv2.LatLngBounds();
+                            for (var i = 0; i < viaMarkers[index].length; i++) {
+                                var markerPosition = viaMarkers[index][i].getPosition();
+                                PTbounds.extend(markerPosition);
+                            }
+
+                            // 지도를 경계에 맞게 확대/축소
+                            map.fitBounds(PTbounds);
+                        }
                     }
                 } else {
                     alert('이미 추가된 장소입니다.');
@@ -1070,11 +1091,10 @@
                     return placeList.length > 0;
                 });
                 if (allPlacesAdded) {
-                    var placesData = places;
 
                     $.ajax({
                         type: "POST", // HTTP 요청 방식
-                        url: "api/saveplans", // 데이터를 전송할 서버의 URL
+                        url: "plan/api/saveplans", // 데이터를 전송할 서버의 URL
                         contentType: "application/json", // 전송할 데이터의 타입
                         data: JSON.stringify({
                             plannerName: plannerName,
@@ -1094,7 +1114,7 @@
                         success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
                             var p_id = response.p_id; // 응답에서 p_id 추출
                             // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
-                            // window.location.href = '/plan/show?p_id=' + p_id;
+                            window.location.href = '/plan/show?p_id=' + p_id;
                             console.log('성공');
                         },
                         error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
