@@ -23,17 +23,6 @@ public class ReviewBookApiController {
     private final PlannerService plannerService;
     private final ReviewBookService reviewBookService;
 
-    @PostMapping("/my-reviewbook")
-    public ResponseEntity<MyPageResponse> getMyReview(@RequestBody MyPageRequest request){
-        MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
-                MyPageResponse.builder()
-                        .type("reviewbook")
-                        .pageResponse(reviewBookService.findMyReviewBook(request))
-                        .build();
-
-        return ResponseEntity.ok().body(myPageResponse);
-    }
-
     @PostMapping("/create")
     public ResponseEntity<Long> saveReviewBook(@ModelAttribute AddReviewBookRequest request) {
         String loginUserId = userService.getCurrentUserId();

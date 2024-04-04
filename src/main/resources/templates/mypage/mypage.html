@@ -399,7 +399,7 @@
                 <a class="nav-link" onclick="changeTab('REVIEWBOOK')">내 리뷰북</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link">관심 리뷰</a>
+                <a class="nav-link" onclick="changeTab('LIKE')">관심 리뷰</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" onclick="changeTab('BOOKMARK')">북마크</a>
@@ -414,6 +414,7 @@
         <div id="load-point"></div>
         <div class="loader"></div>
     </div>
+
     <!-- 리뷰 상세 조회 폼 -->
     <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -511,7 +512,7 @@
         </div>
     </div>
 
-    <!-- 리뷰 작성 폼 -->
+    <!-- 리뷰 작성 폼 : 리뷰북 선택 -->
     <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="selectBookLabel" aria-hidden="true">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered">
@@ -553,6 +554,8 @@
             </div>
         </div>
     </div>
+
+    <!--  리뷰 작성 폼 : 리뷰 작성  -->
     <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editorLabel" aria-hidden="true">
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -1430,6 +1433,9 @@
                 case "BOOKMARK" :
                     showBookmark();
                     break;
+                case "LIKE" :
+                    showLike();
+                    break;
             }
         });
     });
@@ -1476,13 +1482,12 @@
             back = false;
         }
         $.ajax({
-            url : '/api/bookmark',
-            type : 'POST',
-            contentType : 'application/json; charset=UTF-8',
-            data : JSON.stringify({
+            url : '/api/mypage/bookmarks',
+            type : 'GET',
+            data : {
                 userId : [[${findUser.id}]],
                 page : scrollPage
-            }),
+            },
             async: false,
             success : function (response) {
                 let bookmarkList = response.pageResponse.dtoList;
@@ -1548,13 +1553,12 @@
             back = false;
         }
         $.ajax({
-            url : '/api/review/my-review',
-            type : 'POST',
-            contentType : 'application/json; charset=UTF-8',
-            data : JSON.stringify({
+            url : '/api/mypage/reviews',
+            type : 'GET',
+            data : {
                 userId : [[${findUser.id}]],
                 page : scrollPage
-            }),
+            },
             async: false,
             success : function (response) {
                 let reviewList = response.pageResponse.dtoList;
@@ -1623,13 +1627,12 @@
             back = false;
         }
         $.ajax({
-            url : '/api/book/my-reviewbook',
-            type : 'POST',
-            contentType : 'application/json; charset=UTF-8',
-            data : JSON.stringify({
+            url : '/api/mypage/reviewbooks',
+            type : 'GET',
+            data : {
                 userId : [[${findUser.id}]],
                 page : scrollPage
-            }),
+            },
             async: false,
             success : function (response) {
                 let reviewBookList = response.pageResponse.dtoList;
@@ -1654,6 +1657,80 @@
                                         `<p>${reviewBook.bookTitle}</p>` +
                                         `</a>`
                                         '</div>';
+                            gallery.append(tempHtml).trigger("create")
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(reviewBookList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
+                }
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
+    }
+
+    function showLike(){
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(!firstLoad){
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/mypage/likes',
+            type : 'GET',
+            data : {
+                userId : [[${findUser.id}]],
+                page : scrollPage
+            },
+            async: false,
+            success : function (response) {
+                let likeReviewList = response.pageResponse.dtoList;
+                // 로더를 일정시간 이상 노출하기 위한 setTimeout
+
+                if(firstLoad && likeReviewList.length <= 0){
+                    firstLoad = false;
+                    $(".loader").hide()
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
+                        '<h4>등록된 관심 리뷰가 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    setTimeout(() => {
+                        firstLoad = false;
+                        $(".loader").hide()
+                        $.each(likeReviewList, function (index, review){
+                            let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="openViewer(${review.reviewId})">`
+                            if(review.photoCount > 1){
+                                tempHtml += '<div class="gallery-item-type">' +
+                                    '<i class="fas fa-clone" aria-hidden="true"></i>' +
+                                    '</div>'
+                            }
+                            tempHtml +=
+                                `<img src="/api/image/review/${review.firstPhoto.filePath}" class="gallery-image" alt="">` +
+                                `<div class="gallery-item-info">` +
+                                `<ul>` +
+                                `<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> ${review.likeCount}</li>` +
+                                `<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> ${review.commentCount}</li>` +
+                                `</ul>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>`;
                             gallery.append(tempHtml).trigger("create")
                         })
                         window.scrollTo({top: loadScroll, behavior: "instant"});
@@ -1706,6 +1783,9 @@
                     break;
                 case "REVIEWBOOK":
                     showReviewBook();
+                    break;
+                case "LIKE":
+                    showLike();
                     break;
                 // 탭 메뉴의 타입을 추가하여 사용
             }

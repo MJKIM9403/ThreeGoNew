@@ -25,17 +25,6 @@ public class ReviewApiController {
     private final PlanService planService;
     private final ReviewService reviewService;
 
-    @PostMapping("/my-review")
-    public ResponseEntity<MyPageResponse> getMyReview(@RequestBody MyPageRequest request){
-        MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
-                MyPageResponse.builder()
-                        .type("review")
-                        .pageResponse(reviewService.getMyReviews(request))
-                        .build();
-
-        return ResponseEntity.ok().body(myPageResponse);
-    }
-
     @PostMapping("/create")
     public ResponseEntity saveReview(@ModelAttribute AddReviewRequest request) {
         ReviewBook selectedReviewBook = null;

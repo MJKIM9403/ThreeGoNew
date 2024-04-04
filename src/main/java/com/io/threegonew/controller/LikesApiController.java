@@ -2,16 +2,14 @@ package com.io.threegonew.controller;
 
 
 import com.io.threegonew.domain.Likes;
-import com.io.threegonew.dto.LikesResponse;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.service.LikesService;
+import com.io.threegonew.service.ReviewService;
 import com.io.threegonew.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/likes")
@@ -45,5 +43,4 @@ public class LikesApiController {
                 .build());
 
     }
-
 }
