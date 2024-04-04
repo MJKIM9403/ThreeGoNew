@@ -190,11 +190,12 @@ public class ReviewService {
     }
 
     private ReviewResponse reviewMapper(Review review) throws Exception {
-        Long bookId = null;
+        String bookId = null;
         String bookTitle = null;
         String bookCoverImg = null;
         if(review.getReviewBook() != null) {
-            bookId = review.getReviewBook().getBookId();
+            bookId = review.getReviewBook().getBookId().toString();
+            bookId = AesUtil.aesCBCEncode(bookId);
             bookTitle = review.getReviewBook().getBookTitle();
             bookCoverImg = review.getReviewBook().getCoverFilePath();
         }
@@ -202,7 +203,7 @@ public class ReviewService {
 
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())
-                .reviewBookId(AesUtil.aesCBCEncode(bookId.toString()))
+                .reviewBookId(bookId)
                 .reviewBookTitle(bookTitle)
                 .reviewBookCoverImg(bookCoverImg)
                 .userInfo(userInfoMapper(review.getUser()))

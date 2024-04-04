@@ -423,7 +423,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="preview-container col-md-7">
-                            <div id="review-book-info" class="d-flex align-items-center cursor-pointer">
+                            <div id="review-book-info" class="d-flex align-items-center">
                                 <div class="rounded-3 icon-img">
                                     <img id="review-book-cover" src="../assets/img/no_image.png" alt="...">
                                 </div>
@@ -745,7 +745,6 @@
             })
         });
         promise.then(() => {
-            $('#viewer').modal('show');
             $('#login-user-name').text(loginUserName);
             if(loginUserProfile != null){
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
@@ -786,6 +785,10 @@
                     $('#review-book-info').removeClass('d-flex').hide();
                 }else {
                     $('#review-book-info').addClass('d-flex').show();
+                    $('#review-book-info').addClass('cursor-pointer')
+                    $('#review-book-info').off().click(function (){
+                        location.href = `../book?bookId=${findReview.reviewBookId}`;
+                    })
                     $('#review-book-title').text(findReview.reviewBookTitle);
                     if(findReview.reviewBookCoverImg != null){
                         $('#review-book-cover').attr('src','/api/image/book/' + findReview.reviewBookCoverImg);
@@ -808,10 +811,7 @@
                 }else {
                     $('.viewSwiper .swiper-controller').hide()
                 };
-
-                $('#review-book-info').off().click(function (){
-                    location.href = `../book?bookId=${findReview.reviewBookId}`;
-                })
+                $('#viewer').modal('show');
             },
             error : function (){
                 alert("리뷰 정보 조회에 실패했습니다.")
