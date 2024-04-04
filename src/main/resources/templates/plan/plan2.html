@@ -1002,7 +1002,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         // 각 탭 요소들을 선택
-        var tabs = document.querySelectorAll('.nav-link');
+        var tabs = document.querySelectorAll('.day-nav');
         // 첫 번째 탭을 활성화하고 해당 내용을 보이도록 설정
         tabs[0].classList.add('active');
         $('#your_day').html("DAY1");
@@ -1094,7 +1094,7 @@
 
                     $.ajax({
                         type: "POST", // HTTP 요청 방식
-                        url: "plan/api/saveplans", // 데이터를 전송할 서버의 URL
+                        url: "/plan/api/saveplans", // 데이터를 전송할 서버의 URL
                         contentType: "application/json", // 전송할 데이터의 타입
                         data: JSON.stringify({
                             plannerName: plannerName,
@@ -1250,7 +1250,7 @@
                 <!-- 반복하여 탭 생성 -->
                 <th:block th:each="dayNumber : ${dayNumbers}">
                     <li class="nav-item" role="presentation">
-                        <a href="#" class="nav-link py-3 border-bottom" aria-current="page"  title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Day" th:text="${'Day ' + dayNumber}">
+                        <a href="#" class="day-nav nav-link py-3 border-bottom" aria-current="page"  title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Day" th:text="${'Day ' + dayNumber}">
                         </a>
                     </li>
                 </th:block>
