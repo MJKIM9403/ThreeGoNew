@@ -11,4 +11,5 @@ public class MailDTO {
     private String address;
     private String title;
     private String message;
+    private int number; // 인증번호 변수 추가
 }
