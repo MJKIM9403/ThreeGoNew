@@ -77,26 +77,24 @@ public class PlanService {
         return planMap;
     }
 
-    public List<PlanDTO> findByPlannerIdAndDay(PlanRequest planRequest) {
+    public List<PlanDTO<TourItemResponse>> findByPlannerIdAndDay(PlanRequest planRequest) {
         Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId())
                 .orElseThrow(() -> new IllegalArgumentException("Planner not found"));
         List<Plan> plans = planRepository.findByPlannerIdAndDay(planner.getPlannerId(), planRequest.getDay());
 
-        // Plan 엔티티 리스트를 PlanDto 리스트로 변환
-        List<PlanDTO> planDTOs = new ArrayList<>();
-        for (Plan plan : plans) {
-            PlanDTO<TourItemResponse> planDto = new PlanDTO<>();
-            planDto.setPlanId(plan.getPlanId());
-            planDto.setPlannerId(plan.getPlannerId());
-            planDto.setDay(plan.getDay());
-            planDto.setOrder(plan.getOrder());
-            // TourItemResponse 정보를 받아와서 dtoList에 추가
-            List<TourItemResponse> tourItemResponses = new ArrayList<>();
-            tourItemResponses.add(tourItemMapper(plan.getTourItem()));
-            planDto.setDtoList(tourItemResponses);
 
-            planDTOs.add(planDto);
-        }
+        List<PlanDTO<TourItemResponse>> planDTOs = plans.stream().map(plan -> {
+            // TourItemResponse 정보를 받아와서 dtoList에 추가
+            List<TourItemResponse> tourItemResponse = Collections.singletonList(tourItemMapper(plan.getTourItem()));
+
+            return PlanDTO.<TourItemResponse>builder()
+                    .planId(plan.getPlanId())
+                    .plannerId(plan.getPlannerId())
+                    .day(plan.getDay())
+                    .order(plan.getOrder())
+                    .dtoList(tourItemResponse)
+                    .build();
+        }).collect(Collectors.toList());
 
         return planDTOs;
     }
@@ -130,6 +128,8 @@ public class PlanService {
 
     // TourItem을 TourItemResponse로 매핑하는 메서드
     private TourItemResponse tourItemMapper(TourItem tourItem) {
+        String defaultImage = "../assets/img/no_img.jpg"; // 기본 이미지 경로 설정
+
         return TourItemResponse.builder()
                 .contentid(tourItem.getContentid())
                 .cat1(tourItem.getCat1())
@@ -139,7 +139,7 @@ public class PlanService {
                 .areacode(tourItem.getAreacode())
                 .contenttypeid(tourItem.getContenttypeid())
                 .address(getAddress(tourItem))
-                .firstimage(tourItem.getFirstimage())
+                .firstimage(tourItem.getFirstimage() != null && !tourItem.getFirstimage().isEmpty() ? tourItem.getFirstimage() : defaultImage)
                 .mapx(tourItem.getMapx())
                 .mapy(tourItem.getMapy())
                 .mlevel(tourItem.getMlevel())

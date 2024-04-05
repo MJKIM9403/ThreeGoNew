@@ -1,15 +1,12 @@
 package com.io.threegonew.dto;
 
 import com.io.threegonew.domain.TourItem;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlanDTO<E> {

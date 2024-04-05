@@ -36,9 +36,9 @@ public class MyPlanApiController {
 
     // 플랜 가져와서 보여주기
     @PostMapping("/showplan")
-    public ResponseEntity<List<PlanDTO>> showPlan(@RequestBody PlanRequest request) {
-        List<PlanDTO> planDtos = planService.findByPlannerIdAndDay(request);
-        return new ResponseEntity<>(planDtos, HttpStatus.OK);
+    public ResponseEntity<List<PlanDTO<TourItemResponse>>> showPlan(@RequestBody PlanRequest request) {
+        List<PlanDTO<TourItemResponse>> planDTOs = planService.findByPlannerIdAndDay(request);
+        return new ResponseEntity<>(planDTOs, HttpStatus.OK);
     }
 
     // 플래너 공유하기
