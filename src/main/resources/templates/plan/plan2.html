@@ -217,49 +217,49 @@
     let selectedAreaCode = "";
 
     // 날짜
-    var days = [[${daysBetween}]];
+    let days = [[${daysBetween}]];
 
     // 인덱스
-    var index;
+    let index;
     // 이전에 선택된 탭의 인덱스를 저장하는 변수
-    var previousTabIndex = -1; // 초기값 설정, 아무런 탭도 선택되지 않았음을 나타냄
-    var prevIndex;
+    let previousTabIndex = -1; // 초기값 설정, 아무런 탭도 선택되지 않았음을 나타냄
+
     // tmap api
-    var map;
+    let map;
 
     // 마커
-    var marker = [];
+    let marker = [];
 
-    // 지도 확대용 모든 마커 배열
-    var allMarkers = [];
+    // 검색 설정 용 탭
+    let tabType = 'TOTAL';
 
     // 찍은 모든 마커
-    var viaMarkers = Array.from({length: days}, () => []);
+    let viaMarkers = Array.from({length: days}, () => []);
 
     // 지도 범위 확대하기 위한 배열
-    var Points = Array.from({length: days}, () => []);
+    let Points = Array.from({length: days}, () => []);
 
-    // 지도 줌좀 하자
-    var bounds;
+    // 지도 줌
+    let bounds;
 
     // 경유지만 넣는 배열
-    var viaPoints = Array.from({length: days}, () => []);
+    let viaPoints = Array.from({length: days}, () => []);
 
     // 경유지 최적화 실행 시간
-    var startTime = getRealTime();
+    let startTime = getRealTime();
 
     // 관광지들
-    var places = Array.from({length: days}, () => []);
+    let places = Array.from({length: days}, () => []);
 
     // 내가 선택한 관광지
-    var place;
+    let place;
 
     // 경로그림정보
-    var drawInfoArr = Array.from({length: days}, () => []);
-    var resultInfoArr = Array.from({length: days}, () => []);
+    let drawInfoArr = Array.from({length: days}, () => []);
+    let resultInfoArr = Array.from({length: days}, () => []);
 
     // 경로 출력 결과
-    var resultText = Array.from({length: days}, () => []);
+    let resultText = Array.from({length: days}, () => []);
 
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
@@ -284,11 +284,20 @@
 
     // 탭 이동시 변수 초기화
     function switchTabType(type) {
-        switch (type) {
+        tabType = type;
+        switch (tabType) {
             case "TOTAL" :
+                $('#show-all').addClass('btn-primary')
+                    .removeClass('btn-primary2');
+                $('#show-bookmark').addClass('btn-primary2')
+                    .removeClass('btn-primary');
                 totalSearch();
                 break;
             case "BOOKMARK" :
+                $('#show-bookmark').addClass('btn-primary')
+                    .removeClass('btn-primary2');
+                $('#show-all').addClass('btn-primary2')
+                    .removeClass('btn-primary');
                 bookmarkSearch();
                 break;
         }
@@ -366,37 +375,44 @@
     // 페이지네이션
     function showTourItems(){
         $(document).on('click','.page-item, .areaSelect',function (e) {
-            const target = e.target;
-            let keyword = $('.search-input').val();
-            if(!target.classList.contains('disabled')){
-                $.ajax({
-                    url : '/plan/api/touritems',
-                    type: 'POST',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : JSON.stringify({
-                        page : target.getAttribute('data-num'),
-                        cat1 : $('input[name=cat1]:checked').val(),
-                        cat2 : $('input[name=cat2]:checked').val(),
-                        cat3 : $('input[name=cat3]:checked').val(),
-                        areaCode : selectedAreaCode,
-                        sigunguCode : $('input[name=sigungu]:checked').val(),
-                        contentTypeId : $('input[name=type]:checked').val(),
-                        keyword: keyword
-                    }),
-                    success : function(data){
-                        // var offset = $('.search-scroll').offset();
-                        // $('.search-scroll').animate({scrollTop: (offset.top - $('.search-scroll').height() / 2)}, 500);
-                        // $('.search-scroll').scrollTop(0);
-                        const html = document.querySelector('html');
-                        const div = document.querySelector('.search-scroll');
+            if(tabType == "TOTAL") {
+                const target = e.target;
+                let keyword = $('.search-input').val();
+                if(!target.classList.contains('disabled')){
+                    $.ajax({
+                        url : '/plan/api/touritems',
+                        type: 'POST',
+                        contentType : 'application/json; charset=UTF-8',
+                        data : JSON.stringify({
+                            page : target.getAttribute('data-num'),
+                            cat1 : $('input[name=cat1]:checked').val(),
+                            cat2 : $('input[name=cat2]:checked').val(),
+                            cat3 : $('input[name=cat3]:checked').val(),
+                            areaCode : selectedAreaCode,
+                            sigunguCode : $('input[name=sigungu]:checked').val(),
+                            contentTypeId : $('input[name=type]:checked').val(),
+                            keyword: keyword
+                        }),
+                        success : function(data){
+                            // var offset = $('.search-scroll').offset();
+                            // $('.search-scroll').animate({scrollTop: (offset.top - $('.search-scroll').height() / 2)}, 500);
+                            // $('.search-scroll').scrollTop(0);
+                            const html = document.querySelector('html');
+                            const div = document.querySelector('.search-scroll');
 
-                        html.scrollTo({top: div.scrollHeight});
-                        $('#touritems').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    }
-                })
+                            html.scrollTo({top: div.scrollHeight});
+                            $('#touritems').replaceWith(data);
+                        },
+                        error : function (err){
+                            console.log(err)
+                        }
+                    })
+                }
+            }
+
+            if(tabType == "BOOKMARK") {
+                const target = e.target;
+                let keyword = $('.search-input').val();
             }
         });
     }
@@ -586,6 +602,7 @@
 
     // tmap 실행
     $(document).ready(function() {
+        switchTabType('TOTAL');
         initTmap2();
         addPlace();
         searchItems();
