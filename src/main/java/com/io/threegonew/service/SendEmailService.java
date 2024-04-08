@@ -60,31 +60,50 @@ public class SendEmailService {
 
 
 //    인증번호
-public MimeMessage CreateMail(String mail){
-    createNumber();
-    MimeMessage message = javaMailSender.createMimeMessage();
-    System.out.println("이멜 전송 완료!");
-
-//    try {
-//        message.setFrom(FROM_ADDRESS);
-//        message.setRecipients(MimeMessage.RecipientType.TO, mail);
-//        message.setSubject("이메일 인증");
-//        String body = "";
-//        body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
-//        body += "<h1>" + number + "</h1>";
-//        body += "<h3>" + "감사합니다." + "</h3>";
-//        message.setText(body,"UTF-8", "html");
-//    } catch (MessagingException e) {
-//        e.printStackTrace();
+//
+//public MimeMessage CreateMail(String mail){
+//    createNumber();
+////    MimeMessage message = javaMailSender.createMimeMessage();
+//    System.out.println("이멜 전송 완료!");
+//
+////    try {
+////        message.setFrom(FROM_ADDRESS);
+////        message.setRecipients(MimeMessage.RecipientType.TO, mail);
+////        message.setSubject("이메일 인증");
+////        String body = "";
+////        body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
+////        body += "<h1>" + number + "</h1>";
+////        body += "<h3>" + "감사합니다." + "</h3>";
+////        message.setText(body,"UTF-8", "html");
+////    } catch (MessagingException e) {
+////        e.printStackTrace();
+////    }
+//
+//    return message;
+//}
+//
+//    public int sendMail(String mail){
+//        MimeMessage message = CreateMail(mail);
+//        javaMailSender.send(message);
+//
+//        return number;
 //    }
+// 이메일로 인증번호 전송
+public void sendVerificationCode(String email) {
+        createNumber();
+        MailDTO mailDto = new MailDTO();
+        mailDto.setAddress(email);
+        mailDto.setTitle("이메일 인증 번호");
+        mailDto.setMessage("인증 번호는 " + number + "입니다.");
+        mailDto.setFormat("text/plain");
 
-    return message;
-}
-
-    public int sendMail(String mail){
-        MimeMessage message = CreateMail(mail);
-        javaMailSender.send(message);
-
-        return number;
+        // 이메일 전송
+        try {
+            javaMailSenderImpl.emailSending((Map<String, String>) mailDto);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // 이메일 전송 실패 시 예외 처리
+        }
     }
+
 }
