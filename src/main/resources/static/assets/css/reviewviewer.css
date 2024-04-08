@@ -41,8 +41,9 @@
 
 #contents-wrap {
     width: 100%;
-    max-height: 550px;
+    max-height: 575px;
     overflow-y: scroll;
+    transition: all 0.2s ease-in-out;
 }
 #contents-wrap::-webkit-scrollbar {
     width: 5px !important;
@@ -63,7 +64,9 @@
 #comment-area {
     flex: auto;
 }
-textarea {
+#comment-content {
+    transition: all 0.2s ease-in-out;
+    height: 1.2rem;
     resize: none;
 }
 #comment-btn {

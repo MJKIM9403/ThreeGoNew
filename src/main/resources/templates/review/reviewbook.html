@@ -82,7 +82,7 @@
         height: 100%;
     }
     .book-title {
-        word-break: keep-all;
+        word-break: break-all;
         position: absolute;
         top: 8%;
         padding: 0 40px;
@@ -98,7 +98,7 @@
         margin: 0;
     }
     .book-content {
-        word-break: keep-all;
+        word-break: break-all;
         position: absolute;
         bottom: 5%;
         right: 0%;
@@ -392,7 +392,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="preview-container col-md-7">
-                            <div id="review-book-info cursor-pointer" class="d-flex align-items-center">
+                            <div id="review-book-info" class="d-flex align-items-center">
                                 <div class="rounded-3 icon-img">
                                     <img id="review-book-cover" src="../assets/img/review_book_cover.jpg" alt="...">
                                 </div>
@@ -460,6 +460,11 @@
                                             <span class="comment-text ms-4">정말 데단해</span>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="review-icons d-flex gap-3">
+                                    <i class="bi bi-chat-square-dots"> 120</i>
+                                    <i class="like-btn bi bi-star"> 2334</i>
+                                    <i class="bi bi-eye"> 2.3k</i>
                                 </div>
                                 <div id="my-comment-wrap" class="d-flex align-items-start">
                                     <div class="rounded-circle icon-img">
@@ -795,6 +800,10 @@
                     $('#review-book-info').removeClass('d-flex').hide();
                 }else {
                     $('#review-book-info').addClass('d-flex').show();
+                    $('#review-book-info').addClass('cursor-pointer')
+                    $('#review-book-info').off().click(function (){
+                        location.href = `../book?bookId=${findReview.reviewBookId}`;
+                    })
                     $('#review-book-title').text(findReview.reviewBookTitle);
                     if(findReview.reviewBookCoverImg != null){
                         $('#review-book-cover').attr('src','/api/image/book/' + findReview.reviewBookCoverImg);
@@ -817,10 +826,6 @@
                 }else {
                     $('.viewSwiper .swiper-controller').hide()
                 };
-
-                $('#review-book-info').off().click(function (){
-                    location.href = `../book?bookId=${findReview.reviewBookId}`;
-                })
             },
             error : function (){
                 alert("리뷰 정보 조회에 실패했습니다.")
@@ -900,6 +905,16 @@
 
     $('#new-review-btn').mouseleave(function (){
         $('#new-review-btn span').remove()
+    })
+
+    $('#comment-content').on('focus',function (){
+        $('#comment-content').css('height','4.6rem');
+        $('#contents-wrap').css('max-height','calc(575px - 3.4rem)')
+    })
+
+    $('#comment-content').on('blur',function (){
+        $('#comment-content').css('height','1.2rem');
+        $('#contents-wrap').css('max-height','575px')
     })
 </script>
 

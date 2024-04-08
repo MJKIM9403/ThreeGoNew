@@ -48,7 +48,7 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom{
                 .join(likes)
                 .on(review.reviewId.eq(likes.reviewId))
                 .where(likes.userId.eq(userId))
-                .orderBy(likes.likeId.desc())
+                .orderBy(likes.regDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

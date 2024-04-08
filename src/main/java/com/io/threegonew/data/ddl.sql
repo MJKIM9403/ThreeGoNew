@@ -9,7 +9,7 @@ CREATE TABLE `likes` (
                          `like_id` bigint(20) NOT NULL AUTO_INCREMENT,
                          `user_id` varchar(40) NOT NULL,
                          `review_id` bigint(20) NOT NULL,
-                         `reg_date` date NOT NULL,
+                         `reg_date` datetime NOT NULL,
                          PRIMARY KEY (`like_id`),
                          UNIQUE KEY `like_un` (`user_id`,`review_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -63,8 +63,8 @@ CREATE TABLE `review` (
                           `touritem_title` varchar(40) NOT NULL,
                           `review_content` text NOT NULL,
                           `view_count` bigint(20) DEFAULT 0 NOT NULL,
-                          `reg_date` date NOT NULL,
-                          `mod_date` date NOT NULL,
+                          `reg_date` datetime NOT NULL,
+                          `mod_date` datetime NOT NULL,
                           PRIMARY KEY (`review_id`),
                           KEY `review_FK` (`book_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -77,8 +77,8 @@ CREATE TABLE `review_book` (
                                `book_content` varchar(100) DEFAULT NULL,
                                `cover_o_file` varchar(255) DEFAULT NULL,
                                `cover_file_path` varchar(1000) DEFAULT NULL,
-                               `reg_date` date NOT NULL,
-                               `mod_date` date NOT NULL,
+                               `reg_date` datetime NOT NULL,
+                               `mod_date` datetime NOT NULL,
                                PRIMARY KEY (`book_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -89,7 +89,7 @@ CREATE TABLE `review_photo` (
                                 `o_file` varchar(255) NOT NULL,
                                 `file_path` varchar(1000) NOT NULL,
                                 `file_size` bigint(20) NOT NULL,
-                                `reg_date` date NOT NULL,
+                                `reg_date` datetime NOT NULL,
                                 PRIMARY KEY (`file_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
