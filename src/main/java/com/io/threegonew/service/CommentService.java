@@ -3,12 +3,16 @@ package com.io.threegonew.service;
 import com.io.threegonew.domain.Comment;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.AddCommentRequest;
+import com.io.threegonew.dto.CommentRequest;
 import com.io.threegonew.dto.EditCommentRequest;
+import com.io.threegonew.dto.PageResponse;
 import com.io.threegonew.repository.CommentRepository;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -72,5 +76,11 @@ public class CommentService {
         comment.updateComment(request.getContent());
     }
 
+//    @Transactional
+//    public PageResponse getComments(CommentRequest request){
+//        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+//
+//
+//    }
 
 }
