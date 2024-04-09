@@ -41,6 +41,7 @@ public class PlanController {
     private final TeamRepository teamRepository;
     private final PlannerService plannerService;
 
+    // 북마크 포스트 매핑
     @PostMapping("/api/bookmark")
     public String getMyBookmark(@RequestBody MyPageRequest request, Model model){
         PageResponse pageResponse = tourItemService.findMyBookmark(request);
@@ -49,6 +50,57 @@ public class PlanController {
         return "plan/plan2 :: #touritems";
     }
 
+    @PostMapping("/api/bookmark/touritems")
+    public String getMyBookmarkTourItemList(@RequestBody TourItemBookmarkRequest request, Model model) {
+        PageResponse pageResponse = tourItemService.findMyBookmarkedTourItemList(request);
+        model.addAttribute("pageResponse", pageResponse);
+        return "plan/plan2 :: #touritems";
+    }
+
+    @PostMapping("/api/bookmark/cat2")
+    public String getMyBookmarkCat2List(@RequestBody TourItemBookmarkRequest request, Model model) {
+
+        System.out.println("Cat1 : " + request.getCat1());
+
+        if(request.getCat1() != null){
+            model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
+            model.addAttribute("cat3List", new ArrayList<>());
+        }else {
+            model.addAttribute("cat2List", new ArrayList<>());
+            model.addAttribute("cat3List", new ArrayList<>());
+        }
+
+        return "plan/plan2 :: #category-middle";
+    }
+
+    @PostMapping("/api/bookmark/sigungu")
+    public String getMyBookmarkSigunguList(@RequestBody TourItemBookmarkRequest request, Model model) {
+
+        System.out.println("areaCode : " + request.getAreaCode());
+
+        if(request.getAreaCode() != null){
+            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getAreaCode())));
+
+        }else {
+            model.addAttribute("sigunguList", new ArrayList<>());
+        }
+
+        return "plan/plan2 :: #sigungu";
+    }
+
+    @PostMapping("/api/bookmark/cat3")
+    public String getMyBookmarkCat3List(@RequestBody TourItemBookmarkRequest request, Model model){
+        if(request.getCat2() != null){
+            model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
+        }else {
+            model.addAttribute("cat3List", new ArrayList<>());
+        }
+
+        return "plan/plan2 :: #category-row";
+    }
+
+
+    // 북마크 아닌 경우
     @PostMapping("/api/touritems")
     public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
         PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);

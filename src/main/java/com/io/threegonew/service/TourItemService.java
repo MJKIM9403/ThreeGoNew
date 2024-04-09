@@ -142,6 +142,58 @@ public class TourItemService {
         return pageResponse;
     }
 
+    @Transactional(readOnly = true)
+    public PageResponse findMyBookmarkedTourItemList(TourItemBookmarkRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("title").ascending());
+
+
+        Specification<TourItem> spec = (root, query, criteriaBuilder) -> null;
+
+        // 북마크 조건 추가
+        if(!request.getUserId().equals("anonymousUser")) {
+            spec = spec.and(TourItemSpecification.equalUser(request.getUserId()));
+        }
+
+        // 키워드 추가 시작
+        if(request.getKeyword() != null && !request.getKeyword().isEmpty()) {
+            spec = spec.and(TourItemSpecification.equalKeyword(request.getKeyword()));
+        }
+        // 키워드 추가 끝
+
+        if(request.getAreaCode() != null && !request.getAreaCode().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalAreacode(request.getAreaCode()));
+        }
+        if(request.getSigunguCode() != null && !request.getSigunguCode().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalSigungucode(request.getSigunguCode()));
+        }
+        if(request.getCat1() != null && !request.getCat1().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalCat1(request.getCat1()));
+        }
+        if(request.getCat2() != null && !request.getCat2().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalCat2(request.getCat2()));
+        }
+        if(request.getCat3() != null && !request.getCat3().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalCat3(request.getCat3()));
+        }
+        if(request.getContentTypeId() != null && !request.getContentTypeId().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalContenttypeid(request.getContentTypeId()));
+        }
+
+        Page<TourItemResponse> page = tourItemRepository.findAll(spec, pageable)
+                .map(this::tourItemMapper);
+
+        PageResponse<TourItemResponse> pageResponse = PageResponse.<TourItemResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+
     public PageResponse findMyBookmarkByArea(MyBookmarkByAreaRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
