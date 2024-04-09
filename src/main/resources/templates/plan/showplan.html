@@ -87,7 +87,7 @@
             width: 100%;
         }
 
-        #open-share-btn {
+        #open-etc-btn {
             bottom: 5%;
             right: 5%;
         }
@@ -201,7 +201,8 @@
             loadPlanForDay(day);
         });
 
-        openModal();
+        openShareModal();
+        deletePlanner();
         searchUser();
         share();
         deleteList();
@@ -210,12 +211,39 @@
     });
 
     // 공유하기 모달창 열기
-    function openModal() {
-        $('#open-share-btn').click(function () {
+    function openShareModal() {
+        $('.share-planner-btn').click(function () {
             if(isWriter == false){
-                alert("플랜을 작성한 사람만 공유할 수 있습니다.")
+                alert("공유 권한이 없습니다.");
             } else {
                 $('#shareModal').modal('show');
+            }
+        })
+    }
+
+    // 플래너 삭제하기
+    function deletePlanner() {
+        $('.delete-planner-btn').click(function () {
+            if(isWriter == false) {
+                alert('삭제 권한이 없습니다.');
+            } else {
+                const deleteConfirm = "등록한 여행 일정을 정말로 삭제하시겠습니까? 삭제하면 복구할 수 없습니다.";
+                if(confirm(deleteConfirm)) {
+                    $.ajax({
+                        url : `/plan/api/delete/${plannerId}`,
+                        type : 'DELETE',
+                        data : {
+                            plannerId : plannerId,
+                        },
+                        success : function () {
+                            alert('삭제되었습니다.');
+                            window.location.href = '/planner';
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                }
             }
         })
     }
@@ -340,27 +368,35 @@
             var userIdsString = userIds.join("님, ");
             var confirmMessage = userIdsString + "님 에게 공유하시겠습니까?";
 
-            // 확인 대화상자를 통해 공유를 확인한 후에만 나머지 코드를 실행
-            if (confirm(confirmMessage)) {
-                // AJAX를 사용하여 userIds를 서버로 POST 방식으로 전송
-                $.ajax({
-                    url: '/api/sharePlanner', // 요청을 보낼 서버의 URL 주소
-                    type: 'POST', // HTTP 요청 방식 (GET, POST 등)
-                    contentType: 'application/json', // 전송할 데이터의 MIME 타입
-                    data: JSON.stringify(dataToSend), // 서버로 보낼 데이터. JSON 문자열로 변환.
-                    success: function (response) { // 요청 성공 시 수행할 함수
-                        alert('초대가 성공적으로 완료되었습니다.');
-                        $('#shareModal').modal('hide');
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) { // 요청 실패 시 수행할 함수
-                        alert('초대 과정에서 오류가 발생했습니다: ' + error);
-                        // 실패 시 추가적인 로직 처리...
-                    }
-                });
+            // 사용자가 추가된 경우에만
+            if(userIds.length > 0) {
+                // 확인 대화상자를 통해 공유를 확인한 후에만 나머지 코드를 실행
+                if (confirm(confirmMessage)) {
+                    // AJAX를 사용하여 userIds를 서버로 POST 방식으로 전송
+                    $.ajax({
+                        url: '/api/sharePlanner',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(dataToSend),
+                        success: function (response) {
+                            alert('초대가 성공적으로 완료되었습니다.');
+                            $('#shareModal').modal('hide');
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            alert('초대 과정에서 오류가 발생했습니다: ' + error);
+                            // 실패 시 추가적인 로직 처리...
+                        }
+                    });
+                } else {
+                    alert('공유를 취소하였습니다.');
+                }
             } else {
-                alert('공유를 취소하였습니다.');
+                alert('먼저 유저를 선택한 다음 공유해주세요.')
             }
+
+
+
         });
     }
 
@@ -936,16 +972,21 @@
             </div>
         </div>
 
-        <button type="button" id="open-share-btn" class="position-fixed rounded-pill btn btn-outline-primary">
-            <i class="bi bi-share-fill"></i>
-        </button>
+        <div class="btn-group">
+            <button type="button" id="open-etc-btn" class="position-fixed rounded-pill btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item edit-planner-btn">수정</a></li>
+                <li><a class="dropdown-item delete-planner-btn">삭제</a></li>
+                <li><a class="dropdown-item share-planner-btn">공유</a></li>
+            </ul>
+        </div>
+
+
+
 
     </div>
-
-
-
-
-</div>
 
 </div>
 </body>
