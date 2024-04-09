@@ -3,6 +3,20 @@
 -- 기존 테이블을 삭제하거나 컬럼명을 동일하게 맞춰주세요 --
 -- TOURITEM 테이블은 데이터가 NULL인 컬럼이 많으므로 contentid를 제외하고는 모두 NULL로 설정하였습니다 --
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
+-- 댓글 테이블 생성 --
+CREATE TABLE `comment` (
+                           `comment_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                           `review_id` bigint(20) NOT NULL,
+                           `writer_id` varchar(40) NOT NULL,
+                           `cmt_content` text NOT NULL,
+                           `group` int(11) NOT NULL,
+                           `order` int(11) NOT NULL,
+                           `parent_id` bigint(20) DEFAULT NULL,
+                           `cmt_del` tinyint(1) NOT NULL DEFAULT 0,
+                           `reg_date` datetime NOT NULL,
+                           `mod_date` datetime NOT NULL,
+                           PRIMARY KEY (`comment_id`)
+)
 
 -- 좋아요 테이블 생성 --
 CREATE TABLE `likes` (
