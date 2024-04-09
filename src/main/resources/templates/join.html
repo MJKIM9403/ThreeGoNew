@@ -130,12 +130,10 @@
                                 <button type="button" id="sendBtn" name="sendBtn" onclick="sendNumber()">인증번호보내기</button>
                             </div>
                             <br>
-                            <input type="text" id="Confirm" name="Confirm" style="display: none" value="">
                             <div id="mail_number" name="mail_number" style="display: none">
                                 <input type="text" name="number" id="number" style="width:250px; margin-top: -10px"
                                        placeholder="인증번호 입력">
                                 <button type="button" name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일 인증 </button>
-
                                 <div id="emailAvailable" class="valid-feedback" style="display: none;"></div>
                                 <div id="emailNotAvailable" class="invalid-feedback" style="display: none;"></div>
 
@@ -163,6 +161,8 @@
 
             let emailCheck = false;
             let idCheck = false;
+
+            let emailAuthNum = null;
 
             document.getElementById('joinBtn').addEventListener('click', function (event) {
                 // 간단한 유효성 검사
@@ -254,37 +254,39 @@
                     alert("이메일을 입력해주세요.");
                     return;
                 }
-                    console.log("번호보내기클릭");
-                    $("#mail_number").css("display", "block");
 
-                    $.ajax({
-                        url: "/join/sendEmail",
-                        type: "post",
-                        dataType: 'text',
-                        data:
-                            {"email": email},
-                        success: function (data) {
-                            $("#Confirm").attr("value", data);
-                            alert("가입 인증 번호 발송");
-                            console.log("성공했을지도?");
-                        }, error: function (request, status, error) {
-                            alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                            alert("인증 보내기 실패")
-                        }
-                    });
-                }
+                console.log("번호보내기클릭");
+                $("#mail_number").css("display", "block");
+                alert("입력한 메일로 인증번호를 발송하였습니다.")
 
-                // 인증 번호 보낸 거랑. 보낸 번호랑 확인해야함.
-                function confirmNumber() {
-                    var number1 = $("#number").val();
-                    var number2 = $("#Confirm").val();
-
-                    if (number1 == number2) {
-                        alert("인증되었습니다.");
-                    } else {
-                        alert("인증번호가 다릅니다.");
+                $.ajax({
+                    url: "/api/join/sendEmail",
+                    type: "post",
+                    dataType: 'text',
+                    data: JSON.stringify({
+                        email : email
+                    }),
+                    contentType: "application/json",
+                    success: function (authNum) {
+                        emailAuthNum = authNum;
+                        console.log("성공했을지도?");
+                    }, error: function (request, status, error) {
+                        alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                        alert("인증 보내기 실패")
                     }
+                });
+            }
+
+            // 인증 번호 보낸 거랑. 보낸 번호랑 확인해야함.
+            function confirmNumber() {
+                var inputNum = $("#number").val();
+
+                if (emailAuthNum == inputNum) {
+                    alert("인증되었습니다.");
+                } else {
+                    alert("인증번호가 다릅니다.");
                 }
+            }
 
         </script>
 
