@@ -247,13 +247,25 @@
             //     이메일 인증
             function sendNumber() {
                 let email = document.getElementsByName('email')[0].value;
-                console.log("Email : ", email);
+                let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+                let testEmails = document.getElementsByName('email')[0].value;
 
                 // 이메일 주소가 비어있을 경우 처리
                 if (email.trim() === "") {
                     alert("이메일을 입력해주세요.");
                     return;
                 }
+                //이메일 유효성 안맞을시 빠꾸
+                if (!regExp.test(testEmails)) {
+                    emailCheck = false;
+                        alert('이메일 형식이 올바르지 않습니다.');
+                        return;
+                    event.preventDefault(); // 폼 제출 막기
+                    } else {
+                        emailCheck = true;
+                        alert('적절한 이메일 주소 입니다.');
+                }
+
 
                 console.log("번호보내기클릭");
                 $("#mail_number").css("display", "block");
