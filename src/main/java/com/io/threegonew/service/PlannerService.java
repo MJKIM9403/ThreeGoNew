@@ -75,47 +75,6 @@ public class PlannerService {
         return sigunguRepository.findByAreaCode(areaCode);
     }
 
-//    @Transactional
-//    public Plan saveCompletePlanner(CompletePlannerRequest comDto, String userId) {
-//        Plan lastSavedPlan = null;
-//        try {
-//            // Planner 저장
-//            Planner planner = savePlanner(comDto, userId);
-//
-//            // 각 Plan 저장
-//            for (AddPlanRequest addDto : comDto.getPlans()) {
-//                lastSavedPlan = savePlan(addDto, planner);
-//            }
-//        } catch (Exception e) {
-//            // 예외 처리
-//            e.printStackTrace();
-//            // 또는 다른 방법으로 예외를 처리합니다.
-//        }
-//        return lastSavedPlan;
-//    }
-//
-//    private Planner savePlanner(CompletePlannerRequest comDto, String userId) {
-//        return plannerRepository.save(Planner.builder()
-//                .userId(userId)
-//                .plannerName(comDto.getPlannerName())
-//                .startDate(comDto.getStartDate())
-//                .endDate(comDto.getEndDate())
-//                .build()
-//        );
-//    }
-//
-//    private Plan savePlan(AddPlanRequest addDto, Planner planner) {
-//        // tourItem을 찾아서 설정
-//        TourItem tourItem = tourItemRepository.findById(addDto.getContentId()).orElse(null);
-//
-//        return planRepository.save(Plan.builder()
-//                .userId(addDto.getUserId())
-//                .plannerId(planner.getPlannerId())
-//                .day(addDto.getDay())
-//                .order(addDto.getOrder())
-//                .tourItem(tourItem)
-//                .build());
-//    }
 
     public Planner save(String plannerName, LocalDate startDate, LocalDate endDate, String userId) {
         if(plannerRepository.existsByUserIdAndPlannerNameAndStartDateAndEndDate(userId, plannerName, startDate, endDate)){
@@ -130,5 +89,27 @@ public class PlannerService {
                 .build()
         );
         return planner; // 저장된 엔터티 반환
+    }
+
+    public void deletePlannerAndRelatedPlans(Long plannerId) {
+
+        // Planner에 속한 모든 Team을 조회합니다.
+        List<Team> teams = teamRepository.findByPlannerPlannerId(plannerId);
+
+        // 조회된 모든 Team을 삭제합니다.
+        for (Team team : teams) {
+            teamRepository.delete(team);
+        }
+
+        // Planner에 속한 모든 Plan을 조회합니다.
+        List<Plan> plans = planRepository.findByPlannerId(plannerId);
+
+        // 조회된 모든 Plan을 삭제합니다.
+        for (Plan plan : plans) {
+            planRepository.delete(plan);
+        }
+
+        // 마지막으로 Planner를 삭제합니다.
+        plannerRepository.deleteById(plannerId);
     }
 }

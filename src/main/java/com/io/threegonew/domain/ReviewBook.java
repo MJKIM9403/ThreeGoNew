@@ -19,11 +19,11 @@ public class ReviewBook extends BaseTimeEntity{
     @Column(name = "book_id")
     private Long bookId;
 
-    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = User.class)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, targetEntity = User.class)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Planner.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "planner_id", nullable = false)
     private Planner planner;
 
