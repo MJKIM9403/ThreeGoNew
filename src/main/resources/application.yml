@@ -33,3 +33,4 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+      auth-code-expiration-millis: 600000
