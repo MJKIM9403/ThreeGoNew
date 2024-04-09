@@ -5,7 +5,6 @@ import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.JavaMailSenderImpl;
 import com.io.threegonew.util.TempPassword;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,10 +25,11 @@ public class SendEmailService {
     private final JavaMailSenderImpl javaMailSenderImpl;
     private static final String FROM_ADDRESS = Key.GMAIL;
     //    인증번호
-    private static int number;
-    public static void createNumber(){
-        number = (int)(Math.random() * (90000)) + 100000;// (int) Math.random() * (최댓값-최소값+1) + 최소값
-    }
+//    private static int number;
+//    public static String createNumber(){
+//        number = (int)(Math.random() * (90000)) + 100000;// (int) Math.random() * (최댓값-최소값+1) + 최소값
+//        return createNumber();
+//    }
 
     @Transactional
     public MailDTO createMailAndChangePassword(String email, String id) {
@@ -58,51 +58,37 @@ public class SendEmailService {
         }
     }
 
+//    인증번호 발송
+    @Transactional
+    public MailDTO createVerificationCode(String email, String id){
+        String tempPw = TempPassword.makeRandomPw(8);
+        MailDTO dto = new MailDTO();
+        dto.setAddress(email);
+        dto.setTitle(id + "님의 가입 인증 안내 이메일 입니다.");
+        dto.setMessage("안녕하세요. 가입 인증 번호 안내 관련 이메일 입니다." + "[" + id + "]" + "님의" + tempPw + "입니다.");
+         return dto;
 
-//    인증번호
-//
-//public MimeMessage CreateMail(String mail){
-//    createNumber();
-////    MimeMessage message = javaMailSender.createMimeMessage();
-//    System.out.println("이멜 전송 완료!");
-//
-////    try {
-////        message.setFrom(FROM_ADDRESS);
-////        message.setRecipients(MimeMessage.RecipientType.TO, mail);
-////        message.setSubject("이메일 인증");
-////        String body = "";
-////        body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
-////        body += "<h1>" + number + "</h1>";
-////        body += "<h3>" + "감사합니다." + "</h3>";
-////        message.setText(body,"UTF-8", "html");
-////    } catch (MessagingException e) {
-////        e.printStackTrace();
-////    }
-//
-//    return message;
-//}
-//
-//    public int sendMail(String mail){
-//        MimeMessage message = CreateMail(mail);
-//        javaMailSender.send(message);
-//
-//        return number;
-//    }
+    }
+
 // 이메일로 인증번호 전송
-public void sendVerificationCode(String email) {
-        createNumber();
-        MailDTO mailDto = new MailDTO();
-        mailDto.setAddress(email);
-        mailDto.setTitle("이메일 인증 번호");
-        mailDto.setMessage("인증 번호는 " + number + "입니다.");
-        mailDto.setFormat("text/plain");
-
+public void sendVerificationCode(MailDTO mailDTO) {
+//    createNumber();
+    System.out.println("가입인증 이메일 전송");
+    Map<String, String> mailInfo = new HashMap<>();
+    mailInfo.put("from", FROM_ADDRESS);
+    mailInfo.put("to", mailDTO.getAddress());
+    mailInfo.put("subject", mailDTO.getTitle());
+    mailInfo.put("content", mailDTO.getMessage());
+    mailInfo.put("format", "text/plain");
         // 이메일 전송
         try {
-            javaMailSenderImpl.emailSending((Map<String, String>) mailDto);
+            javaMailSenderImpl.emailSending(mailInfo);
         } catch (MessagingException e) {
             e.printStackTrace();
             // 이메일 전송 실패 시 예외 처리
+//            System.err.println("메일 전송 중 오류 발생: " + e.getMessage());
+//            // 예외를 다시 throw하여 상위 레벨로 전파할 수 있도록 함
+//            throw new RuntimeException("메일 전송 중 오류 발생", e);
         }
     }
 
