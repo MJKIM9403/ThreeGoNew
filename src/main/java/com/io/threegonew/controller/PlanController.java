@@ -350,6 +350,16 @@ public class PlanController {
         return "plan/showplan";
     }
 
+    @DeleteMapping(value = "/api/delete/{plannerId}")
+    public ResponseEntity<String> deletePlanner(@PathVariable Long plannerId) {
+        try {
+            plannerService.deletePlannerAndRelatedPlans(plannerId);
+            return ResponseEntity.ok().body("플래너와 관련된 일정이 성공적으로 삭제되었습니다");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("플래너와 관련된 일정을 삭제하는 데 실패했습니다");
+        }
+    }
 
 
 }
