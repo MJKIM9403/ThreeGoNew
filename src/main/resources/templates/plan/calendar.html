@@ -355,9 +355,21 @@
 
                     if (days > 9) {
                         alert("여행 일자는 최대 10일까지 설정 가능합니다.");
-                        endDatePicker.val('');
+                        endDatePicker.datepicker('setDate', null);
                     }
                 }
+            });
+
+            $('form').submit(function(e) {
+                var plannerName = $(this).find('input[name="plannerName"]').val();
+                var startDate = $(this).find('input[name="startDate"]').val();
+                var endDate = $(this).find('input[name="endDate"]').val();
+
+                if (plannerName === "" || startDate === "" || endDate === "") {
+                    e.preventDefault();
+                    alert('모든 여행 정보를 입력해주세요');
+                }
+
             });
         });
     </script>
