@@ -3,6 +3,14 @@
 -- 기존 테이블을 삭제하거나 컬럼명을 동일하게 맞춰주세요 --
 -- TOURITEM 테이블은 데이터가 NULL인 컬럼이 많으므로 contentid를 제외하고는 모두 NULL로 설정하였습니다 --
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
+
+
+-- 이미 플래너, 플랜, 팀 테이블을 추가했다면 P_DEL 컬럼을 추가해주세요 --
+alter table planner add p_del BOOLEAN default '0' not null;
+alter table plan add p_del BOOLEAN default '0' not null;
+alter table team add t_del BOOLEAN default '0' not null;
+
+
 -- 댓글 테이블 생성 --
 CREATE TABLE `comment` (
                            `comment_id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -128,6 +136,7 @@ create table `PLANNER` (
                            start_date DATE not null,
                            end_date DATE not null
 );
+
 
 -- 댓글 테이블 추가 --
 CREATE TABLE `REPLY`

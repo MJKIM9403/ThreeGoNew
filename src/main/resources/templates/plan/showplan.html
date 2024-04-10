@@ -231,7 +231,7 @@
                 if(confirm(deleteConfirm)) {
                     $.ajax({
                         url : `/plan/api/delete/${plannerId}`,
-                        type : 'DELETE',
+                        type : 'POST',
                         data : {
                             plannerId : plannerId,
                         },
@@ -265,7 +265,7 @@
                 success: function (result) {
                     console.log(result);
 
-                    let button = "<button id='right-btn' class='btn btn-sm btn-outline-dark' ";
+                    let button = "<button id='right-btn' class='btn btn-sm btn-outline-dark'>추가하기</button>";
                     if (result.id == typedText) {
                         // 나 자신은 추가할 수 없다
                         if(result.id == myId) {
@@ -279,8 +279,16 @@
                                 type: "GET",
                                 success: function (response) {
                                     if (!response.invited) { // 초대되지 않은 게스트일 경우에만 버튼 추가
-                                        button += "onclick='printUser(\"" + result.id + "\")'>추가하기</button>";
-                                        $('#searchResult').append(button);
+                                        // 이미 목록에 추가된 사용자인지 확인
+                                        if (!$(`#resultBox .user-btn[data-user-id='${result.id}']`).length) {
+                                            $('#searchResult').append(button);
+                                            // 한 번만 버튼을 누를 수 있도록 이벤트 핸들러를 한 번만 실행합니다.
+                                            $('#right-btn').one('click', function () {
+                                                printUser(result.id);
+                                            });
+                                        } else {
+                                            alert("이미 추가된 사용자입니다.");
+                                        }
                                     } else {
                                         alert("이미 초대된 게스트입니다.");
                                     }
@@ -351,6 +359,7 @@
 
     function share() {
         $('#share-btn').on('click', function () {
+            var plannerName = [[${plannerName}]];
             var plannerId = [[${plannerId}]]; // Planner ID를 설정합니다.
             var ownerId = [[${userId}]]; // Owner ID를 설정합니다.
             var userIds = [];
@@ -366,7 +375,7 @@
 
             // 각 사용자의 ID를 쉼표로 구분하여 출력
             var userIdsString = userIds.join("님, ");
-            var confirmMessage = userIdsString + "님 에게 공유하시겠습니까?";
+            var confirmMessage = plannerName + "을 " + userIdsString + "님 에게 공유하시겠습니까?";
 
             // 사용자가 추가된 경우에만
             if(userIds.length > 0) {
