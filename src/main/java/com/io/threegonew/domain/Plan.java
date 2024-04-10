@@ -33,17 +33,25 @@ public class Plan {
     @JoinColumn(name = "contentid")
     private TourItem tourItem;
 
+    @Column(name = "p_del", nullable = false)
+    private Boolean planDelete;
+
     @Builder
-    public Plan(Long plannerId, String userId, Integer day, Integer order, TourItem tourItem) {
+    public Plan(Long plannerId, String userId, Integer day, Integer order, TourItem tourItem, Boolean planDelete) {
         this.plannerId = plannerId;
         this.userId = userId;
         this.day = day;
         this.order = order;
         this.tourItem = tourItem;
+        this.planDelete = planDelete;
     }
 
     public void update(Integer day, Integer order) {
         this.day = day;
         this.order = order;
+    }
+
+    public void updateDelete() {
+        this.planDelete = true;
     }
 }

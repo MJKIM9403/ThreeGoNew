@@ -44,8 +44,14 @@ public class TeamService {
             teamRepository.save(hostTeam);
         } else {
             // Host로 등록되어 있지 않은 경우, 새로운 Team 생성 및 저장
-            Team hostTeam = new Team(planner, host, 9);
-            teamRepository.save(hostTeam);
+            // Team hostTeam = new Team(planner, host, 9);
+            Team hostTeam = teamRepository.save(Team.builder()
+                    .planner(planner)
+                    .user(host)
+                    .teamLevel(9)
+                    .teamDelete(false)
+                    .build()
+            );
         }
 
         // host 이외의 사용자들을 게스트로 저장
@@ -59,8 +65,13 @@ public class TeamService {
 
                 if (!existingGuestTeam.isPresent()) {
                     // Guest로 등록되어 있지 않은 경우, 새로운 Team 생성 및 저장
-                    Team guestTeam = new Team(planner, guest, 0);
-                    teamRepository.save(guestTeam);
+                    Team guestTeam = teamRepository.save(Team.builder()
+                            .planner(planner)
+                            .user(guest)
+                            .teamLevel(0)
+                            .teamDelete(false)
+                            .build()
+                    );
                 }
             }
         }
@@ -72,7 +83,10 @@ public class TeamService {
                 teamRepository.findByUserId(userId).stream()
 
                         // 게스트인 경우만 필터링
-                        .filter(team -> team.getTeamLevel() == 0) // 게스트인 경우만 필터링
+                        .filter(team -> team.getTeamLevel() == 0)
+                        // p_del 값이 false인 플래너만 필터링
+                        .filter(team -> Boolean.FALSE.equals(team.getPlanner().getPlannerDelete()))
+
                         .map(team -> modelMapper.map(team.getPlanner(), PlannerResponse.class))
                         .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
                         .collect(Collectors.toList());

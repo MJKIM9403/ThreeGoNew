@@ -1,16 +1,15 @@
 package com.io.threegonew.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @EntityListeners(AuditingEntityListener.class)
-
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Team {
     @Id
@@ -28,9 +27,19 @@ public class Team {
 
     private Integer teamLevel;
 
-    public Team(Planner planner, User user, Integer teamLevel) {
+    @Column(name = "t_del", nullable = false)
+    private Boolean teamDelete;
+
+    @Builder
+    public Team(Planner planner, User user, Integer teamLevel, Boolean teamDelete) {
         this.planner = planner;
         this.user = user;
         this.teamLevel = teamLevel;
+        this.teamDelete = teamDelete;
     }
+
+    public void updateDelete() {
+        this.teamDelete = true;
+    }
+
 }

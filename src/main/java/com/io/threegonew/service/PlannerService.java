@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +62,7 @@ public class PlannerService {
     public List<PlannerResponse> findMyPlannerList(String userId) {
         List<PlannerResponse> plannerResponseList =
                 plannerRepository.findByUserId(userId).stream()
+                        .filter(planner -> Boolean.FALSE.equals(planner.getPlannerDelete())) // p_del 값이 false인 경우만
                         .map(planner -> modelMapper.map(planner, PlannerResponse.class))
                         .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
                         .collect(Collectors.toList());
@@ -86,6 +88,7 @@ public class PlannerService {
                 .plannerName(plannerName)
                 .startDate(startDate)
                 .endDate(endDate)
+                .plannerDelete(false)
                 .build()
         );
         return planner; // 저장된 엔터티 반환
@@ -111,5 +114,33 @@ public class PlannerService {
 
         // 마지막으로 Planner를 삭제합니다.
         plannerRepository.deleteById(plannerId);
+    }
+
+    public void updatePlannerDeleteFlag(Long plannerId) {
+        // Planner를 조회합니다.
+        Optional<Planner> optionalPlanner = plannerRepository.findById(plannerId);
+        if (optionalPlanner.isPresent()) {
+            Planner planner = optionalPlanner.get();
+
+            // Planner의 삭제 플래그(p_del)를 true로 설정하고 저장합니다.
+            planner.updateDelete();
+            plannerRepository.save(planner);
+
+            // Planner에 속한 모든 Plan을 조회하고 삭제 플래그를 true로 설정합니다.
+            List<Plan> plans = planRepository.findByPlannerId(plannerId);
+            for (Plan plan : plans) {
+                plan.updateDelete();
+            }
+
+            // Planner에 속한 모든 Team을 조회하고 삭제 플래그를 true로 설정합니다.
+            List<Team> teams = teamRepository.findByPlannerPlannerId(plannerId);
+            for (Team team : teams) {
+                team.updateDelete();
+            }
+
+            // 수정된 Plan과 Team을 저장합니다.
+            planRepository.saveAll(plans);
+            teamRepository.saveAll(teams);
+        }
     }
 }

@@ -119,6 +119,7 @@ public class PlanService {
                 .day(dto.getDay())
                 .order(dto.getOrder())
                 .tourItem(tourItem)
+                .planDelete(false)
                 .build());
 
 
