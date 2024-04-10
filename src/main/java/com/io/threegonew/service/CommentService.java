@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -65,17 +67,25 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId){
+    public void deleteComment(Long commentId) throws AccessDeniedException{
         Comment comment = getComment(commentId);
-
-        comment.deleteComment();
+        String loginUserId = SecurityUtils.getCurrentUsername();
+        if(loginUserId.equals(comment.getWriter().getId())){
+            comment.deleteComment();
+        }else {
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
     }
 
     @Transactional
-    public void updateComment(EditCommentRequest request){
+    public void updateComment(EditCommentRequest request) throws AccessDeniedException {
         Comment comment = getComment(request.getCommentId());
-
-        comment.updateComment(request.getContent());
+        String loginUserId = SecurityUtils.getCurrentUsername();
+        if(loginUserId.equals(comment.getWriter().getId())){
+            comment.updateComment(request.getContent());
+        }else {
+            throw new AccessDeniedException("댓글 업데이트 권한이 없습니다.");
+        }
     }
 
     @Transactional
