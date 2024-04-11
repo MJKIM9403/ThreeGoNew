@@ -2,6 +2,7 @@ package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
+import com.io.threegonew.repository.CommentRepository;
 import com.io.threegonew.repository.LikesRepository;
 import com.io.threegonew.repository.ReviewPhotoRepository;
 import com.io.threegonew.repository.ReviewRepository;
@@ -26,6 +27,7 @@ public class ReviewService {
     private final FileHandler fileHandler;
     private final ReviewPhotoRepository reviewPhotoRepository;
     private final LikesRepository likesRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Review saveReview(ReviewBook reviewBook, User user, TourItem tourItem, AddReviewRequest request) throws Exception{
@@ -173,7 +175,7 @@ public class ReviewService {
                 .reviewPhotoList(review.getReviewPhotoList().stream()
                         .map(this::reviewPhotoMapper).collect(Collectors.toList()))
                 .viewCount(review.getViewCount())
-                .commentCount(0L) //TODO: 댓글 추가 후 수정
+                .commentCount(commentRepository.countCommentsByReviewId(review.getReviewId()))
                 .likeCount(likesRepository.countByReviewId(review.getReviewId()))
                 .likeState(likesRepository.existsByUserIdAndReviewId(loginUserId ,review.getReviewId()))
                 .build();
@@ -184,8 +186,8 @@ public class ReviewService {
                 .reviewId(review.getReviewId())
                 .firstPhoto(reviewPhotoMapper(review.getReviewPhotoList().get(0)))
                 .photoCount(review.getReviewPhotoList().size())
-                .likeCount(likesRepository.countByReviewId(review.getReviewId()))   /* TODO: 좋아요, 댓글 구현 후 값 바꿀 것*/
-                .commentCount(0L)
+                .likeCount(likesRepository.countByReviewId(review.getReviewId()))
+                .commentCount(commentRepository.countCommentsByReviewId(review.getReviewId()))
                 .build();
     }
 

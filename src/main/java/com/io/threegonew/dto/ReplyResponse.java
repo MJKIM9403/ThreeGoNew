@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -17,4 +19,6 @@ public class ReplyResponse {
     private Long parentId;
     private String patentWriterId;
     private Boolean cmtDel;
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
 }

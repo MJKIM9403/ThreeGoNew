@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.io.threegonew.domain.QComment.comment;
@@ -66,6 +67,33 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom{
                 .fetchFirst();
 
         return count;
+    }
+
+    @Override
+    public List<Comment> findRecentComments(Long reviewId, LocalDateTime lastRegDate) {
+        List<Comment> recentCommentList = jpaQueryFactory
+                .select(comment)
+                .from(comment)
+                .where(
+                        comment.reviewId.eq(reviewId)
+                                .and(comment.order.eq(1))
+                                .and(comment.regDate.gt(lastRegDate)))
+                .orderBy(comment.group.asc())
+                .fetch();
+
+        return recentCommentList;
+    }
+
+    @Override
+    public Boolean existNewComments(Long reviewId, LocalDateTime lastRegDate) {
+        return jpaQueryFactory
+                .select(comment.commentId)
+                .from(comment)
+                .where(
+                        comment.reviewId.eq(reviewId)
+                                .and(comment.order.eq(1))
+                                .and(comment.regDate.gt(lastRegDate)))
+                .fetchFirst() != null;
     }
 
     @Override

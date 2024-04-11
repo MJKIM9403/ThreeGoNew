@@ -75,6 +75,10 @@ public class UserService {
         return userRepository.existsById(userId);
     }
 
+    public boolean isEmailDuplicate(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public User findUserByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         return userOptional.orElse(null); // 만약 사용자가 존재하지 않는다면 null 반환
