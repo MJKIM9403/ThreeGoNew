@@ -25,7 +25,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom{
                 .from(comment)
                 .where(comment.reviewId.eq(reviewId))
                 .fetchFirst();
-        return maxGroupNum;
+        return maxGroupNum == null ? 0 : maxGroupNum;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom{
                         comment.reviewId.eq(reviewId)
                                 .and(comment.group.eq(group)))
                 .fetchFirst();
-        return maxOrderNum;
+        return maxOrderNum == null ? 0 : maxOrderNum;
     }
 
     @Override

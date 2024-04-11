@@ -30,10 +30,10 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "cmt_content")
     private String content;
 
-    @Column(name = "group")
+    @Column(name = "cmt_group")
     private Integer group;
 
-    @Column(name = "order")
+    @Column(name = "cmt_order")
     private Integer order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,7 +43,7 @@ public class Comment extends BaseTimeEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     private List<Comment> children;
 
-    @Column(name = "cmt_del")
+    @Column(name = "cmt_del", columnDefinition = "TINYINT(1)")
     @ColumnDefault("0")
     private Boolean cmtDel;
 
@@ -54,6 +54,11 @@ public class Comment extends BaseTimeEntity {
         this.content = content;
         this.group = group;
         this.order = order;
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.cmtDel = this.cmtDel == null ? false : this.cmtDel;
     }
 
     public void setParent(Comment parent) {

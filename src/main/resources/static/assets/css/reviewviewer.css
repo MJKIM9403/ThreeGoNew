@@ -72,7 +72,7 @@
     /* 댓글 리스트 */
 .comment-info {
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .comment-text {

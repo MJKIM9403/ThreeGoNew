@@ -81,7 +81,6 @@ public class ReviewApiController {
 
     @PutMapping("/view_count")
     public ResponseEntity<Long> viewCountUp(@RequestParam("reviewId") Long reviewId){
-        System.out.println("--------------------" + reviewId);
         try{
             int updateState = reviewService.viewCountUp(reviewId);
             if(updateState > 0){

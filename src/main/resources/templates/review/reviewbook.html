@@ -871,7 +871,7 @@
                 let commentList = result.dtoList;
                 $('#comment-wrap').html("");
                 if(commentList.length > 0){
-                    $.Each(commentList, function (index, comment){
+                    $.each(commentList, function (index, comment){
                         let profileImg;
                         let regDate = comment.regDate;
                         if(comment.writer.profileImg == null){
@@ -883,20 +883,24 @@
                             regDate = comment.modDate;
                         }
                         let tempHtml =
-                            '<div class="comment-info d-flex mb-2">' +
-                                '<div class="rounded-circle icon-img comment-profile">' +
-                                    `<img src="${profileImg}" alt="...">` +
-                                '</div>' +
-                                `<div class="comment-text" data-comment-id="${comment.commentId}">` +
-                                    `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
-                                    `<span class="comment-content">${comment.content}</span>` +
-                                    '<div class="d-flex justify-content-start gap-2">' +
-                                        `<span class="comment-regdate">${regDate}</span>` +
-                                        '<span class="reply-btn">답글쓰기</span>' +
+                            '<div class="comment-info">' +
+                                '<div class="d-flex mb-2">' +
+                                    '<div class="rounded-circle icon-img comment-profile">' +
+                                        `<img src="${profileImg}" alt="...">` +
                                     '</div>' +
-                                    `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>` +
-                                '</div>' +
-                            '</div>';
+                                    `<div class="comment-text" data-comment-id="${comment.commentId}">` +
+                                        `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
+                                        `<span class="comment-content">${comment.content}</span>` +
+                                        '<div class="d-flex justify-content-start gap-2">' +
+                                            `<span class="comment-regdate">${regDate}</span>` +
+                                            '<span class="reply-btn">답글쓰기</span>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>';
+                        if(comment.childrenCount > 0){
+                            tempHtml += `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>`
+                        }
+                        tempHtml += '</div>';
 
                         $('#comment-wrap').append(tempHtml);
                     })
@@ -932,7 +936,7 @@
 
     // 댓글 작성
     function postNewComment(reviewId) {
-        $('#comment-btn').click(function (){
+        $('#comment-btn').off('click').on('click', function (){
             let content = $('#comment-content').val();
             $.ajax({
                 url : '/api/comments',
@@ -945,6 +949,7 @@
                 success : function (){
                     $('.no-comment-msg').remove();
                     showRecentComment(reviewId);
+                    $('#comment-content').val("");
                 },
                 error : function (){
                     alert("댓글 등록에 실패하였습니다.");
@@ -969,7 +974,7 @@
                 success : function (result){
                     let commentList = result.dtoList;
                     if(commentList.length > 0) {
-                        $.Each(commentList, function (index, comment) {
+                        $.each(commentList, function (index, comment) {
                             let profileImg;
                             let regDate = comment.regDate;
                             if (comment.writer.profileImg == null) {
@@ -981,7 +986,8 @@
                                 regDate = comment.modDate;
                             }
                             let tempHtml =
-                                '<div class="comment-info d-flex mb-2">' +
+                                '<div class="comment-info">' +
+                                '<div class="d-flex mb-2">' +
                                 '<div class="rounded-circle icon-img comment-profile">' +
                                 `<img src="${profileImg}" alt="...">` +
                                 '</div>' +
@@ -992,9 +998,12 @@
                                 `<span class="comment-regdate">${regDate}</span>` +
                                 '<span class="reply-btn">답글쓰기</span>' +
                                 '</div>' +
-                                `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>` +
                                 '</div>' +
                                 '</div>';
+                            if(comment.childrenCount > 0){
+                                tempHtml += `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>`
+                            }
+                            tempHtml += '</div>';
 
                             $('#comment-wrap').prepend(tempHtml);
                         })
