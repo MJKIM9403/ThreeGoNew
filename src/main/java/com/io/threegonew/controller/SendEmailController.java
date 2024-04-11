@@ -3,6 +3,7 @@ package com.io.threegonew.controller;
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.service.SendEmailService;
 import com.io.threegonew.util.TempPassword;
+import com.io.threegonew.util.TempPasswordEmail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,11 @@ public class SendEmailController {
     public ResponseEntity sendIdAuth(@RequestBody Map<String, String> request){
         String email = request.get("email");
         try{
-            String tempPw = TempPassword.makeRandomPw(8);
-            MailDTO dto = sendEmailService.createVerificationCode(email, tempPw);
+//            String tempPw = TempPassword.makeRandomPw(8);
+            String tempEmail = TempPasswordEmail.makeRandomPw();
+            MailDTO dto = sendEmailService.createVerificationCode(email, tempEmail);
             sendEmailService.sendVerificationCode(dto);
-            return ResponseEntity.ok(tempPw);
+            return ResponseEntity.ok(tempEmail);
         }catch (MessagingException e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
