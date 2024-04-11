@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -127,6 +128,11 @@ public class PlanService {
 
     public List<Sigungu> findSigunguByAreaCode(Integer areaCode) {
         return sigunguRepository.findByAreaCode(areaCode);
+    }
+
+    @Transactional
+    public void deleteByPlannerId(Long plannerId) {
+        planRepository.deleteByPlannerId(plannerId);
     }
 
     public Plan save(AddPlanRequest dto, String userId) {

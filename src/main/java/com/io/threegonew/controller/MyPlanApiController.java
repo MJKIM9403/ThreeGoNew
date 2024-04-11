@@ -34,13 +34,14 @@ public class MyPlanApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    // 플랜 가져와서 보여주기
+    // 플랜을 날짜별로 가져와서 보여주기
     @PostMapping("/showplan")
     public ResponseEntity<List<PlanDTO<TourItemResponse>>> showPlan(@RequestBody PlanRequest request) {
         List<PlanDTO<TourItemResponse>> planDTOs = planService.findByPlannerIdAndDay(request);
         return new ResponseEntity<>(planDTOs, HttpStatus.OK);
     }
 
+    // 플랜 전체를 가져와서 보여주기
     @PostMapping("/allShowplan")
     public ResponseEntity<List<PlanDTO<TourItemResponse>>> allShowPlan(@RequestBody PlanRequest request) {
         List<PlanDTO<TourItemResponse>> planDTOs = planService.findByPlannerId(request);

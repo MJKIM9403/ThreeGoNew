@@ -268,53 +268,46 @@ public class PlanController {
     }
 
     /** 수정 메서드 구현해야됨 **/
-//    @PostMapping(value = "/api/editplans/{plannerId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Map<String, Long>> updatePlan(@RequestBody CompletePlannerRequest request) {
-//
-//        String plannerName = request.getPlannerName();
-//        LocalDate startDate = request.getStartDate();
-//        LocalDate endDate = request.getEndDate();
-//        List<AddPlanRequest> places = request.getPlans();
-//
-//        try {
-//            // 여기서 날짜와 플래너 이름을 받아서 사용할 수 있습니다.
-//            System.out.println("Planner Name: " + plannerName);
-//            System.out.println("Start Date: " + startDate);
-//            System.out.println("End Date: " + endDate);
-//
-//            // 현재 사용자의 인증 정보를 가져옴
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            // 인증 정보에서 사용자 아이디를 추출
-//            String userId = authentication.getName();
-//            System.out.println(userId);
-//
-//            // 해당 플래너의 기존 계획을 불러옴
-//            List<Plan> existingPlans = planService.findByPlannerId(plannerId); // 이 메서드는 필요에 따라 구현되어야 함
-//
-//            // 기존 계획을 삭제
-//            planService.deleteByPlannerId(plannerId); // 이 메서드도 필요에 따라 구현되어야 함
-//
-//            // 플래너를 업데이트하고 식별자를 반환
-//            Planner planner = plannerService.update(plannerId, plannerName, startDate, endDate, userId);
-//
-//            if (planner == null) {
-//                // 업데이트에 실패한 경우 처리
-//                System.out.println("planner 업데이트 실패~~~");
-//                return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
-//            } else {
-//                for(AddPlanRequest place: places) {
-//                    place.setUserId(userId);
-//                    place.setPlannerId(plannerId);
-//                    planService.save(place, userId); // 저장된 엔터티 반환
-//                }
-//            }
-//
-//            return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
-//        }
-//    }
+    @PostMapping(value = "/api/editplans/{plannerId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Long>> updatePlan(@PathVariable("plannerId") Long plannerId, @RequestBody CompletePlannerRequest request) {
+
+        String plannerName = request.getPlannerName();
+        LocalDate startDate = request.getStartDate();
+        LocalDate endDate = request.getEndDate();
+        List<AddPlanRequest> places = request.getPlans();
+
+        try {
+            // 여기서 날짜와 플래너 이름을 받아서 사용할 수 있습니다.
+            System.out.println("Planner Name: " + plannerName);
+            System.out.println("Start Date: " + startDate);
+            System.out.println("End Date: " + endDate);
+
+            // 현재 사용자의 인증 정보를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // 인증 정보에서 사용자 아이디를 추출
+            String userId = authentication.getName();
+            System.out.println(userId);
+
+            // 기존 계획을 삭제
+            planService.deleteByPlannerId(plannerId); // 이 메서드도 필요에 따라 구현되어야 함
+
+            // 플래너를 업데이트하고 식별자를 반환
+            // Planner planner = plannerService.update(plannerId, plannerName, startDate, endDate, userId);
+
+
+                for(AddPlanRequest place: places) {
+                    place.setUserId(userId);
+                    place.setPlannerId(plannerId);
+                    planService.save(place, userId); // 저장된 엔터티 반환
+                }
+
+
+            return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
+        }
+    }
 
 
     @GetMapping("/edit")

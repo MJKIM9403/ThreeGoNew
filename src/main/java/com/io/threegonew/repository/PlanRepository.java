@@ -16,4 +16,6 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 
 
     Optional<Plan> findTopByPlannerIdOrderByDayDesc(Long plannerId);
+
+    void deleteByPlannerId(Long plannerId);
 }

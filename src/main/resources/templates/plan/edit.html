@@ -721,8 +721,9 @@
         viaMarkers[index] = []; // viaMarkers 배열 초기화
 
         for(var i = 0; i<places[index].length; i++) {
-            addMarker(i+1, places[index][i]) // 마커 다시 찍기
+            addMarker(i+1, places[index][i], index) // 마커 다시 찍기
         }
+        fitBoundsToMarkers();
 
         if(resultInfoArr[index].length > 0){ // 관광지 추가할때는 빨간 선을 지우지 않지만, 삭제할때는 빨간 선을 지우는게 좋을 것 같아서 추가했습니다.
             for(var i in resultInfoArr[index]){
@@ -774,7 +775,7 @@
         checkSigungu();
         selectAndShow();
         showTourItems();
-
+        loadPlanForDay();
     })
 
     // 마커 삭제하기 함수
@@ -802,8 +803,9 @@
             success: function (response) {
                 // 응답으로 받은 계획을 표시
                 insertPlaces(response);
-                // displayPlan(response);
-
+                addPrintDayList();
+                // 모든 마커가 추가된 후에 fitBounds 호출
+                fitBoundsToMarkers();
             },
             error: function (xhr, status, error) {
                 console.error(error);
@@ -831,16 +833,36 @@
                 let status = ++markerCountPerDay[currentDay]; // 마커 수 증가 및 status 설정
                 addMarker(status, place, plan.day - 1);
             });
-
-            // if (places[plan.day - 1].length > 0) {
-            //     places[plan.day - 1].forEach(function(place) {
-            //         addMarker(index + 1, place);
-            //     });
-            // }
         });
 
+        // 생성한 마커는 탭을 이동할때만 보여야하므로 안 보이게 설정
+        for (let i = 0; i < viaMarkers.length; i++) {
+            if (viaMarkers[i].length > 0) {
+                viaMarkers[i].forEach(function(marker) {
+                    marker.setMap(null);
+                });
+            };
+        };
+
+        // 첫번째 탭의 마커는 미리 보이게 설정
+        viaMarkers[0].forEach(function(marker) {
+            marker.setMap(map);
+        });
     }
 
+    // 모든 마커가 추가된 후에 fitBounds 함수 호출
+    function fitBoundsToMarkers() {
+        var PTbounds = new Tmapv2.LatLngBounds();
+        for (var dayIndex = 0; dayIndex < viaMarkers.length; dayIndex++) {
+            if (viaMarkers[dayIndex].length > 0) {
+                for (var i = 0; i < viaMarkers[dayIndex].length; i++) {
+                    var marker = viaMarkers[dayIndex][i];
+                    PTbounds.extend(marker.getPosition());
+                }
+            }
+        }
+        map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
+    }
 
     // 마커 추가하기 함수
     function addMarker(status, info, dayIndex) {
@@ -856,23 +878,6 @@
             title: info.title
         })
         viaMarkers[dayIndex].push(marker);
-        // 마커 위치에 맞게 지도 줌
-        Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
-        // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-        if (Points[index].length === 1) {
-            map.setCenter(marker.getPosition());
-            map.setZoom(10); // 기본 줌 레벨 설정
-        } else {
-            // 모든 마커를 포함하는 경계를 계산
-            PTbounds = new Tmapv2.LatLngBounds();
-            for (var i in Points[index]) {
-                var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-                PTbounds.extend(linePt);
-            }
-
-            // 지도를 경계에 맞게 확대/축소
-            map.fitBounds(PTbounds);
-        }
     }
 
     function addPlace() {
@@ -919,30 +924,10 @@
                         viaMarkers[index] = []; // viaMarkers 배열 초기화
 
                         for(var i = 0; i<places[index].length; i++) {
-                            addMarker(i+1, places[index][i])
+                            addMarker(i+1, places[index][i], index);
                         }
                         // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-                        if (viaMarkers[index].length === 1) {
-                            map.setCenter(marker.getPosition());
-                            map.setZoom(10); // 기본 줌 레벨 설정
-                        } else {
-                            // 모든 마커를 포함하는 경계를 계산
-                            PTbounds = new Tmapv2.LatLngBounds();
-                            for (var i in Points[index]) {
-                                var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-                                PTbounds.extend(linePt);
-                            }
-
-
-                            var PTbounds = new Tmapv2.LatLngBounds();
-                            for (var i = 0; i < viaMarkers[index].length; i++) {
-                                var markerPosition = viaMarkers[index][i].getPosition();
-                                PTbounds.extend(markerPosition);
-                            }
-
-                            // 지도를 경계에 맞게 확대/축소
-                            map.fitBounds(PTbounds);
-                        }
+                        fitBoundsToMarkers();
                     }
                 } else {
                     alert('이미 추가된 장소입니다.');
@@ -1031,23 +1016,7 @@
     //     });
     // }
 
-    function addPrintDayList() {
-        $('#areabox').empty(); // 반복문 시작 전에 출력된 목록을 지우고
 
-        places[index].forEach(function (data) { // places[index] 배열에 있는 모든 오브젝트를 반복문을 돌려 출력합니다
-            var template = `
-                        <a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'>
-                            <div class='d-flex w-100 align-items-center justify-content-between'>
-                                <strong class='mb-1 select-title'>${data.title}</strong>
-                                <button class='delete' type='button' onclick='deleteRow(this);'>
-                                    <i class='bi bi-x-circle'></i>
-                                </button>
-                            </div>
-                        </a>
-                        `;
-            $('#areabox').append(template); // 계속해서 추가한다.
-        });
-    }
 
 
     // tmap 실행 함수
@@ -1133,7 +1102,7 @@
                                 resultInfoArr[index]=[];
                             }
 
-                            PTbounds = new Tmapv2.LatLngBounds();
+                            var PTbounds = new Tmapv2.LatLngBounds();
                             for(var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
                                 var polyline_ = Array.from({length: days}, () => []);
@@ -1159,7 +1128,8 @@
                                         // 경유지 최적화 결과 반경만큼 지도 레벨 조정
                                         var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
                                         // console.log(linePt);
-                                        PTbounds.extend(linePt);
+
+                                        PTbounds.extend(linePt, { padding: new Tmapv2.LatLng(0.3, 0.3) });
                                     }
 
                                     polyline_[index] = new Tmapv2.Polyline({
@@ -1169,8 +1139,7 @@
                                         map : map
                                     });
                                     resultInfoArr[index].push(polyline_[index]);
-
-                                    map.fitBounds(PTbounds);
+                                    map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
                                 }
                             }
                         },
@@ -1251,7 +1220,7 @@
                                 resultInfoArr[index]=[];
                             }
 
-                            PTbounds = new Tmapv2.LatLngBounds();
+                            var PTbounds = new Tmapv2.LatLngBounds();
                             for(var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
                                 var polyline_ = Array.from({length: days}, () => []);
@@ -1279,7 +1248,7 @@
                                     });
                                     resultInfoArr[index].push(polyline_[index]);
 
-                                    map.fitBounds(PTbounds);
+                                    map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
                                 }
                             }
                         },
@@ -1305,144 +1274,151 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        loadPlanForDay();
+
         // 각 탭 요소들을 선택
         var tabs = document.querySelectorAll('.day-nav');
         // 첫 번째 탭을 활성화하고 해당 내용을 보이도록 설정
         tabs[0].classList.add('active');
         $('#your_day').html("DAY1");
         index = 0;
-        // 첫 번째 탭의 마커만 지도에 추가하는 로직 추가
-        viaMarkers[0].forEach(function(marker) {
-            marker.setMap(map);
-        });
-        // 각 탭에 대해 클릭 이벤트 리스너 추가
-        tabs.forEach(function (tab, tabIndex) {
-            tab.addEventListener('click', function () {
+        previousTabIndex = -1; // 이전 탭의 인덱스를 초기화
 
-                // 모든 탭에서 'active' 클래스 제거
-                tabs.forEach(function(otherTab) {
-                    otherTab.classList.remove('active');
-                });
-
-                // 현재 클릭된 탭에만 'active' 클래스 추가
-                tab.classList.add('active');
-
-                // 다른 탭으로 이동할 경우
-                if(previousTabIndex !== index) {
-
-                    // 방금전까지의 현재 인덱스 값은 이제 이전의 인덱스 값이 된다
-                    // 초기값으로 줬던 -1은 탭을 이동할때마다 바뀐다
+            // 각 탭에 대해 클릭 이벤트 리스너 추가
+            tabs.forEach(function (tab, tabIndex) {
+                tab.addEventListener('click', function () {
                     previousTabIndex = index;
-                    // 이전 탭에서 마커와 경로가 이미 있다면 제거
-                    if(viaMarkers[previousTabIndex] && viaMarkers[previousTabIndex].length > 0) {
-                        viaMarkers[previousTabIndex].forEach(function(marker) {
-                            marker.setMap(null); // TMap에서 이전 탭 마커 제거
-                        });
-                    }
-                    if(resultInfoArr[previousTabIndex] && resultInfoArr[previousTabIndex].length > 0) {
-                        resultInfoArr[previousTabIndex].forEach(function(line) {
-                            line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
-                        })
-                        $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
-                    }
-                }
+                    index = tabIndex; // 현재 선택한 탭의 인덱스
+                    // 모든 탭에서 'active' 클래스 제거
+                    tabs.forEach(function (otherTab) {
+                        otherTab.classList.remove('active');
+                    });
+                    // 현재 클릭된 탭에만 'active' 클래스 추가
+                    tab.classList.add('active');
 
-                // 현재 선택한 탭의 번호는 현재 인덱스가 됨
-                var dayNumber = tab.innerText.split(' ')[1]; // 탭 텍스트에서 'Day'를 제외하고 숫자만 추출
-                index = Number(dayNumber) - 1;
-                var yourDay = "DAY" + (index + 1).toString(); // 담은 장소가 몇일째인지 띄워줌
-                $('#your_day').html(yourDay);
-
-
-                // 현재탭의 목록 불러오기
-                addPrintDayList();
-                // 선택한 인덱스 탭에 맞는 마커를 다시 로드
-                viaMarkers[index].forEach(function(marker) {
-                    marker.setMap(map);
-                });
-                // 선택한 인덱스 탭에 맞는 경로 빨간 선 표시를 다시 로드
-                resultInfoArr[index].forEach(function(line) {
-                    line.setMap(map);
-                })
-                // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
-                $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
-
-                // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-                if(viaMarkers[index].length > 0) {
-                    if (viaMarkers[index].length === 1) {
-                        map.setCenter(marker.getPosition());
-                        map.setZoom(10); // 기본 줌 레벨 설정
-                    } else {
-                        // 모든 마커를 포함하는 경계를 계산
-
-                        PTbounds = new Tmapv2.LatLngBounds();
-                        for (var i in Points[index]) {
-                            var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-                            PTbounds.extend(linePt);
+                    // 다른 탭으로 이동할 경우
+                    if (previousTabIndex !== index) {
+                        // 이전 탭에서 마커와 경로가 이미 있다면 제거
+                        if (viaMarkers[previousTabIndex] && viaMarkers[previousTabIndex].length > 0) {
+                            viaMarkers[previousTabIndex].forEach(function (marker) {
+                                marker.setMap(null); // TMap에서 이전 탭 마커 제거
+                            });
+                            viaMarkers[previousTabIndex] = []; // viaMarkers 배열 초기화
+                        }
+                        if (resultInfoArr[previousTabIndex] && resultInfoArr[previousTabIndex].length > 0) {
+                            resultInfoArr[previousTabIndex].forEach(function (line) {
+                                line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
+                            })
+                            $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
                         }
 
-                        // 지도를 경계에 맞게 확대/축소
-                        map.fitBounds(PTbounds);
+                        // 현재 선택한 탭의 번호는 현재 인덱스가 됨
+                        var yourDay = "DAY" + (index + 1).toString(); // 담은 장소가 몇일째인지 띄워줌
+                        $('#your_day').html(yourDay);
 
-                    }
+                        // 현재탭의 목록 불러오기
+                        addPrintDayList();
+
+                        // 마커 다시 찍기
+                        for(var i = 0; i<places[index].length; i++) {
+                            addMarker(i+1, places[index][i], index);
+                        }
+                        // 선택한 인덱스 탭에 맞는 마커를 다시 로드
+                        viaMarkers[index].forEach(function (marker) {
+                            marker.setMap(map);
+                        });
+
+
+                        // 선택한 인덱스 탭에 맞는 경로 빨간 선 표시를 다시 로드
+                        resultInfoArr[index].forEach(function (line) {
+                            line.setMap(map);
+                        })
+                        // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
+                        $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+
+                        // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                        fitBoundsToMarkers();
+                        // if (viaMarkers[index].length > 0) {
+                        //     if (viaMarkers[index].length === 1) {
+                        //         map.setCenter(viaMarkers[index][0].getPosition());
+                        //         map.setZoom(10); // 기본 줌 레벨 설정
+                        //     } else {
+                        //         // 모든 마커를 포함하는 경계를 계산
+                        //         var PTbounds = new Tmapv2.LatLngBounds();
+                        //         for (var i in Points[index]) {
+                        //             var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
+                        //             PTbounds.extend(linePt);
+                        //         }
+                        //
+                        //         // 지도를 경계에 맞게 확대/축소
+                        //         map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
+                        //     }
+                        // }
+                    // 이전 탭의 인덱스를 업데이트
+                    previousTabIndex = index;
                 }
-
-
-
             });
         });
 
+        // 취소 버튼 실행시 클릭
+        $("#cancel-btn").click(function () {
+            if(confirm("취소하게되면 수정한 내용은 저장되지 않습니다. 취소하시겠습니까?")) {
+                window.location.href = '/plan/show?p_id=' + p_id;
+            }
+        })
+
         // 다음 버튼 클릭시 실행
-        $("#next-btn").click(function () {
-            // 마지막 탭에서 장소를 추가한 경우에만 데이터 저장
-            if (index === tabs.length - 1) {
-                var allPlacesAdded = places.every(function(placeList) {
-                    return placeList.length > 0;
+        $("#edit-btn").click(function () {
+            if(confirm("입력하신 내용으로 여행을 수정하시겠습니까?")) {
+                $.ajax({
+                    type: "POST", // HTTP 요청 방식
+                    url: "/plan/api/editplans/" + plannerId, // 데이터를 전송할 서버의 URL
+                    contentType: "application/json", // 전송할 데이터의 타입
+                    data: JSON.stringify({
+                        plannerName: plannerName,
+                        startDate: startDate,
+                        endDate: endDate,
+                        plans: places.flatMap(function(place, index) {
+                            return place.map(function(subPlace, subIndex) {
+                                return {
+                                    userId: subPlace.userId,
+                                    day: index + 1, // day 값 설정
+                                    order: subIndex + 1, // order 값 설정
+                                    contentId: subPlace.contentid
+                                };
+                            });
+                        })
+                    }), // 전송할 데이터
+                    success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
+                        var p_id = response.p_id; // 응답에서 p_id 추출
+                        // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
+                        window.location.href = '/plan/show?p_id=' + p_id;
+                        console.log('성공');
+                    },
+                    error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
+                        alert('실패');
+                    }
                 });
-                if (allPlacesAdded) {
-
-                    $.ajax({
-                        type: "POST", // HTTP 요청 방식
-                        url: "/plan/api/updateplans", // 데이터를 전송할 서버의 URL
-                        contentType: "application/json", // 전송할 데이터의 타입
-                        data: JSON.stringify({
-                            plannerName: plannerName,
-                            startDate: startDate,
-                            endDate: endDate,
-                            plans: places.flatMap(function(place, index) {
-                                return place.map(function(subPlace, subIndex) {
-                                    return {
-                                        userId: subPlace.userId,
-                                        day: index + 1, // day 값 설정
-                                        order: subIndex + 1, // order 값 설정
-                                        contentId: subPlace.contentid
-                                    };
-                                });
-                            })
-                        }), // 전송할 데이터
-                        success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
-                            var p_id = response.p_id; // 응답에서 p_id 추출
-                            // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
-                            window.location.href = '/plan/show?p_id=' + p_id;
-                            console.log('성공');
-                        },
-                        error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
-                            alert('실패');
-                        }
-                    });
-
-
-
-                } else {
-                    alert('모든 탭에서 장소를 추가해주세요.');
-                }
             }
         });
-
     });
 
+    function addPrintDayList() {
+        $('#areabox').empty(); // 반복문 시작 전에 출력된 목록을 지우고
 
+        places[index].forEach(function (data) { // places[index] 배열에 있는 모든 오브젝트를 반복문을 돌려 출력합니다
+            var template = `
+                        <a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'>
+                            <div class='d-flex w-100 align-items-center justify-content-between'>
+                                <strong class='mb-1 select-title'>${data.title}</strong>
+                                <button class='delete' type='button' onclick='deleteRow(this);'>
+                                    <i class='bi bi-x-circle'></i>
+                                </button>
+                            </div>
+                        </a>
+                        `;
+            $('#areabox').append(template); // 계속해서 추가한다.
+        });
+    }
 
 
 </script>
@@ -1566,7 +1542,8 @@
 
             </ul>
             <div class="btn_con text-center">
-                <button type="button" id="next-btn" class="btn btn-primary" >다음</button>
+                <button type="button" id="cancel-btn" class="btn btn-primary" >취소</button>
+                <button type="button" id="edit-btn" class="btn btn-primary" >수정</button>
             </div>
             <div class="dropdown border-top">
                 <div class="login-drop dropdown mt-auto">
