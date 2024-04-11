@@ -5,6 +5,7 @@ import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.JavaMailSenderImpl;
 import com.io.threegonew.util.TempPassword;
+import com.io.threegonew.util.TempPasswordEmail;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -34,6 +35,7 @@ public class SendEmailService {
     @Transactional
     public MailDTO createMailAndChangePassword(String email, String id) {
         String tempPw = TempPassword.makeRandomPw(8);
+        String tempEmail = TempPasswordEmail.makeRandomPw();
         MailDTO dto = new MailDTO();
         dto.setAddress(email);
         dto.setTitle(id + "님의 임시 비밀번호 안내 이메일 입니다.");
@@ -60,11 +62,11 @@ public class SendEmailService {
 
 //    인증번호 발송
     @Transactional
-    public MailDTO createVerificationCode(String email, String tempPw){
+    public MailDTO createVerificationCode(String email, String tempEmail){
         MailDTO dto = new MailDTO();
         dto.setAddress(email);
         dto.setTitle("[둘레둘레] 가입 인증 안내 이메일 입니다.");
-        dto.setMessage("안녕하세요. 둘레둘레 입니다.\r\n가입 인증 번호 : "  + tempPw );
+        dto.setMessage("안녕하세요. 둘레둘레 입니다.\r\n가입 인증 번호 : "  + tempEmail);
 
         return dto;
     }

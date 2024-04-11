@@ -28,16 +28,36 @@
         padding-left: 12px;
     }
 
-    #delete_btn{
-        color: red;
+    .deleteBtn {
+        --bs-btn-color: #fff;
+        --bs-btn-bg: #fd0d0d;
+        --bs-btn-border-color: #fd0d0d;
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-bg: #d70b0b;
+        --bs-btn-hover-border-color: #ca0a0a;
+        --bs-btn-focus-shadow-rgb: 49, 132, 253;
+        --bs-btn-active-color: #fff;
+        --bs-btn-active-bg: #ca0a0a;
+        --bs-btn-active-border-color: #be0a0a;
+        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+        --bs-btn-disabled-color: #fff;
+        --bs-btn-disabled-bg: #fd0d0d;
+        --bs-btn-disabled-border-color: #fd0d0d;
     }
-
 </style>
 <body>
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <div class="w3-content w3-container w3-margin-top container position-relative pb-5 justify-content-center"
          style="margin: 0 auto;">
+
+        <!--허전해서 이미지-->
+        <div class="w3-content w3-container container position-relative pb-5 headerImg"
+             style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
+         background-size: cover;
+         height: 15em;
+         margin-bottom: 3em;">
+        </div>
 
         <div id="wrap" class="container position-relative pb-5 deleteDiv">
             <div class="form-group userInput mb-5">
@@ -69,7 +89,7 @@
                         </form>
                         <div class="btn_align">
 
-                            <button class="col text-center mb-5 btn btn-primary"  id="delete_btn" type="button" onclick="removeMember();"> 탈퇴하기</button>
+                            <button class="col text-center mb-5 btn btn-primary deleteBtn"  id="delete_btn" type="button" onclick="removeMember();"> 탈퇴하기</button>
 
                             <button class="col text-center mb-5 btn btn-primary2" onclick="cancel()">취소</button>
                         </div>
@@ -126,8 +146,6 @@
             }
         });
     }
-
-
 
     function cancel() {
         window.location.href = '/review';

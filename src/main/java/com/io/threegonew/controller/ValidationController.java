@@ -31,5 +31,20 @@ public class ValidationController {
     }
 
 
+    @GetMapping("/checkDuplicateEmail")
+    public ResponseEntity<Boolean> checkDuplicateEmail(@RequestParam(name = "email") String email){
+        System.out.println("email에 대한 요청이 수신되었습니다:" + email);
+        boolean isDuplicate = userService.isEmailDuplicate(email);
+
+        if(isDuplicate) {
+            System.out.println("중복된 이메일이 감지되었습니다." +  email);
+            return ResponseEntity.ok(true);
+        }
+        else{
+            System.out.println("사용가능이메일" + email);
+            return ResponseEntity.ok(false);
+        }
+    }
+
 
 }
