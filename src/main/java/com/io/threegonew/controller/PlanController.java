@@ -267,6 +267,132 @@ public class PlanController {
         }
     }
 
+    /** 수정 메서드 구현해야됨 **/
+//    @PostMapping(value = "/api/editplans/{plannerId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Map<String, Long>> updatePlan(@RequestBody CompletePlannerRequest request) {
+//
+//        String plannerName = request.getPlannerName();
+//        LocalDate startDate = request.getStartDate();
+//        LocalDate endDate = request.getEndDate();
+//        List<AddPlanRequest> places = request.getPlans();
+//
+//        try {
+//            // 여기서 날짜와 플래너 이름을 받아서 사용할 수 있습니다.
+//            System.out.println("Planner Name: " + plannerName);
+//            System.out.println("Start Date: " + startDate);
+//            System.out.println("End Date: " + endDate);
+//
+//            // 현재 사용자의 인증 정보를 가져옴
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            // 인증 정보에서 사용자 아이디를 추출
+//            String userId = authentication.getName();
+//            System.out.println(userId);
+//
+//            // 해당 플래너의 기존 계획을 불러옴
+//            List<Plan> existingPlans = planService.findByPlannerId(plannerId); // 이 메서드는 필요에 따라 구현되어야 함
+//
+//            // 기존 계획을 삭제
+//            planService.deleteByPlannerId(plannerId); // 이 메서드도 필요에 따라 구현되어야 함
+//
+//            // 플래너를 업데이트하고 식별자를 반환
+//            Planner planner = plannerService.update(plannerId, plannerName, startDate, endDate, userId);
+//
+//            if (planner == null) {
+//                // 업데이트에 실패한 경우 처리
+//                System.out.println("planner 업데이트 실패~~~");
+//                return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
+//            } else {
+//                for(AddPlanRequest place: places) {
+//                    place.setUserId(userId);
+//                    place.setPlannerId(plannerId);
+//                    planService.save(place, userId); // 저장된 엔터티 반환
+//                }
+//            }
+//
+//            return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
+//        }
+//    }
+
+
+    @GetMapping("/edit")
+    public String EditYourPlan ( @RequestParam(name = "p_id") Long plannerId, Model model) {
+        // 현재 사용자의 인증 정보를 가져옴
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = "";
+
+        if (principal.equals("anonymousUser")) {
+            userId = "anonymousUser";
+        }else {
+            UserDetails userDetails = (UserDetails)principal;
+            userId = userDetails.getUsername();
+        }
+
+        System.out.println("plannerId : " + plannerId); // 플래너 아이디 확인
+        String plannerName = plannerService.findPlanner(plannerId).getPlannerName(); // 플래너 이름
+        List<Plan> plans = planService.findByPlannerId(plannerId); // 플랜
+
+        // plannerId에 해당하는 planner의 날짜 계산하기
+        Planner optionalPlanner = plannerService.findPlanner(plannerId);
+        LocalDate startLocalDate = optionalPlanner.getStartDate();
+        LocalDate endLocalDate = optionalPlanner.getEndDate();
+        String startDate = startLocalDate.toString();
+        String endDate = endLocalDate.toString();
+        long daysBetween = ChronoUnit.DAYS.between(startLocalDate, endLocalDate) + 1;
+
+        System.out.println(startDate);
+        System.out.println(endDate);
+        System.out.println(daysBetween);
+
+        // 1부터 daysBetween까지의 숫자 목록 생성
+        List<Integer> dayNumbers = new ArrayList<>();
+        for (int i = 1; i <= daysBetween; i++) {
+            dayNumbers.add(i);
+        }
+
+        // plannerId가 일치하는 planList 찾기
+        List<TourItem> planList = new ArrayList<>();
+
+        for (Plan plan : plans) {
+            planList.add(plan.getTourItem());
+        }
+
+        model.addAttribute("userId", userId);
+        model.addAttribute("plans", plans);
+        model.addAttribute("plannerId", plannerId);
+        model.addAttribute("plannerName", plannerName);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("daysBetween", daysBetween);
+        model.addAttribute("dayNumbers", dayNumbers);
+
+        TourItemSelectRequest tourItemSelectRequest = buildTourItemSelectRequest();
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(tourItemSelectRequest);
+
+
+        /* 선택한 지역의 내 북마크 목록 조회 테스트용 코드*/
+
+        PageResponse myPageResponse = tourItemService.findMyBookmark(MyPageRequest.builder()
+                .userId(userId)
+                .build());
+
+        model.addAttribute("myPageResponse", myPageResponse);
+        model.addAttribute("userId", userId);
+        model.addAttribute("areaList", tourItemService.findAreaList());
+        model.addAttribute("cat1List", tourItemService.findCat1List());
+        model.addAttribute("cat2List", new ArrayList<Cat2>());
+        model.addAttribute("cat3List", new ArrayList<Cat3>());
+        model.addAttribute("sigunguList", new ArrayList<Sigungu>());
+        model.addAttribute("contentTypeList", tourItemService.findContentTypeList());
+        model.addAttribute("selectedArea", "전체");
+        model.addAttribute("pageResponse", pageResponse);
+
+        return "plan/edit";
+
+    }
+
     @GetMapping("/show")
     public String ShowYourPlan (
                                     @RequestParam(name = "p_id") Long plannerId,
@@ -352,17 +478,6 @@ public class PlanController {
 
         return "plan/showplan";
     }
-
-//    @DeleteMapping(value = "/api/delete/{plannerId}")
-//    public ResponseEntity<String> deletePlanner(@PathVariable Long plannerId) {
-//        try {
-//            plannerService.deletePlannerAndRelatedPlans(plannerId);
-//            return ResponseEntity.ok().body("플래너와 관련된 일정이 성공적으로 삭제되었습니다");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.badRequest().body("플래너와 관련된 일정을 삭제하는 데 실패했습니다");
-//        }
-//    }
 
     @PostMapping(value = "/api/delete/{plannerId}")
     public ResponseEntity<String> updatePlannerDeleteFlag(@PathVariable Long plannerId) {

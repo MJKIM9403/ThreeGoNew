@@ -41,6 +41,12 @@ public class MyPlanApiController {
         return new ResponseEntity<>(planDTOs, HttpStatus.OK);
     }
 
+    @PostMapping("/allShowplan")
+    public ResponseEntity<List<PlanDTO<TourItemResponse>>> allShowPlan(@RequestBody PlanRequest request) {
+        List<PlanDTO<TourItemResponse>> planDTOs = planService.findByPlannerId(request);
+        return new ResponseEntity<>(planDTOs, HttpStatus.OK);
+    }
+
     // 플래너 공유하기
     @PostMapping("/sharePlanner")
     public ResponseEntity<?> sharePlanner(@RequestBody SharePlannerRequest request) {

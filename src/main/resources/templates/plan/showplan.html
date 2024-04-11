@@ -203,6 +203,7 @@
 
         openShareModal();
         deletePlanner();
+        editPlanner();
         searchUser();
         share();
         deleteList();
@@ -217,6 +218,16 @@
                 alert("공유 권한이 없습니다.");
             } else {
                 $('#shareModal').modal('show');
+            }
+        })
+    }
+
+    function editPlanner() {
+        $('.edit-planner-btn').click(function () {
+            if(isWriter == false) {
+                alert('수정 권한이 없습니다.');
+            } else {
+                window.location.href = "/plan/edit?p_id=" + plannerId;
             }
         })
     }
@@ -457,16 +468,18 @@
     }
 
     // 계획을 표시하는 함수
-    function displayPlan(planList) {
+    function displayPlan(planList, day) {
         $('.plan').empty(); // 계획을 비우고 다시 채움
+
         let currentDay = 0; // 현재의 'day'를 추적
 
         $.each(planList, function(index, plan) {
-            // 새로운 일차가 시작될 때만 일차 정보를 출력
+            // 새로운 일자가 시작될 때만 일자 정보를 출력
             if (plan.day !== currentDay) {
                 var dayTemplate = `<h4 class="mb-1">${plan.day}일차</h4>`;
                 $('.plan').append(dayTemplate);
                 currentDay = plan.day; // 일차 업데이트
+
             }
 
             // dtoList의 각 항목에 대한 정보 출력
@@ -495,7 +508,6 @@
                             `;
                 $('.plan').append(template);
 
-
                 place = {
                     title: dto.title,
                     contentid: dto.contentid,
@@ -507,15 +519,15 @@
 
                 // 중복이 아닐 경우에만 관광지 목록에 내가 선택한 관광지를 추가한다.
                 places[plan.day - 1].push(place);
-                for(var i = 0; i<places[plan.day - 1].length; i++) {
-                    addMarker(i+1, places[plan.day - 1][i])
-                }
+                addMarker(index+1, place);
             });
         });
     }
 
+
     // 마커 추가하기 함수
     function addMarker(status, info) {
+
         // status 에 따라 아이콘 바꾸기
         imgUrl = `https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_${status}.png`;
 
@@ -540,9 +552,6 @@
             }
             map.fitBounds(PTbounds);
         }
-
-
-
     }
 
 

@@ -94,28 +94,6 @@ public class PlannerService {
         return planner; // 저장된 엔터티 반환
     }
 
-    public void deletePlannerAndRelatedPlans(Long plannerId) {
-
-        // Planner에 속한 모든 Team을 조회합니다.
-        List<Team> teams = teamRepository.findByPlannerPlannerId(plannerId);
-
-        // 조회된 모든 Team을 삭제합니다.
-        for (Team team : teams) {
-            teamRepository.delete(team);
-        }
-
-        // Planner에 속한 모든 Plan을 조회합니다.
-        List<Plan> plans = planRepository.findByPlannerId(plannerId);
-
-        // 조회된 모든 Plan을 삭제합니다.
-        for (Plan plan : plans) {
-            planRepository.delete(plan);
-        }
-
-        // 마지막으로 Planner를 삭제합니다.
-        plannerRepository.deleteById(plannerId);
-    }
-
     public void updatePlannerDeleteFlag(Long plannerId) {
         // Planner를 조회합니다.
         Optional<Planner> optionalPlanner = plannerRepository.findById(plannerId);

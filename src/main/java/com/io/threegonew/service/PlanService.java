@@ -99,6 +99,26 @@ public class PlanService {
         return planDTOs;
     }
 
+    public List<PlanDTO<TourItemResponse>> findByPlannerId(PlanRequest planRequest) {
+        Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId())
+                .orElseThrow(() -> new IllegalArgumentException("Planner not found"));
+        List<Plan> plans = planRepository.findByPlannerId(planner.getPlannerId());
+
+        List<PlanDTO<TourItemResponse>> planDTOs = plans.stream().map(plan -> {
+            // TourItemResponse 정보를 받아와서 dtoList에 추가
+            List<TourItemResponse> tourItemResponse = Collections.singletonList(tourItemMapper(plan.getTourItem()));
+
+            return PlanDTO.<TourItemResponse>builder()
+                    .planId(plan.getPlanId())
+                    .plannerId(plan.getPlannerId())
+                    .day(plan.getDay())
+                    .order(plan.getOrder())
+                    .dtoList(tourItemResponse)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return planDTOs;
+    }
 
 
     public List<Area> findAllAreas() {
