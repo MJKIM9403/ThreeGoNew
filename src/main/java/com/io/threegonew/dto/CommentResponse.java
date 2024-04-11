@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,4 +18,6 @@ public class CommentResponse {
     private Integer group;
     private Integer childrenCount;
     private Boolean cmtDel;
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
 }

@@ -57,6 +57,39 @@
     background: #fff;  /*스크롤바 뒷 배경 색상*/
 }
 
+/* 댓글, 좋아요, 조회수 아이콘 */
+.small-review-icons {
+    padding: 5pt 0;
+    justify-content: flex-end;
+    margin-right: 5px;
+    font-size: 1.2rem;
+}
+
+.small-review-icons .like-btn::before {
+    cursor: pointer;
+}
+
+    /* 댓글 리스트 */
+.comment-info {
+    justify-content: center;
+    align-items: center;
+}
+
+.comment-text {
+    margin-left: 10px;
+    width: calc(100% - 35px - 10px);
+}
+
+.comment-writer {
+    font-weight: 600;
+}
+
+.no-comment-msg {
+    color: #999999;
+    justify-content: center;
+}
+
+/* 댓글 작성란 */
 #my-comment-wrap {
     width: 100%;
 }
@@ -73,6 +106,12 @@
     padding: 5px;
     width: 70px;
 }
+
+#login-user-name {
+    font-weight: 600;
+}
+
+/* 관광지 정보 미리보기 */
 #touritem-wrap {
     padding: 5px;
     position: absolute;

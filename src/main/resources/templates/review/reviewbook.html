@@ -365,7 +365,7 @@
                                 <i class="like-btn bi" th:classappend="${review.likeState ? 'bi-star-fill' : 'bi-star'}" th:data-review-id="${review.reviewId}"></i>
                             </div>
 
-                            <p class="like-count text-muted card-text" th:text="|${review.likeCount} 명이 이 리뷰를 좋아합니다.|"></p>
+                            <p class="like-count text-muted card-text" th:data-review-id="${review.reviewId}" th:text="|${review.likeCount} 명이 이 리뷰를 좋아합니다.|"></p>
                             <div class="review-content" th:utext="${review.reviewContent}"></div>
                             <div class="card-text"><small class="text-muted" th:text="|댓글 ${review.commentCount}개|"></small></div>
                             <div class="card-text show-more" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">자세히 보기</small></div>
@@ -441,30 +441,25 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div id="contents-wrap" class="mb-3">
-                                    <div id="content" class="mb-2">
+                                <div id="contents-wrap" class="mb-2">
+                                    <div id="content" class="mb-4">
                                     </div>
                                     <div id="comment-wrap">
-                                        <div class="comment-info d-flex justify-content-start mb-1">
+                                        <div class="comment-info d-flex mb-2">
                                             <div class="rounded-circle icon-img comment-profile">
                                                 <img src="../assets/img/profile.jpg" alt="...">
                                             </div>
-                                            <span class="comment-writer ms-2">댓글1</span>
-                                            <span class="comment-text ms-4">우와~</span>
-                                        </div>
-                                        <div class="comment-info  d-flex justify-content-start mb-1">
-                                            <div class="rounded-circle icon-img comment-profile">
-                                                <img src="../assets/img/profile.jpg" alt="...">
+                                            <div class="comment-text">
+                                                <span class="comment-writer me-3">댓글 아이디</span>
+                                                <span class="comment-content">댓글 내용</span>
                                             </div>
-                                            <span class="comment-writer ms-2">댓글2</span>
-                                            <span class="comment-text ms-4">정말 데단해</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="review-icons d-flex gap-3">
-                                    <i class="bi bi-chat-square-dots"> 120</i>
-                                    <i class="like-btn bi bi-star"> 2334</i>
-                                    <i class="bi bi-eye"> 2.3k</i>
+                                <div class="small-review-icons d-flex gap-2">
+                                    <i class="bi bi-chat-square-dots"></i><span class="comment-count">120</span>
+                                    <i class="like-btn bi bi-star"></i><span class="like-count">2334</span>
+                                    <i class="bi bi-eye"></i><span class="view-count">2.3k</span>
                                 </div>
                                 <div id="my-comment-wrap" class="d-flex align-items-start">
                                     <div class="rounded-circle icon-img">
@@ -690,7 +685,8 @@
         let idx = $(this).closest('.gallery-item').index();
 
         if(loginUserId == 'anonymousUser'){
-            alert('좋아요는 로그인 후 사용하실 수 있습니다.')
+            alert('좋아요는 로그인 후 사용하실 수 있습니다.');
+            location.href = '../login'
         }else {
             $.ajax({
                 url : `/api/likes/${reviewId}`,
@@ -699,13 +695,18 @@
                     const likeCount = result.likeCount;
                     const likeState = result.likeState;
                     if(likeState){
-                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).removeClass("bi-star");
-                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).addClass("bi-star-fill");
+                        $(`.review-icons > .like-btn[data-review-id="${reviewId}"]`).removeClass("bi-star");
+                        $(`.review-icons > .like-btn[data-review-id="${reviewId}"]`).addClass("bi-star-fill");
+                        $('.small-review-icons .like-btn').removeClass("bi-star");
+                        $('.small-review-icons .like-btn').addClass("bi-star-fill");
                     }else {
-                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).removeClass("bi-star-fill");
-                        $(`.gallery-item:eq(${idx}) > .card-body > .review-icons > .like-btn`).addClass("bi-star");
+                        $(`.review-icons > .like-btn[data-review-id="${reviewId}"]`).removeClass("bi-star-fill");
+                        $(`.review-icons > .like-btn[data-review-id="${reviewId}"]`).addClass("bi-star");
+                        $('.small-review-icons .like-btn').removeClass("bi-star-fill");
+                        $('.small-review-icons .like-btn').addClass("bi-star");
                     }
-                    $(`.gallery-item:eq(${idx}) > .card-body > .like-count`).html(`${likeCount} 명이 이 리뷰를 좋아합니다.`);
+                    $(`.gallery-item > .card-body > .like-count[data-review-id="${reviewId}"]`).html(`${likeCount} 명이 이 리뷰를 좋아합니다.`);
+                    $('.small-review-icons .like-count').html(likeCount)
                 },
                 error : function (err) {
                     console.log(err)
@@ -764,7 +765,10 @@
             if(loginUserProfile != null){
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
-            loadDetailReview(reviewId)
+            loadDetailReview(reviewId);
+            showComments(reviewId);
+            showAllCommentsCount(reviewId);
+            postNewComment(reviewId);
         });
     }
     function loadDetailReview(reviewId){
@@ -826,11 +830,181 @@
                 }else {
                     $('.viewSwiper .swiper-controller').hide()
                 };
+                $('.small-review-icons .view-count').html(findReview.viewCount)
             },
             error : function (){
                 alert("리뷰 정보 조회에 실패했습니다.")
             }
         })
+        $.ajax({
+            url : `/api/likes/${reviewId}`,
+            type : 'GET',
+            success : function (result){
+                const likeCount = result.likeCount;
+                const likeState = result.likeState;
+                $('.small-review-icons .like-btn').data('review-id',reviewId);
+                $('.small-review-icons .like-count').html(likeCount);
+                if(likeState){
+                    $('.small-review-icons .like-btn').removeClass("bi-star");
+                    $('.small-review-icons .like-btn').addClass("bi-star-fill");
+                }else {
+                    $('.small-review-icons .like-btn').removeClass("bi-star-fill");
+                    $('.small-review-icons .like-btn').addClass("bi-star");
+                }
+
+            },
+            error : function (err){
+                console.log(err)
+            }
+        })
+    }
+
+    // 댓글 리스트 조회
+    function showComments(reviewId) {
+        $.ajax({
+            url : '/api/comments',
+            type : 'GET',
+            data : {
+                reviewId: reviewId
+            },
+            success : function (result){
+                let commentList = result.dtoList;
+                $('#comment-wrap').html("");
+                if(commentList.length > 0){
+                    $.Each(commentList, function (index, comment){
+                        let profileImg;
+                        let regDate = comment.regDate;
+                        if(comment.writer.profileImg == null){
+                            profileImg = '../assets/img/profile.jpg';
+                        }else {
+                            profileImg = `/api/image/profile/${comment.writer.profileImg}`;
+                        }
+                        if(comment.modDate != null){
+                            regDate = comment.modDate;
+                        }
+                        let tempHtml =
+                            '<div class="comment-info d-flex mb-2">' +
+                                '<div class="rounded-circle icon-img comment-profile">' +
+                                    `<img src="${profileImg}" alt="...">` +
+                                '</div>' +
+                                `<div class="comment-text" data-comment-id="${comment.commentId}">` +
+                                    `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
+                                    `<span class="comment-content">${comment.content}</span>` +
+                                    '<div class="d-flex justify-content-start gap-2">' +
+                                        `<span class="comment-regdate">${regDate}</span>` +
+                                        '<span class="reply-btn">답글쓰기</span>' +
+                                    '</div>' +
+                                    `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>` +
+                                '</div>' +
+                            '</div>';
+
+                        $('#comment-wrap').append(tempHtml);
+                    })
+                }else {
+                    let tempHtml =
+                        '<div class="no-comment-msg d-flex mb-2">아직 등록된 리뷰가 없습니다.</div>';
+                    $('#comment-wrap').append(tempHtml);
+                }
+            },
+            error : function (err) {
+                console.log(err);
+                alert("댓글 정보 조회에 실패하였습니다.")
+            }
+        })
+    }
+
+    // 댓글 갯수 조회
+    function showAllCommentsCount(reviewId){
+        $.ajax({
+            url : '/api/comments/count',
+            type : 'GET',
+            data : {
+                reviewId : reviewId
+            },
+            success : function (count){
+                $('.small-review-icons .comment-count').html(count);
+            },
+            error : function (err){
+                console.log(err);
+            }
+        })
+    }
+
+    // 댓글 작성
+    function postNewComment(reviewId) {
+        $('#comment-btn').click(function (){
+            let content = $('#comment-content').val();
+            $.ajax({
+                url : '/api/comments',
+                type : 'POST',
+                data : JSON.stringify({
+                    reviewId : reviewId,
+                    content : content
+                }),
+                contentType : 'application/json; charset=UTF-8',
+                success : function (){
+                    $('.no-comment-msg').remove();
+                    showRecentComment(reviewId);
+                },
+                error : function (){
+                    alert("댓글 등록에 실패하였습니다.");
+                }
+            })
+        })
+    }
+
+    function showRecentComment(reviewId) {
+        let lastCommentId = $('.comment-text').first().data('content-id');
+        console.log(lastCommentId);
+        if(lastCommentId === undefined){
+            showComments(reviewId);
+        }else {
+            $.ajax({
+                url : '/api/comments/recent',
+                type : 'GET',
+                data : {
+                    reviewId : reviewId,
+                    lastCommentId : lastCommentId
+                },
+                success : function (result){
+                    let commentList = result.dtoList;
+                    if(commentList.length > 0) {
+                        $.Each(commentList, function (index, comment) {
+                            let profileImg;
+                            let regDate = comment.regDate;
+                            if (comment.writer.profileImg == null) {
+                                profileImg = '../assets/img/profile.jpg';
+                            } else {
+                                profileImg = `/api/image/profile/${comment.writer.profileImg}`;
+                            }
+                            if (comment.modDate != null) {
+                                regDate = comment.modDate;
+                            }
+                            let tempHtml =
+                                '<div class="comment-info d-flex mb-2">' +
+                                '<div class="rounded-circle icon-img comment-profile">' +
+                                `<img src="${profileImg}" alt="...">` +
+                                '</div>' +
+                                `<div class="comment-text" data-comment-id="${comment.commentId}">` +
+                                `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
+                                `<span class="comment-content">${comment.content}</span>` +
+                                '<div class="d-flex justify-content-start gap-2">' +
+                                `<span class="comment-regdate">${regDate}</span>` +
+                                '<span class="reply-btn">답글쓰기</span>' +
+                                '</div>' +
+                                `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>` +
+                                '</div>' +
+                                '</div>';
+
+                            $('#comment-wrap').prepend(tempHtml);
+                        })
+                    }
+                },
+                error : function (){
+                    alert("댓글 등록에 실패하였습니다.")
+                }
+            })
+        }
     }
 
     // 리뷰 뷰어에서 관광지 정보 조회

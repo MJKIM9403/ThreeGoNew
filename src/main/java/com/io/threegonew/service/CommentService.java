@@ -14,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -107,6 +110,26 @@ public class CommentService {
     }
 
     @Transactional
+    public List<CommentResponse> getRecentComments(Long reviewId, Long lastCommentId){
+        Comment lastComment = getComment(lastCommentId);
+        LocalDateTime lastRegDate = lastComment.getRegDate();
+
+        List<CommentResponse> recentComments = commentRepository.findRecentComments(reviewId, lastRegDate)
+                                                                .stream()
+                                                                .map(this::commentMapper)
+                                                                .collect(Collectors.toList());
+        return recentComments;
+    }
+
+    @Transactional
+    public Boolean hasNewComments(Long reviewId, Long lastCommentId){
+        Comment lastComment = getComment(lastCommentId);
+        LocalDateTime lastRegDate = lastComment.getRegDate();
+
+        return commentRepository.existNewComments(reviewId, lastRegDate);
+    }
+
+    @Transactional
     public PageResponse getReplies(CommentRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
@@ -124,8 +147,17 @@ public class CommentService {
         return pageResponse;
     }
 
+    @Transactional
+    public Long getAllCommentsCount(Long reviewId){
+        return commentRepository.countCommentsByReviewId(reviewId);
+    }
+
     private CommentResponse commentMapper(Comment comment){
         Integer childrenCount = commentRepository.countReplies(comment.getReviewId(), comment.getGroup()).intValue();
+        LocalDateTime modDate = null;
+        if(comment.getModDate() != null){
+            modDate = comment.getModDate();
+        }
 
         return CommentResponse.builder()
                 .commentId(comment.getCommentId())
@@ -134,10 +166,16 @@ public class CommentService {
                 .group(comment.getGroup())
                 .childrenCount(childrenCount)
                 .cmtDel(comment.getCmtDel())
+                .regDate(comment.getRegDate())
+                .modDate(modDate)
                 .build();
     }
 
     private ReplyResponse replyMapper(Comment reply) {
+        LocalDateTime modDate = null;
+        if(reply.getModDate() != null){
+            modDate = reply.getModDate();
+        }
         return ReplyResponse.builder()
                 .commentId(reply.getCommentId())
                 .writer(userInfoMapper(reply.getWriter()))
@@ -146,6 +184,8 @@ public class CommentService {
                 .parentId(reply.getParent().getCommentId())
                 .patentWriterId(reply.getParent().getWriter().getId())
                 .cmtDel(reply.getCmtDel())
+                .regDate(reply.getRegDate())
+                .modDate(modDate)
                 .build();
     }
 

@@ -4,6 +4,9 @@ import com.io.threegonew.domain.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface CommentRepositoryCustom {
     Integer maxGroup(Long reviewId);
 
@@ -12,6 +15,10 @@ public interface CommentRepositoryCustom {
     Page<Comment> findComments(Pageable pageable, Long reviewId);
 
     Long countComments(Long reviewId);
+
+    List<Comment> findRecentComments(Long reviewId, LocalDateTime lastRegDate);
+
+    Boolean existNewComments(Long reviewId, LocalDateTime lastRegDate);
 
     Page<Comment> findReplies(Pageable pageable, Long reviewId, Integer group);
 
