@@ -5,7 +5,7 @@
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 
--- 이미 플래너, 플랜, 팀 테이블을 추가했다면 P_DEL 컬럼을 추가해주세요 --
+-- 이미 플래너, 플랜, 팀 테이블을 추가했다면 P_DEL 컬럼을 추가해주세요 04/11--
 alter table planner add p_del BOOLEAN default '0' not null;
 alter table plan add p_del BOOLEAN default '0' not null;
 alter table team add t_del BOOLEAN default '0' not null;
