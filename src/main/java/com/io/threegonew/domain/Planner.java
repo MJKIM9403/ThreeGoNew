@@ -33,19 +33,27 @@ public class Planner {
 //    @Temporal(TemporalType.DATE)
     private LocalDate endDate;
 
+    @Column(name = "p_del", nullable = false)
+    private Boolean plannerDelete;
+
     @OneToMany(mappedBy = "planner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Team> sharedUsers = new ArrayList<>();
 
 
     @Builder
-    public Planner(String userId, String plannerName, LocalDate startDate, LocalDate endDate) {
+    public Planner(String userId, String plannerName, LocalDate startDate, LocalDate endDate, Boolean plannerDelete) {
         this.userId = userId;
         this.plannerName = plannerName;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.plannerDelete = plannerDelete;
     }
 
     public void update(String plannerName) {
         this.plannerName = plannerName;
+    }
+
+    public void updateDelete() {
+        this.plannerDelete = true;
     }
 }

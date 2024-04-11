@@ -277,8 +277,10 @@ public class PlanController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
 
-        System.out.println("plannerId : " + plannerId);
-        List<Plan> plans = planService.findByPlannerId(plannerId);
+        System.out.println("plannerId : " + plannerId); // 플래너 아이디 확인
+        String plannerName = plannerService.findPlanner(plannerId).getPlannerName(); // 플래너 이름
+        List<Plan> plans = planService.findByPlannerId(plannerId); // 플랜
+
 
 
         // plannerId에 해당하는 planner의 날짜 계산하기
@@ -332,6 +334,7 @@ public class PlanController {
         model.addAttribute("userId", userId);
         model.addAttribute("plans", plans);
         model.addAttribute("plannerId", plannerId);
+        model.addAttribute("plannerName", plannerName);
         model.addAttribute("daysBetween", daysBetween);
         model.addAttribute("guestList", guestList);
         model.addAttribute("teamList", teamList);
@@ -350,17 +353,26 @@ public class PlanController {
         return "plan/showplan";
     }
 
-    @DeleteMapping(value = "/api/delete/{plannerId}")
-    public ResponseEntity<String> deletePlanner(@PathVariable Long plannerId) {
+//    @DeleteMapping(value = "/api/delete/{plannerId}")
+//    public ResponseEntity<String> deletePlanner(@PathVariable Long plannerId) {
+//        try {
+//            plannerService.deletePlannerAndRelatedPlans(plannerId);
+//            return ResponseEntity.ok().body("플래너와 관련된 일정이 성공적으로 삭제되었습니다");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.badRequest().body("플래너와 관련된 일정을 삭제하는 데 실패했습니다");
+//        }
+//    }
+
+    @PostMapping(value = "/api/delete/{plannerId}")
+    public ResponseEntity<String> updatePlannerDeleteFlag(@PathVariable Long plannerId) {
         try {
-            plannerService.deletePlannerAndRelatedPlans(plannerId);
-            return ResponseEntity.ok().body("플래너와 관련된 일정이 성공적으로 삭제되었습니다");
+            plannerService.updatePlannerDeleteFlag(plannerId);
+            return ResponseEntity.ok().body("플래너와 관련된 삭제 플래그가 성공적으로 수정되었습니다");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("플래너와 관련된 일정을 삭제하는 데 실패했습니다");
+            return ResponseEntity.badRequest().body("플래너와 관련된 삭제 플래그를 수정하는 데 실패했습니다");
         }
     }
-
-
 }
 
