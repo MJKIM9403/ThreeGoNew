@@ -41,7 +41,7 @@
 
 #contents-wrap {
     width: 100%;
-    max-height: 575px;
+    max-height: 540px;
     overflow-y: scroll;
     transition: all 0.2s ease-in-out;
 }
@@ -55,6 +55,10 @@
 }
 #contents-wrap::-webkit-scrollbar-track {
     background: #fff;  /*스크롤바 뒷 배경 색상*/
+}
+
+#content {
+    margin-bottom: 4rem;
 }
 
 /* 댓글, 좋아요, 조회수 아이콘 */
@@ -73,6 +77,7 @@
 .comment-info {
     justify-content: center;
     align-items: flex-start;
+    margin-bottom: 0.8rem;
 }
 
 .comment-text {
@@ -89,6 +94,29 @@
     justify-content: center;
 }
 
+.reply-btn {
+    color: #888888;
+    font-size: 0.9rem;
+}
+
+.reply-btn:hover {
+    color: #007aff;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.reply-wrap {
+    margin-left: 10pt;
+    width: calc(100% - 10pt);
+}
+
+.more-reply-btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 /* 댓글 작성란 */
 #my-comment-wrap {
     width: 100%;
@@ -99,9 +127,12 @@
 }
 #comment-content {
     transition: all 0.2s ease-in-out;
-    height: 1.2rem;
+    height: 50px;
     resize: none;
+    padding: 0.3rem 0.5rem;
+    overflow-y: scroll;
 }
+
 #comment-btn {
     padding: 5px;
     width: 70px;
@@ -109,6 +140,19 @@
 
 #login-user-name {
     font-weight: 600;
+}
+
+.invisible-parent-writer {
+    display: none;
+}
+
+.parent-writer {
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: #666666;
+    padding-right: 10pt;
+    box-sizing: content-box;
 }
 
 /* 관광지 정보 미리보기 */

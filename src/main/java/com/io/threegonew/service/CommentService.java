@@ -153,7 +153,7 @@ public class CommentService {
     }
 
     private CommentResponse commentMapper(Comment comment){
-        String content = comment.getContent().replace("\r\n","<br/>");
+        String content = (comment.getContent()).replace("\r\n","<br/>");
         Integer childrenCount = commentRepository.countReplies(comment.getReviewId(), comment.getGroup()).intValue();
         LocalDateTime modDate = null;
         if(comment.getModDate() != null){
@@ -173,7 +173,7 @@ public class CommentService {
     }
 
     private ReplyResponse replyMapper(Comment reply) {
-        String content = reply.getContent().replace("\r\n","<br/>");
+        String content = (reply.getContent()).replace("\r\n","<br/>");
         LocalDateTime modDate = null;
         if(reply.getModDate() != null){
             modDate = reply.getModDate();

@@ -367,7 +367,7 @@
 
                             <p class="like-count text-muted card-text" th:data-review-id="${review.reviewId}" th:text="|${review.likeCount} 명이 이 리뷰를 좋아합니다.|"></p>
                             <div class="review-content" th:utext="${review.reviewContent}"></div>
-                            <div class="card-text"><small class="text-muted" th:text="|댓글 ${review.commentCount}개|"></small></div>
+                            <div class="card-text"><small class="text-muted comment-count" th:data-review-id="${review.reviewId}" th:text="|댓글 ${review.commentCount}개|"></small></div>
                             <div class="card-text show-more" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">자세히 보기</small></div>
                         </div>
                     </div>
@@ -442,7 +442,7 @@
                                     </div>
                                 </div>
                                 <div id="contents-wrap" class="mb-2">
-                                    <div id="content" class="mb-4">
+                                    <div id="content">
                                     </div>
                                     <div id="comment-wrap">
                                         <div class="comment-info d-flex mb-2">
@@ -467,8 +467,9 @@
                                     </div>
                                     <div id="comment-area" class="ms-2">
                                         <div id="login-user-name" class="mb-2">작성자 이름</div>
+                                        <span class="invisible-parent-writer"></span>
                                         <div class="d-flex gap-1">
-                                            <textarea id="comment-content" class="form-control"></textarea>
+                                            <div contenteditable="true" id="comment-content" class="form-control"></div>
                                             <button id="comment-btn" type="button" class="btn btn-outline-secondary">등록</button>
                                         </div>
                                     </div>
@@ -684,7 +685,7 @@
         let reviewId = $(this).data('review-id');
         let idx = $(this).closest('.gallery-item').index();
 
-        if(loginUserId == 'anonymousUser'){
+        if(loginUserId === 'anonymousUser'){
             alert('좋아요는 로그인 후 사용하실 수 있습니다.');
             location.href = '../login'
         }else {
@@ -741,8 +742,9 @@
         mousewheel: true,
         keyboard: true,
     });
+
     function openViewer(reviewId) {
-        let loginUserName = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
+        let loginUserId = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
         let promise = new Promise((resolve) => {
             $.ajax({
@@ -761,7 +763,7 @@
         });
         promise.then(() => {
             $('#viewer').modal('show');
-            $('#login-user-name').text(loginUserName);
+            $('#login-user-name').text(loginUserId);
             if(loginUserProfile != null){
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
@@ -769,6 +771,9 @@
             showComments(reviewId);
             showAllCommentsCount(reviewId);
             postNewComment(reviewId);
+            parentId = null;
+            $('.invisible-parent-writer').html("");
+            $('.parent-writer').remove();
         });
     }
     function loadDetailReview(reviewId){
@@ -799,7 +804,7 @@
                 if(writer.profileImg != null){
                     $('#writer-profile-img').attr('src','/api/image/profile/' + writer.profileImg);
                 }
-                $('#content').html(findReview.reviewContent);
+                $('#content').html((findReview.reviewContent).replace(/\r\n/g,"<br/>"));
                 if(findReview.reviewBookId == null){
                     $('#review-book-info').removeClass('d-flex').hide();
                 }else {
@@ -889,18 +894,18 @@
                                         `<img src="${profileImg}" alt="...">` +
                                     '</div>' +
                                     `<div class="comment-text" data-comment-id="${comment.commentId}">` +
-                                        `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
-                                        `<span class="comment-content">${comment.content}</span>` +
-                                        '<div class="d-flex justify-content-start gap-2">' +
+                                        '<div class="d-flex justify-content-between gap-2">' +
+                                            `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
                                             `<span class="comment-regdate">${regDate}</span>` +
-                                            '<span class="reply-btn">답글쓰기</span>' +
                                         '</div>' +
+                                        `<span class="comment-content">${comment.content}</span>` +
+                                        `<span class="reply-btn ms-3" data-parent-writer="${comment.writer.id}" data-parent-id="${comment.commentId}">답글쓰기</span>` +
                                     '</div>' +
                                 '</div>';
                         if(comment.childrenCount > 0){
-                            tempHtml += `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>`
+                            tempHtml += `<div class="more-reply-btn">답글 더 보기(${comment.childrenCount}개)</div>`
                         }
-                        tempHtml += '</div>';
+                        tempHtml += '<div class="reply-wrapper"></div></div>';
 
                         $('#comment-wrap').append(tempHtml);
                     })
@@ -919,6 +924,8 @@
 
     // 댓글 갯수 조회
     function showAllCommentsCount(reviewId){
+        let test = $(`small.comment-count[data-review-id="${reviewId}"]`).html();
+        console.log(test)
         $.ajax({
             url : '/api/comments/count',
             type : 'GET',
@@ -927,6 +934,7 @@
             },
             success : function (count){
                 $('.small-review-icons .comment-count').html(count);
+                $(`small.comment-count[data-review-id="${reviewId}"]`).html(`댓글 ${count}개`);
             },
             error : function (err){
                 console.log(err);
@@ -934,32 +942,84 @@
         })
     }
 
+    let parentId = null;
+
     // 댓글 작성
     function postNewComment(reviewId) {
         $('#comment-btn').off('click').on('click', function (){
-            let content = $('#comment-content').val();
-            $.ajax({
-                url : '/api/comments',
-                type : 'POST',
-                data : JSON.stringify({
+            let loginUserId = [[${loginUser.id}]];
+
+            if(loginUserId === 'anonymousUser'){
+                alert('댓글은 로그인 후 등록하실 수 있습니다.');
+                location.href = '../login'
+            }else {
+                let content = $('#comment-content').html();
+                content = content.replace(/<input.*?>/s, "")
+                content = content.replace(/<div>/g,'\r\n');
+                content = content.replace(/<\/div>/g,'');
+
+                let data = {
                     reviewId : reviewId,
                     content : content
-                }),
-                contentType : 'application/json; charset=UTF-8',
-                success : function (){
-                    $('.no-comment-msg').remove();
-                    showRecentComment(reviewId);
-                    $('#comment-content').val("");
-                },
-                error : function (){
-                    alert("댓글 등록에 실패하였습니다.");
                 }
-            })
+
+                if(parentId != null){
+                    data.parentId = parentId;
+                }
+
+                $.ajax({
+                    url : '/api/comments',
+                    type : 'POST',
+                    data : JSON.stringify(data),
+                    contentType : 'application/json; charset=UTF-8',
+                    success : function (){
+                        $('.no-comment-msg').remove();
+                        showRecentComment(reviewId);
+                        $('#comment-content').html("");
+                        showAllCommentsCount(reviewId);
+                        $('.invisible-parent-writer').html("");
+                        parentId = null;
+                    },
+                    error : function (){
+                        alert("댓글 등록에 실패하였습니다.");
+                    }
+                })
+            }
         })
     }
 
+    // 답글 작성
+    $(document).on('click', '.reply-btn', function() {
+        // this를 사용하여 클릭된 버튼에 접근
+        parentId = $(this).data('parent-id');
+        let parentWriter = $(this).data('parent-writer');
+        $('.parent-writer').remove();
+        $('.invisible-parent-writer').html(`@${parentWriter} `);
+        $('#comment-content').prepend(`<input type="text" class="parent-writer" value="@${parentWriter}" disabled>`);
+        let parentWriterWidth = $('.invisible-parent-writer').css('width')
+        $('.parent-writer').css("width",parentWriterWidth);
+        $('#comment-content').focus();
+    });
+
+    // 댓글 작성란 키보드 이벤트
+    // 방향키 커서 이동 시 스와이퍼 슬라이드 이동 방지
+    // 답글 상대 id input 삭제 시 parentId 초기화
+    $('#comment-content').on('keydown', function(e) {
+        if(e.key === 'Backspace' || e.keyCode === 8){
+            setTimeout(function (){
+                let parentWriterCount = $('.parent-writer').length;
+                if(parentWriterCount < 1){
+                    parentId = null;
+                    $('.invisible-parent-writer').html("");
+                }
+            },10)
+        }
+        e.stopPropagation();
+    })
+
+
     function showRecentComment(reviewId) {
-        let lastCommentId = $('.comment-text').first().data('content-id');
+        let lastCommentId = $('#comment-wrap .comment-info:first .comment-text').data('comment-id');
         console.log(lastCommentId);
         if(lastCommentId === undefined){
             showComments(reviewId);
@@ -972,7 +1032,7 @@
                     lastCommentId : lastCommentId
                 },
                 success : function (result){
-                    let commentList = result.dtoList;
+                    let commentList = result;
                     if(commentList.length > 0) {
                         $.each(commentList, function (index, comment) {
                             let profileImg;
@@ -992,18 +1052,18 @@
                                 `<img src="${profileImg}" alt="...">` +
                                 '</div>' +
                                 `<div class="comment-text" data-comment-id="${comment.commentId}">` +
+                                '<div class="d-flex justify-content-between gap-2">' +
                                 `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
-                                `<span class="comment-content">${comment.content}</span>` +
-                                '<div class="d-flex justify-content-start gap-2">' +
                                 `<span class="comment-regdate">${regDate}</span>` +
-                                '<span class="reply-btn">답글쓰기</span>' +
                                 '</div>' +
+                                `<span class="comment-content">${comment.content}</span>` +
+                                `<span class="reply-btn ms-3" data-parent-writer="${comment.writer.id}" data-parent-id="${comment.commentId}">답글쓰기</span>` +
                                 '</div>' +
                                 '</div>';
                             if(comment.childrenCount > 0){
-                                tempHtml += `<div class="more-reply-btn mt-2">답글 더 보기(${comment.childrenCount}개)</div>`
+                                tempHtml += `<div class="more-reply-btn">답글 더 보기(${comment.childrenCount}개)</div>`
                             }
-                            tempHtml += '</div>';
+                            tempHtml += '<div class="reply-wrapper"></div></div>';
 
                             $('#comment-wrap').prepend(tempHtml);
                         })
@@ -1091,13 +1151,29 @@
     })
 
     $('#comment-content').on('focus',function (){
-        $('#comment-content').css('height','4.6rem');
-        $('#contents-wrap').css('max-height','calc(575px - 3.4rem)')
+        $('#comment-content').css('height','90px');
+        $('#contents-wrap').css('max-height','500px')
+        var inputExists = $(this).find('input').length > 0;
+        if (inputExists) {
+            placeCaretAtEnd(this);
+        }
     })
 
+    function placeCaretAtEnd(el) {
+        el.focus();
+        if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+
     $('#comment-content').on('blur',function (){
-        $('#comment-content').css('height','1.2rem');
-        $('#contents-wrap').css('max-height','575px')
+        $('#comment-content').css('height','50px');
+        $('#contents-wrap').css('max-height','540px')
     })
 </script>
 

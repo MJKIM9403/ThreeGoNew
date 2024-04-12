@@ -10,6 +10,9 @@ alter table planner add p_del BOOLEAN default '0' not null;
 alter table plan add p_del BOOLEAN default '0' not null;
 alter table team add t_del BOOLEAN default '0' not null;
 
+-- 이미 comment테이블을 추가한 경우 기존 group, order 컬럼 변경 --
+ALTER TABLE test.comment CHANGE `group` cmt_group int(11) NOT NULL;
+ALTER TABLE test.comment CHANGE `order` cmt_order int(11) NOT NULL;
 
 -- 댓글 테이블 생성 --
 CREATE TABLE `comment` (
