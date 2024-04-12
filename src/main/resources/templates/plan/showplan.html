@@ -527,18 +527,6 @@
     /**
      * 마커
      */
-    // 마커 제거 후 다시 줌
-    function drawMarkerAgain() {
-        viaMarkers[index].forEach(function (marker) {
-            marker.setMap(null); // TMap에서 마커 제거
-        });
-        viaMarkers[index] = []; // viaMarkers 배열 초기화
-
-        for(var i = 0; i<places[index].length; i++) {
-            addMarker(i+1, places[index][i], index) // 마커 다시 찍기
-        }
-        fitBoundsToMarkers();
-    }
 
     // 마커 추가하기 함수
     function addMarker(status, info) {
