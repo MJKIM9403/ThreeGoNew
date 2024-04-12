@@ -285,17 +285,18 @@
         initTmap();
         addPlace();
         searchItems();
-        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
-        $(document).on('click', '.areaSelect', function() {
-            selectedAreaCode = $(this).val();
-            updateCityName();
-        });
         checkCategory();
         checkSigungu();
         selectAndShow();
         showTourItems();
         loadPlanForDay();
         listSortable();
+
+        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
+        $(document).on('click', '.areaSelect', function() {
+            selectedAreaCode = $(this).val();
+            updateCityName();
+        });
     })
 
     /**
@@ -1122,13 +1123,8 @@
                                         // 포인트객체의 정보로 좌표값 변환 객체로 저장
                                         var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
 
-                                        // console.log("latlng : " + latlng);
-                                        // console.log("convertPoint : " + convertPoint);
-                                        // console.log("convertChange : " + convertChange);
-
                                         bounds = convertChange;
                                         drawInfoArr[index].push(convertChange);
-
                                         // 경유지 최적화 결과 반경만큼 지도 레벨 조정
                                         var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
 
