@@ -58,11 +58,15 @@
         width: 50%;
     }
 
-    .fontSizeBtn{
+    .fontSizeBtn {
         font-size: x-small;
         height: 40px;
     }
 
+    #timer {
+        font-size: small;
+        margin-top: 5px;
+    }
 </style>
 <body class="body-form">
 
@@ -132,7 +136,10 @@
                                 <!--                                새로운 이메일 인증-->
                                 <input type="email" name="email" id="email" class="form-control form-control-sm"
                                        placeholder="이메일을 입력해주세요.">
-                                <button type="button" class="btn-join btn btn-primary btn-md fontSizeBtn" id="sendBtn" name="sendBtn" onclick="sendNumber()">인증번호전송</button>
+
+                                <button type="button" class="btn-join btn btn-primary btn-md fontSizeBtn" id="sendBtn"
+                                        name="sendBtn" onclick="sendNumber()">인증번호전송
+                                </button>
 
                                 <div id="emaildupliAvailable" class="valid-feedback" style="display: none;"></div>
                                 <div id="emaildupliNotAvailable" class="invalid-feedback" style="display: none;"></div>
@@ -141,7 +148,13 @@
                             <div id="mail_number" name="mail_number" style="display: none">
                                 <input type="text" name="number" id="number" style="width:250px; margin-top: -10px"
                                        placeholder="인증번호 입력">
-                                <button type="button" class="btn-join btn btn-primary btn-md fontSizeBtn" name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일 인증 </button>
+                                <button type="button" class="btn-join btn btn-primary btn-md fontSizeBtn"
+                                        name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일 인증
+                                </button>
+
+                                <!-- 타이머 표시할 요소 -->
+                                <div id="timer"></div>
+
                                 <div id="emailAvailable" class="valid-feedback" style="display: none;"></div>
                                 <div id="emailNotAvailable" class="invalid-feedback" style="display: none;"></div>
 
@@ -172,6 +185,10 @@
             let emailAuthNum = null;
             // 이메일 중복 확인
             let emailDupliCheck = false;
+            // 타임 설정
+            let emailSentTime = null; // 이메일 전송 시간
+            let emailExpirationTimer = null; // 이메일 유효시간 타이머
+            let expirationTime = 180000; // 3분 (밀리초 단위)
 
             document.getElementById('joinBtn').addEventListener('click', function (event) {
                 // 인증번호 입력 확인
@@ -237,7 +254,7 @@
                     event.preventDefault(); // 폼 제출 막기
                     document.getElementsByName('email')[0].focus();
                     return;
-                } else if (emailAuthNum !== inputNum ){
+                } else if (emailAuthNum !== inputNum) {
                     alert("이메일 인증번호가 맞지않습니다.");
                     event.preventDefault(); // 폼 제출 막기
                     return false;
@@ -316,86 +333,18 @@
                 });
             });
 
-            //     이메일 인증
-            // function sendNumber() {
-            //     let email = document.getElementsByName('email')[0].value;
-            //     let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-            //     let testEmails = document.getElementsByName('email')[0].value;
-            //     // 이메일 주소가 비어있을 경우 처리
-            //     if (email.trim() === "") {
-            //         alert("이메일을 입력해주세요.");
-            //         return;
-            //     }
-            //     $.ajax({
-            //         url: '/checkDuplicateEmail',
-            //         type: 'GET',
-            //         dataType: 'text',
-            //         data: {
-            //             email: email
-            //         },
-            //         success: function (result) {
-            //             // 메시지 초기화
-            //             $('#emaildupliAvailable').hide().text('');
-            //             $('#emaildupliNotAvailable').hide().text('');
-            //             let duplicate = result == "true" ? true : false
-            //             if (duplicate) {
-            //                 // 중복된 아이디가 존재할 경우
-            //                 $('#emaildupliNotAvailable').show().text('이미 사용 중인 이메일입니다.');
-            //                 console.log("중복: " + duplicate);
-            //                 event.preventDefault(); // 폼 제출 막기
-            //                 return;
-            //                 idCheck = false;
-            //             } else {
-            //                 // 사용 가능한 아이디일 경우
-            //                 $('#emaildupliAvailable').show().text('사용 가능한 이메일.');
-            //                 idCheck = true;
-            //             }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             // 에러 메시지 출력
-            //             console.error("Error:", error);
-            //             console.error("XHR:", xhr);
-            //         }
-            //     });
-            //
-            //     //이메일 유효성 안맞을시 빠꾸
-            //     if (!regExp.test(testEmails)) {
-            //         emailCheck = false;
-            //         event.preventDefault(); // 폼 제출 막기
-            //             alert('이메일 형식이 올바르지 않습니다.');
-            //             return;
-            //         } else {
-            //             emailCheck = true;
-            //     }
-            //
-            //     console.log("번호보내기클릭");
-            //     $("#mail_number").css("display", "block");
-            //     alert("입력한 메일로 인증번호를 발송하였습니다.");
-            //
-            //     $.ajax({
-            //         url: "/api/join/sendEmail",
-            //         type: "post",
-            //         dataType: 'text',
-            //         data: JSON.stringify({
-            //             email : email
-            //         }),
-            //         contentType: "application/json",
-            //         success: function (authNum) {
-            //
-            //             emailAuthNum = authNum;
-            //         }, error: function (request, status, error) {
-            //             alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-            //             alert("인증 보내기 실패");
-            //         }
-            //     });
-            //     // 이메일 중복
-
-            // }
-
             function sendNumber() {
                 let email = document.getElementsByName('email')[0].value;
                 let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
                 let testEmails = document.getElementsByName('email')[0].value;
+                startEmailTimer();
+                // 이메일 전송 후 타이머 시작
+                emailSentTime = new Date().getTime(); // 현재 시간 설정
+                emailExpirationTimer = setTimeout(function () {
+                    alert("유효시간이 지났습니다. 다시 요청해주세요.");
+                    // 타이머가 만료되면 인증번호 입력 폼을 숨기거나 초기화하는 등의 작업 수행
+                }, expirationTime);
+
                 // 이메일 주소가 비어있을 경우 처리
                 if (email.trim() === "") {
                     alert("이메일을 입력해주세요.");
@@ -465,11 +414,22 @@
             }
 
 
-            // 인증 번호 확인.
+            // 인증 번호 확인
             function confirmNumber() {
                 var inputNum = $("#number").val();
+                var currentTime = new Date().getTime();
+                var elapsedTime = currentTime - emailSentTime;
 
-                if (emailAuthNum == inputNum) {
+                if (elapsedTime > expirationTime) {
+                    alert("유효시간이 지났습니다. 다시 요청해주세요.");
+                    event.preventDefault(); // 폼 제출 막기
+                    clearTimeout(emailExpirationTimer); // 타이머 제거
+                    // 이메일 인증번호 입력 폼 초기화
+                    document.getElementById("number").value = "";
+                    document.getElementById("mail_number").style.display = "none";
+                    // 가입 프로세스 중단
+                    return false;
+                } else if (emailAuthNum == inputNum) {
                     alert("인증되었습니다.");
                 } else {
                     alert("인증번호가 다릅니다.");
@@ -478,6 +438,40 @@
                 }
             }
 
+            // 타이머 변수들
+            let emailTimerInterval;
+            let remainingTime = 180; // 초 단위로 설정
+
+            // 이메일 전송 후 타이머 시작 함수
+            function startEmailTimer() {
+                remainingTime = 180; // 초기화
+
+                // 카운트다운 타이머 시작
+                emailTimerInterval = setInterval(function() {
+                    remainingTime--;
+                    if (remainingTime >= 0) {
+                        displayTimer(remainingTime);
+                    } else {
+                        clearInterval(emailTimerInterval);
+                        document.getElementById("timer").innerHTML = "유효시간이 만료되었습니다.";
+                    }
+                }, 1000);
+            }
+            // 카운트다운 타이머 표시 함수
+            function displayTimer(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                document.getElementById("timer").innerHTML = "남은 시간: " + minutes + "분 " + remainingSeconds + "초";
+            }
+
+            // // 이메일 전송 버튼 클릭 이벤트 핸들러
+            // document.getElementById('sendBtn').addEventListener('click', function() {
+            //     // 인증번호 전송 코드 추가
+            //     // ...
+            //
+            //     // 타이머 시작
+            //     startEmailTimer();
+            // });
 
         </script>
 

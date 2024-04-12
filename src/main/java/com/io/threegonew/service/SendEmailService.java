@@ -4,6 +4,7 @@ import com.io.threegonew.Key;
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.JavaMailSenderImpl;
+import com.io.threegonew.util.VerificationCodeManager;
 import com.io.threegonew.util.TempPassword;
 import com.io.threegonew.util.TempPasswordEmail;
 import jakarta.transaction.Transactional;
@@ -18,24 +19,38 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class SendEmailService {
-
-    private final UserRepository userRepository;
+    private final VerificationCodeManager verificationCodeManager;
     private final UserService userService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JavaMailSender javaMailSender;
     private final JavaMailSenderImpl javaMailSenderImpl;
     private static final String FROM_ADDRESS = Key.GMAIL;
-    //    인증번호
-//    private static int number;
-//    public static String createNumber(){
-//        number = (int)(Math.random() * (90000)) + 100000;// (int) Math.random() * (최댓값-최소값+1) + 최소값
-//        return createNumber();
-//    }
+    // 유효시간 설정 (3분)
+    private static final long EXPIRATION_TIME = 3 * 60 * 1000; // milliseconds
+
+    // 인증번호와 유효시간을 저장하는 맵
+    private static Map<String, Long> verificationCodes = new HashMap<>();
+
+    // 인증번호와 유효시간을 저장
+    public static void storeVerificationCode(String code) {
+        verificationCodes.put(code, System.currentTimeMillis() + EXPIRATION_TIME);
+    }
+
+    // 인증번호가 유효한지 확인
+    public static boolean isVerificationCodeValid(String code) {
+        Long expirationTime = verificationCodes.get(code);
+        if (expirationTime == null) {
+            // 인증번호가 없음
+            return false;
+        }
+        // 현재 시간과 유효시간을 비교하여 만료되었는지 확인
+        return System.currentTimeMillis() < expirationTime;
+    }
+
 
     @Transactional
     public MailDTO createMailAndChangePassword(String email, String id) {
         String tempPw = TempPassword.makeRandomPw(8);
         String tempEmail = TempPasswordEmail.makeRandomPw();
+        storeVerificationCode(tempPw); // 인증번호와 유효시간을 저장
         MailDTO dto = new MailDTO();
         dto.setAddress(email);
         dto.setTitle(id + "님의 임시 비밀번호 안내 이메일 입니다.");
@@ -63,6 +78,7 @@ public class SendEmailService {
 //    인증번호 발송
     @Transactional
     public MailDTO createVerificationCode(String email, String tempEmail){
+        storeVerificationCode(tempEmail); // 인증번호와 유효시간을 저장
         MailDTO dto = new MailDTO();
         dto.setAddress(email);
         dto.setTitle("[둘레둘레] 가입 인증 안내 이메일 입니다.");

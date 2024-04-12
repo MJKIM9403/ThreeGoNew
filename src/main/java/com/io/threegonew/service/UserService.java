@@ -89,7 +89,6 @@ public class UserService {
     public String getCurrentUserId() {
         // 현재 인증된 사용자의 정보를 SecurityContextHolder에서 가져와서 반환
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         // 인증된 유저일 경우 principal에서 유저 id를, 비인증 유저일 경우 anonymousUser 반환
