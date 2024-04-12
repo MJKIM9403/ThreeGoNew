@@ -3,6 +3,7 @@
 <head>
     <!--jquery-->
     <script	src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Font Awesome icons (free version)-->
@@ -19,7 +20,7 @@
     <link href="../../../assets/css/style.css?after" rel="stylesheet"/>
     <link href="../../../assets/css/commonstyle.css?after" rel="stylesheet"/>
 
-    <title>Three Go</title>
+    <title>둘레둘레</title>
 
 
 
@@ -206,6 +207,12 @@
         .dropdown-toggle::after {
             margin-left: 0;
         }
+
+        .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+
+        .btn_route, .btn_optimize, .btn_delete {
+            padding: 5px 10px;
+        }
     </style>
 </head>
 <body>
@@ -238,8 +245,6 @@
     let viaMarkers = Array.from({length: days}, () => []);
     // 각 일자별 마커 수를 추적하는 객체
     let markerCountPerDay = Array.from({length: days}, () => []);
-    // 지도 범위 확대하기 위한 배열
-    let Points = Array.from({length: days}, () => []);
 
     // 지도 줌
     let bounds;
@@ -266,13 +271,68 @@
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
 
-    console.log(days);
+    // 일정 정보
+    let plannerName = [[${plannerName}]];
+    let startDate = [[${startDate}]];
+    let endDate = [[${endDate}]];
 
 
-    var plannerName = [[${plannerName}]];
-    var startDate = [[${startDate}]];
-    var endDate = [[${endDate}]];
+    /**
+     * 자동 실행 함수
+     */
+    $(function() {
+        switchTabType('TOTAL');
+        initTmap();
+        addPlace();
+        searchItems();
+        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
+        $(document).on('click', '.areaSelect', function() {
+            selectedAreaCode = $(this).val();
+            updateCityName();
+        });
+        checkCategory();
+        checkSigungu();
+        selectAndShow();
+        showTourItems();
+        loadPlanForDay();
+        listSortable();
+    })
 
+    /**
+     * sortable 설정
+     */
+     function listSortable() {
+        $('#areabox').sortable({
+            placeholder: "ui-state-highlight",
+            axis: 'y', // 세로로만 드래그를 허용
+            update: function(event, ui) {
+                /// 요소의 고유한 ID를 사용하여 places 배열에서 해당 요소를 찾아 재정렬
+                var reorderedArray = [];
+                $(this).children().each(function() {
+                    var itemId = $(this).attr('data-id');
+                    var item = places[index].find(function(place) {
+                        return place.contentid === itemId;
+                    });
+                    reorderedArray.push(item);
+                });
+                places[index] = reorderedArray;
+                console.log(places[index]); // 순서가 변경된 배열 로깅
+
+                drawMarkerAgain();
+            }
+        });
+        $('#areabox').disableSelection();
+
+        $(document).on('click', '#areabox button.delete', function() {
+            deleteRow(this);
+        });
+    }
+
+
+
+    /**
+     * 뷰 관련 기타
+     */
     // 도시명 바꾸기
     function updateCityName() {
         $('.areaSelect').change(function() {
@@ -284,7 +344,23 @@
         });
     }
 
-    // 탭 이동시 변수 초기화
+    // 토글로 창 접기
+    function toggleDay() {
+        $('#your_item').toggleClass('d-flex');
+        $('#your_item').toggle();
+        $('.toggle-btn-icon').toggleClass('bi-caret-right-fill');
+        $('.toggle-btn-icon').toggleClass('bi-caret-left-fill');
+        // 지도 너비 100%로 고정하기
+        $('#map_div').children('div:eq(0)').css('width','100%');
+        $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
+        $('#map').toggleClass('wide');
+    }
+
+
+    /**
+     * 탭 이동
+     */
+    // 탭타입을 바꿀때마다 버튼스타일을 바꾸고 input 버튼값을 초기화
     function switchTabType(type) {
         tabType = type;
         switch (tabType) {
@@ -294,6 +370,12 @@
                 $('#show-bookmark').addClass('btn-primary2')
                     .removeClass('btn-primary');
                 totalSearch();
+                $('input[name=cat1]').prop('checked', false);
+                $('input[name=cat2]').prop('checked', false);
+                $('input[name=cat3]').prop('checked', false);
+                $('input[name=areaSelect]').prop('checked', false);
+                $('input[name=sigungu]').prop('checked', false);
+                $('input[name=type]').prop('checked', false);
                 break;
             case "BOOKMARK" :
                 $('#show-bookmark').addClass('btn-primary')
@@ -301,10 +383,21 @@
                 $('#show-all').addClass('btn-primary2')
                     .removeClass('btn-primary');
                 bookmarkSearch();
+                $('input[name=cat1]').prop('checked', false);
+                $('input[name=cat2]').prop('checked', false);
+                $('input[name=cat3]').prop('checked', false);
+                $('input[name=areaSelect]').prop('checked', false);
+                $('input[name=sigungu]').prop('checked', false);
+                $('input[name=type]').prop('checked', false);
                 break;
         }
     }
 
+    /**
+     * 검색관련
+     * api리스트
+     */
+    // 전체 검색
     function totalSearch() {
         $.ajax({
             url: '/plan/api/touritems',
@@ -322,6 +415,7 @@
         });
     }
 
+    // 북마크 검색
     function bookmarkSearch() {
         $.ajax({
             url: '/plan/api/bookmark',
@@ -339,8 +433,6 @@
             }
         });
     }
-
-
 
     // 검색기능
     function searchItems(){
@@ -394,8 +486,6 @@
                     }
                 })
             }
-
-
         })
     }
 
@@ -434,9 +524,9 @@
                             $('#touritems').replaceWith(data);
                         },
                         error : function (err){
-                            console.log(err)
+                            console.log(err);
                         }
-                    })
+                    });
                 }
             }
 
@@ -574,9 +664,9 @@
                     }
                 })
             }
-
         })
 
+        // 중분류 선택
         $(document).on('click','.cat2Select',function () {
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
             const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
@@ -626,6 +716,8 @@
             }
         })
     }
+
+    // 선택한 값에 맞는 결과물 보여주기
     function selectAndShow(){
         $(document).on('click','.select-btn',function () {
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
@@ -699,32 +791,27 @@
     }
 
 
-    // 담은 아이템 지우는 함수
+
+
+    /**
+     * 담은 아이템을
+     * 출력된 목록에서 지우기
+     */
     function deleteRow(ths) {
         var ths = $(ths);
-        var text = ths.closest('a').find('strong.mb-1').text(); // 선택한 관광지 이름 가져오기
-        console.log(text);
+        var text = ths.closest('div').find('strong.mb-1').text(); // 선택한 관광지 이름 가져오기
         for (var i = 0; i<viaMarkers[index].length; i++) {
             console.log(viaMarkers[index][i]._marker_data.options.title);
             if(text == viaMarkers[index][i]._marker_data.options.title) { // 선택한 관광지 이름이 viaMarkers[index]의 관광지 이름과 같다면
-                ths.closest("a").remove(); // 화면에서 출력되는 목록을 지우기
+                ths.closest('div.list-group-item').remove(); // 화면에서 출력되는 목록을 지우기
                 viaMarkers[index][i].setMap(null); // 지도에 뜨는 마커를 지우기
                 viaMarkers[index].splice(i,1); // 마커 배열에서 삭제하기
                 places[index].splice(i,1); // 선택한 관광지 배열에서 삭제하기
-
             }
         }
         console.log("places[index] : " + places[index]);
-        viaMarkers[index].forEach(function (marker) {
-            marker.setMap(null); // TMap에서 마커 제거
-        });
-        viaMarkers[index] = []; // viaMarkers 배열 초기화
 
-        for(var i = 0; i<places[index].length; i++) {
-            addMarker(i+1, places[index][i], index) // 마커 다시 찍기
-        }
-        fitBoundsToMarkers();
-
+        drawMarkerAgain();
         if(resultInfoArr[index].length > 0){ // 관광지 추가할때는 빨간 선을 지우지 않지만, 삭제할때는 빨간 선을 지우는게 좋을 것 같아서 추가했습니다.
             for(var i in resultInfoArr[index]){
                 resultInfoArr[index][i].setMap(null); //경로 빨간 선도 찍어놨다면 삭제
@@ -734,64 +821,10 @@
     }
 
 
-
-    // 창 토글로 접는 함수
-    function toggleDay() {
-        $('#your_item').toggleClass('d-flex');
-        $('#your_item').toggle();
-        $('.toggle-btn-icon').toggleClass('bi-caret-right-fill');
-        $('.toggle-btn-icon').toggleClass('bi-caret-left-fill');
-        // 지도 너비 100%로 고정하기
-        $('#map_div').children('div:eq(0)').css('width','100%');
-        $('#map_div>div:eq(0)').children('div:eq(0)').css('width','100%');
-        $('#map').toggleClass('wide');
-    }
-    // 현재 시간을 토대로 이동에 걸리는 시간을 구합니다.
-    function getRealTime() {
-        var date = new Date();
-        var year = date.getFullYear();
-        var month = ('0' + (date.getMonth() + 1)).slice(-2);
-        var day = ('0' + (date.getDate())).slice(-2);
-        var hour = ('0' + (date.getHours())).slice(-2);
-        var minute = ('0' + (date.getMinutes())).slice(-2);
-
-        var currentDate = year + month + day + hour + minute
-        console.log(currentDate);
-        return currentDate;
-    }
-
-    // tmap 실행
-    $(document).ready(function() {
-        switchTabType('TOTAL');
-        initTmap2();
-        addPlace();
-        searchItems();
-        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
-        $(document).on('click', '.areaSelect', function() {
-            selectedAreaCode = $(this).val();
-            updateCityName();
-        });
-        checkCategory();
-        checkSigungu();
-        selectAndShow();
-        showTourItems();
-        loadPlanForDay();
-    })
-
-    // 마커 삭제하기 함수
-    function deleteMarkers() {
-        for (var i=0; i<viaMarkers[index].length; i++) {
-            viaMarkers[index][i].setMap(null);
-        }
-        // 등록된 마커 배열도 초기화
-        viaMarkers[index] = [];
-        // 장소 배열도 초기화
-        places[index] = [];
-        place = null;
-        // 출력된 목록도 초기화
-        $('#areabox').empty();
-    }
-
+    /**
+     * 저장된 데이터 처리하기
+     */
+    // 여행 일정 목록 불러오기
     function loadPlanForDay() {
         $.ajax({
             type: "POST",
@@ -812,6 +845,9 @@
             }
         });
     }
+
+
+    // 불러온 목록 보여주기
     function insertPlaces(planList) {
         let currentDay = 0; // 현재의 day를 추적
 
@@ -828,43 +864,61 @@
                     mapx: dto.mapx,
                     mapy: dto.mapy
                 }
-                places[plan.day - 1].push(place);
-                // 현재 일자의 마커 개수를 기반으로 status 결정
-                let status = ++markerCountPerDay[currentDay]; // 마커 수 증가 및 status 설정
-                addMarker(status, place, plan.day - 1);
+                places[plan.day - 1].push(place); // places 배열만 생성, viaMarkers 배열은 필요할때만 생성
             });
         });
 
-        // 생성한 마커는 탭을 이동할때만 보여야하므로 안 보이게 설정
-        for (let i = 0; i < viaMarkers.length; i++) {
-            if (viaMarkers[i].length > 0) {
-                viaMarkers[i].forEach(function(marker) {
-                    marker.setMap(null);
-                });
-            };
-        };
-
         // 첫번째 탭의 마커는 미리 보이게 설정
-        viaMarkers[0].forEach(function(marker) {
-            marker.setMap(map);
+        for(var i = 0; i<places[0].length; i++) {
+            addMarker(i+1, places[0][i], 0);
+        }
+        fitBoundsToMarkers();
+    }
+
+    /**
+     * 마커
+     */
+    // 마커 제거 후 다시 줌
+    function drawMarkerAgain() {
+        viaMarkers[index].forEach(function (marker) {
+            marker.setMap(null); // TMap에서 마커 제거
         });
+        viaMarkers[index] = []; // viaMarkers 배열 초기화
+
+        for(var i = 0; i<places[index].length; i++) {
+            addMarker(i+1, places[index][i], index) // 마커 다시 찍기
+        }
+        fitBoundsToMarkers();
     }
 
     // 모든 마커가 추가된 후에 fitBounds 함수 호출
     function fitBoundsToMarkers() {
-        var PTbounds = new Tmapv2.LatLngBounds();
-        for (var dayIndex = 0; dayIndex < viaMarkers.length; dayIndex++) {
-            if (viaMarkers[dayIndex].length > 0) {
-                for (var i = 0; i < viaMarkers[dayIndex].length; i++) {
-                    var marker = viaMarkers[dayIndex][i];
-                    PTbounds.extend(marker.getPosition());
+        if(viaMarkers[index].length > 0) {
+            if(viaMarkers[index].length == 1) {
+                map.setCenter(viaMarkers[index][0].getPosition());
+                map.setZoom(10); // 마커가 하나 뿐이면 그것만 줌
+            } else {
+                var PTbounds = new Tmapv2.LatLngBounds();
+                for (var dayIndex = 0; dayIndex < viaMarkers.length; dayIndex++) {
+                    if (viaMarkers[dayIndex].length > 0) {
+                        for (var i = 0; i < viaMarkers[dayIndex].length; i++) {
+                            var marker = viaMarkers[dayIndex][i];
+                            PTbounds.extend(marker.getPosition());
+                        }
+                    }
                 }
+                var paddingOptions = {
+                    top: 40, // 상단 패딩
+                    right: 40, // 우측 패딩
+                    bottom: 40, // 하단 패딩
+                    left: 40 // 좌측 패딩
+                };
+                map.fitBounds(PTbounds, paddingOptions);
             }
         }
-        map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
     }
 
-    // 마커 추가하기 함수
+    // 마커 추가하기
     function addMarker(status, info, dayIndex) {
         // status 에 따라 아이콘 바꾸기
         imgUrl = `https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_${status}.png`;
@@ -880,6 +934,7 @@
         viaMarkers[dayIndex].push(marker);
     }
 
+    // 목록에서 선택하여 장소 추가하기
     function addPlace() {
         $(document).on('click','.plus',function () {
             if(places[index].length < 9) {
@@ -917,17 +972,7 @@
 
                     // 선택한 관광지가 1개 ~ 9개일 경우에만
                     if (places[index].length >= 1) {
-                        // 기존 마커 제거
-                        viaMarkers[index].forEach(function (marker) {
-                            marker.setMap(null); // TMap에서 마커 제거
-                        });
-                        viaMarkers[index] = []; // viaMarkers 배열 초기화
-
-                        for(var i = 0; i<places[index].length; i++) {
-                            addMarker(i+1, places[index][i], index);
-                        }
-                        // 첫 번째 마커가 추가될 때, 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-                        fitBoundsToMarkers();
+                        drawMarkerAgain();
                     }
                 } else {
                     alert('이미 추가된 장소입니다.');
@@ -935,92 +980,51 @@
             } else { // 관광지 등록은 9개까지만
                 alert('관광지는 최대 9개까지 등록 가능합니다.');
             }
-
-
         });
     }
 
+    // 마커 전부 삭제
+    function deleteMarkers() {
+        for (var i=0; i<viaMarkers[index].length; i++) {
+            viaMarkers[index][i].setMap(null);
+        }
+        // 등록된 마커 배열도 초기화
+        viaMarkers[index] = [];
+        // 장소 배열도 초기화
+        places[index] = [];
+        place = null;
+        // 출력된 목록도 초기화
+        $('#areabox').empty();
+
+        if(resultInfoArr[index].length > 0){
+            for(var i in resultInfoArr[index]){
+                resultInfoArr[index][i].setMap(null);
+            }
+            resultInfoArr[index]=[];
+        }
+        $('.result').empty(); // 결과 값 비우기
+    }
 
 
-    // function loadPlanForDay(day) {
-    //     // 처음 불러오는거면
-    //     if (places[day - 1].length == 0 && viaMarkers[day - 1].length == 0) {
-    //         $.ajax({
-    //             type: "POST",
-    //             url: "/api/allShowplan",
-    //             contentType: 'application/json; charset=UTF-8',
-    //             data: JSON.stringify({
-    //                 "plannerId": plannerId,
-    //                 "day": day
-    //             }),
-    //             success: function (response) {
-    //                 // 응답으로 받은 계획을 표시
-    //                 displayPlan(response);
-    //             },
-    //             error: function (xhr, status, error) {
-    //                 console.error(error);
-    //             }
-    //         });
-    //     } else { // 이미 목록을 불러왔으면
-    //         places[day - 1].forEach(function (data) { // places[index] 배열에 있는 모든 오브젝트를 반복문을 돌려 출력합니다
-    //             var template = `
-    //                     <a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'>
-    //                         <div class='d-flex w-100 align-items-center justify-content-between'>
-    //                             <strong class='mb-1 select-title'>${data.title}</strong>
-    //                             <button class='delete' type='button' onclick='deleteRow(this);'>
-    //                                 <i class='bi bi-x-circle'></i>
-    //                             </button>
-    //                         </div>
-    //                     </a>
-    //                     `;
-    //             $('#areabox').append(template); // 계속해서 추가한다.
-    //         });
-    //     }
-    // }
+    /**
+     * tmap
+     */
+    // 현재 시간을 토대로 이동에 걸리는 시간을 구합니다.
+    function getRealTime() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2);
+        var day = ('0' + (date.getDate())).slice(-2);
+        var hour = ('0' + (date.getHours())).slice(-2);
+        var minute = ('0' + (date.getMinutes())).slice(-2);
 
-
-
-    // function displayPlan(planList) {
-    //     $('#areabox').empty(); // 반복문 시작 전에 출력된 목록을 지우고
-    //     let currentDay = 0; // 현재의 day를 추적
-    //     $.each(planList, function(index, plan) {
-    //         // 새로운 일자가 시작될 때만 일자 정보를 출력
-    //         if(plan.day !== currentDay) {
-    //             currentDay = plan.day; // 일자 업데이트
-    //         }
-    //
-    //         $.each(plan.dtoList, function(i, dto) {
-    //             var template = `
-    //                               <a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'>
-    //                                 <div class='d-flex w-100 align-items-center justify-content-between'>
-    //                                     <strong class='mb-1 select-title'>${dto.title}</strong>
-    //                                     <input type="hidden" value="${dto.mapx}">
-    //                                     <input type="hidden" value="${dto.mapy}">
-    //                                     <button class='delete' type='button' onclick='deleteRow(this);'>
-    //                                         <i class='bi bi-x-circle'></i>
-    //                                     </button>
-    //                                 </div>
-    //                               </a>
-    //                             `;
-    //             $('#areabox').append(template);
-    //
-    //             place = {
-    //                 title: dto.title,
-    //                 contentid: dto.contentid,
-    //                 mapx: dto.mapx,
-    //                 mapy: dto.mapy
-    //             }
-    //             places[plan.day - 1].push(place);
-    //             addMarker(index+1, place);
-    //         });
-    //     });
-    // }
-
-
-
+        var currentDate = year + month + day + hour + minute
+        console.log(currentDate);
+        return currentDate;
+    }
 
     // tmap 실행 함수
-    function initTmap2() {
+    function initTmap() {
             map = new Tmapv2.Map("map_div", {
                 center: new Tmapv2.LatLng(36.4109466, 128.1590828),
                 width: "100%",
@@ -1127,9 +1131,8 @@
 
                                         // 경유지 최적화 결과 반경만큼 지도 레벨 조정
                                         var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
-                                        // console.log(linePt);
 
-                                        PTbounds.extend(linePt, { padding: new Tmapv2.LatLng(0.3, 0.3) });
+                                        PTbounds.extend(linePt);
                                     }
 
                                     polyline_[index] = new Tmapv2.Polyline({
@@ -1139,7 +1142,13 @@
                                         map : map
                                     });
                                     resultInfoArr[index].push(polyline_[index]);
-                                    map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
+                                    var paddingOptions = {
+                                        top: 40, // 상단 패딩
+                                        right: 40, // 우측 패딩
+                                        bottom: 40, // 하단 패딩
+                                        left: 40 // 좌측 패딩
+                                    };
+                                    map.fitBounds(PTbounds, paddingOptions);
                                 }
                             }
                         },
@@ -1248,7 +1257,13 @@
                                     });
                                     resultInfoArr[index].push(polyline_[index]);
 
-                                    map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
+                                    var paddingOptions = {
+                                        top: 40, // 상단 패딩
+                                        right: 40, // 우측 패딩
+                                        bottom: 40, // 하단 패딩
+                                        left: 40 // 좌측 패딩
+                                    };
+                                    map.fitBounds(PTbounds, paddingOptions);
                                 }
                             }
                         },
@@ -1263,16 +1278,13 @@
         // 전체 관광지 삭제하기 버튼을 누르면 모든 마커를 삭제
         $(".btn_delete").click(function () {
             deleteMarkers();
-            if(resultInfoArr[index].length > 0){
-                for(var i in resultInfoArr[index]){
-                    resultInfoArr[index][i].setMap(null);
-                }
-                resultInfoArr[index]=[];
-            }
-            $('.result').empty(); // 결과 값 비우기
         })
     }
 
+
+    /**
+     * 탭 이동, 저장 및 취소
+     */
     document.addEventListener("DOMContentLoaded", function () {
 
         // 각 탭 요소들을 선택
@@ -1282,77 +1294,58 @@
         $('#your_day').html("DAY1");
         index = 0;
         previousTabIndex = -1; // 이전 탭의 인덱스를 초기화
+        addPrintDayList();
 
-            // 각 탭에 대해 클릭 이벤트 리스너 추가
-            tabs.forEach(function (tab, tabIndex) {
-                tab.addEventListener('click', function () {
-                    previousTabIndex = index;
-                    index = tabIndex; // 현재 선택한 탭의 인덱스
-                    // 모든 탭에서 'active' 클래스 제거
-                    tabs.forEach(function (otherTab) {
-                        otherTab.classList.remove('active');
-                    });
-                    // 현재 클릭된 탭에만 'active' 클래스 추가
-                    tab.classList.add('active');
+        // 각 탭에 대해 클릭 이벤트 리스너 추가
+        tabs.forEach(function (tab, tabIndex) {
+            tab.addEventListener('click', function () {
+                previousTabIndex = index;
+                index = tabIndex; // 현재 선택한 탭의 인덱스
+                // 모든 탭에서 'active' 클래스 제거
+                tabs.forEach(function (otherTab) {
+                    otherTab.classList.remove('active');
+                });
+                // 현재 클릭된 탭에만 'active' 클래스 추가
+                tab.classList.add('active');
 
-                    // 다른 탭으로 이동할 경우
-                    if (previousTabIndex !== index) {
-                        // 이전 탭에서 마커와 경로가 이미 있다면 제거
-                        if (viaMarkers[previousTabIndex] && viaMarkers[previousTabIndex].length > 0) {
-                            viaMarkers[previousTabIndex].forEach(function (marker) {
-                                marker.setMap(null); // TMap에서 이전 탭 마커 제거
-                            });
-                            viaMarkers[previousTabIndex] = []; // viaMarkers 배열 초기화
-                        }
-                        if (resultInfoArr[previousTabIndex] && resultInfoArr[previousTabIndex].length > 0) {
-                            resultInfoArr[previousTabIndex].forEach(function (line) {
-                                line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
-                            })
-                            $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
-                        }
-
-                        // 현재 선택한 탭의 번호는 현재 인덱스가 됨
-                        var yourDay = "DAY" + (index + 1).toString(); // 담은 장소가 몇일째인지 띄워줌
-                        $('#your_day').html(yourDay);
-
-                        // 현재탭의 목록 불러오기
-                        addPrintDayList();
-
-                        // 마커 다시 찍기
-                        for(var i = 0; i<places[index].length; i++) {
-                            addMarker(i+1, places[index][i], index);
-                        }
-                        // 선택한 인덱스 탭에 맞는 마커를 다시 로드
-                        viaMarkers[index].forEach(function (marker) {
-                            marker.setMap(map);
+                // 다른 탭으로 이동할 경우
+                if (previousTabIndex !== index) {
+                    // 이전 탭에서 마커와 경로가 이미 있다면 제거
+                    if (viaMarkers[previousTabIndex] && viaMarkers[previousTabIndex].length > 0) {
+                        viaMarkers[previousTabIndex].forEach(function (marker) {
+                            marker.setMap(null); // TMap에서 이전 탭 마커 제거
                         });
-
-
-                        // 선택한 인덱스 탭에 맞는 경로 빨간 선 표시를 다시 로드
-                        resultInfoArr[index].forEach(function (line) {
-                            line.setMap(map);
+                        viaMarkers[previousTabIndex] = []; // viaMarkers 배열 초기화
+                    }
+                    if (resultInfoArr[previousTabIndex] && resultInfoArr[previousTabIndex].length > 0) {
+                        resultInfoArr[previousTabIndex].forEach(function (line) {
+                            line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                         })
-                        // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
-                        $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+                        $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+                    }
 
-                        // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
-                        fitBoundsToMarkers();
-                        // if (viaMarkers[index].length > 0) {
-                        //     if (viaMarkers[index].length === 1) {
-                        //         map.setCenter(viaMarkers[index][0].getPosition());
-                        //         map.setZoom(10); // 기본 줌 레벨 설정
-                        //     } else {
-                        //         // 모든 마커를 포함하는 경계를 계산
-                        //         var PTbounds = new Tmapv2.LatLngBounds();
-                        //         for (var i in Points[index]) {
-                        //             var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-                        //             PTbounds.extend(linePt);
-                        //         }
-                        //
-                        //         // 지도를 경계에 맞게 확대/축소
-                        //         map.fitBounds(PTbounds, { padding: new Tmapv2.LatLng(0.3, 0.3) });
-                        //     }
-                        // }
+                    // 현재 선택한 탭의 번호는 현재 인덱스가 됨
+                    var yourDay = "DAY" + (index + 1).toString(); // 담은 장소가 몇일째인지 띄워줌
+                    $('#your_day').html(yourDay);
+
+                    // 현재탭의 목록 불러오기
+                    addPrintDayList();
+
+                    // 마커 다시 찍기
+                    for(var i = 0; i<places[index].length; i++) {
+                        addMarker(i+1, places[index][i], index);
+                    }
+
+                    // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                    fitBoundsToMarkers();
+
+                    // 선택한 인덱스 탭에 맞는 경로 빨간 선 표시를 다시 로드
+                    resultInfoArr[index].forEach(function (line) {
+                        line.setMap(map);
+                    })
+                    // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
+                    $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+
                     // 이전 탭의 인덱스를 업데이트
                     previousTabIndex = index;
                 }
@@ -1368,53 +1361,64 @@
 
         // 다음 버튼 클릭시 실행
         $("#edit-btn").click(function () {
-            if(confirm("입력하신 내용으로 여행을 수정하시겠습니까?")) {
-                $.ajax({
-                    type: "POST", // HTTP 요청 방식
-                    url: "/plan/api/editplans/" + plannerId, // 데이터를 전송할 서버의 URL
-                    contentType: "application/json", // 전송할 데이터의 타입
-                    data: JSON.stringify({
-                        plannerName: plannerName,
-                        startDate: startDate,
-                        endDate: endDate,
-                        plans: places.flatMap(function(place, index) {
-                            return place.map(function(subPlace, subIndex) {
-                                return {
-                                    userId: subPlace.userId,
-                                    day: index + 1, // day 값 설정
-                                    order: subIndex + 1, // order 값 설정
-                                    contentId: subPlace.contentid
-                                };
-                            });
-                        })
-                    }), // 전송할 데이터
-                    success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
-                        var p_id = response.p_id; // 응답에서 p_id 추출
-                        // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
-                        window.location.href = '/plan/show?p_id=' + p_id;
-                        console.log('성공');
-                    },
-                    error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
-                        alert('실패');
-                    }
-                });
+            // 모든 탭에서 장소를 추가한 경우에만 데이터 저장
+            var allPlacesAdded = places.every(function (placeList) {
+                return placeList.length > 0;
+            });
+            if (allPlacesAdded) {
+                if(confirm("입력하신 내용으로 여행을 수정하시겠습니까?")) {
+                    $.ajax({
+                        type: "POST", // HTTP 요청 방식
+                        url: "/plan/api/editplans/" + plannerId, // 데이터를 전송할 서버의 URL
+                        contentType: "application/json", // 전송할 데이터의 타입
+                        data: JSON.stringify({
+                            plannerName: plannerName,
+                            startDate: startDate,
+                            endDate: endDate,
+                            plans: places.flatMap(function(place, index) {
+                                return place.map(function(subPlace, subIndex) {
+                                    return {
+                                        userId: subPlace.userId,
+                                        day: index + 1, // day 값 설정
+                                        order: subIndex + 1, // order 값 설정
+                                        contentId: subPlace.contentid
+                                    };
+                                });
+                            })
+                        }), // 전송할 데이터
+                        success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
+                            var p_id = response.p_id; // 응답에서 p_id 추출
+                            // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
+                            window.location.href = '/plan/show?p_id=' + p_id;
+                            console.log('성공');
+                        },
+                        error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
+                            alert('실패');
+                        }
+                    });
+                }
+            } else {
+                alert('모든 여행일자에 장소를 추가해주세요.');
             }
         });
     });
 
+    /**
+     * place 배열에 맞춰 목록을 출력합니다
+     */
     function addPrintDayList() {
         $('#areabox').empty(); // 반복문 시작 전에 출력된 목록을 지우고
 
         places[index].forEach(function (data) { // places[index] 배열에 있는 모든 오브젝트를 반복문을 돌려 출력합니다
             var template = `
-                        <a href='#' class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true'>
+                        <div class='list-group-item list-group-item-action py-3 lh-tight' aria-current='true' data-id='${data.contentid}'>
                             <div class='d-flex w-100 align-items-center justify-content-between'>
                                 <strong class='mb-1 select-title'>${data.title}</strong>
                                 <button class='delete' type='button' onclick='deleteRow(this);'>
                                     <i class='bi bi-x-circle'></i>
                                 </button>
                             </div>
-                        </a>
+                        </div>
                         `;
             $('#areabox').append(template); // 계속해서 추가한다.
         });
@@ -1422,12 +1426,6 @@
 
 
 </script>
-
-<!--계획 화면에선 헤더가 안들어가야됨-->
-<!--이전 화면에서 input 값으로 여행 start day와 여행 end day 값을 가지고 옵니다. (start day가 더 작은지에 대한 유효성 검사가 필요합니다.)-->
-<!--유효한 날짜값을 받았다면 end day - start day + 1 을 해서 일자 수를 계산합니다.-->
-<!--계산한 일자수를 토대로 day1, day2... 등을 출력합니다.-->
-<!--day1을 클릭하면 그 날짜의 장소를 검색하고 선택해서 가져오면, 빈칸에는 장소에 해당하는 지도가 출력됩니다.-->
 
 
 
@@ -1447,6 +1445,8 @@
                     <div>
                         <h4>지역</h4>
                         <div id="area-list-box">
+                            <input type="radio" class="areaSelect btn-check" name="areaSelect" id="areaSelect0" autocomplete="off" value="" checked>
+                            <label class="btn btn-2" for="areaSelect0" th:text="전체"></label>
                             <th:block th:each="area, idx : ${areaList}">
                                 <input type="radio" class="areaSelect btn-check" name="areaSelect" th:id="|area${idx.count}|" autocomplete="off"
                                        th:value="${area.areaCode}">
@@ -1584,147 +1584,147 @@
 
 
 
-            <!--장소찾기-->
-            <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-                <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
-                    <span class="city-name fs-5 fw-semibold">도시명</span>
-                    <span class="fx-6">이전화면에서 선택한 날짜</span>
-                </a>
-                <div class="search-bar">
-                    <input class="search-input" placeholder="장소를 검색하세요.">
-                    <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
-                </div>
-                <div class="flex-box">
-                    <!--장소선택이 들어가야 하는 부분-->
-                    <div class="wrap">
-                        <div class="flex-box">
-                            <h2 id="areaName"></h2>
-                            <!-- 선택하면 옵션을 설정하는 모달을 띄웁니다. -->
-                            <button type="button" class="btn btn-4 btn-primary2" id="show-all" onclick="switchTabType('TOTAL')">통합검색</button>
-                            <button type="button" class="btn btn-4 btn-primary2" id="show-bookmark" onclick="switchTabType('BOOKMARK')">내 북마크 검색</button>
-                            <button type="button" class="btn btn-4 btn-primary2 btn-select-area " id="morebtn" data-bs-toggle="modal" data-bs-target="#selectModal">검색설정</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-scroll list-group list-group-flush border-bottom scrollarea">
-                    <div class="flex overflow-x-hidden">
-                        <!--장소 불러오기-->
-                        <div id="touritems">
-                            <div>
-                                <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
-                            </div>
-
-                            <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
-
-                                <!--선택된 객체에는 active 클래스를 주면 파란 배경이 됨-->
-                                <a class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <!-- 이미지 출력하기 -->
-                                        <div style="width: 60px; height: 60px;">
-                                            <img class="thumbnail" th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" src="../../../assets/img/no_img.jpg">
-                                            <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
-                                        </div>
-
-                                        <div th:title="${touritem.title}" class="ps-3">
-                                            <input type="hidden" th:id="mapx" th:value="${touritem.mapx}">
-                                            <input type="hidden" th:id="mapy" th:value="${touritem.mapy}">
-                                            <input type="hidden" th:id="contentId" th:value="${touritem.contentid}">
-                                            <div class="content-title" th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}" th:text="${touritem.title}"></div>
-                                            <p class="content-address" th:text="${touritem.address}"></p>
-                                        </div>
-
-                                        <button class="plus">
-                                            <!--아이콘 눌러서 담기-->
-                                            <i class="bi bi-bookmark-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-10 mb-1 small" >
-                                        <label th:text="${touritem.fullCategoryName}"></label>
-                                    </div>
-                                </a>
-                            </th:block>
-
-
-                            <th:block th:unless="${pageResponse.total > 0}">
-                                <p class="mb-1 touritem-no-contents">
-                                    검색된 관광지 정보가 없습니다.
-                                </p>
-                            </th:block>
-
-                            <div class="nav-container">
-                                <nav aria-label="page-bar">
-                                    <ul class="pagination">
-                                        <li class="page-item">
-                                            <i class="bi bi-chevron-double-left page-link" data-num="0"></i>
-                                        </li>
-                                        <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
-                                            <i class="bi bi-chevron-left page-link" th:attr="data-num=${pageResponse.start -1}"></i>
-                                        </li>
-                                        <th:block th:each="pageNo : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
-                                            <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" th:classappend="${pageResponse.page == pageNo} ? 'active' : ''" th:text="${pageNo + 1}"></span></li>
-                                        </th:block>
-                                        <li class="page-item" th:classappend="${pageResponse.next} ? '' : 'disabled'">
-                                            <i class="bi bi-chevron-right page-link" th:attr="data-num=${pageResponse.end +1}"></i>
-                                        </li>
-                                        <li class="page-item">
-                                            <i class="bi bi-chevron-double-right page-link" th:attr="data-num=${pageResponse.last}"></i>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
+        <!--장소찾기-->
+        <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
+            <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
+                <span class="city-name fs-5 fw-semibold">도시명</span>
+                <span class="fx-6">이전화면에서 선택한 날짜</span>
+            </a>
+            <div class="search-bar">
+                <input class="search-input" placeholder="장소를 검색하세요.">
+                <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+            <div class="flex-box">
+                <!--장소선택이 들어가야 하는 부분-->
+                <div class="wrap">
+                    <div class="flex-box">
+                        <h2 id="areaName"></h2>
+                        <!-- 선택하면 옵션을 설정하는 모달을 띄웁니다. -->
+                        <button type="button" class="btn btn-4 btn-primary2" id="show-all" onclick="switchTabType('TOTAL')">통합검색</button>
+                        <button type="button" class="btn btn-4 btn-primary2" id="show-bookmark" onclick="switchTabType('BOOKMARK')">내 북마크 검색</button>
+                        <button type="button" class="btn btn-4 btn-primary2 btn-select-area " id="morebtn" data-bs-toggle="modal" data-bs-target="#selectModal">검색설정</button>
                     </div>
                 </div>
             </div>
 
-
-
-                <div id="day" class="day vh-100 d-flex flex-column">
-                    <!--장소담기-->
-                    <div id="your_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-                        <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                            <span class="fs-5 fw-semibold" id="your_day"></span>
-                        </a>
-
-                        <!--버튼눌러서 담으면 이렇게 됩니다.-->
-                        <!--            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">-->
-                        <!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
-                        <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
-                        <!--                        <strong class="mb-1">장소1</strong>-->
-                        <!--                        <small>-->
-                        <!--아이콘 눌러서 담기-->
-                        <!--                            <button id="deleteBtn" type="button" onclick="deleteRow(this);">-->
-                        <!--                                <i class='bi bi-x-circle'></i>-->
-                        <!--                            </button>-->
-                        <!--                        </small>-->
-                        <!--                    </div>-->
-                        <!--                </a>-->
-                        <!--            </div>-->
-
-                        <div id="areabox" class="scroll list-group list-group-flush scrollarea">
+            <div class="search-scroll list-group list-group-flush border-bottom scrollarea">
+                <div class="flex overflow-x-hidden">
+                    <!--장소 불러오기-->
+                    <div id="touritems">
+                        <div>
+                            <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
                         </div>
-                    </div>
 
-                    <!--지도가 들어갑니다.-->
-                    <div id="map" class="vh-100 d-flex flex-column align-items-stretch default">
-                        <button class="toggle-btn bg-white text-center" type="button" onclick="toggleDay();">
-                            <i class="toggle-btn-icon bi bi-caret-left-fill"></i>
-                        </button>
+                        <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
 
-                        <div class="map-result position-absolute">
-                            <p class="result"></p>
-                            <button class="btn btn-primary btn_route">경로 확인</button>
-                            <button class="btn btn-primary btn_optimize">동선 추천</button>
-                            <button class="btn btn-danger btn_delete">전체 삭제</button>
-                        </div>
-                        <div id="map_div">
+                            <!--선택된 객체에는 active 클래스를 주면 파란 배경이 됨-->
+                            <a class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                    <!-- 이미지 출력하기 -->
+                                    <div style="width: 60px; height: 60px;">
+                                        <img class="thumbnail" th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" src="../../../assets/img/no_img.jpg">
+                                        <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
+                                    </div>
+
+                                    <div th:title="${touritem.title}" class="ps-3">
+                                        <input type="hidden" th:id="mapx" th:value="${touritem.mapx}">
+                                        <input type="hidden" th:id="mapy" th:value="${touritem.mapy}">
+                                        <input type="hidden" th:id="contentId" th:value="${touritem.contentid}">
+                                        <div class="content-title" th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}" th:text="${touritem.title}"></div>
+                                        <p class="content-address" th:text="${touritem.address}"></p>
+                                    </div>
+
+                                    <button class="plus">
+                                        <!--아이콘 눌러서 담기-->
+                                        <i class="bi bi-bookmark-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="col-10 mb-1 small" >
+                                    <label th:text="${touritem.fullCategoryName}"></label>
+                                </div>
+                            </a>
+                        </th:block>
+
+
+                        <th:block th:unless="${pageResponse.total > 0}">
+                            <p class="mb-1 touritem-no-contents">
+                                검색된 관광지 정보가 없습니다.
+                            </p>
+                        </th:block>
+
+                        <div class="nav-container">
+                            <nav aria-label="page-bar">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <i class="bi bi-chevron-double-left page-link" data-num="0"></i>
+                                    </li>
+                                    <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
+                                        <i class="bi bi-chevron-left page-link" th:attr="data-num=${pageResponse.start -1}"></i>
+                                    </li>
+                                    <th:block th:each="pageNo : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                                        <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" th:classappend="${pageResponse.page == pageNo} ? 'active' : ''" th:text="${pageNo + 1}"></span></li>
+                                    </th:block>
+                                    <li class="page-item" th:classappend="${pageResponse.next} ? '' : 'disabled'">
+                                        <i class="bi bi-chevron-right page-link" th:attr="data-num=${pageResponse.end +1}"></i>
+                                    </li>
+                                    <li class="page-item">
+                                        <i class="bi bi-chevron-double-right page-link" th:attr="data-num=${pageResponse.last}"></i>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
-            </th:block>
+            </div>
         </div>
+
+
+
+        <div id="day" class="day vh-100 d-flex flex-column">
+            <!--장소담기-->
+            <div id="your_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
+                <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+                    <span class="fs-5 fw-semibold" id="your_day"></span>
+                </a>
+
+                <!--버튼눌러서 담으면 이렇게 됩니다.-->
+                <!--            <div id="areabox" class="scroll list-group list-group-flush border-bottom scrollarea">-->
+                <!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">장소1</strong>-->
+                <!--                        <small>-->
+                <!--아이콘 눌러서 담기-->
+                <!--                            <button id="deleteBtn" type="button" onclick="deleteRow(this);">-->
+                <!--                                <i class='bi bi-x-circle'></i>-->
+                <!--                            </button>-->
+                <!--                        </small>-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--            </div>-->
+
+                <div id="areabox" class="scroll list-group list-group-flush scrollarea">
+                </div>
+            </div>
+
+            <!--지도가 들어갑니다.-->
+            <div id="map" class="vh-100 d-flex flex-column align-items-stretch default">
+                <button class="toggle-btn bg-white text-center" type="button" onclick="toggleDay();">
+                    <i class="toggle-btn-icon bi bi-caret-left-fill"></i>
+                </button>
+
+                <div class="map-result position-absolute">
+                    <button class="btn btn-primary btn_route">경로 확인</button>
+                    <button class="btn btn-primary btn_optimize">동선 추천</button>
+                    <button class="btn btn-danger btn_delete">전체 삭제</button>
+                    <span class="result"></span>
+                </div>
+                <div id="map_div">
+                </div>
+            </div>
+        </div>
+        </th:block>
     </div>
+</div>
 </div>
 </body>
 </html>

@@ -90,6 +90,7 @@
         #open-etc-btn {
             bottom: 5%;
             right: 5%;
+            z-index: 1000;
         }
 
         #right-btn {
@@ -431,20 +432,6 @@
         // $('#shareModal').modal('hide');
     };
 
-
-
-
-    // 다른 유저에게 공유하기
-    // function share(id) {
-    //     const myId = [[${userId}]];
-    //     if(id == myId) {
-    //         alert('본인에게 공유할 수 없습니다. 다른 사람의 아이디를 입력하세요.');
-    //     }
-    //     if(confirm(id+'님에게 일정을 공유하시겠습니까?')) {
-    //
-    //     }
-    // }
-
     // 특정 날짜의 계획을 로드하는 함수
     function loadPlanForDay(day) {
         var plannerId = $('.timeline').attr('data-pid');
@@ -579,10 +566,6 @@
                     resultInfoArr[previousTabIndex].forEach(function(line) {
                         line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
                     })
-                    // if(viaMarkers != null) {
-                    //     for (var i=0; i<viaMarkers[index].length; i++) {
-                    //     }
-                    // }
 
                     $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
                 } else if (previousTabIndex === -1) {
@@ -600,14 +583,6 @@
                     }
                 }
 
-                // // 선택한 인덱스 탭에 맞는 마커를 다시 로드
-                // viaMarkers[index].forEach(function(marker) {
-                //     marker.setMap(map);
-                // });
-                // // 선택한 인덱스 탭에 맞는 경로 빨간 선 표시를 다시 로드
-                // resultInfoArr[index].forEach(function(line) {
-                //     line.setMap(map);
-                // })
                 // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
                 $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
 
