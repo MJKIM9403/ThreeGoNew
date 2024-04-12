@@ -85,32 +85,27 @@
         display: none;
     }
 
-    .btn-editProfile {
-        text-align: center;
-    }
-
     .btn-primary {
         width: 100px;
     }
 
-    .about-list{
-       display: flex;
+    .about-list {
+        display: flex;
         justify-content: flex-start;
     }
 
-    .list_info{
-        margin-left: auto;}
+    .list_info {
+        margin-left: auto;
+    }
 
-
-.loginUser-list{
-    padding-top: 12px;
-}
+    .loginUser-list {
+        padding-top: 12px;
+    }
 
     /* 텍스트 영역을 고정 크기로 만들기 */
     textarea#about {
         resize: none; /* 크기 조절 핸들 숨기기 */
     }
-
 </style>
 
 
@@ -141,16 +136,15 @@
                 <div class="profile-info">
                     <div class="profile-pic">
                         <div class="mb-2">
-                        <img th:if="${loginUser.profileImg == null}" src="/assets/img/profile.jpg" alt="프로필 이미지">
-                        <img th:unless="${loginUser.profileImg == null}"
-                             th:src="|@{/api/image/profile/}${loginUser.profileImg}|" alt="프로필 이미지">
+                            <img th:if="${loginUser.profileImg == null}" src="/assets/img/profile.jpg" alt="프로필 이미지">
+                            <img th:unless="${loginUser.profileImg == null}"
+                                 th:src="|@{/api/image/profile/}${loginUser.profileImg}|" alt="프로필 이미지">
                         </div>
 
                         <label for="uploadFile">
                             <div class="btn-upload">사진 업로드</div>
                         </label>
                         <input id="uploadFile" type="file" accept="image/*" onchange="setProfileImage()"/>
-
                     </div>
 
                     <div class="loginUser-list">
@@ -159,8 +153,6 @@
                         <h5>메일주소: </h5>
                         <p><span th:text="${loginUser.email}"></span></p>
                     </div>
-
-
                 </div>
 
                 <form id="editForm" action="/editProfile" method="post">
@@ -168,9 +160,9 @@
                         <div class="mb-3">
                             <div class="mb-4">
                                 <div class="about-list">
-                                <h4 class="list ">닉네임</h4>
-                                <div class="list_info">※ 10자까지입력가능
-                                </div>
+                                    <h4 class="list ">닉네임</h4>
+                                    <div class="list_info">※ 10자까지입력가능
+                                    </div>
                                 </div>
                                 <input type="text" id="name" class="form-control form-control-sm" maxlength="10"
                                        th:value="${loginUser.name}"/>
@@ -206,8 +198,8 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        $('#saveCancel').click(function() {
+    $(document).ready(function () {
+        $('#saveCancel').click(function () {
             history.back();
         });
     });
