@@ -213,6 +213,21 @@
         .btn_route, .btn_optimize, .btn_delete {
             padding: 5px 10px;
         }
+
+        .planner-name {
+            width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            line-height: 1.5;
+            height: 2rem;
+        }
+        .planner-date {
+            font-size: 0.8rem;
+            color: #555555;
+        }
     </style>
 </head>
 <body>
@@ -297,6 +312,7 @@
             selectedAreaCode = $(this).val();
             updateCityName();
         });
+        LoadNameAndDay();
     })
 
     /**
@@ -334,6 +350,12 @@
     /**
      * 뷰 관련 기타
      */
+
+    function LoadNameAndDay() {
+        $('.planner-name').text(plannerName);
+        $('.planner-date').text(startDate + "~" + endDate);
+    }
+
     // 도시명 바꾸기
     function updateCityName() {
         $('.areaSelect').change(function() {
@@ -1537,11 +1559,11 @@
                 </th:block>
 
             </ul>
-            <div class="btn_con text-center">
+            <div class="btn_con d-flex flex-column align-items-center text-center gap-3">
                 <button type="button" id="cancel-btn" class="btn btn-primary" >취소</button>
                 <button type="button" id="edit-btn" class="btn btn-primary" >수정</button>
             </div>
-            <div class="dropdown border-top">
+            <div class="dropdown">
                 <div class="login-drop dropdown mt-auto">
                     <hr>
                     <a href="#"
@@ -1582,10 +1604,10 @@
 
         <!--장소찾기-->
         <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-            <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
-                <span class="city-name fs-5 fw-semibold">도시명</span>
-                <span class="fx-6">이전화면에서 선택한 날짜</span>
-            </a>
+            <div class="d-flex flex-column flex-shrink-0 px-3 py-2 link-dark text-decoration-none">
+                <span class="fs-5 fw-semibold planner-name">플래너 이름</span><br>
+                <span class="fs-6 fw-semibold planner-date">날짜</span>
+            </div>
             <div class="search-bar">
                 <input class="search-input" placeholder="장소를 검색하세요.">
                 <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
@@ -1608,7 +1630,8 @@
                     <!--장소 불러오기-->
                     <div id="touritems">
                         <div>
-                            <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
+                            <span class="fs-5 fw-semibold city-name">전국</span>
+                            <span class="fs-5 fw-semibold" th:text="|${pageResponse.total}건의 관광지|"></span>
                         </div>
 
                         <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
