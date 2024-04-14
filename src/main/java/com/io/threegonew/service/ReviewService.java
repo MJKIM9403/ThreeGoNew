@@ -215,6 +215,8 @@ public class ReviewService {
                 .viewCount(review.getViewCount())
                 .reviewPhotoList(review.getReviewPhotoList().stream()
                                 .map(this::reviewPhotoMapper).collect(Collectors.toList()))
+                .regDate(review.getRegDate())
+                .modDate(review.getModDate())
                 .build();
     }
 

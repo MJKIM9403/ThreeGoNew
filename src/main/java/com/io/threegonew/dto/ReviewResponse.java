@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -25,4 +26,6 @@ public class ReviewResponse {
     private String reviewContent;
     private Long viewCount;
     private List<ReviewPhotoResponse> reviewPhotoList;
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
 }

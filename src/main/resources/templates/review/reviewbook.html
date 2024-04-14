@@ -317,7 +317,7 @@
                     <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><sapn id="book-edit" class="dropdown-item">수정</sapn></li>
+                    <li><span id="book-edit" class="dropdown-item">수정</span></li>
                     <li><span id="book-delete" class="dropdown-item" onclick="deleteBook()">삭제</span></li>
                 </ul>
             </div>
@@ -386,7 +386,7 @@
 
     <!-- 리뷰 상세 조회 폼 -->
     <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="container-fluid">
@@ -431,21 +431,27 @@
                                         <strong id="writer-name" class="ms-2">작성자 이름</strong>
                                         <span id="writer-id" class="ms-2">@writerId</span>
                                     </div>
-                                    <div class="btn-group">
-                                        <button id="review-more-btn" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-cog" aria-hidden="true"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a id="review-edit" class="dropdown-item" href="#">수정</a></li>
-                                            <li><span id="review-delete" class="dropdown-item">삭제</span></li>
-                                        </ul>
+                                    <div class="d-flex gap-2">
+                                        <div id="review-regdate">
+                                            yyyy-mm-dd
+                                        </div>
+                                        <div class="btn-group">
+                                            <button id="review-more-btn" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-cog" aria-hidden="true"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a id="review-edit" class="dropdown-item" href="#">수정</a></li>
+                                                <li><span id="review-delete" class="dropdown-item">삭제</span></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="contents-wrap" class="mb-2">
                                     <div id="content">
                                     </div>
+                                    <hr class="comment-line">
                                     <div id="comment-wrap">
-                                        <div class="comment-info d-flex mb-2">
+                                        <div class="comment-info d-flex">
                                             <div class="rounded-circle icon-img comment-profile">
                                                 <img src="../assets/img/profile.jpg" alt="...">
                                             </div>
@@ -457,9 +463,9 @@
                                     </div>
                                 </div>
                                 <div class="small-review-icons d-flex gap-2">
-                                    <i class="bi bi-chat-square-dots"></i><span class="comment-count">120</span>
-                                    <i class="like-btn bi bi-star"></i><span class="like-count">2334</span>
-                                    <i class="bi bi-eye"></i><span class="view-count">2.3k</span>
+                                    <i class="bi bi-chat-square-dots"></i><span class="comment-count">0000</span>
+                                    <i class="like-btn bi bi-star"></i><span class="like-count">0000</span>
+                                    <i class="bi bi-eye"></i><span class="view-count">0000</span>
                                 </div>
                                 <div id="my-comment-wrap" class="d-flex align-items-start">
                                     <div class="rounded-circle icon-img">
@@ -484,7 +490,7 @@
 
     <!--  리뷰북 수정 폼  -->
     <div id="book-editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="bookEditorLabel" aria-hidden="true">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -743,15 +749,20 @@
         keyboard: true,
     });
 
+    let selectedReviewId;
+
+    let loginUserId = [[${loginUser.id}]];
     function openViewer(reviewId) {
-        let loginUserId = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
+        selectedReviewId = reviewId;
+
+        let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
         let promise = new Promise((resolve) => {
             $.ajax({
                 url : '/api/review/view_count',
                 type : 'PUT',
                 data : {
-                    reviewId : reviewId
+                    reviewId : selectedReviewId
                 },
                 success : function (viewCount) {
                     resolve();
@@ -763,30 +774,32 @@
         });
         promise.then(() => {
             $('#viewer').modal('show');
-            $('#login-user-name').text(loginUserId);
+            $('#login-user-name').text(loginUser);
             if(loginUserProfile != null){
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
-            loadDetailReview(reviewId);
-            showComments(reviewId);
-            showAllCommentsCount(reviewId);
-            postNewComment(reviewId);
+            loadDetailReview();
+            showComments();
+            showAllCommentsCount();
+            postNewComment();
             parentId = null;
             $('.invisible-parent-writer').html("");
             $('.parent-writer').remove();
         });
     }
-    function loadDetailReview(reviewId){
+    function loadDetailReview(){
         $.ajax({
             url : '/api/review/detail',
             type : 'GET',
             data : {
-                reviewId : reviewId
+                reviewId : selectedReviewId
             },
             contentType : 'application/json; charset=UTF-8',
             success : function (findReview) {
                 let writer = findReview.userInfo;
                 let photoList = findReview.reviewPhotoList;
+                let regDate = (findReview.regDate === findReview.modDate) ? formatRegDate(findReview.regDate) : formatRegDate(findReview.modDate) + ' (수정됨)';
+
                 $('#writer-info').click(function (){
                     location.href = `/mypage/${writer.id}`
                 })
@@ -794,9 +807,9 @@
                 $('#writer-id').text('@' + writer.id);
                 if(writer.id === [[${loginUser.id}]]){
                     $('#writer-wrap .btn-group').addClass('d-flex').show();
-                    $('#review-edit').attr('href',`../review/edit/${reviewId}`);
+                    $('#review-edit').attr('href',`../review/edit/${selectedReviewId}`);
                     $('#review-delete').off('click').on('click', function (){
-                        deleteReview(reviewId);
+                        deleteReview(selectedReviewId);
                     })
                 }else {
                     $('#writer-wrap .btn-group').removeClass('d-flex').hide();
@@ -804,6 +817,8 @@
                 if(writer.profileImg != null){
                     $('#writer-profile-img').attr('src','/api/image/profile/' + writer.profileImg);
                 }
+                $('#review-regdate').text(regDate);
+
                 $('#content').html((findReview.reviewContent).replace(/\r\n/g,"<br/>"));
                 if(findReview.reviewBookId == null){
                     $('#review-book-info').removeClass('d-flex').hide();
@@ -842,12 +857,12 @@
             }
         })
         $.ajax({
-            url : `/api/likes/${reviewId}`,
+            url : `/api/likes/${selectedReviewId}`,
             type : 'GET',
             success : function (result){
                 const likeCount = result.likeCount;
                 const likeState = result.likeState;
-                $('.small-review-icons .like-btn').data('review-id',reviewId);
+                $('.small-review-icons .like-btn').data('review-id',selectedReviewId);
                 $('.small-review-icons .like-count').html(likeCount);
                 if(likeState){
                     $('.small-review-icons .like-btn').removeClass("bi-star");
@@ -864,50 +879,101 @@
         })
     }
 
+    // 댓글 시간 포맷
+    function formatRegDate(regDateStr) {
+        const regDate = new Date(regDateStr);
+        const now = new Date();
+
+        // 현재시간과 regDate의 차이 계산 (밀리초 단위)
+        const diff = now - regDate;
+
+        // 밀리초를 분, 시, 일, 주 단위로 변환
+        const diffMinutes = Math.floor(diff / (60 * 1000));
+        const diffHours = Math.floor(diff / (60 * 60 * 1000));
+        const diffDays = Math.floor(diff / (24 * 60 * 60 * 1000));
+
+        // 조건에 따라 적절한 문자열 반환
+        if (diffMinutes < 60) {
+            return `${diffMinutes}분 전`;
+        } else if (diffHours < 24) {
+            return `${diffHours}시간 전`;
+        } else if (diffDays < 7) {
+            return `${diffDays}일 전`;
+        } else {
+            // regDate를 'yyyy-mm-dd' 형식으로 포맷팅
+            const year = regDate.getFullYear();
+            const month = String(regDate.getMonth() + 1).padStart(2, '0');
+            const day = String(regDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+    }
+
     // 댓글 리스트 조회
-    function showComments(reviewId) {
+    function showComments() {
         $.ajax({
             url : '/api/comments',
             type : 'GET',
             data : {
-                reviewId: reviewId
+                reviewId: selectedReviewId
             },
             success : function (result){
                 let commentList = result.dtoList;
                 $('#comment-wrap').html("");
                 if(commentList.length > 0){
                     $.each(commentList, function (index, comment){
-                        let profileImg;
-                        let regDate = comment.regDate;
-                        if(comment.writer.profileImg == null){
-                            profileImg = '../assets/img/profile.jpg';
+                        if(comment.cmtDel){
+                            let tempHtml = '<div class="comment-info deleted-comment">삭제된 댓글 입니다.</div>'
+                            $('#comment-wrap').append(tempHtml);
                         }else {
-                            profileImg = `/api/image/profile/${comment.writer.profileImg}`;
-                        }
-                        if(comment.modDate != null){
-                            regDate = comment.modDate;
-                        }
-                        let tempHtml =
-                            '<div class="comment-info">' +
-                                '<div class="d-flex mb-2">' +
-                                    '<div class="rounded-circle icon-img comment-profile">' +
-                                        `<img src="${profileImg}" alt="...">` +
-                                    '</div>' +
-                                    `<div class="comment-text" data-comment-id="${comment.commentId}">` +
-                                        '<div class="d-flex justify-content-between gap-2">' +
-                                            `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
-                                            `<span class="comment-regdate">${regDate}</span>` +
-                                        '</div>' +
-                                        `<span class="comment-content">${comment.content}</span>` +
-                                        `<span class="reply-btn ms-3" data-parent-writer="${comment.writer.id}" data-parent-id="${comment.commentId}">답글쓰기</span>` +
-                                    '</div>' +
-                                '</div>';
-                        if(comment.childrenCount > 0){
-                            tempHtml += `<div class="more-reply-btn">답글 더 보기(${comment.childrenCount}개)</div>`
-                        }
-                        tempHtml += '<div class="reply-wrapper"></div></div>';
+                            let profileImg;
+                            let regDate = (comment.regDate === comment.modDate) ? formatRegDate(comment.regDate) : formatRegDate(comment.modDate) + ' (수정됨)';
+                            if(comment.writer.profileImg == null){
+                                profileImg = '../assets/img/profile.jpg';
+                            }else {
+                                profileImg = `/api/image/profile/${comment.writer.profileImg}`;
+                            }
 
-                        $('#comment-wrap').append(tempHtml);
+                            let tempHtml =
+                                '<div class="comment-info">' +
+                                '<div class="d-flex">' +
+                                '<div class="rounded-circle icon-img comment-profile">' +
+                                `<img src="${profileImg}" alt="...">` +
+                                '</div>' +
+                                `<div class="comment-text" data-comment-id="${comment.commentId}">` +
+                                '<div class="d-flex justify-content-between gap-2">' +
+                                `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
+                                '<div class="d-flex">' +
+                                `<span class="comment-regdate">${regDate}</span>`;
+
+                            if(loginUserId === comment.writer.id){
+                                tempHtml +=
+                                    '<button type="button" class="btn comment-more-btn" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                    '<i class="bi bi-three-dots-vertical" aria-hidden="true"></i>' +
+                                    '</button>' +
+                                    '<ul class="dropdown-menu">' +
+                                    '<li><span class="comment-edit dropdown-item">수정</span></li>' +
+                                    '<li><span class="comment-delete dropdown-item">삭제</span></li>' +
+                                    '</ul>';
+                            }
+
+                            tempHtml +=
+                                '</div>' +
+                                '</div>' +
+                                `<span class="comment-content">${comment.content}</span>` +
+                                `<span class="reply-btn ms-3" data-parent-writer="${comment.writer.id}" data-parent-id="${comment.commentId}">답글쓰기</span>` +
+                                '</div>' +
+                                '</div>';
+                            if(comment.childrenCount > 0){
+                                tempHtml +=
+                                    `<div class="more-reply-btn" data-group="${comment.group}" data-page="0">답글 더 보기(${comment.childrenCount}개)</div>` +
+                                    `<div class="close-reply-btn" data-group="${comment.group}">답글 접기</div>`;
+                            }
+                            tempHtml +=
+                                `<div class="reply-wrap" data-group="${comment.group}"></div>` +
+                                `<div class="next-reply-btn" data-group="${comment.group}">답글 더 보기</div></div>`;
+
+                            $('#comment-wrap').append(tempHtml);
+                        }
                     })
                 }else {
                     let tempHtml =
@@ -923,18 +989,17 @@
     }
 
     // 댓글 갯수 조회
-    function showAllCommentsCount(reviewId){
-        let test = $(`small.comment-count[data-review-id="${reviewId}"]`).html();
-        console.log(test)
+    function showAllCommentsCount(){
+        let test = $(`small.comment-count[data-review-id="${selectedReviewId}"]`).html();
         $.ajax({
             url : '/api/comments/count',
             type : 'GET',
             data : {
-                reviewId : reviewId
+                reviewId : selectedReviewId
             },
             success : function (count){
                 $('.small-review-icons .comment-count').html(count);
-                $(`small.comment-count[data-review-id="${reviewId}"]`).html(`댓글 ${count}개`);
+                $(`small.comment-count[data-review-id="${selectedReviewId}"]`).html(`댓글 ${count}개`);
             },
             error : function (err){
                 console.log(err);
@@ -945,9 +1010,8 @@
     let parentId = null;
 
     // 댓글 작성
-    function postNewComment(reviewId) {
+    function postNewComment() {
         $('#comment-btn').off('click').on('click', function (){
-            let loginUserId = [[${loginUser.id}]];
 
             if(loginUserId === 'anonymousUser'){
                 alert('댓글은 로그인 후 등록하실 수 있습니다.');
@@ -959,7 +1023,7 @@
                 content = content.replace(/<\/div>/g,'');
 
                 let data = {
-                    reviewId : reviewId,
+                    reviewId : selectedReviewId,
                     content : content
                 }
 
@@ -972,18 +1036,80 @@
                     type : 'POST',
                     data : JSON.stringify(data),
                     contentType : 'application/json; charset=UTF-8',
-                    success : function (){
+                    success : function (commentId){
                         $('.no-comment-msg').remove();
-                        showRecentComment(reviewId);
+                        showRecentComment();
                         $('#comment-content').html("");
-                        showAllCommentsCount(reviewId);
+                        showAllCommentsCount();
                         $('.invisible-parent-writer').html("");
+                        if(parentId != null){
+                            addReply(commentId);
+                        }
                         parentId = null;
                     },
                     error : function (){
                         alert("댓글 등록에 실패하였습니다.");
                     }
                 })
+            }
+        })
+    }
+
+    function addReply(commentId){
+        $.ajax({
+            url : '/api/comments/new-reply',
+            type : 'GET',
+            data : {
+                commentId : commentId
+            },
+            success : function (result){
+                let reply = result.reply;
+                let replyCount = result.replyCount;
+                let profileImg;
+                let regDate = (reply.regDate === reply.modDate) ? formatRegDate(reply.regDate) : formatRegDate(reply.modDate) + ' (수정됨)';
+                let group = reply.group;
+                if(reply.writer.profileImg == null){
+                    profileImg = '../assets/img/profile.jpg';
+                }else {
+                    profileImg = `/api/image/profile/${reply.writer.profileImg}`;
+                }
+
+                let tempHtml =
+                    '<div class="comment-info">' +
+                    '<div class="d-flex">' +
+                    '<div class="rounded-circle icon-img comment-profile">' +
+                    `<img src="${profileImg}" alt="...">` +
+                    '</div>' +
+                    `<div class="comment-text" data-comment-id="${reply.commentId}">` +
+                    '<div class="d-flex justify-content-between gap-2">' +
+                    `<span class="comment-writer me-3">@${reply.writer.id}</span>` +
+                    '<div class="d-flex">' +
+                    `<span class="comment-regdate">${regDate}</span>`;
+
+                if(loginUserId === reply.writer.id){
+                    tempHtml +=
+                        '<button type="button" class="btn comment-more-btn" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="bi bi-three-dots-vertical" aria-hidden="true"></i>' +
+                        '</button>' +
+                        '<ul class="dropdown-menu">' +
+                        '<li><span class="comment-edit dropdown-item">수정</span></li>' +
+                        '<li><span class="comment-delete dropdown-item">삭제</span></li>' +
+                        '</ul>';
+                }
+
+                tempHtml +=
+                    '</div>' +
+                    '</div>' +
+                    `<span class="comment-content"><span class="reply-parent-writer">@${reply.parentWriterId}</span>${reply.content}</span>` +
+                    `<span class="reply-btn ms-3" data-parent-writer="${reply.writer.id}" data-parent-id="${reply.commentId}">답글쓰기</span>` +
+                    '</div>' +
+                    '</div>';
+
+                $(`.reply-wrap[data-group="${group}"]`).append(tempHtml);
+                $(`.more-reply-btn[data-group="${group}"]`).text(`답글 더 보기(${replyCount}개)`)
+            },
+            error : function (err){
+                console.log(err)
             }
         })
     }
@@ -1017,55 +1143,256 @@
         e.stopPropagation();
     })
 
+    // 답글 삭제
+    $(document).on('click','.comment-delete', function (){
+        let commentId = $(this).closest('.comment-text').attr('data-comment-id');
+        let commentInfo = $(this).closest('.comment-info');
 
-    function showRecentComment(reviewId) {
+        $.ajax({
+            url : `/api/comments/${commentId}`,
+            type : 'DELETE',
+            success : function (){
+                $(commentInfo).addClass('deleted-comment');
+                $(commentInfo).html('삭제된 댓글 입니다.');
+            },
+            error : function (err){
+                alert("댓글 삭제에 실패했습니다.");
+                console.log(err)
+            }
+        })
+    })
+
+    // 답글 수정 - 입력폼 변경
+    $(document).on('click','.comment-edit', function (){
+        let commentInfo = $(this).closest('.comment-info');
+        let targetComment = $(commentInfo).children('.d-flex').first();
+
+        let commentText = $(this).closest('.comment-text');
+        let commentClone = $(commentText).children('.comment-content').clone();
+        commentClone.find('.reply-parent-writer').remove();
+        let originContent = commentClone.html();
+
+        let editCommentContent =
+            '<div class="d-flex comment-editor gap-1">' +
+            `<i class="bi bi-arrow-return-right"></i>` +
+            `<div contenteditable="true" class="edit-comment-content form-control">${originContent}</div>` +
+            '<button type="button" class="edit-comment-btn btn btn-outline-secondary">수정</button>' +
+            '</div>'
+
+        $(targetComment).after(editCommentContent);
+        setTimeout(function (){
+            commentInfo.find('.edit-comment-content').focus();
+        },50)
+    })
+
+    // 댓글 수정
+    $(document).on('click','.edit-comment-btn', function (){
+        let commentText = $(this).closest('.comment-info').find('.comment-text');
+        let commentId = $(commentText).attr('data-comment-id');
+        let content = $(this).prev('.edit-comment-content').html();
+        content = content.replace(/<br>/g,'\r\n');
+
+        let commentEditor = $(this).closest('.comment-editor');
+        $.ajax({
+            url : `/api/comments/${commentId}`,
+            type : 'PUT',
+            data : JSON.stringify({
+                commentId : commentId,
+                content : content
+            }),
+            contentType : 'application/json; charset=UTF-8',
+            success : function (result){
+                const type = result.type;
+                let updatedComment = result.updatedComment;
+                let modDate = formatRegDate(updatedComment.modDate) + ' (수정됨)';
+                if(type === 'comment'){
+                    commentText.find('.comment-regdate').text(modDate);
+                    commentText.find('.comment-content').html(updatedComment.content);
+                }else if(type === 'reply'){
+                    commentText.find('.comment-regdate').text(modDate);
+                    let content = `<span class="reply-parent-writer">@${updatedComment.parentWriterId}</span>` + updatedComment.content;
+                    commentText.find('.comment-content').html(content);
+                }
+                commentEditor.remove();
+            },
+            error : function (err){
+                alert('댓글 수정에 실패했습니다.');
+                console.log(err);
+            }
+        })
+    })
+
+    // 답글 리스트 조회
+    $(document).on('click','.more-reply-btn, .next-reply-btn', function (){
+        let group = $(this).attr('data-group');
+        let page = $(this).attr('data-page');
+
+        $.ajax({
+            url : '/api/comments/replies',
+            type : 'GET',
+            data : {
+                reviewId : selectedReviewId,
+                group : group,
+                page : page
+            },
+            success : function (result){
+                let replyList = result.dtoList;
+                $.each(replyList, function (index, reply){
+                    if(reply.cmtDel){
+                        let tempHtml = '<div class="comment-info deleted-comment">삭제된 댓글 입니다.</div>'
+                        $(`.reply-wrap[data-group="${group}"]`).append(tempHtml);
+                    }else {
+                        let profileImg;
+                        let regDate = (reply.regDate === reply.modDate) ? formatRegDate(reply.regDate) : formatRegDate(reply.modDate) + ' (수정됨)';
+                        if(reply.writer.profileImg == null){
+                            profileImg = '../assets/img/profile.jpg';
+                        }else {
+                            profileImg = `/api/image/profile/${reply.writer.profileImg}`;
+                        }
+
+                        let tempHtml =
+                            '<div class="comment-info">' +
+                            '<div class="d-flex">' +
+                            '<div class="rounded-circle icon-img comment-profile">' +
+                            `<img src="${profileImg}" alt="...">` +
+                            '</div>' +
+                            `<div class="comment-text" data-comment-id="${reply.commentId}">` +
+                            '<div class="d-flex justify-content-between gap-2">' +
+                            `<span class="comment-writer me-3">@${reply.writer.id}</span>` +
+                            '<div class="d-flex">' +
+                            `<span class="comment-regdate">${regDate}</span>`;
+
+                        if(loginUserId === reply.writer.id){
+                            tempHtml +=
+                                '<button type="button" class="btn comment-more-btn" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                '<i class="bi bi-three-dots-vertical" aria-hidden="true"></i>' +
+                                '</button>' +
+                                '<ul class="dropdown-menu">' +
+                                '<li><span class="comment-edit dropdown-item">수정</span></li>' +
+                                '<li><span class="comment-delete dropdown-item">삭제</span></li>' +
+                                '</ul>';
+                        }
+
+                        tempHtml +=
+                            '</div>' +
+                            '</div>' +
+                            `<span class="comment-content"><span class="reply-parent-writer">@${reply.parentWriterId}</span>${reply.content}</span>` +
+                            `<span class="reply-btn ms-3" data-parent-writer="${reply.writer.id}" data-parent-id="${reply.commentId}">답글쓰기</span>` +
+                            '</div>' +
+                            '</div>';
+
+                        $(`.reply-wrap[data-group="${group}"]`).append(tempHtml);
+                    }
+                })
+                $(`.more-reply-btn[data-group="${group}"]`).hide();
+                $(`.close-reply-btn[data-group="${group}"]`).show().css('display','flex');
+                $(`.next-reply-btn[data-group="${group}"]`).attr('data-page',Number(page) +1);
+                if(result.page < result.last){
+                    $(`.next-reply-btn[data-group="${group}"]`).show().css('display','flex');
+                }else {
+                    $(`.next-reply-btn[data-group="${group}"]`).attr('data-page','last');
+                    $(`.next-reply-btn[data-group="${group}"]`).hide();
+                }
+                $(`.more-reply-btn[data-group="${group}"]`).text(`답글 더 보기(${result.total}개)`)
+            },
+            error : function (err){
+                console.log(err)
+            }
+        })
+    })
+
+    // 조회한 답글 접었다 펴기
+    $(document).on('click','.close-reply-btn', function (){
+        const info = $(this).closest('.comment-info');
+        const page = $(info).children('.next-reply-btn').attr('data-page');
+
+        if($(info).children('.reply-wrap').css('display') === 'none'){
+            $(this).text('답글 접기');
+            $(info).children('.reply-wrap').show();
+            if(page !== 'last'){
+                $(info).children('.next-reply-btn').show();
+            }
+        }else {
+            const text = $(info).children('.more-reply-btn').text();
+            $(this).text(text);
+            $(info).children('.reply-wrap').hide();
+            $(info).children('.next-reply-btn').hide();
+            $(info).children('.reply-wrap').children('.temp-reply').remove();
+        }
+    })
+
+
+    // 댓글 작성 시 최신 댓글 리스트까지 갱신
+    function showRecentComment() {
         let lastCommentId = $('#comment-wrap .comment-info:first .comment-text').data('comment-id');
         console.log(lastCommentId);
         if(lastCommentId === undefined){
-            showComments(reviewId);
+            showComments();
         }else {
             $.ajax({
                 url : '/api/comments/recent',
                 type : 'GET',
                 data : {
-                    reviewId : reviewId,
+                    reviewId : selectedReviewId,
                     lastCommentId : lastCommentId
                 },
                 success : function (result){
                     let commentList = result;
                     if(commentList.length > 0) {
                         $.each(commentList, function (index, comment) {
-                            let profileImg;
-                            let regDate = comment.regDate;
-                            if (comment.writer.profileImg == null) {
-                                profileImg = '../assets/img/profile.jpg';
-                            } else {
-                                profileImg = `/api/image/profile/${comment.writer.profileImg}`;
-                            }
-                            if (comment.modDate != null) {
-                                regDate = comment.modDate;
-                            }
-                            let tempHtml =
-                                '<div class="comment-info">' +
-                                '<div class="d-flex mb-2">' +
-                                '<div class="rounded-circle icon-img comment-profile">' +
-                                `<img src="${profileImg}" alt="...">` +
-                                '</div>' +
-                                `<div class="comment-text" data-comment-id="${comment.commentId}">` +
-                                '<div class="d-flex justify-content-between gap-2">' +
-                                `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
-                                `<span class="comment-regdate">${regDate}</span>` +
-                                '</div>' +
-                                `<span class="comment-content">${comment.content}</span>` +
-                                `<span class="reply-btn ms-3" data-parent-writer="${comment.writer.id}" data-parent-id="${comment.commentId}">답글쓰기</span>` +
-                                '</div>' +
-                                '</div>';
-                            if(comment.childrenCount > 0){
-                                tempHtml += `<div class="more-reply-btn">답글 더 보기(${comment.childrenCount}개)</div>`
-                            }
-                            tempHtml += '<div class="reply-wrapper"></div></div>';
+                            if(comment.cmtDel){
+                                let tempHtml = '<div class="comment-info deleted-comment">삭제된 댓글 입니다.</div>'
+                                $('#comment-wrap').prepend(tempHtml);
+                            }else {
+                                let profileImg;
+                                let regDate = comment.regDate;
+                                if(comment.writer.profileImg == null){
+                                    profileImg = '../assets/img/profile.jpg';
+                                }else {
+                                    profileImg = `/api/image/profile/${comment.writer.profileImg}`;
+                                }
+                                if(comment.regDate != comment.modDate){
+                                    regDate = comment.modDate + ' (수정됨)';
+                                }
+                                let tempHtml =
+                                    '<div class="comment-info">' +
+                                    '<div class="d-flex">' +
+                                    '<div class="rounded-circle icon-img comment-profile">' +
+                                    `<img src="${profileImg}" alt="...">` +
+                                    '</div>' +
+                                    `<div class="comment-text" data-comment-id="${comment.commentId}">` +
+                                    '<div class="d-flex justify-content-between gap-2">' +
+                                    `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
+                                    '<div class="d-flex">' +
+                                    `<span class="comment-regdate">${regDate}</span>`;
 
-                            $('#comment-wrap').prepend(tempHtml);
+                                if(loginUserId === comment.writer.id){
+                                    tempHtml +=
+                                        '<button type="button" class="btn comment-more-btn" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                        '<i class="bi bi-three-dots-vertical" aria-hidden="true"></i>' +
+                                        '</button>' +
+                                        '<ul class="dropdown-menu">' +
+                                        '<li><span class="comment-edit dropdown-item">수정</span></li>' +
+                                        '<li><span class="comment-delete dropdown-item">삭제</span></li>' +
+                                        '</ul>';
+                                }
+
+                                tempHtml +=
+                                    '</div>' +
+                                    '</div>' +
+                                    `<span class="comment-content">${comment.content}</span>` +
+                                    `<span class="reply-btn ms-3" data-parent-writer="${comment.writer.id}" data-parent-id="${comment.commentId}">답글쓰기</span>` +
+                                    '</div>' +
+                                    '</div>';
+                                if(comment.childrenCount > 0){
+                                    tempHtml += `<div class="more-reply-btn" data-group="${comment.group}" data-page="0">답글 더 보기(${comment.childrenCount}개)</div>` +
+                                        `<div class="close-reply-btn" data-group="${comment.group}">답글 접기</div>`;
+                                }
+                                tempHtml += `<div class="reply-wrap" data-group="${comment.group}"></div>` +
+                                    `<div class="next-reply-btn" data-group="${comment.group}">답글 더 보기</div></div>`;
+
+                                $('#comment-wrap').prepend(tempHtml);
+                            }
                         })
                     }
                 },
@@ -1118,14 +1445,14 @@
         })
     }
 
-    function deleteReview(reviewId){
+    function deleteReview(){
         const deleteConfirm = confirm("리뷰를 삭제하시겠습니까?");
         if(deleteConfirm){
             $.ajax({
                 url : '/api/review/delete',
                 type : 'DELETE',
                 data : {
-                    reviewId : reviewId
+                    reviewId : selectedReviewId
                 },
                 success : function (){
                     alert('삭제 되었습니다.')
