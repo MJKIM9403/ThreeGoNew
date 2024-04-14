@@ -20,9 +20,10 @@
     <!-- bootstrap datepicker cdn -->
     <!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
     <!-- jQuery가 먼저 로드 된 후 datepicker가 로드 되어야함.-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ko.min.js" integrity="sha512-L4qpL1ZotXZLLe8Oo0ZyHrj/SweV7CieswUODAAPN/tnqN3PA1P+4qPu5vIryNor6HQ5o22NujIcAZIfyVXwbQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <title>Title</title>
 
 
@@ -141,7 +142,7 @@
         .fa-2 {
             left: calc(100% - 40px);
         }
-        input {
+        input.days {
             padding: 10px 15px !important;
             border: 1px solid lightgrey !important;
             border-radius: 10px;
@@ -179,63 +180,6 @@
             -webkit-box-shadow: none !important;
             box-shadow: none !important;
             outline-width: 0;
-        }
-
-        .datepicker {
-            background-color: #fff;
-            border: none;
-            border-radius: 0 !important;
-        }
-
-        .datepicker-dropdown {
-            top: 0;
-            left: 0;
-        }
-
-        .datepicker table tr td.today, span.focused {
-            border-radius: 5% !important;
-            background-image: linear-gradient(#FFF3E0, #FFE0B2);
-        }
-
-        .datepicker table tr td.today.range {
-            background-image: linear-gradient(#eeeeee, #eeeeee) !important;
-            border-radius: 0 !important;
-        }
-
-        /*Weekday title*/
-        thead tr:nth-child(3) th {
-            font-weight: bold !important;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-
-        .dow, .old-day, .day, .new-day {
-            width: 40px !important;
-            height: 40px !important;
-            border-radius: 0px !important;
-        }
-
-        .old-day:hover, .day:hover, .new-day:hover, .month:hover, .year:hover, .decade:hover, .century:hover {
-            border-radius: 5% !important;
-            background-color: #eee;
-        }
-
-        .range-start, .range-end {
-            border-radius: 5% !important;
-            background-image: linear-gradient(#FFA726, #FFA726) !important;
-        }
-
-        .prev, .next, .datepicker-switch {
-            border-radius: 0 !important;
-            padding: 10px 10px 10px 10px !important;
-            text-transform: uppercase;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .prev:hover, .next:hover, .datepicker-switch:hover {
-            background-color: inherit !important;
-            opacity: 1;
         }
     </style>
 </head>
@@ -317,6 +261,7 @@
         hideEditNameModal();
         hideEditDaysModal();
         loadDatePicker();
+        editPlannerDays();
     });
 
     /**
@@ -536,7 +481,6 @@
                 alert("수정 권한이 없습니다.");
             } else {
                 $('#nameEditModal').modal('show');
-
             }
         })
     }
@@ -552,84 +496,61 @@
         let startDate = new Date(startDateString);
         let endDate = new Date(endDateString);
 
-        // Date 객체를 밀리초로 변환
-        // let startDateTimestamp = startDate.getTime();
-        // let endDateTimestamp = endDate.getTime();
 
         console.log("startDate : " + startDate);
         console.log("endDate : " + endDate);
 
 
+        let fp = flatpickr("#days", {
+            mode: "range",
+            inline: true,
+            static: true,
+            locale: "ko",
+            defaultDate: [startDate, endDate],
+            onChange: function(selectedDates, datestr, instance) {
 
-            // input-daterange 클래스를 가진 요소를 선택하여 초기화
-            $('.input-daterange').each(function() {
-                var startDatePicker = $(this).find('input[name="startDate"]');
-                var endDatePicker = $(this).find('input[name="endDate"]');
+                if (selectedDates.length === 1) { // 날짜를 하루만 선택했을 때
+                    let newMaxDate = new Date(selectedDates[0]);
+                    newMaxDate.setDate(selectedDates[0].getDate() + 9); // 시작 날짜에서 9일 후의 날짜 설정
+                    let newMinDate = new Date(selectedDates[0]);
+                    newMinDate.setDate(selectedDates[0].getDate() - 9); // 시작 날짜에서 9일 전의 날짜 설정
 
-                startDatePicker.datepicker('setDate', new Date(startDateString));
-                endDatePicker.datepicker('setDate', new Date(endDateString));
-
-
-                // DatePicker 초기화
-                $(this).datepicker({
-                    format: 'yyyy-mm-dd',
-                    todayHighlight: true,
-                    autoclose: true,
-                    language: "ko"
-                }).on('changeDate', function(e) {
-                    checkDate();
-                    let startDateTimestamp = startDatePicker.val().getTime();
-                    let endDateTimestamp = endDatePicker.val().getTime();
-
-                    $('[data-date="' + startDateTimestamp + '"]').addClass('selected range-start');
-                    $('[data-date="' + endDateTimestamp + '"]').addClass('selected range-end');
-                    console.log('remove');
-                }).on('show', function (e) {
-                    // datepicker가 보일때
-                    // 각 날짜에 해당하는 요소를 선택하여 클래스 추가
-                    let startDateTimestamp = new Date(startDatePicker.val()).getTime();
-                    let endDateTimestamp = new Date(endDatePicker.val()).getTime();
-
-                    $('[data-date="' + startDateTimestamp + '"]').addClass('selected range-start');
-                    $('[data-date="' + endDateTimestamp + '"]').addClass('selected range-end');
-                    console.log('show');
-                });
-
-                startDatePicker.datepicker('setDate', new Date(startDateString));
-                endDatePicker.datepicker('setDate', new Date(endDateString));
-
-                /**
-                 * 값을 start,
-                 * enddate 로 지정하게해야됨..
-                 */
-
-                // 날짜 간격을 확인하는 함수
-                function checkDate() {
-                    var startDate = new Date(startDatePicker.val());
-                    var endDate = new Date(endDatePicker.val());
-
-                    if (!startDate || !endDate) {
-                        return; // 하나라도 선택되지 않은 경우 함수 종료
-                    }
-
-                    if (startDate > endDate) { // startDate가 값이 더 크다면
-                        endDatePicker.datepicker('setDate', startDate); // 그 값을 종료날짜로 설정
-                    }
-
-                    var diff = endDate - startDate;
-                    var days = diff / (1000 * 60 * 60 * 24);
-
-                    if (days > 9) {
-                        alert("여행 일자는 최대 10일까지 설정 가능합니다.");
-                        endDatePicker.datepicker('setDate', null);
-                    }
+                    instance.set('maxDate', newMaxDate);
+                    instance.set('minDate', newMinDate);
+                } else {
+                    instance.set('maxDate', null); // 종료 날짜 제한 없음
+                    instance.set('minDate', null); // 시작 날짜 제한 없음
                 }
+            }
+        });
 
+        // fp.setDate([startDate, endDate]);
 
-
-
-            });
     }
+
+    function editPlannerDays() {
+        $('#days-edit-confirm').click(function () {
+            let dateStr = $('#days').val();
+            if(dateStr === "") { // 비어있으면
+                alert('날짜를 모두 입력해주세요.');
+            } else {
+                console.log(dateStr);
+                let startDate = new Date(parseInt(dateStr.substr(0, 4)), parseInt(dateStr.substr(5, 2)) - 1, parseInt(dateStr.substr(8, 2)));
+                console.log("startDate 문자열만 자른거 : " + parseInt(dateStr.substr(0, 4)), parseInt(dateStr.substr(5, 2)) - 1, parseInt(dateStr.substr(8, 2)));
+                let allDays; // 전체 여행 일수
+                let endDate;
+                if (dateStr.length > 10) {
+                    endDate = new Date(parseInt(dateStr.substr(13, 4)), parseInt(dateStr.substr(18, 2)) - 1, parseInt(dateStr.substr(21, 2)));
+                    console.log("endDate 문자열만 자른거 : " + parseInt(dateStr.substr(13, 4)), parseInt(dateStr.substr(18, 2)) - 1, parseInt(dateStr.substr(21, 2)));
+                } else {
+                    endDate = startDate;
+                }
+                console.log("startDate : " + startDate);
+                console.log("endDate : " + endDate);
+            }
+        });
+    }
+
 
     function hideEditNameModal() {
         $('#nameEditModal').on('hidden.bs.modal', function () {
@@ -652,8 +573,7 @@
     function hideEditDaysModal() {
         $('#daysEditModal').on('hidden.bs.modal', function () {
             // 모달 내용 초기화
-            $('#startDate').val(''); // 값 초기화
-            $('#endDate').val('');
+            $('#days').val(''); // 값 초기화
         });
     }
 
@@ -1248,14 +1168,9 @@
                 <div class="flex-sm-row flex-column d-flex">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-group input-daterange">
-                            <input id="startDate" name="startDate" type="date" class="form-control" th:placeholder="${startDateString}">
+                            <input id="days" name="days" type="date" class="form-control" th:placeholder="${startDateString} + ' ~ ' + ${endDateString}">
                             <i class="bi bi-calendar fa-1"></i>
-                            <input id="endDate" name="endDate" type="date" class="form-control" th:placeholder="${endDateString}">
-                            <i class="bi bi-calendar fa-2"></i>
                         </div>
-                    </div>
-                    <div class="col-sm-3 col-12 px-0">
-                        <button type="submit" class="btn btn-black">Search</button>
                     </div>
                 </div>
             </div>

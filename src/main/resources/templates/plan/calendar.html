@@ -335,7 +335,6 @@
                     format: 'yyyy-mm-dd',
                     todayHighlight: true,
                     autoclose: true,
-                    startDate: '0d',
                     language: "ko"
                 }).on('changeDate', function(e) {
                     checkDate();
@@ -348,6 +347,10 @@
 
                     if (!startDate || !endDate) {
                         return; // 하나라도 선택되지 않은 경우 함수 종료
+                    }
+
+                    if (startDate > endDate) {
+                        endDatePicker.datepicker('setDate', startDate); // endDate를 startDate로 설정
                     }
 
                     var diff = endDate - startDate;

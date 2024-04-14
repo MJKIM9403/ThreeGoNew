@@ -407,7 +407,8 @@ public class PlanController {
         LocalDate startLocalDate = optionalPlanner.getStartDate();
         LocalDate endLocalDate = optionalPlanner.getEndDate();
         long daysBetween = plannerService.getDaysBetweenDates(startLocalDate, endLocalDate);
-
+        String startDateString = startLocalDate.toString(); // LocalDate를 문자열로 변환
+        String endDateString = endLocalDate.toString(); // LocalDate를 문자열로 변환
 
         // plannerId가 일치하는 planList 찾기
         List<TourItem> planList = new ArrayList<>();
@@ -454,6 +455,10 @@ public class PlanController {
         model.addAttribute("plans", plans);
         model.addAttribute("plannerId", plannerId);
         model.addAttribute("plannerName", plannerName);
+        model.addAttribute("startLocalDate", startLocalDate);
+        model.addAttribute("endLocalDate", endLocalDate);
+        model.addAttribute("startDateString", startDateString);
+        model.addAttribute("endDateString", endDateString);
         model.addAttribute("daysBetween", daysBetween);
         model.addAttribute("guestList", guestList);
         model.addAttribute("teamList", teamList);
@@ -469,7 +474,7 @@ public class PlanController {
             return "redirect:/login";
         }
 
-        return "plan/showplan";
+        return "plan/showplan2";
     }
 
     @PostMapping(value = "/api/delete/{plannerId}")
