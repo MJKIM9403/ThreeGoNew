@@ -4,6 +4,7 @@ import com.io.threegonew.domain.Follow;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.FollowService;
+import com.io.threegonew.service.ReviewService;
 import com.io.threegonew.service.TourItemService;
 import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class MyPageController {
     private final UserService userService;
     private final FollowService followService;
+    private final ReviewService reviewService;
 
     @GetMapping("")
     public String getMyPage(@PathVariable String userId, Model model) {
@@ -49,6 +51,10 @@ public class MyPageController {
 
         model.addAttribute("findUser", findUserInfo);
         model.addAttribute("loginUser", loginUserInfo);
+
+        // 작성한 리뷰 개수
+        Long reviewCount = reviewService.getMyReviewCount(userId);
+        model.addAttribute("reviewCount", reviewCount);
 
 //      팔로우, 팔로워 기능 관련 추가
         User fromUser = userService.findUser(userId);

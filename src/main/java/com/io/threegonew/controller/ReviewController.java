@@ -35,6 +35,7 @@ public class ReviewController {
 
         model.addAttribute("loginUser", loginUserInfo);
 
+
         return "review/review";
     }
 

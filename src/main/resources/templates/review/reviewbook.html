@@ -539,6 +539,9 @@
     let isScrollDown = true;
     let isCoverClose = false;
 
+    $(document).ready(function (){
+        checkReviewHeight();
+    })
     function checkReviewHeight() {
         let viewportHeight = window.innerHeight;
         let reviewCardHeight = $('#list-item-1').outerHeight(true);
@@ -644,10 +647,16 @@
     }
 
 </script>
+
 <!-- 리뷰 간단 뷰 관련 스크립트 -->
 <script th:inline="javascript">
     let simpleViewSwiper = [];
     let reviewList = [[${reviewList}]];
+
+    $(document).ready(function (){
+        createSimpleViewSwiper();
+    });
+
     function createSimpleViewSwiper(){
         for(let idx = 0; idx < reviewList.length; idx++){
             var swiper = new Swiper(`.simple-view-swiper${idx}`, {
@@ -683,13 +692,13 @@
         openViewer(reviewId);
     }
 </script>
+
 <!-- 좋아요 관련 스크립트 -->
 <script th:inline="javascript">
 
     $('.like-btn').click(function (){
         let loginUserId = [[${loginUser.id}]]
         let reviewId = $(this).data('review-id');
-        let idx = $(this).closest('.gallery-item').index();
 
         if(loginUserId === 'anonymousUser'){
             alert('좋아요는 로그인 후 사용하실 수 있습니다.');
@@ -728,8 +737,6 @@
     $(document).ready(function (){
         /* 리뷰 상세 조회 관련 설정 */
         $('.viewSwiper .swiper-controller').hide();
-        createSimpleViewSwiper();
-        checkReviewHeight();
     });
 
     let savedFile = []; // 기존 저장된 이미지 파일의 id를 저장할 배열
@@ -1345,14 +1352,11 @@
                                 $('#comment-wrap').prepend(tempHtml);
                             }else {
                                 let profileImg;
-                                let regDate = comment.regDate;
+                                let regDate = (comment.regDate === comment.modDate) ? formatRegDate(comment.regDate) : formatRegDate(comment.modDate) + ' (수정됨)';
                                 if(comment.writer.profileImg == null){
                                     profileImg = '../assets/img/profile.jpg';
                                 }else {
                                     profileImg = `/api/image/profile/${comment.writer.profileImg}`;
-                                }
-                                if(comment.regDate != comment.modDate){
-                                    regDate = comment.modDate + ' (수정됨)';
                                 }
                                 let tempHtml =
                                     '<div class="comment-info">' +
