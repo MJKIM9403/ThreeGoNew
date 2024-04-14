@@ -283,16 +283,18 @@
         initTmap();
         addPlace();
         searchItems();
-        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
-        $(document).on('click', '.areaSelect', function() {
-            selectedAreaCode = $(this).val();
-            updateCityName();
-        });
         checkCategory();
         checkSigungu();
         selectAndShow();
         showTourItems();
         listSortable();
+
+        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
+        $(document).on('click', '.areaSelect', function() {
+            selectedAreaCode = $(this).val();
+            updateCityName();
+        });
+        LoadNameAndDay();
     })
 
 
@@ -329,6 +331,12 @@
     /**
      * 뷰 관련 기타
      */
+
+    function LoadNameAndDay() {
+        $('.planner-name').text(plannerName);
+        $('.planner-date').text(startDate + "~" + endDate);
+    }
+
     // 도시명 바꾸기
     function updateCityName() {
         $('.areaSelect').change(function() {
@@ -1472,7 +1480,7 @@
             <div class="btn_con text-center">
                 <button type="button" id="next-btn" class="btn btn-primary" >저장</button>
             </div>
-            <div class="dropdown border-top">
+            <div class="dropdown">
                 <div class="login-drop dropdown mt-auto">
                     <hr>
                     <a href="#"
@@ -1513,10 +1521,10 @@
 
             <!--장소찾기-->
             <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-                <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
-                    <span class="city-name fs-5 fw-semibold">도시명</span>
-                    <span class="fx-6">이전화면에서 선택한 날짜</span>
-                </a>
+                <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none">
+                    <span class="fs-5 fw-semibold planner-name">플래너 이름</span><br>
+                    <span class="fx-6 planner-date">날짜</span>
+                </div>
                 <div class="search-bar">
                     <input class="search-input" placeholder="장소를 검색하세요.">
                     <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
@@ -1539,7 +1547,8 @@
                         <!--장소 불러오기-->
                         <div id="touritems">
                             <div>
-                                <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
+                                <span class="fs-5 fw-semibold city-name">전국</span>
+                                <span class="fs-5 fw-semibold" th:text="|${pageResponse.total}건의 관광지|"></span>
                             </div>
 
                             <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">

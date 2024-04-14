@@ -131,49 +131,49 @@
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
 <script th:inline="javascript">
     // 로그인 된 나의 아이디
-    var myId = [[${userId}]];
+    let myId = [[${userId}]];
 
     // 플래너의 ID
-    var plannerId = [[${plannerId}]];
+    let plannerId = [[${plannerId}]];
 
     // 날짜
-    var days = [[${daysBetween+1}]];
+    let days = [[${daysBetween+1}]];
 
     // 인덱스
-    var index;
+    let index;
     // 이전에 선택된 탭의 인덱스를 저장하는 변수
-    var previousTabIndex = -1; // 초기값 설정, 아무런 탭도 선택되지 않았음을 나타냄
+    let previousTabIndex = -1; // 초기값 설정, 아무런 탭도 선택되지 않았음을 나타냄
 
     // tmap api
-    var map;
+    let map;
 
     // 마커
-    var marker = [];
+    let marker = [];
 
     // 찍은 모든 마커
-    var viaMarkers = Array.from({length: days}, () => []);
+    let viaMarkers = Array.from({length: days}, () => []);
 
     // 경유지만 넣는 배열
-    var viaPoints = Array.from({length: days}, () => []);
+    let viaPoints = Array.from({length: days}, () => []);
 
-    // 지도 범위 확대하기 위한 배열
-    var Points = Array.from({length: days}, () => []);
+    // 지도 줌
+    let bounds;
 
     // 경유지 최적화 실행 시간
-    var startTime = getRealTime();
+    let startTime = getRealTime();
 
     // 관광지들
-    var places = Array.from({length: days}, () => []);
+    let places = Array.from({length: days}, () => []);
 
     // 내가 선택한 관광지
-    var place;
+    let place;
 
     // 경로그림정보
-    var drawInfoArr = Array.from({length: days}, () => []);
-    var resultInfoArr = Array.from({length: days}, () => []);
+    let drawInfoArr = Array.from({length: days}, () => []);
+    let resultInfoArr = Array.from({length: days}, () => []);
 
     // 경로 출력 결과
-    var resultText = Array.from({length: days}, () => []);
+    let resultText = Array.from({length: days}, () => []);
 
     // 앱키
     const appKey = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
@@ -184,24 +184,15 @@
     // 로드된 plannerId를 작성한 유저가 지금 로그인한 유저가 맞는지
     let isWriter = [[${exists}]];
 
-    // 검색을 위한 변수
-    var searchTimer;
 
 
 
-
-
-    // 페이지 로드 시 실행되는 코드
-    $(document).ready(function() {
-        // 처음으로 첫 번째 날짜의 계획을 로드
-        loadPlanForDay(1);
-
-        // 날짜 버튼 클릭 시 실행되는 이벤트 핸들러
-        $('.dayButton').click(function() {
-            var day = $(this).attr('data-day');
-            loadPlanForDay(day);
-        });
-
+    /**
+     * 자동 실행 함수
+     */
+    $(function() {
+        initTmap();
+        loadPlanForDay();
         openShareModal();
         deletePlanner();
         editPlanner();
@@ -212,6 +203,9 @@
         deleteGuest();
     });
 
+    /**
+     * 공유하기
+     */
     // 공유하기 모달창 열기
     function openShareModal() {
         $('.share-planner-btn').click(function () {
@@ -223,43 +217,7 @@
         })
     }
 
-    function editPlanner() {
-        $('.edit-planner-btn').click(function () {
-            if(isWriter == false) {
-                alert('수정 권한이 없습니다.');
-            } else {
-                window.location.href = "/plan/edit?p_id=" + plannerId;
-            }
-        })
-    }
-
-    // 플래너 삭제하기
-    function deletePlanner() {
-        $('.delete-planner-btn').click(function () {
-            if(isWriter == false) {
-                alert('삭제 권한이 없습니다.');
-            } else {
-                const deleteConfirm = "등록한 여행 일정을 정말로 삭제하시겠습니까? 삭제하면 복구할 수 없습니다.";
-                if(confirm(deleteConfirm)) {
-                    $.ajax({
-                        url : `/plan/api/delete/${plannerId}`,
-                        type : 'POST',
-                        data : {
-                            plannerId : plannerId,
-                        },
-                        success : function () {
-                            alert('삭제되었습니다.');
-                            window.location.href = '/planner';
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(error);
-                        }
-                    });
-                }
-            }
-        })
-    }
-
+    // 유저 검색하기
     function searchUser() {
         $('#searchInput').on('keyup', function () {
             typedText = $(this).val();
@@ -327,6 +285,7 @@
         });
     }
 
+    // 선택한 유저 출력
     function printUser(id) {
         let button = `<div>
                         <button class='btn btn-sm btn-dark user-btn' data-user-id='${id}'>${id}</button>
@@ -338,12 +297,14 @@
         $('#resultBox').prepend(button);
     }
 
+    // 출력된 유저 목록에서 삭제
     function deleteList() {
         $('#resultBox').on('click', '.delete-list-btn', function() {
             $(this).closest('div').remove();
         });
     }
 
+    // 특정 친구에게 공유 끊기
     function deleteGuest() {
         $('.delete-user-btn').on('click', function() {
             const guestId = this.previousElementSibling.getAttribute('data-user-id');
@@ -368,7 +329,7 @@
         })
     }
 
-
+    // 공유하기
     function share() {
         $('#share-btn').on('click', function () {
             var plannerName = [[${plannerName}]];
@@ -415,12 +376,10 @@
             } else {
                 alert('먼저 유저를 선택한 다음 공유해주세요.')
             }
-
-
-
         });
     }
 
+    // 모달창 닫기
     function hideModal() {
         $('#shareModal').on('hidden.bs.modal', function () {
             // 모달 내용 초기화
@@ -429,24 +388,69 @@
             $('#searchResult').hide(); // 검색 결과 숨기기
             $('#resultBox').empty().hide(); // 선택된 유저 목록 초기화 및 숨기기
         });
-        // $('#shareModal').modal('hide');
     };
 
-    // 특정 날짜의 계획을 로드하는 함수
-    function loadPlanForDay(day) {
-        var plannerId = $('.timeline').attr('data-pid');
 
+    /**
+     * 수정하기
+     */
+    function editPlanner() {
+        $('.edit-planner-btn').click(function () {
+            if(isWriter == false) {
+                alert('수정 권한이 없습니다.');
+            } else {
+                window.location.href = "/plan/edit?p_id=" + plannerId;
+            }
+        })
+    }
+
+    /**
+     * 삭제하기
+     */
+    function deletePlanner() {
+        $('.delete-planner-btn').click(function () {
+            if(isWriter == false) {
+                alert('삭제 권한이 없습니다.');
+            } else {
+                const deleteConfirm = "등록한 여행 일정을 정말로 삭제하시겠습니까? 삭제하면 복구할 수 없습니다.";
+                if(confirm(deleteConfirm)) {
+                    $.ajax({
+                        url : `/plan/api/delete/${plannerId}`,
+                        type : 'POST',
+                        data : {
+                            plannerId : plannerId,
+                        },
+                        success : function () {
+                            alert('삭제되었습니다.');
+                            window.location.href = '/planner';
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    /**
+     * 저장된 여행 일정 불러오기
+     */
+    // 여행 일정 목록 불러오기
+    function loadPlanForDay() {
         $.ajax({
             type: "POST",
-            url: "/api/showplan",
+            url: "/api/allShowplan",
             contentType: 'application/json; charset=UTF-8',
             data: JSON.stringify({
-                "plannerId": plannerId,
-                "day": day
+                "plannerId": plannerId
             }),
             success: function(response) {
                 // 응답으로 받은 계획을 표시
-                displayPlan(response);
+                insertPlaces(response);
+                addPrintDayList();
+                // 모든 마커가 추가된 후에 fitBounds 호출
+                fitBoundsToMarkers();
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -454,38 +458,61 @@
         });
     }
 
-    // 계획을 표시하는 함수
-    function displayPlan(planList, day) {
-        $('.plan').empty(); // 계획을 비우고 다시 채움
-
-        let currentDay = 0; // 현재의 'day'를 추적
+    // 불러온 목록 보여주기
+    function insertPlaces(planList) {
+        let currentDay = 0; // 현재의 day를 추적
 
         $.each(planList, function(index, plan) {
-            // 새로운 일자가 시작될 때만 일자 정보를 출력
-            if (plan.day !== currentDay) {
-                var dayTemplate = `<h4 class="mb-1">${plan.day}일차</h4>`;
-                $('.plan').append(dayTemplate);
-                currentDay = plan.day; // 일차 업데이트
-
+            if(plan.day !== currentDay) {
+                currentDay = plan.day; // 일자 업데이트
             }
 
-            // dtoList의 각 항목에 대한 정보 출력
             $.each(plan.dtoList, function(i, dto) {
-                var template = `
-                                <div class="timeline" data-pid="${plan.plannerId}">
+                place = {
+                    title: dto.title,
+                    contentid: dto.contentid,
+                    mapx: dto.mapx,
+                    mapy: dto.mapy,
+                    address: dto.address,
+                    fullCategoryName: dto.fullCategoryName,
+                    firstimage: dto.firstimage
+                }
+                places[plan.day - 1].push(place); // places 배열만 생성, viaMarkers 배열은 필요할때만 생성
+            });
+        });
+
+        // 첫번째 탭의 마커는 미리 보이게 설정
+        for(var i = 0; i<places[0].length; i++) {
+            addMarker(i+1, places[0][i], 0);
+        }
+        fitBoundsToMarkers();
+    }
+
+
+
+    // 계획을 표시하는 함수
+    function addPrintDayList() {
+        $('.plan').empty(); // 계획을 비우고 다시 채움
+
+        var dayTemplate = `<h4 class="mb-1">${index + 1}일차</h4>`;
+        $('.plan').append(dayTemplate);
+
+        places[index].forEach(function (data) {
+            var template = `
+                                <div class="timeline">
                                     <div class="outer planContainer">
                                         <div>
-                                            <a href="/info/content/${dto.contentid}" class="list-group-item list-group-item-action" aria-current="true">
+                                            <a href="/info/content/${data.contentid}" class="list-group-item list-group-item-action" aria-current="true">
                                                 <div class="content">
                                                     <div class="info">
-                                                        <h5 class="mb-1 title">${dto.title}</h5>
-                                                        <p class="mb-1">${dto.address}</p>
-                                                        <p class="mb-1">${dto.fullCategoryName}</p>
-                                                        <input type="hidden" value="${dto.mapx}">
-                                                        <input type="hidden" value="${dto.mapy}">
+                                                        <h5 class="mb-1 title">${data.title}</h5>
+                                                        <p class="mb-1">${data.address}</p>
+                                                        <p class="mb-1">${data.fullCategoryName}</p>
+                                                        <input type="hidden" value="${data.mapx}">
+                                                        <input type="hidden" value="${data.mapy}">
                                                     </div>
                                                     <div class="img">
-                                                        <img class="touritem-img" src="${dto.firstimage}">
+                                                        <img class="touritem-img" src="${data.firstimage}">
                                                     </div>
                                                 </div>
                                             </a>
@@ -493,24 +520,13 @@
                                     </div>
                                 </div>
                             `;
-                $('.plan').append(template);
-
-                place = {
-                    title: dto.title,
-                    contentid: dto.contentid,
-                    mapx: dto.mapx,
-                    mapy: dto.mapy
-                }
-                console.log(place);
-                // place에 잘 담기는지 확인
-
-                // 중복이 아닐 경우에만 관광지 목록에 내가 선택한 관광지를 추가한다.
-                places[plan.day - 1].push(place);
-                addMarker(index+1, place);
-            });
-        });
+            $('.plan').append(template);
+        })
     }
 
+    /**
+     * 마커
+     */
 
     // 마커 추가하기 함수
     function addMarker(status, info) {
@@ -527,72 +543,107 @@
             title: info.title
         })
         viaMarkers[index].push(marker);
+    }
 
-        // 마커 위치에 맞게 지도 줌
-        Points[index].push(new Tmapv2.LatLng(info.mapy, info.mapx));
-        console.log(Points[index]);
-        PTbounds = new Tmapv2.LatLngBounds();
-        if(Points[index]) {
-            for(var i in Points[index]) {
-                var linePt = new Tmapv2.LatLng(Points[index][i]._lat, Points[index][i]._lng);
-                PTbounds.extend(linePt);
+    // 모든 마커가 추가된 후에 fitBounds 함수 호출
+    function fitBoundsToMarkers() {
+        if(viaMarkers[index].length > 0) {
+            if(viaMarkers[index].length == 1) {
+                map.setCenter(viaMarkers[index][0].getPosition());
+                map.setZoom(10); // 마커가 하나 뿐이면 그것만 줌
+            } else {
+                var PTbounds = new Tmapv2.LatLngBounds();
+                for (var dayIndex = 0; dayIndex < viaMarkers.length; dayIndex++) {
+                    if (viaMarkers[dayIndex].length > 0) {
+                        for (var i = 0; i < viaMarkers[dayIndex].length; i++) {
+                            var marker = viaMarkers[dayIndex][i];
+                            PTbounds.extend(marker.getPosition());
+                        }
+                    }
+                }
+                var paddingOptions = {
+                    top: 40, // 상단 패딩
+                    right: 40, // 우측 패딩
+                    bottom: 40, // 하단 패딩
+                    left: 40 // 좌측 패딩
+                };
+                map.fitBounds(PTbounds, paddingOptions);
             }
-            map.fitBounds(PTbounds);
         }
     }
 
-
+    /**
+     * 탭 처리
+     */
     document.addEventListener("DOMContentLoaded", function () {
         // 각 탭 요소들을 선택
         var tabs = document.querySelectorAll('.dayButton');
         // 첫 번째 탭을 활성화하고 해당 내용을 보이도록 설정
+        tabs[0].classList.add('active');
         index = 0;
+        // 처음으로 첫 번째 날짜의 계획을 로드
+        addPrintDayList();
 
         // 각 탭에 대해 클릭 이벤트 리스너 추가
         tabs.forEach(function (tab, tabIndex) {
             tab.addEventListener('click', function () {
-                // 현재 선택한 탭의 일련 번호를 가져옴
-                var dayNumber = tab.innerText.split(' ')[1]; // 탭 텍스트에서 'Day'를 제외하고 숫자만 추출
-                index = Number(dayNumber) - 1;
+                previousTabIndex = index;
+                index = tabIndex; // 현재 선택한 탭의 인덱스
+
+                // 모든 탭에서 'active' 클래스 제거
+                tabs.forEach(function(otherTab) {
+                    otherTab.classList.remove('active');
+                });
+                // 현재 클릭된 탭에만 'active' 클래스 추가
+                tab.classList.add('active');
+
 
                 // 다른 탭으로 이동할 경우
-                if(previousTabIndex !== -1 && previousTabIndex !== index) {
-                    viaMarkers[previousTabIndex].forEach(function(marker) {
-                        marker.setMap(null); // TMap에서 이전 탭 마커 제거
-                    });
-                    viaMarkers[previousTabIndex] = []; // 등록된 마커 배열도 초기화
-                    Points[previousTabIndex] = []; // 지도 확대를 위한 배열도 초기화
-                    places[previousTabIndex] = []; // 장소 배열도 초기화
-                    resultInfoArr[previousTabIndex].forEach(function(line) {
-                        line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
+                if(previousTabIndex !== index) {
+                    // 이전 탭에서 마커와 경로가 이미 있다면 제거
+                    if (viaMarkers[previousTabIndex] && viaMarkers[previousTabIndex].length > 0) {
+                        viaMarkers[previousTabIndex].forEach(function (marker) {
+                            marker.setMap(null); // TMap에서 이전 탭 마커 제거
+                        });
+                        viaMarkers[previousTabIndex] = []; // 등록된 마커 배열도 초기화
+                    }
+                    if(resultInfoArr[previousTabIndex] && resultInfoArr[previousTabIndex].length > 0) {
+                        resultInfoArr[previousTabIndex].forEach(function (line) {
+                            line.setMap(null); // TMap에서 이전 탭 경로 빨간 선 제거
+                        })
+                        $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
+                    }
+
+                    addPrintDayList();
+
+                    // 마커 다시 찍기
+                    for(var i = 0; i<places[index].length; i++) {
+                        addMarker(i+1, places[index][i])
+                    }
+                    // 지도를 해당 마커를 중심으로 기본 줌 레벨로 확대
+                    fitBoundsToMarkers();
+
+                    // 현재 선택한 탭에 맞는 경로 빨간 선 표시를 다시 로드
+                    resultInfoArr[index].forEach(function (line) {
+                        line.setMap(map);
                     })
 
-                    $(".result").text(""); // 총 거리, 시간, 요금 결과 제거
-                } else if (previousTabIndex === -1) {
-                    // 첫 번째 탭에서 다른 탭으로 이동하는 경우
-                    viaMarkers[0].forEach(function(marker) {
-                        marker.setMap(null);
-                    });
-                    viaMarkers[0] = []; // 등록된 마커 배열도 초기화
-                    places[0] = []; // 장소 배열도 초기화
-                    Points[0] = []; // 지도 확대를 위한 배열도 초기화
-                    if (resultInfoArr[0] && resultInfoArr[0].length > 0) {
-                        resultInfoArr[0].forEach(function(line) {
-                            line.setMap(null);
-                        });
-                    }
+                    // 현재 선택한 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
+                    $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
+
+
+                    // 이전 탭의 인덱스를 업데이트
+                    previousTabIndex = index;
                 }
-
-                // 선택한 인덱스 탭에 맞는 총 거리, 시간, 요금 결과를 다시 로드
-                $(".result").text(resultText[index]); // 총 거리, 시간, 요금 결과 제거
-
-                // 모든 마커 로드를 완료한 후 이전 인덱스를 현재 인덱스로 바꾸기
-                previousTabIndex = index;
             });
         });
     });
 
 
+
+    /**
+     * tmap
+     */
     // 현재 시간을 토대로 이동에 걸리는 시간을 구합니다.
     function getRealTime() {
         var date = new Date();
@@ -606,11 +657,6 @@
         console.log(currentDate);
         return currentDate;
     }
-
-    // tmap 실행
-    $(document).ready(function() {
-        initTmap();
-    })
 
     function initTmap() {
         map = new Tmapv2.Map("map_div", {
@@ -693,10 +739,10 @@
                             resultInfoArr[index]=[];
                         }
 
+                        var PTbounds = new Tmapv2.LatLngBounds();
                         for(var i in resultFeatures) {
                             var geometry = resultFeatures[i].geometry;
                             var polyline_ = Array.from({length: days}, () => []);
-
                             drawInfoArr[index] = [];
 
                             if(geometry.type == "LineString") {
@@ -708,7 +754,12 @@
                                     // 포인트객체의 정보로 좌표값 변환 객체로 저장
                                     var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
 
+                                    bounds = convertChange;
                                     drawInfoArr[index].push(convertChange);
+                                    // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                    var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
+
+                                    PTbounds.extend(linePt);
                                 }
 
                                 polyline_[index] = new Tmapv2.Polyline({
@@ -718,15 +769,13 @@
                                     map : map
                                 });
                                 resultInfoArr[index].push(polyline_[index]);
-
-                                // 경유지 최적화 결과 반경만큼 지도 레벨 조정
-                                // var newData = geoData[0];
-                                // PTbounds = new Tmapv2.LatLngBounds();
-                                // for (var i = 0; i < newData.length; i++) {
-                                //     var mData = newData[i];
-                                //     var type = mData.geometry.type;
-                                //     var pointType = mData.properties.pointType;
-                                // }
+                                var paddingOptions = {
+                                    top: 40, // 상단 패딩
+                                    right: 40, // 우측 패딩
+                                    bottom: 40, // 하단 패딩
+                                    left: 40 // 좌측 패딩
+                                };
+                                map.fitBounds(PTbounds, paddingOptions);
                             }
                         }
                     },
@@ -807,36 +856,40 @@
                             resultInfoArr[index]=[];
                         }
 
+                        var PTbounds = new Tmapv2.LatLngBounds();
                         for(var i in resultFeatures) {
                             var geometry = resultFeatures[i].geometry;
-                            var polyline_;
-
+                            var polyline_ = Array.from({length: days}, () => []);
                             drawInfoArr[index] = [];
 
+                            // 지도 레벨과 경로를 함께 조정
                             if(geometry.type == "LineString") {
                                 for(var j in geometry.coordinates){
                                     var point = new Tmapv2.LatLng(geometry.coordinates[j][1],geometry.coordinates[j][0]);
 
+                                    bounds = point;
                                     drawInfoArr[index].push(point);
+
+                                    // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                    var linePt = new Tmapv2.LatLng(bounds._lat, bounds._lng);
+                                    PTbounds.extend(linePt);
                                 }
 
-                                polyline_ = new Tmapv2.Polyline({
+                                polyline_[index] = new Tmapv2.Polyline({
                                     path : drawInfoArr[index],
                                     strokeColor : "#FF0000",
                                     strokeWeight: 6,
                                     map : map
                                 });
-                                resultInfoArr[index].push(polyline_);
+                                resultInfoArr[index].push(polyline_[index]);
 
-
-                                // 경유지 최적화 결과 반경만큼 지도 레벨 조정
-                                // var newData = geoData[0];
-                                // PTbounds = new Tmapv2.LatLngBounds();
-                                // for (var i = 0; i < newData.length; i++) {
-                                //     var mData = newData[i];
-                                //     var type = mData.geometry.type;
-                                //     var pointType = mData.properties.pointType;
-                                // }
+                                var paddingOptions = {
+                                    top: 40, // 상단 패딩
+                                    right: 40, // 우측 패딩
+                                    bottom: 40, // 하단 패딩
+                                    left: 40 // 좌측 패딩
+                                };
+                                map.fitBounds(PTbounds, paddingOptions);
                             }
                         }
                     },
@@ -846,9 +899,6 @@
                 });
             }
         })
-
-
-
     }
 
 </script>
@@ -897,9 +947,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 
 
@@ -975,12 +1022,7 @@
                 <li><a class="dropdown-item share-planner-btn">공유</a></li>
             </ul>
         </div>
-
-
-
-
     </div>
-
 </div>
 </body>
 </html>
