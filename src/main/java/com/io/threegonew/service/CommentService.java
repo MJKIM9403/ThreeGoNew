@@ -30,6 +30,20 @@ public class CommentService {
                 new IllegalArgumentException("댓글 정보를 찾을 수 없습니다."));
     }
 
+    @Transactional
+    public ReplyResponse getReplyResponse(Comment comment){
+        return replyMapper(comment);
+    }
+
+    @Transactional
+    public CommentResponse getCommentResponse(Comment comment){
+        return commentMapper(comment);
+    }
+    @Transactional
+    public Long getReplyCount(Comment comment){
+        return commentRepository.countReplies(comment.getReviewId(), comment.getGroup());
+    }
+
     private Integer getNextGroup(Long reviewId){
         return commentRepository.maxGroup(reviewId) + 1;
     }
@@ -81,11 +95,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(EditCommentRequest request) throws AccessDeniedException {
+    public Comment updateComment(EditCommentRequest request) throws AccessDeniedException {
         Comment comment = getComment(request.getCommentId());
         String loginUserId = SecurityUtils.getCurrentUsername();
         if(loginUserId.equals(comment.getWriter().getId())){
             comment.updateComment(request.getContent());
+            return comment;
         }else {
             throw new AccessDeniedException("댓글 업데이트 권한이 없습니다.");
         }
@@ -152,13 +167,10 @@ public class CommentService {
         return commentRepository.countCommentsByReviewId(reviewId);
     }
 
+
     private CommentResponse commentMapper(Comment comment){
         String content = (comment.getContent()).replace("\r\n","<br/>");
         Integer childrenCount = commentRepository.countReplies(comment.getReviewId(), comment.getGroup()).intValue();
-        LocalDateTime modDate = null;
-        if(comment.getModDate() != null){
-            modDate = comment.getModDate();
-        }
 
         return CommentResponse.builder()
                 .commentId(comment.getCommentId())
@@ -168,26 +180,22 @@ public class CommentService {
                 .childrenCount(childrenCount)
                 .cmtDel(comment.getCmtDel())
                 .regDate(comment.getRegDate())
-                .modDate(modDate)
+                .modDate(comment.getModDate())
                 .build();
     }
 
     private ReplyResponse replyMapper(Comment reply) {
         String content = (reply.getContent()).replace("\r\n","<br/>");
-        LocalDateTime modDate = null;
-        if(reply.getModDate() != null){
-            modDate = reply.getModDate();
-        }
         return ReplyResponse.builder()
                 .commentId(reply.getCommentId())
                 .writer(userInfoMapper(reply.getWriter()))
                 .content(content)
                 .group(reply.getGroup())
                 .parentId(reply.getParent().getCommentId())
-                .patentWriterId(reply.getParent().getWriter().getId())
+                .parentWriterId(reply.getParent().getWriter().getId())
                 .cmtDel(reply.getCmtDel())
                 .regDate(reply.getRegDate())
-                .modDate(modDate)
+                .modDate(reply.getModDate())
                 .build();
     }
 
