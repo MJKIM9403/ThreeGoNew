@@ -1,5 +1,6 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.domain.Comment;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
@@ -29,6 +29,24 @@ public class CommentApiController {
         return ResponseEntity.ok().body(pageResponse);
     }
 
+    @GetMapping("/new-reply")
+    public ResponseEntity<Map<String,Object>> addNewReply(@RequestParam Long commentId){
+        try {
+            Comment reply = commentService.getComment(commentId);
+            ReplyResponse replyResponse = commentService.getReplyResponse(reply);
+            Long replyCount = commentService.getReplyCount(reply);
+
+            Map<String,Object> result = new HashMap<>();
+            result.put("reply", replyResponse);
+            result.put("replyCount", replyCount);
+
+            return ResponseEntity.ok().body(result);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<List<CommentResponse>> showRecentComments(@RequestParam(value = "reviewId") Long reviewId,
                                                                     @RequestParam(value = "lastCommentId") Long lastCommentId){
@@ -45,10 +63,10 @@ public class CommentApiController {
     }
 
     @PostMapping("")
-    public ResponseEntity saveComment(@RequestBody AddCommentRequest request){
+    public ResponseEntity<Long> saveComment(@RequestBody AddCommentRequest request){
         try{
-            commentService.saveComment(request);
-            return new ResponseEntity<>(HttpStatus.OK);
+            Comment savedComment = commentService.saveComment(request);
+            return ResponseEntity.ok(savedComment.getCommentId());
         }catch (IllegalArgumentException e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -56,10 +74,20 @@ public class CommentApiController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity updateComment(@RequestBody EditCommentRequest request) {
+    public ResponseEntity<Map<String, Object>> updateComment(@RequestBody EditCommentRequest request) {
         try{
-            commentService.updateComment(request);
-            return new ResponseEntity<>(HttpStatus.OK);
+            Map<String, Object> result = new HashMap<>();
+            Comment updatedComment = commentService.updateComment(request);
+            if(updatedComment.getParent() == null){
+                CommentResponse comment = commentService.getCommentResponse(updatedComment);
+                result.put("type","comment");
+                result.put("updatedComment",comment);
+            }else {
+                ReplyResponse reply = commentService.getReplyResponse(updatedComment);
+                result.put("type","reply");
+                result.put("updatedComment",reply);
+            }
+            return ResponseEntity.ok().body(result);
         }catch (IllegalArgumentException e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

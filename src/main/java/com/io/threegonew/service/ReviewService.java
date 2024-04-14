@@ -119,6 +119,10 @@ public class ReviewService {
         return pageResponse;
     }
 
+    public Long getMyReviewCount(String userId){
+        return reviewRepository.countMyReview(userId);
+    }
+
     public ReviewResponse getDetailReview(Long reviewId){
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
@@ -215,6 +219,8 @@ public class ReviewService {
                 .viewCount(review.getViewCount())
                 .reviewPhotoList(review.getReviewPhotoList().stream()
                                 .map(this::reviewPhotoMapper).collect(Collectors.toList()))
+                .regDate(review.getRegDate())
+                .modDate(review.getModDate())
                 .build();
     }
 

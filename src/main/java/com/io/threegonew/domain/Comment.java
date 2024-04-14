@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,7 +42,7 @@ public class Comment extends BaseTimeEntity {
     private Comment parent;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private List<Comment> children;
+    private List<Comment> children = new ArrayList<>();
 
     @Column(name = "cmt_del", columnDefinition = "TINYINT(1)")
     @ColumnDefault("0")
@@ -62,19 +63,18 @@ public class Comment extends BaseTimeEntity {
     }
 
     public void setParent(Comment parent) {
-        if(this.parent != null){
+        if(this.parent == null){
             this.parent = parent;
         }
-        if(parent.parent != null){
-            addChildComment(this);
+        if(this.parent != null){
+            addChildComment(parent, this);
         }
     }
 
-    private void addChildComment(Comment child) {
-        Comment parentComment = child.parent;
-        if(parentComment.order > 1){
-            parentComment.children.add(child);
-            addChildComment(parentComment);
+    private void addChildComment(Comment ancestor, Comment child) {
+        ancestor.children.add(child);
+        if(ancestor.parent != null){
+            addChildComment(ancestor.parent, child);
         }
     }
 

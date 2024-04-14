@@ -17,7 +17,7 @@ public class ReplyResponse {
     private String content;
     private Integer group;
     private Long parentId;
-    private String patentWriterId;
+    private String parentWriterId;
     private Boolean cmtDel;
     private LocalDateTime regDate;
     private LocalDateTime modDate;

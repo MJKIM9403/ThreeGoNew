@@ -36,10 +36,12 @@
             0px -1px rgba(0, 0, 0, 0.8);
 }
 .modal-body {
+    padding-right: 5pt;
     width: 100%;
 }
 
 #contents-wrap {
+    padding-right: 8pt;
     width: 100%;
     max-height: 540px;
     overflow-y: scroll;
@@ -49,7 +51,7 @@
     width: 5px !important;
 }
 #contents-wrap::-webkit-scrollbar-thumb {
-    height: 30%; /* 스크롤바의 길이 */
+    height: 10%; !important; /* 스크롤바의 길이 */
     background: #ddd; /* 스크롤바의 색상 */
     border-radius: 10px;
 }
@@ -58,7 +60,11 @@
 }
 
 #content {
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
+}
+
+.comment-line {
+    opacity: 0.1;
 }
 
 /* 댓글, 좋아요, 조회수 아이콘 */
@@ -75,9 +81,17 @@
 
     /* 댓글 리스트 */
 .comment-info {
+    padding: 0.5rem 0;
+    margin: 0.4rem 0;
+}
+
+.deleted-comment {
+    display: flex;
     justify-content: center;
-    align-items: flex-start;
-    margin-bottom: 0.8rem;
+    align-items: center;
+    padding: 1.5rem 0;
+    background: rgba(200, 200, 200, 0.1);
+
 }
 
 .comment-text {
@@ -97,6 +111,7 @@
 .reply-btn {
     color: #888888;
     font-size: 0.9rem;
+    word-break: keep-all;
 }
 
 .reply-btn:hover {
@@ -106,15 +121,34 @@
 }
 
 .reply-wrap {
-    margin-left: 10pt;
-    width: calc(100% - 10pt);
+    margin-left: 20pt;
+    width: calc(100% - 20pt);
 }
 
-.more-reply-btn {
+.more-reply-btn, .next-reply-btn, .close-reply-btn {
     display: flex;
     justify-content: center;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.next-reply-btn, .close-reply-btn {
+    display: none;
+}
+
+.reply-parent-writer {
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: #666666;
+    padding-right: 10pt;
+    box-sizing: content-box;
+}
+
+.comment-more-btn {
+    border: none;
+    padding: 0 0.3rem;
 }
 
 /* 댓글 작성란 */
@@ -128,12 +162,20 @@
 #comment-content {
     transition: all 0.2s ease-in-out;
     height: 50px;
-    resize: none;
     padding: 0.3rem 0.5rem;
     overflow-y: scroll;
 }
 
-#comment-btn {
+.comment-editor {
+    margin: 1rem 0;
+}
+.edit-comment-content {
+    max-height: 90px;
+    padding: 0.3rem 0.5rem;
+    overflow-y: scroll;
+}
+
+#comment-btn, .edit-comment-btn {
     padding: 5px;
     width: 70px;
 }

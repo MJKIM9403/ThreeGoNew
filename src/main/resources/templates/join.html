@@ -67,6 +67,16 @@
         font-size: small;
         margin-top: 5px;
     }
+
+    .numberBtn {
+        width: 300px;
+        /*text-align: center;*/
+        /*margin: 0 auto; !* 요소를 수평으로 가운데 정렬합니다. *!*/
+    }
+
+    .btn-square {
+        border-radius: 0; /* 버튼의 모서리를 직각으로 만듭니다. */
+    }
 </style>
 <body class="body-form">
 
@@ -146,12 +156,13 @@
                             </div>
                             <br>
                             <div id="mail_number" name="mail_number" style="display: none">
-                                <input type="text" name="number" id="number" style="width:250px; margin-top: -10px"
-                                       placeholder="인증번호 입력">
-                                <button type="button" class="btn-join btn btn-primary btn-md fontSizeBtn"
-                                        name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일 인증
-                                </button>
-
+                                <div class="input-group numberBtn">
+                                    <input type="text" name="number" id="number" class="form-control form-control-sm "
+                                           placeholder="인증번호 입력">
+                                    <button type="button" class="btn-join btn btn-primary btn-md fontSizeBtn btn-square"
+                                            name="confirmBtn" id="confirmBtn" onclick="confirmNumber()">이메일 인증
+                                    </button>
+                                </div>
                                 <!-- 타이머 표시할 요소 -->
                                 <div id="timer"></div>
 
@@ -444,10 +455,9 @@
 
             // 이메일 전송 후 타이머 시작 함수
             function startEmailTimer() {
-                remainingTime = 180; // 초기화
-
+                remainingTime = 180;
                 // 카운트다운 타이머 시작
-                emailTimerInterval = setInterval(function() {
+                emailTimerInterval = setInterval(function () {
                     remainingTime--;
                     if (remainingTime >= 0) {
                         displayTimer(remainingTime);
@@ -455,23 +465,21 @@
                         clearInterval(emailTimerInterval);
                         document.getElementById("timer").innerHTML = "유효시간이 만료되었습니다.";
                     }
+
+                    // 남은 시간이 0초 이하이면 타이머를 종료하고 메시지를 표시합니다.
+                    if (remainingTime <= 0) {
+                        clearInterval(emailTimerInterval);
+                        document.getElementById("timer").innerHTML = "유효시간이 만료되었습니다.";
+                    }
                 }, 1000);
             }
+
             // 카운트다운 타이머 표시 함수
             function displayTimer(seconds) {
                 const minutes = Math.floor(seconds / 60);
                 const remainingSeconds = seconds % 60;
                 document.getElementById("timer").innerHTML = "남은 시간: " + minutes + "분 " + remainingSeconds + "초";
             }
-
-            // // 이메일 전송 버튼 클릭 이벤트 핸들러
-            // document.getElementById('sendBtn').addEventListener('click', function() {
-            //     // 인증번호 전송 코드 추가
-            //     // ...
-            //
-            //     // 타이머 시작
-            //     startEmailTimer();
-            // });
 
         </script>
 
