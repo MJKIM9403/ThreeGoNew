@@ -17,7 +17,6 @@ public class ValidationController {
 
     @GetMapping("/checkDuplicateId")
     public ResponseEntity<Boolean> checkDuplicateId(@RequestParam(name = "userId") String userId) {
-        System.out.println("userId에 대한 요청이 수신되었습니다: " + userId); // 콘솔 출력 추가
         boolean isDuplicate = userService.isIdDuplicate(userId);
 
         if (isDuplicate) {

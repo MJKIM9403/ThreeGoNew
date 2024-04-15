@@ -32,7 +32,7 @@ public class MyPageApiController {
         MyPageResponse<PageResponse<MyReviewResponse>> myPageResponse =
                 MyPageResponse.builder()
                         .type("reviewbook")
-                        .pageResponse(reviewBookService.findMyReviewBook(request))
+                        .pageResponse(reviewBookService.getMyReviewBook(request))
                         .build();
 
         return ResponseEntity.ok().body(myPageResponse);

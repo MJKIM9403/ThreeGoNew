@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
@@ -19,8 +19,12 @@
     <!--swiper-->
     <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet"/>
     <script src="../assets/swiper/swiper-bundle.min.js"></script>
+
+    <!--  my page 적용 템플릿 스타일 시트  -->
+    <link href="../assets/css/mypagestyle.css" rel="stylesheet"/>
     <!--  review 적용 템플릿 스타일 시트  -->
     <link href="../assets/css/reviewviewer.css" rel="stylesheet"/>
+
     <title>Three Go</title>
 
     <style>
@@ -67,11 +71,6 @@
             height: 100%;
         }
 
-        .btn-close {
-            position: absolute;
-            top: 5%;
-            right: 5%;
-        }
 
         .preview-container {
             position: relative;
@@ -161,115 +160,65 @@
     <th:block th:replace="~{fragments/sidebar}"></th:block>
 
     <div class="container d-flex justify-content-center">
-        <div class="d-flex flex-column align-items-center">
-            <!--            TODO: 배너 고쳐야함.-->
-            <!--배너-->
-            <!--swiper-->
-            <div class="swiper-container">
-                <section class="slider-1">
-                    <div class="swiper" id="swiper-1">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <div class="cards cards-1">
-
-                                    <p></p>
-                                </div>
-                            </div><!--end swiper-slide-->
-                            <div class="swiper-slide">
-                                <div class="cards cards-2">
-
-                                    <p></p>
-                                </div>
-                            </div><!--end swiper-slide-->
-                            <div class="swiper-slide">
-                                <div class="cards cards-3">
-
-                                    <p></p>
-                                </div>
-                            </div><!--end swiper-slide-->
-                            <div class="swiper-slide">
-                                <div class="cards cards-4">
-
-                                    <p></p>
-                                </div>
-                            </div><!--end swiper-slide-->
-                            <div class="swiper-slide">
-                                <div class="cards cards-5">
-
-                                    <p></p>
-                                </div>
-                            </div><!--end swiper-slide-->
-                            <div class="swiper-slide">
-                                <div class="cards cards-6">
-
-                                    <p></p>
-                                </div>
-                            </div><!--end swiper-slide-->
-                        </div><!--end swipper-wrapper-->
-                        <div class="swiper-pagination">
-
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
         <div class="container justify-content-center">
-            <div id="content" class="p-4 p-md-5">
-                <div class="card">
+            <ul class="nav nav-underline mb-3 justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" onclick="changeTab('RECOMMEND')">추천 리뷰</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" onclick="changeTab('FOLLOW')">팔로우 리뷰</a>
+                </li>
+            </ul>
+            <div id="content" class="p-4 p-md-5 gallery">
+                <div class="card gallery-item">
                     <!--유저 정보-->
-                    <div class="d-flex card-header gap-3">
-                        <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo"
+                    <div class="d-flex card-header gap-2">
+                        <img src=`/api/image/profile/${review.userInfo.profileImg}` alt="mdo"
                              class="rounded-circle">
-                        <span>nongdamgom</span>
-                        <span>농담곰</span>
+                        <span text=`${review.userInfo.name}`></span>
+                        <span text=`${review.userInfo.id}`></span>
                     </div>
                     <div class="card-body">
                         <!--유저가 업로드한 이미지-->
-                        <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg"
-                             alt="Card image cap">
+                        <div class=`swiper simple-view-swiper simple-view-swiper${index}`>
+                            <div class="swiper-wrapper">
+                                <th:block th:each="photo : ${review.reviewPhotoList}">
+                                    <div class="swiper-slide">
+                                        <img class="simple-view-img" th:src="|@{/api/image/review/}${photo.filePath}|"/>
+                                    </div>
+                                </th:block>
+                            </div>
+                            <div th:class="|swiper-controller swiper-controller${reviewState.index}|">
+                                <div th:class="|swiper-button-next swiper-button-next${reviewState.index}|"></div>
+                                <div th:class="|swiper-button-prev swiper-button-prev${reviewState.index}|"></div>
+                                <div th:class="|swiper-pagination swiper-pagination${reviewState.index}|"></div>
+                            </div>
+                        </div>
                         <!--좋아요와 댓글 -->
-                        <div class="d-flex gap-3">
-                            <i class="bi bi-heart"></i>
-                            <i class="bi bi-chat"></i>
+                        <div class="review-icons d-flex gap-3">
+                            <i class="bi bi-chat-square-dots" th:onclick="goComment([[${review.reviewId}]])"></i>
+                            <i class="like-btn bi" th:classappend="${review.likeState ? 'bi-star-fill' : 'bi-star'}" th:data-review-id="${review.reviewId}"></i>
                         </div>
 
-                        <p class="card-text">좋아요 몇개</p>
-                        <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <!--유저 정보-->
-                    <div class="d-flex card-header gap-3">
-                        <img src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg" alt="mdo"
-                             class="rounded-circle">
-                        <span>nongdamgom</span>
-                        <span>농담곰</span>
-                    </div>
-                    <div class="card-body">
-                        <!--유저가 업로드한 이미지-->
-                        <img class="card-img-top" src="https://webimage.10x10.co.kr/image/basic600/326/B003260178-1.jpg"
-                             alt="Card image cap">
-                        <!--좋아요와 댓글 -->
-                        <div class="d-flex gap-3">
-                            <i class="bi bi-heart"></i>
-                            <i class="bi bi-chat"></i>
-                        </div>
-
-                        <p class="card-text">좋아요 몇개</p>
-                        <p class="card-text"><small class="text-muted">댓글 더 보기</small></p>
+                        <p class="like-count text-muted card-text" th:data-review-id="${review.reviewId}" th:text="|${review.likeCount} 명이 이 리뷰를 좋아합니다.|"></p>
+                        <div class="review-content" th:utext="${review.reviewContent}"></div>
+                        <div class="card-text"><small class="text-muted comment-count" th:data-review-id="${review.reviewId}" th:text="|댓글 ${review.commentCount}개|"></small></div>
+                        <div class="card-text show-more" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">자세히 보기</small></div>
                     </div>
                 </div>
 
             </div>
+
+            <div id="load-point"></div>
+            <div class="loader"></div>
         </div>
     </div>
 
     <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="selectBookLabel" aria-hidden="true">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="selectBookLabel">리뷰북 선택</h1>
                 </div>
@@ -318,9 +267,9 @@
     </div>
     <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="editorLabel" aria-hidden="true">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="container-fluid">
                     <div class="row">
                         <div class="preview-container col-md-7">
@@ -392,7 +341,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<!--카드 -->
+<!-- 댓글 작성 -->
 <script th:inline="javascript">
     $(document).ready(function () {
         selectBook();
@@ -742,41 +691,208 @@
             }
         })
     }
+</script>
 
-    // 헤더 스와이프
-    //     new Swiper("#swiper-1",{
-    //     autoplay:{
-    //     delay: 3500,
-    //     disableOnInteraction: false
-    // },
-    //     pagination:{
-    //     el: "#swiper-1 .swiper-pagination",
-    //     clickable:true,
-    // },
-    //     lazyLoading: true,
-    //     loop: true,
-    //     keyboard:{
-    //     enabled:true,
-    // }
-    // });
-
-    var swiper2 = new Swiper("#swiper-1", {
-        autoplay: {
-            delay: 3500,
-            disableOnInteraction: false
-        },
-        pagination: {
-            el: "#swiper-1 .swiper-pagination",
-            clickable: true,
-        },
-        lazyLoading: true,
-        loop: true,
-        keyboard: {
-            enabled: true,
+<!-- 간단 댓글 조회 + 무한스크롤 -->
+<!-- 마이페이지 무한스크롤 관련 스크립트 -->
+<script th:inline="javascript">
+    let scrollPage = 0; // 무한스크롤로 불러올 페이지
+    let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
+    let firstLoad = true; // 첫 로딩인지 체크
+    let gallery = $('.gallery');
+    let tabType = "RECOMMEND"; // 화면에 보여줄 탭
+    let back = false;
+    $(document).ready(function (){
+        /*무한스크롤 & 페이지 로드 설정*/
+        gallery.html("")
+        observer.observe(document.getElementById('load-point'));
+        $('#load-point').hide(); // 옵저버 관측 타이밍을 컨트롤하기 위해 hide
+        loadPage();
+        /* 리뷰 상세 조회 관련 설정 */
+        $('.swiper-controller').hide();
+        /* 새 글 작성 버튼 관련 설정 */
+        $('.create-btn').hide();
+        if([[${findUser.id == loginUser.id}]]){
+            $('#new-review-btn').show()
         }
+        /* 리뷰 작성 관련 설정 */
+        selectBook();
+        deleteImg();
+        // /*리뷰 북 작성 관련 설정*/
+        // changeBookTitle();
+        // checkBookContents();
+    })
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            // entry가 intersecting 중이 아니라면 함수를 실행하지 않음.
+            if (!entry.isIntersecting) return;
+            // 현재 페이지가 불러오는 중이면 함수를 실행하지 않음.
+            if (scrollCheck) return;
+            //옵저버 타겟 설정
+            observer.observe(document.getElementById('load-point'));
+            // 페이지를 불러오는 함수 호출.
+            switch (tabType){
+                case "RECOMMEND" :
+                    showRecommend();
+                    break;
+                case "FOLLOW" :
+                    showFollowReview();
+                    break;
+            }
+        });
     });
-</script>
+
+    // 탭을 이동시 마다 변수 및 기존 화면 초기화(탭 이동시 마다 실행 해주세요.)
+    function changeTab(type) {
+        observer.disconnect()
+        tabType = type;
+        scrollPage = 0;
+        scrollCheck = false;
+        firstLoad = true;
+        back = false;
+
+        gallery.html("")
+        // 옵저버 타겟 관측 시작
+        observer.observe(document.getElementById('load-point'));
+    }
+
+
+
+    function showRecommend() {
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(!firstLoad){
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/review/recommend',
+            type : 'GET',
+            data : {
+                page : scrollPage
+            },
+            async: false,
+            success : function (result) {
+                let reviewList = result.dtoList;
+
+                if(firstLoad && reviewList.length <= 0){
+                    firstLoad = false;
+                    $(".loader").hide()
+                    let messageHtml = '<div class="no-data-msg mt-5">' +
+                        '<h4>등록된 리뷰가 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    firstLoad = false;
+                    // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                    setTimeout(() => {
+                        $(".loader").hide()
+                        $.each(reviewList, function (index, review){
+                            let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
+                                `<a href="/info/content/${bookmark.contentid}">` +
+                                `<img src="${bookmark.firstimage}"` +
+                                `class="gallery-image" alt="">` +
+                                `<div class="gallery-item-info d-flex">` +
+                                `<div class="bookmark-info-wrap">` +
+                                `<div class="bookmark-category">${bookmark.fullCategoryName}</div>` +
+                                `<div class="bookmark-title"><strong>${bookmark.title}</strong></div>` +
+                                `<div class="bookmark-address">${bookmark.address}</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</a>` +
+                                `</div>`
+                            gallery.append(tempHtml).trigger("create")
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(result.page <= result.last){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
+                }
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
+    }
+
+
+    function savePage() {
+        let feedInfo = {};
+        feedInfo.tabType = tabType;
+        feedInfo.scrollPage = scrollPage;
+        feedInfo.scrollPosition = window.scrollY.toString();
+        sessionStorage.setItem("feedInfo", JSON.stringify(feeInfo));
+    }
+
+    function setScrollByMyPageInfo(){
+        let session_feedInfo = JSON.parse(sessionStorage.getItem("feedInfo"));
+        let tabType = session_feedInfo.tabType;
+        let sessionPage = Number(session_feedInfo.scrollPage);
+        let scrollPosition = Number(session_feedInfo.scrollPosition);
+        changeTab(tabType)
+        console.log(sessionPage);
+        console.log(scrollPosition);
+        for(let page = 0; page <= sessionPage; page++){
+            back = true;
+            console.log(`${scrollPage}, ${page}`);
+            switch (tabType){
+                case "RECOMMEND":
+                    showRecommend();
+                    break;
+                case "FOLLOW":
+                    showFollowReview();
+                    break;
+            }
+        }
+        setTimeout(() => {
+            var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+            if(scrollPosition > scrollBottom){
+                window.scrollTo(0, scrollBottom);
+            }else {
+                window.scrollTo(0, scrollPosition);
+            }
+        }, 100);
+
+        setTimeout(() => {
+            $('#load-point').show();
+        }, 550)
+    }
+
+    function loadPage() {
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+                if(sessionStorage.getItem("feedInfo") != null){
+                    // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
+                    setScrollByMyPageInfo();
+                }else {
+                    $('#load-point').show();
+                }
+            }else {
+                // 그 외의 방법으로 페이지 접근 시 바로 타겟을 노출, 데이터 로딩
+                if(sessionStorage.getItem("feedInfo") != null){
+                    sessionStorage.removeItem("feedInfo");
+                }
+                $('#load-point').show();
+            }
+        });
+    }
+
 
 </script>
+
 </body>
 </html>
