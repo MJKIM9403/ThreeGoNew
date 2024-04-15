@@ -22,32 +22,28 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     @Query(value = "SELECT r.* " +
             "FROM review r " +
-            "INNER JOIN ( " +
-            "SELECT l.review_id, count(l.like_id) as like_count " +
-            "FROM likes l " +
-            "WHERE l.reg_date BETWEEN :toDate AND :fromDate " +
-            "GROUP BY l.review_id ) as sub " +
-            "ON r.review_id = sub.review_id " +
-            "ORDER BY sub.like_count DESC, r.review_id ASC ",
+            "LEFT JOIN likes l " +
+            "ON r.review_id = l.review_id " +
+            "GROUP BY r.review_id " +
+            "ORDER BY " +
+            "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
+            "COUNT(l.like_id) DESC, " +
+            "r.review_id DESC ",
             countQuery = "SELECT count(r.review_id) FROM review r",
             nativeQuery = true)
     Page<Review> findRecommendReviews(Pageable pageable, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
 
     @Query(value = "SELECT r.* " +
                 "FROM review r " +
-                "WHERE r.user_id in ( " +
-                "SELECT f.from_user_id " +
-                "FROM follows f " +
+                "INNER JOIN follows f " +
+                "ON r.user_id = f.from_user_id " +
                 "WHERE f.to_user_id = :userId " +
-                ")" +
-                "ORDER BY r.review_id",
+                "ORDER BY r.review_id DESC",
             countQuery = "SELECT count(r.review_id) " +
                     "FROM review r " +
-                    "WHERE r.user_id in ( " +
-                    "SELECT f.from_user_id " +
-                    "FROM follows f " +
-                    "WHERE f.to_user_id = :userId " +
-                    ")",
+                    "INNER JOIN follows f " +
+                    "ON r.user_id = f.from_user_id " +
+                    "WHERE f.to_user_id = :userId ",
             nativeQuery = true)
     Page<Review> findFollowReview(Pageable pageable, @Param("userId")String userId);
 }

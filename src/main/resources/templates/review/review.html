@@ -20,8 +20,6 @@
     <link href="../assets/swiper/swiper-bundle.min.css" rel="stylesheet"/>
     <script src="../assets/swiper/swiper-bundle.min.js"></script>
 
-    <!--  my page 적용 템플릿 스타일 시트  -->
-    <link href="../assets/css/mypagestyle.css" rel="stylesheet"/>
     <!--  review 적용 템플릿 스타일 시트  -->
     <link href="../assets/css/reviewviewer.css" rel="stylesheet"/>
 
@@ -150,6 +148,33 @@
             object-fit: contain;
         }
 
+    /* 간단 리뷰 */
+        .simple-view-swiper{
+            height: 480px !important;
+            overflow: hidden;
+        }
+
+        .simple-view-img {
+            object-fit: cover !important;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card,
+        .card *,
+        .card *::after,
+        .card *::before{
+            cursor: default;
+            box-sizing: content-box !important;
+        }
+
+        .show-more,
+        .show-more * {
+            width: 20%;
+            height: 30px;
+            cursor: pointer !important;
+            vertical-align: center;
+        }
 
     </style>
 
@@ -159,59 +184,128 @@
 <div class="d-flex">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
 
-    <div class="container d-flex justify-content-center">
-        <div class="container justify-content-center">
-            <ul class="nav nav-underline mb-3 justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" onclick="changeTab('RECOMMEND')">추천 리뷰</a>
-                </li>
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <a class="nav-link" onclick="changeTab('FOLLOW')">팔로우 리뷰</a>
-                </li>
-            </ul>
-            <div id="content" class="p-4 p-md-5 gallery">
-                <div class="card gallery-item">
-                    <!--유저 정보-->
-                    <div class="d-flex card-header gap-2">
-                        <img src="${profileImg}" class="rounded-circle">
-                        <span text="${review.userInfo.name}"></span>
-                        <span text="${review.userInfo.id}"></span>
-                    </div>
-                    <div class="card-body">
-                        <!--유저가 업로드한 이미지-->
-                        <div class="swiper simple-view-swiper simple-view-swiper${num}">
-                            <div class="swiper-wrapper">
-                                <th:block th:each="photo : ${review.reviewPhotoList}">
-                                    <div class="swiper-slide">
-                                        <img class="simple-view-img" src="/api/image/review/${photo.filePath}"/>
-                                    </div>
-                                </th:block>
-                            </div>
-                            <div class="swiper-controller swiper-controller${num}">
-                                <div class="swiper-button-next swiper-button-next${num}"></div>
-                                <div class="swiper-button-prev swiper-button-prev${num}"></div>
-                                <div class="swiper-pagination swiper-pagination${num}"></div>
-                            </div>
-                        </div>
-                        <!--좋아요와 댓글 -->
-                        <div class="review-icons d-flex gap-3">
-                            <i class="bi bi-chat-square-dots" onclick="goComment(${review.reviewId})"></i>
-                            <i class="like-btn bi" th:classappend="${review.likeState ? 'bi-star-fill' : 'bi-star'}" th:data-review-id="${review.reviewId}"></i>
-                        </div>
+    <div class="container flex-column">
+        <ul class="nav nav-underline mb-3 justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" onclick="changeTab('RECOMMEND')">추천 리뷰</a>
+            </li>
+            <li sec:authorize="isAuthenticated()" class="nav-item">
+                <a class="nav-link" onclick="changeTab('FOLLOW')">팔로우 리뷰</a>
+            </li>
+        </ul>
+        <div class="p-4 p-md-5 reviews-wrap gallery">
 
-                        <p class="like-count text-muted card-text" th:data-review-id="${review.reviewId}" th:text="|${review.likeCount} 명이 이 리뷰를 좋아합니다.|"></p>
-                        <div class="review-content" th:utext="${review.reviewContent}"></div>
-                        <div class="card-text"><small class="text-muted comment-count" th:data-review-id="${review.reviewId}" th:text="|댓글 ${review.commentCount}개|"></small></div>
-                        <div class="card-text show-more" th:onclick="openViewer([[${review.reviewId}]])"><small class="text-muted">자세히 보기</small></div>
+        </div>
+
+        <div id="load-point"></div>
+        <div class="loader"></div>
+    </div>
+
+    <!-- 리뷰 상세 조회 폼 -->
+    <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="preview-container col-md-7">
+                            <div id="review-book-info" class="d-flex align-items-center">
+                                <div class="rounded-3 icon-img">
+                                    <img id="review-book-cover" src="../assets/img/review_book_cover.jpg" alt="...">
+                                </div>
+                                <span id="review-book-title" class="ms-2">리뷰 북 타이틀</span>
+                            </div>
+                            <div id="touritem-wrap" class="d-flex align-items-center gap-2">
+                                <div id="touritem-info" class="card">
+                                    <img id="touritem-info-img" src="../assets/img/no_img.jpg" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <p id="touritem-info-title" class="card-text">관광지 이름</p>
+                                        <p id="touritem-info-address" class="card-text">관광지 주소</p>
+                                        <p id="touritem-info-category" class="card-text">관광지 카테고리</p>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span id="touritem-name">관광지 이름</span>
+                            </div>
+                            <div class="swiper viewSwiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">사진을 추가해주세요.</div>
+                                </div>
+                                <div class="swiper-controller">
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-pagination"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-flex align-items-start">
+                            <div class="modal-body">
+                                <div id="writer-wrap" class="mb-2 d-flex align-items-center justify-content-between">
+                                    <div id="writer-info" class="d-flex align-items-center">
+                                        <div class="rounded-circle icon-img">
+                                            <img id="writer-profile-img" src="../assets/img/profile.jpg" alt="...">
+                                        </div>
+                                        <strong id="writer-name" class="ms-2">작성자 이름</strong>
+                                        <span id="writer-id" class="ms-2">@writerId</span>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <div id="review-regdate">
+                                            yyyy-mm-dd
+                                        </div>
+                                        <div class="btn-group">
+                                            <button id="review-more-btn" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-cog" aria-hidden="true"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a id="review-edit" class="dropdown-item" href="#">수정</a></li>
+                                                <li><span id="review-delete" class="dropdown-item">삭제</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="contents-wrap" class="mb-2">
+                                    <div id="content">
+                                    </div>
+                                    <hr class="comment-line">
+                                    <div id="comment-wrap">
+                                        <div class="comment-info d-flex">
+                                            <div class="rounded-circle icon-img comment-profile">
+                                                <img src="../assets/img/profile.jpg" alt="...">
+                                            </div>
+                                            <div class="comment-text">
+                                                <span class="comment-writer me-3">댓글 아이디</span>
+                                                <span class="comment-content">댓글 내용</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="small-review-icons d-flex gap-2">
+                                    <i class="bi bi-chat-square-dots"></i><span class="comment-count">0000</span>
+                                    <i class="like-btn bi bi-star"></i><span class="like-count">0000</span>
+                                    <i class="bi bi-eye"></i><span class="view-count">0000</span>
+                                </div>
+                                <div id="my-comment-wrap" class="d-flex align-items-start">
+                                    <div class="rounded-circle icon-img">
+                                        <img id="login-user-profile-img" src="../assets/img/profile.jpg" alt="...">
+                                    </div>
+                                    <div id="comment-area" class="ms-2">
+                                        <div id="login-user-name" class="mb-2">작성자 이름</div>
+                                        <span class="invisible-parent-writer"></span>
+                                        <div class="d-flex gap-1">
+                                            <div contenteditable="true" id="comment-content" class="form-control"></div>
+                                            <button id="comment-btn" type="button" class="btn btn-outline-secondary">등록</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div id="load-point"></div>
-            <div class="loader"></div>
         </div>
     </div>
 
+    <!-- 리뷰 작성 폼 : 리뷰북 선택 -->
     <div id="select-book" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="selectBookLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -263,6 +357,8 @@
             </div>
         </div>
     </div>
+
+    <!--  리뷰 작성 폼 : 리뷰 작성  -->
     <div id="editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="editorLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -329,6 +425,7 @@
             </div>
         </div>
     </div>
+
     <button type="button" id="new-review-btn" class="position-fixed rounded-pill btn btn-outline-primary">
         <i class="bi bi-vector-pen"></i>
     </button>
@@ -613,16 +710,16 @@
         })
     }
 
-    function setPreview() {
+    function setPreview(){
         let files = fileInput.files;
-        if (files.length + images.length > 4) {
+        if(files.length + images.length > 4){
             files.length = 0;
             alert("사진은 4장까지 첨부할 수 있습니다.")
-        } else {
-            if (files.length > 0 && images.length === 0) {
+        }else {
+            if(files.length > 0 && images.length === 0) {
                 $('.swiper-wrapper').html("");
             }
-            if (files.length > 0) {
+            if(files.length > 0){
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
                     images.push(file);
@@ -638,7 +735,7 @@
                     editSwiper.appendSlide(tempHtml);
                     editSwiper.update();
 
-                    reader.onload = function (data) {
+                    reader.onload = function(data) {
                         const swiperSlides = $('.editSwiper .swiper-wrapper .swiper-slide');
                         const targetSlide = $(swiperSlides[images.length - files.length + i]);
                         targetSlide.find('.preview-img').attr('src', data.target.result);
@@ -647,15 +744,18 @@
                     reader.readAsDataURL(file);
                 }
             }
-            if (images.length > 1) {
+            if(images.length > 1){
                 $('.editSwiper .swiper-controller').show()
-            } else {
+            }else {
                 $('.editSwiper .swiper-controller').hide()
             }
-            if (images.length >= 4) {
+            if(images.length >= 4){
                 $('.uploader').hide()
             }
         }
+        setTimeout(function (){
+            $('#img-uploader').val('');
+        },500)
     }
 
     function goLastSlide() {
@@ -699,6 +799,9 @@
     let gallery = $('.gallery');
     let tabType = "RECOMMEND"; // 화면에 보여줄 탭
     let back = false;
+
+    let fromDate = new Date().toISOString();
+
     $(document).ready(function (){
         /*무한스크롤 & 페이지 로드 설정*/
         gallery.html("")
@@ -709,9 +812,7 @@
         $('.swiper-controller').hide();
         /* 새 글 작성 버튼 관련 설정 */
         $('.create-btn').hide();
-        if([[${findUser.id == loginUser.id}]]){
-            $('#new-review-btn').show()
-        }
+
         /* 리뷰 작성 관련 설정 */
         selectBook();
         deleteImg();
@@ -766,9 +867,9 @@
                 case "RECOMMEND" :
                     showRecommend();
                     break;
-                case "FOLLOW" :
-                    showFollowReview();
-                    break;
+                // case "FOLLOW" :
+                //     showFollowReview();
+                //     break;
             }
         });
     });
@@ -781,6 +882,10 @@
         scrollCheck = false;
         firstLoad = true;
         back = false;
+
+        if(type === 'RECOMMEND'){
+            fromDate = new Date().toISOString();
+        }
 
         gallery.html("")
         // 옵저버 타겟 관측 시작
@@ -803,6 +908,7 @@
             url : '/api/review/recommend',
             type : 'GET',
             data : {
+                fromDate : fromDate,
                 page : scrollPage
             },
             async: false,
@@ -822,11 +928,56 @@
                     setTimeout(() => {
                         $(".loader").hide()
                         $.each(reviewList, function (index, review){
+                            let profileImg = review.profileImg == null ? '../assets/img/profile.jpg' : '/api/image/profile/' + review.profileImg;
                             let num = (result.page * 10) + index;
 
                             createSimpleViewSwiper(review, num);
 
-                            let tempHtml = '';
+                            let tempHtml =
+                                '<div class="card gallery-item">' +
+                                '<div class="d-flex card-header gap-2">' +
+                                `<img src="${profileImg}" class="rounded-circle">` +
+                                `<span>${review.userInfo.name}</span>` +
+                                `<span>${review.userInfo.id}</span>` +
+                                '</div>' +
+                                '<div class="card-body">' +
+                                `<div class="swiper simple-view-swiper simple-view-swiper${num}">` +
+                                '<div class="swiper-wrapper">';
+
+                            $.each(review.reviewPhotoList, function (index, photo){
+                                let slide =
+                                    '<div class="swiper-slide">' +
+                                    `<img class="simple-view-img" src="/api/image/review/${photo.filePath}"/>` +
+                                    '</div>';
+                                tempHtml += slide;
+                            })
+
+                            tempHtml +=
+                                '</div>' +
+                                `<div class="swiper-controller swiper-controller${num}">` +
+                                `<div class="swiper-button-next swiper-button-next${num}"></div>` +
+                                `<div class="swiper-button-prev swiper-button-prev${num}"></div>` +
+                                `<div class="swiper-pagination swiper-pagination${num}"></div>` +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="review-icons d-flex gap-3">' +
+                                '<i class="bi bi-chat-square-dots" onClick="goComment(${review.reviewId})"></i>';
+
+                            if(review.likeState){
+                                tempHtml += `<i class="like-btn bi bi-star-fill" data-review-id="${review.reviewId}"></i>`
+                            }else {
+                                tempHtml += `<i class="like-btn bi bi-star" data-review-id="${review.reviewId}"></i>`
+                            }
+
+                            tempHtml +=
+                                    '</div>' +
+                                    `<p class="like-count text-muted card-text" data-review-id="${review.reviewId}">${review.likeCount} 명이 이 리뷰를 좋아합니다.</p>` +
+                                    `<div class="review-content">${review.reviewContent}</div>` +
+                                    `<div class="card-text"><small class="text-muted comment-count" data-review-id="${review.reviewId}">댓글 ${review.commentCount}개</small></div>` +
+                                    `<div class="card-text show-more" onClick="openViewer(${review.reviewId})"><small class="text-muted">자세히 보기</small></div>` +
+                                    '</div>' +
+                                    '</div>';
+
                             gallery.append(tempHtml).trigger("create")
                         })
                         window.scrollTo({top: loadScroll, behavior: "instant"});
@@ -860,7 +1011,7 @@
         sessionStorage.setItem("feedInfo", JSON.stringify(feeInfo));
     }
 
-    function setScrollByMyPageInfo(){
+    function setScrollByFeedInfo(){
         let session_feedInfo = JSON.parse(sessionStorage.getItem("feedInfo"));
         let tabType = session_feedInfo.tabType;
         let sessionPage = Number(session_feedInfo.scrollPage);
@@ -875,9 +1026,9 @@
                 case "RECOMMEND":
                     showRecommend();
                     break;
-                case "FOLLOW":
-                    showFollowReview();
-                    break;
+                // case "FOLLOW":
+                //     showFollowReview();
+                //     break;
             }
         }
         setTimeout(() => {
@@ -899,7 +1050,7 @@
             if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
                 if(sessionStorage.getItem("feedInfo") != null){
                     // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
-                    setScrollByMyPageInfo();
+                    setScrollByFeedInfo();
                 }else {
                     $('#load-point').show();
                 }
@@ -1687,7 +1838,7 @@
                     savePage();
                     $('#viewer').modal('toggle');
                     changeTab(tabType);
-                    setScrollByMyPageInfo();
+                    setScrollByFeedInfo();
                 },
                 error : function (){
                     alert('삭제에 실패했습니다.')
