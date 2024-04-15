@@ -269,3 +269,10 @@ a {
 .btn_align {
     text-align: center;
 }
+
+.headerLogo{
+    font-size: xx-large;
+    text-align: center;
+    font-weight: bolder;
+    padding-top: 2em;
+}
