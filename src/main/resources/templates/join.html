@@ -59,7 +59,11 @@
     }
 
     .fontSizeBtn {
-        font-size: x-small;
+        font-size: small;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
         height: 40px;
     }
 
@@ -153,6 +157,8 @@
 
                                 <div id="emaildupliAvailable" class="valid-feedback" style="display: none;"></div>
                                 <div id="emaildupliNotAvailable" class="invalid-feedback" style="display: none;"></div>
+                                <div id="joinAvailable" class="valid-feedback" style="display: none;"></div>
+
                             </div>
                             <br>
                             <div id="mail_number" name="mail_number" style="display: none">
@@ -372,19 +378,21 @@
                         // 메시지 초기화
                         $('#emailduplivailable').hide().text('');
                         $('#emaildupliNotAvailable').hide().text('');
-                        let duplicate = result == "true" ? true : false
+                        let duplicate = result == "true" ? true : false;
                         if (duplicate) {
-                            // 중복된 아이디가 존재할 경우
+                            // 중복된 이메일 존재할 경우
                             $('#emaildupliNotAvailable').show().text('이미 사용 중인 이메일입니다.');
                             console.log("중복: " + duplicate);
+                            emailDupliCheck = false;
                             idCheck = false;
                         } else {
                             // 사용 가능한 아이디일 경우
                             $('#emailduplivailable').show().text('사용 가능한 이메일.');
+                            emailDupliCheck = true;
                             idCheck = true;
                         }
 
-                        // 중복 확인 이후에 이메일 유효성 검사 및 이메일 전송 실행
+                        // 중복 확인 이 후에 이메일 유효성 검사 및 이메일 전송 실행
                         if (idCheck) {
                             //이메일 유효성 안맞을시 빠꾸
                             if (!regExp.test(testEmails)) {
@@ -442,6 +450,11 @@
                     return false;
                 } else if (emailAuthNum == inputNum) {
                     alert("인증되었습니다.");
+                    $('#joinAvailable').show().text('인증이 완료되었습니다.');
+                    clearTimeout(emailExpirationTimer); // 타이머 제거
+                    // 이메일 인증번호 입력 폼 없애기
+                    document.getElementById("mail_number").style.display = "none";
+                    clearInterval(emailTimerInterval);
                 } else {
                     alert("인증번호가 다릅니다.");
                     event.preventDefault(); // 폼 제출 막기
