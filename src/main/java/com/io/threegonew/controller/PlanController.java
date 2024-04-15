@@ -5,11 +5,8 @@ import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.TeamRepository;
 import com.io.threegonew.service.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Request;
-import org.springframework.boot.web.embedded.netty.NettyWebServer;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,16 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("plan")
@@ -267,7 +259,28 @@ public class PlanController {
         }
     }
 
-    /** 수정 메서드 구현해야됨 **/
+    /** 수정 메서드 **/
+    @PostMapping(value = "api/editplannerDates")
+    public ResponseEntity<?> updatePlannerDates(@RequestBody UpdatePlannerDatesRequest request) {
+        try {
+            plannerService.updatePlannerDates(request.getPlannerId(), request.getStartDate(), request.getEndDate());
+            return ResponseEntity.ok("날짜가 성공적으로 업데이트 되었습니다!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("날짜 업데이트 실패: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/api/editplannerName/{plannerId}/{plannerName}")
+    public ResponseEntity<?> updatePlannerName(@PathVariable Long plannerId, @PathVariable String plannerName) {
+        try {
+            plannerService.updatePlannerName(plannerId, plannerName);
+            return ResponseEntity.ok().body("플래너 제목이 성공적으로 업데이트 되었습니다!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("플래너 제목 업데이트 실패 : " + e.getMessage());
+        }
+    }
+
+
     @PostMapping(value = "/api/editplans/{plannerId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Long>> updatePlan(@PathVariable("plannerId") Long plannerId, @RequestBody CompletePlannerRequest request) {
 

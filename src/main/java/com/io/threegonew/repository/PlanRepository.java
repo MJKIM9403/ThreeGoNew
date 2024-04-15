@@ -14,6 +14,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 
     List<Plan> findByPlannerIdAndDay(Long plannerId, Integer day);
 
+    List<Plan> findByPlannerIdAndDayGreaterThan(Long plannerId, Integer day);
 
     Optional<Plan> findTopByPlannerIdOrderByDayDesc(Long plannerId);
 
