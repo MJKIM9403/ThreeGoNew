@@ -13,8 +13,8 @@
 
 .btn-close {
     position: absolute;
-    top: 5%;
-    right: 5%;
+    top: -5%;
+    right: -5%;
 }
 
 .preview-container {
@@ -43,7 +43,7 @@
 #contents-wrap {
     padding-right: 8pt;
     width: 100%;
-    max-height: 540px;
+    height: 540px;
     overflow-y: scroll;
     transition: all 0.2s ease-in-out;
 }

@@ -82,7 +82,7 @@ public class ReviewBookService {
         return reviewBookMapper(findReviewBook(reviewBookId));
     }
 
-    public PageResponse findMyReviewBook(MyPageRequest request){
+    public PageResponse getMyReviewBook(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         Page<MyReviewBookResponse> page = reviewBookRepository.findMyReviewBook(pageable, request.getUserId())

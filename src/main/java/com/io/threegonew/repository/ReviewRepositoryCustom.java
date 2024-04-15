@@ -4,12 +4,15 @@ import com.io.threegonew.domain.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface ReviewRepositoryCustom {
-    Page<Review> findMyReview(Pageable pageable, String userId);
+import java.time.LocalDateTime;
 
-    Long countMyReview(String userId);
+public interface ReviewRepositoryCustom {
+    Page<Review> findMyReviews(Pageable pageable, String userId);
+
+    Long countMyReviews(String userId);
 
     Page<Review> findMyLikeReviews(Pageable pageable, String userId);
 
-    Long countMyLikeReview(String userId);
+    Long countMyLikeReviews(String userId);
+
 }

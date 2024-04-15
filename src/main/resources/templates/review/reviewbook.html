@@ -386,9 +386,9 @@
 
     <!-- 리뷰 상세 조회 폼 -->
     <div id="viewer" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="true" tabindex="-1" aria-labelledby="viewerLabel" aria-hidden="true">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="container-fluid">
                     <div class="row">
                         <div class="preview-container col-md-7">
@@ -490,9 +490,9 @@
 
     <!--  리뷰북 수정 폼  -->
     <div id="book-editor" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="bookEditorLabel" aria-hidden="true">
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="bookEditorLabel">리뷰북 생성</h1>
                 </div>
@@ -1082,7 +1082,7 @@
                 }
 
                 let tempHtml =
-                    '<div class="comment-info">' +
+                    '<div class="comment-info temp-reply">' +
                     '<div class="d-flex">' +
                     '<div class="rounded-circle icon-img comment-profile">' +
                     `<img src="${profileImg}" alt="...">` +
@@ -1194,10 +1194,11 @@
 
     // 댓글 수정
     $(document).on('click','.edit-comment-btn', function (){
-        let commentText = $(this).closest('.comment-info').find('.comment-text');
+        let commentText = $(this).closest('.comment-info').find('.comment-text').first();
         let commentId = $(commentText).attr('data-comment-id');
         let content = $(this).prev('.edit-comment-content').html();
-        content = content.replace(/<br>/g,'\r\n');
+        content = content.replace(/<div>/g,'\r\n');
+        content = content.replace(/<\/div>/g,'');
 
         let commentEditor = $(this).closest('.comment-editor');
         $.ajax({
@@ -1324,7 +1325,7 @@
             $(this).text(text);
             $(info).children('.reply-wrap').hide();
             $(info).children('.next-reply-btn').hide();
-            $(info).children('.reply-wrap').children('.temp-reply').remove();
+            info.find('.temp-reply').remove();
         }
     })
 

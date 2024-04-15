@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,5 +146,27 @@ public class ReviewApiController {
                     .build();
         }
         return ResponseEntity.ok().body(tourItemSimpleInfo);
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<PageResponse> showRecommendReview(@ModelAttribute RecommendReviewRequest request){
+        try{
+            PageResponse<SimpleReviewResponse> pageResponse = reviewService.getRecommendReview(request);
+            return ResponseEntity.ok().body(pageResponse);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/follow")
+    public ResponseEntity<PageResponse> showFollowReview(@ModelAttribute MyPageRequest request){
+        try{
+            PageResponse<SimpleReviewResponse> pageResponse = reviewService.getFollowReview(request);
+            return ResponseEntity.ok().body(pageResponse);
+        }catch (AccessDeniedException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 }
