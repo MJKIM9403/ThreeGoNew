@@ -111,11 +111,13 @@ public class FollowService {
 
 
     private UserInfoResponse userInfoMapper(User user) {
+        String defaultImage = "../assets/img/no_img.jpg"; // 기본 이미지 경로 설정
+
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
-                .profileImg(user.getU_sfile())
+                .profileImg(user.getU_sfile()!= null && !user.getU_sfile().isEmpty() ? "/api/image/profile/" + user.getU_sfile() : defaultImage)
                 .about(user.getAbout())
                 .build();
     }

@@ -20,9 +20,10 @@
     <!-- bootstrap datepicker cdn -->
     <!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
     <!-- jQuery가 먼저 로드 된 후 datepicker가 로드 되어야함.-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ko.min.js" integrity="sha512-L4qpL1ZotXZLLe8Oo0ZyHrj/SweV7CieswUODAAPN/tnqN3PA1P+4qPu5vIryNor6HQ5o22NujIcAZIfyVXwbQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <title>Title</title>
 
 
@@ -42,7 +43,7 @@
         .fa-2 {
             left: calc(100% - 40px);
         }
-        input {
+        input.days {
             padding: 10px 15px !important;
             border: 1px solid lightgrey !important;
             border-radius: 10px;
@@ -204,17 +205,18 @@
                     <div class="flex-sm-row flex-column d-flex">
                         <div class="col-sm-9 col-12 px-0 mb-2">
                             <div class="input-group input-daterange">
-                                <input id="startDate2" name="startDate" type="date" class="form-control" placeholder="Arriving Date">
+                                <input id="days2" name="days" type="date" class="form-control">
                                 <i class="bi bi-calendar fa-1"></i>
-                                <input id="endDate2" name="endDate" type="date" class="form-control" placeholder="Leaving Date">
-                                <i class="bi bi-calendar fa-2"></i>
+                                <input type="hidden" id="startDate2" name="startDate" class="form-control" placeholder="Arriving Date">
+                                <input type="hidden" id="endDate2" name="endDate" class="form-control" placeholder="Leaving Date">
                             </div>
                         </div>
-                        <div class="col-sm-3 col-12 px-0">
-                            <button type="submit" class="btn btn-black">Search</button>
-                        </div>
+                    </div>
+                    <div class="col-sm-3 col-12 px-0">
+                        <button type="submit" class="btn btn-black">Search</button>
                     </div>
                 </form>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -229,67 +231,71 @@
     <div class="container mt-5" th:if="${plannerList.size() > 0 || sharedPlannerList.size() > 0}">
 
         <div class="text-center mb-5">
-            <h2 class="display-6 text-center pb-5">등록한 여행일정을 확인해보세요.</h2>
+            <h2 class="display-6 text-center">등록한 여행일정을 확인해보세요.</h2>
         </div>
 
-        <p>내가 작성한 여행</p>
-        <th:block th:if="${plannerList.size() > 0}">
-            <th:block th:each="planner, idx : ${plannerList}">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
-                            <div class="d-flex flex-column flex-lg-row">
-                                <img class="img " src="../../assets/img/no_img.jpg">
-                                <div class="row flex-fill">
-                                    <div class="col-sm-10">
-                                        <h4 class="h5" th:text="${planner.plannerName}"></h4>
-                                        <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
-                                        <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
-                                    </div>
-                                    <div class="col-sm-2 text-lg-end">
-                                        <div class="btn btn-primary">확인하기</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </th:block>
-        </th:block>
-
-        <th:block th:unless="${plannerList.size() > 0}">
-            <p>내가 작성한 일정이 없습니다. 일정을 작성해 보세요.</p>
-        </th:block>
-
-
-        <p>공유받은 여행</p>
-        <th:block th:if="${sharedPlannerList.size() > 0}">
-            <th:block th:each="planner, idx : ${sharedPlannerList}">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
-                            <div class="d-flex flex-column flex-lg-row">
-                                <img class="img " src="../../assets/img/no_img.jpg">
-                                <div class="row flex-fill">
-                                    <div class="col-sm-10">
-                                        <h4 class="h5" th:text="${planner.plannerName}"></h4>
-                                        <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
-                                        <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
-                                    </div>
-                                    <div class="col-sm-2 text-lg-end">
-                                        <div class="btn btn-primary">확인하기</div>
+        <div class="mb-5">
+            <p class="fs-5">내가 작성한 여행</p>
+            <th:block th:if="${plannerList.size() > 0}">
+                <th:block th:each="planner, idx : ${plannerList}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
+                                <div class="d-flex flex-column flex-lg-row">
+                                    <img class="img " src="../../assets/img/no_img.jpg">
+                                    <div class="row flex-fill">
+                                        <div class="col-sm-10">
+                                            <h4 class="h5" th:text="${planner.plannerName}"></h4>
+                                            <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
+                                            <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
+                                        </div>
+                                        <div class="col-sm-2 text-lg-end">
+                                            <div class="btn btn-primary">확인하기</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </th:block>
             </th:block>
-        </th:block>
 
-        <th:block th:unless="${sharedPlannerList.size() > 0}">
-            <p>공유받은 일정이 없습니다. 유저에게 일정을 공유받아 보세요.</p>
-        </th:block>
+            <th:block th:unless="${plannerList.size() > 0}">
+                <p>내가 작성한 일정이 없습니다. 일정을 작성해 보세요.</p>
+            </th:block>
+        </div>
+
+
+        <div class="mb-5">
+            <p class="fs-5">공유받은 여행</p>
+            <th:block th:if="${sharedPlannerList.size() > 0}">
+                <th:block th:each="planner, idx : ${sharedPlannerList}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
+                                <div class="d-flex flex-column flex-lg-row">
+                                    <img class="img " src="../../assets/img/no_img.jpg">
+                                    <div class="row flex-fill">
+                                        <div class="col-sm-10">
+                                            <h4 class="h5" th:text="${planner.plannerName}"></h4>
+                                            <span class="badge bg-secondary" th:text="${planner.startDate}"></span>
+                                            <span class="badge bg-secondary" th:text="${planner.endDate}"></span>
+                                        </div>
+                                        <div class="col-sm-2 text-lg-end">
+                                            <div class="btn btn-primary">확인하기</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </th:block>
+            </th:block>
+
+            <th:block th:unless="${sharedPlannerList.size() > 0}">
+                <p>공유받은 일정이 없습니다. 유저에게 일정을 공유받아 보세요.</p>
+            </th:block>
+        </div>
 
         <button type="button" id="new-planner-btn" class="position-fixed rounded-pill btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newPlannerModal">
             <i class="bi bi-plus"></i>
@@ -301,18 +307,16 @@
     <div class="container px-1 px-sm-5 mx-auto mt-5" th:if="${plannerList.size() == 0 && sharedPlannerList.size() == 0}">
         <div class="pt-5 pb-5">
 
-            <h2 class="display-6 text-center pb-5">여행 기간을 입력해주세요.</h2>
+            <h2 class="display-6 text-center pb-5">여행 정보를 입력해주세요.</h2>
             <form method="get" action="/plan/city">
-
-
                 <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
                 <div class="flex-sm-row flex-column d-flex">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-group input-daterange">
-                            <input id="startDate" name="startDate" type="date" class="form-control" placeholder="Arriving Date">
+                            <input id="days" name="days" type="date" class="form-control">
                             <i class="bi bi-calendar fa-1"></i>
-                            <input id="endDate" name="endDate" type="date" class="form-control" placeholder="Leaving Date">
-                            <i class="bi bi-calendar fa-2"></i>
+                            <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
+                            <input  id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
                         </div>
                     </div>
                     <div class="col-sm-3 col-12 px-0">
@@ -325,54 +329,62 @@
 </div>
     <script>
         $(document).ready(function(){
-            // input-daterange 클래스를 가진 요소를 선택하여 초기화
-            $('.input-daterange').each(function() {
-                var startDatePicker = $(this).find('input[name="startDate"]');
-                var endDatePicker = $(this).find('input[name="endDate"]');
+            // 공통 flatpickr 설정을 함수로 만들기
+            function setupFlatpickr(inputId) {
+                let fp = flatpickr(inputId, {
+                    mode: "range",
+                    inline: true,
+                    static: true,
+                    locale: "ko",
+                    onChange: function(selectedDates, datestr, instance) {
+                        if (selectedDates.length === 1) {
+                            let newMaxDate = new Date(selectedDates[0]);
+                            newMaxDate.setDate(selectedDates[0].getDate() + 9); // 시작 날짜에서 9일 후의 날짜 설정
+                            let newMinDate = new Date(selectedDates[0]);
+                            newMinDate.setDate(selectedDates[0].getDate() - 9); // 시작 날짜에서 9일 전의 날짜 설정
 
-                // DatePicker 초기화
-                $(this).datepicker({
-                    format: 'yyyy-mm-dd',
-                    todayHighlight: true,
-                    autoclose: true,
-                    language: "ko"
-                }).on('changeDate', function(e) {
-                    checkDate();
+                            instance.set('maxDate', newMaxDate);
+                            instance.set('minDate', newMinDate);
+                        } else {
+                            instance.set('maxDate', null); // 종료 날짜 제한 없음
+                            instance.set('minDate', null); // 시작 날짜 제한 없음
+                        }
+                    }
                 });
+            }
 
-                // 날짜 간격을 확인하는 함수
-                function checkDate() {
-                    var startDate = new Date(startDatePicker.val());
-                    var endDate = new Date(endDatePicker.val());
+            // 첫 번째 입력 필드에 대한 flatpickr 설정
+            setupFlatpickr("#days");
 
-                    if (!startDate || !endDate) {
-                        return; // 하나라도 선택되지 않은 경우 함수 종료
-                    }
+            // 두 번째 입력 필드에 대한 flatpickr 설정
+            setupFlatpickr("#days2");
 
-                    if (startDate > endDate) {
-                        endDatePicker.datepicker('setDate', startDate); // endDate를 startDate로 설정
-                    }
-
-                    var diff = endDate - startDate;
-                    var days = diff / (1000 * 60 * 60 * 24);
-
-                    if (days > 9) {
-                        alert("여행 일자는 최대 10일까지 설정 가능합니다.");
-                        endDatePicker.datepicker('setDate', null);
-                    }
-                }
-            });
 
             $('form').submit(function(e) {
-                var plannerName = $(this).find('input[name="plannerName"]').val();
-                var startDate = $(this).find('input[name="startDate"]').val();
-                var endDate = $(this).find('input[name="endDate"]').val();
+                e.preventDefault(); // 폼 기본 제출 동작을 방지
 
-                if (plannerName === "" || startDate === "" || endDate === "") {
+                let dateStr = $('input[name="days"]').val();
+                console.log(dateStr);
+                let plannerName = $(this).find('input[name="plannerName"]').val();
+                if (dateStr) {
+                    let dates = dateStr.split(' ~ '); // ' to '를 기준으로 문자열 분리
+                    let startDate = dates[0]; // 시작 날짜
+                    let endDate = dates.length > 1 ? dates[1] : startDate; // 종료 날짜가 없으면 시작 날짜 사용
+
+                    $(this).find('input[name="startDate"]').val(startDate); // 시작 날짜 설정
+                    $(this).find('input[name="endDate"]').val(endDate); // 종료 날짜 설정
+                }
+
+
+                if (plannerName === "" || dateStr === "") {
                     e.preventDefault();
                     alert('모든 여행 정보를 입력해주세요');
                 }
 
+                // 특정 input의 값을 넘기지 않도록 disabled 속성 설정
+                $('input[name="days"]').prop('disabled', true);
+
+                this.submit(); // 폼 실제 제출
             });
         });
     </script>

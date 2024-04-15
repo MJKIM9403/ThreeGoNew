@@ -78,6 +78,8 @@ public class PlanService {
         return planMap;
     }
 
+
+    // 특정 day를 가진 plan 반환하기
     public List<PlanDTO<TourItemResponse>> findByPlannerIdAndDay(PlanRequest planRequest) {
         Planner planner = plannerRepository.findByPlannerId(planRequest.getPlannerId())
                 .orElseThrow(() -> new IllegalArgumentException("Planner not found"));

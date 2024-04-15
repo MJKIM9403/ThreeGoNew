@@ -1,8 +1,6 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
-import com.io.threegonew.dto.AddPlanRequest;
-import com.io.threegonew.dto.CompletePlannerRequest;
 import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.repository.*;
 import jakarta.transaction.Transactional;
@@ -42,7 +40,7 @@ public class PlannerService {
 
     // 날짜 간의 차이를 계산하는 메서드 추가
     public long getDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
-        return ChronoUnit.DAYS.between(startDate, endDate);
+        return ChronoUnit.DAYS.between(startDate, endDate) + 1;
     }
 
 
@@ -94,6 +92,7 @@ public class PlannerService {
         return planner; // 저장된 엔터티 반환
     }
 
+    @Transactional
     public void updatePlannerDeleteFlag(Long plannerId) {
         // Planner를 조회합니다.
         Optional<Planner> optionalPlanner = plannerRepository.findById(plannerId);
@@ -102,7 +101,6 @@ public class PlannerService {
 
             // Planner의 삭제 플래그(p_del)를 true로 설정하고 저장합니다.
             planner.updateDelete();
-            plannerRepository.save(planner);
 
             // Planner에 속한 모든 Plan을 조회하고 삭제 플래그를 true로 설정합니다.
             List<Plan> plans = planRepository.findByPlannerId(plannerId);
@@ -115,10 +113,40 @@ public class PlannerService {
             for (Team team : teams) {
                 team.updateDelete();
             }
+        }
+    }
 
-            // 수정된 Plan과 Team을 저장합니다.
-            planRepository.saveAll(plans);
-            teamRepository.saveAll(teams);
+    @Transactional
+    public void updatePlannerName(Long plannerId, String plannerName) {
+        // Planner를 조회합니다.
+        Optional<Planner> optionalPlanner = plannerRepository.findById(plannerId);
+        if (optionalPlanner.isPresent()) {
+            Planner planner = optionalPlanner.get();
+            planner.updatePlannerName(plannerName);
+        }
+    }
+
+    @Transactional
+    public void updatePlannerDates(Long plannerId, LocalDate startDate, LocalDate endDate) {
+        // Planner를 조회합니다.
+        Optional<Planner> optionalPlanner = plannerRepository.findById(plannerId);
+        if (optionalPlanner.isPresent()) {
+            Planner planner = optionalPlanner.get();
+            LocalDate origStartDate = planner.getStartDate();
+            LocalDate origEndDate = planner.getEndDate();
+            // 원래 저장했던 일수
+            long origDaysBetween = ChronoUnit.DAYS.between(origStartDate, origEndDate) + 1;
+            // 수정할 일수
+            long editDaysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+            if(editDaysBetween < origDaysBetween) {
+                // 특정 p_id에 해당하는 Plan 중에서 editDaysBetween보다 큰 plan_day를 가진 Plan을 조회
+                List<Plan> plansToDelete = planRepository.findByPlannerIdAndDayGreaterThan(plannerId, (int) editDaysBetween);
+                // 조회된 Plan 삭제
+                planRepository.deleteAll(plansToDelete);
+            }
+
+            planner.updatePlannerDays(startDate, endDate);
         }
     }
 }
