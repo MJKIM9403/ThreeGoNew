@@ -4,16 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "t_area")
 public class Area {
     @Id
@@ -25,4 +23,13 @@ public class Area {
     private Double mapY;
     @Column(name = "longitude")
     private Double mapX;
+
+    public void updateEntityFromApiResponse(Area newArea){
+        if(this.equals(newArea)){
+            this.areaCode = newArea.areaCode;
+            this.areaName = newArea.areaName;
+            this.mapY = newArea.mapY;
+            this.mapX = newArea.mapX;
+        }
+    }
 }
