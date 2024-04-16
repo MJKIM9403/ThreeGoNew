@@ -342,6 +342,13 @@
         width: 100%; /* 부모 요소에 꽉 차도록 설정 */
         height: 100%; /* 부모 요소에 꽉 차도록 설정 */
     }
+
+    .profile-list-img{
+        object-fit: cover;
+        width: 50px; /* 부모 요소에 꽉 차도록 설정 */
+        height: 50px; /* 부모 요소에 꽉 차도록 설정 */
+    }
+
     .profile-image {
         width: 200px; /* 원하는 크기로 조정 */
         height: 200px; /* 원하는 크기로 조정 */
@@ -2519,13 +2526,15 @@
 
                     var template = `
                                     <div class="list-group">
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <img src="${follower.toUser.profileImg}" class="profile-img rounded-circle me-2" alt="프로필 이미지">
-                                                <p>${follower.toUser.id}</p>
-                                                <p>${follower.toUser.name}</p>
+                                        <div class="list-group-item d-flex justify-content-between">
+                                            <div class="d-flex">
+                                                <img src="${follower.toUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
+                                                <div class="d-flex flex-column flex-start gap-2">
+                                                    <strong>${follower.toUser.id}</strong>
+                                                    <span>${follower.toUser.name}</span>
+                                                </div>
                                             </div>
-                                            <div class="follow-state">
+                                            <div class="follow-state d-flex align-self-items">
                                                 ${buttonHTML}
                                             </div>
                                         </div>
@@ -2571,13 +2580,15 @@
 
                     var template = `
                         <div class="list-group">
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <img src="${following.fromUser.profileImg}" class="profile-img rounded-circle me-2">
-                                    <p>${following.fromUser.id}</p>
-                                    <p>${following.fromUser.name}</p>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <img src="${following.fromUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center">
+                                        <div class="d-flex flex-column flex-start gap-2">
+                                            <strong>${following.fromUser.id}</strong>
+                                            <span>${following.fromUser.name}</span>
+                                        </div>
                                 </div>
-                                <div class="follow-state">
+                                <div class="follow-state d-flex align-self-items">
                                     ${buttonHTML}
                                 </div>
                             </div>
