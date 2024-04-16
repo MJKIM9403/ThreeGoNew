@@ -125,23 +125,23 @@ public class FollowService {
      */
     public List<FollowDTO> showFollowingListWithFollowState(String loggedInId, String myPageId) {
         List<FollowProjection> followingList = followRepository.showFollowingList(loggedInId, myPageId);
-        return mapToFollowDTOList(followingList, loggedInId, myPageId);
+        return mapToFollowDTOList(followingList);
     }
 
     public List<FollowDTO> showFollowerListWithFollowState(String loggedInId, String myPageId) {
         List<FollowProjection> followerList = followRepository.showFollowerList(loggedInId, myPageId);
-        return mapToFollowDTOList(followerList, loggedInId, myPageId);
+        return mapToFollowDTOList(followerList);
     }
 
-    private List<FollowDTO> mapToFollowDTOList(List<FollowProjection> followList, String loggedInId, String myPageId) {
+    private List<FollowDTO> mapToFollowDTOList(List<FollowProjection> followList) {
         return followList.stream()
                 .map(follow -> FollowDTO.builder()
                         .id(follow.getId())
                         .toUser(userInfoMapper(follow.getToUser()))
                         .fromUser(userInfoMapper(follow.getFromUser()))
-                        .followingState(Optional.ofNullable(follow.getFollowingState()).orElse(0))
-                        .sameUserState(Optional.ofNullable(follow.getSameUserState()).orElse(0))
-                        .followedState(Optional.ofNullable(follow.getFollowedState()).orElse(0))
+                        .followingState(follow.getFollowingState())
+                        .sameUserState(follow.getSameUserState())
+                        .followedState(follow.getFollowedState())
                         .build())
                 .collect(Collectors.toList());
     }
