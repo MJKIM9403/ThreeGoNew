@@ -338,8 +338,8 @@
                     <div th:id="|list-item-${reviewState.count}|" class="card gallery-item">
                         <!--유저 정보-->
                         <div class="d-flex card-header gap-2">
-                            <img th:src="|@{/api/image/profile/}${review.userInfo.profileImg}|" alt="mdo"
-                                 class="rounded-circle">
+                            <img th:if="${review.userInfo.profileImg == null}" src="../assets/img/profile.jpg" alt="mdo" class="rounded-circle">
+                            <img th:unless="${review.userInfo.profileImg == null}" th:src="|@{/api/image/profile/}${review.userInfo.profileImg}|" alt="mdo" class="rounded-circle">
                             <span th:text="${review.userInfo.name}"></span>
                             <span th:text="|@${review.userInfo.id}|"></span>
                         </div>
@@ -1464,7 +1464,7 @@
                     savePage();
                     $('#viewer').modal('toggle');
                     changeTab(tabType);
-                    setScrollByMyPageInfo();
+                    setScrollByFeedInfo();
                 },
                 error : function (){
                     alert('삭제에 실패했습니다.')
