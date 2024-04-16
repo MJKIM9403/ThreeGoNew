@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface Cat1Repository extends JpaRepository<Cat1, String> {
 
+    boolean existsById(String cat1);
 }

@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SigunguRepository extends JpaRepository<Sigungu, SigunguPk> {
+
+    boolean existsById(SigunguPk pk);
     List<Sigungu> findByAreaCode(Integer areaCode);
 }

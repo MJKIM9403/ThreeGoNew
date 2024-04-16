@@ -1,10 +1,7 @@
 package com.io.threegonew.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "t_cat2")
 public class Cat2 {
     @Id
@@ -31,4 +29,13 @@ public class Cat2 {
             mappedBy = "cat2"
     )
     private List<Cat3> cat3List = new ArrayList<>();
+
+    public void updateEntityFromApiResponse(Cat2 newCat2){
+        if(this.equals(newCat2)){
+            this.cat2 = newCat2.cat2;
+            this.cat2Name = newCat2.cat2Name;
+            this.cat1 = newCat2.cat1;
+            this.cat3List = newCat2.cat3List;
+        }
+    }
 }
