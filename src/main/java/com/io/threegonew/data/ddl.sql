@@ -50,8 +50,8 @@ CREATE TABLE `TEAM` (
 -- 팔로우 테이블 --
 CREATE TABLE follows (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         to_user_id VARCHAR(255) NOT NULL,
-                         from_user_id VARCHAR(255) NOT NULL,
+                         to_user_id VARCHAR(255) NOT NULL, -- 팔로우를 넣는 사람
+                         from_user_id VARCHAR(255) NOT NULL, -- 팔로우를 받는 사람
                          UNIQUE (to_user_id, from_user_id) -- 동일한 팔로우 관계를 중복으로 생성하지 못하게 함
 );
 -- 지역
