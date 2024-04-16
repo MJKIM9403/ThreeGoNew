@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,7 +107,7 @@ public class ReviewService {
     public PageResponse getMyReviews(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-        Page<MyReviewResponse> page = reviewRepository.findMyReview(pageable, request.getUserId())
+        Page<MyReviewResponse> page = reviewRepository.findMyReviews(pageable, request.getUserId())
                 .map(this::myReviewMapper);
 
         PageResponse<MyReviewResponse> pageResponse = PageResponse.<MyReviewResponse>withAll()
@@ -120,7 +122,7 @@ public class ReviewService {
     }
 
     public Long getMyReviewCount(String userId){
-        return reviewRepository.countMyReview(userId);
+        return reviewRepository.countMyReviews(userId);
     }
 
     public ReviewResponse getDetailReview(Long reviewId){
@@ -162,11 +164,59 @@ public class ReviewService {
         return pageResponse;
     }
 
+    @Transactional
     public EditReviewResponse getEditReview(Long reviewId){
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
 
         return editReviewMapper(findReview);
+    }
+
+    // 추천 피드
+    @Transactional
+    public PageResponse getRecommendReview(RecommendReviewRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        LocalDateTime fromDate = request.getFromDate();
+        LocalDateTime toDate = fromDate.minusHours(72);
+
+        Page<SimpleReviewResponse> page = reviewRepository.findRecommendReviews(pageable, toDate, fromDate)
+                .map(this::simpleReviewMapper);
+
+        PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+    // 팔로우 피드
+    @Transactional
+    public PageResponse getFollowReview(MyPageRequest request) throws AccessDeniedException{
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        String loginUserId = SecurityUtils.getCurrentUsername();
+
+        if(loginUserId.equals("anonymousUser")){
+            throw new AccessDeniedException("유저 정보를 찾을 수 없습니다.");
+        }
+
+        Page<SimpleReviewResponse> page = reviewRepository.findFollowReview(pageable, loginUserId)
+                .map(this::simpleReviewMapper);
+
+        PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
     }
 
     private SimpleReviewResponse simpleReviewMapper(Review review){

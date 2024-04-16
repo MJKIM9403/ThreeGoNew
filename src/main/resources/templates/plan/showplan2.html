@@ -21,7 +21,7 @@
     <!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
     <!-- jQuery가 먼저 로드 된 후 datepicker가 로드 되어야함.-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <title>Title</title>
@@ -193,7 +193,7 @@
     let plannerId = [[${plannerId}]];
 
     // 날짜
-    let days = [[${daysBetween+1}]];
+    let days = [[${daysBetween}]];
 
     // 인덱스
     let index;
@@ -240,6 +240,11 @@
     // 로드된 plannerId를 작성한 유저가 지금 로그인한 유저가 맞는지
     let isWriter = [[${exists}]];
 
+    // flatpickr 인스턴스
+    let fp;
+
+    let startDateString = [[${startDateString}]];
+    let endDateString = [[${endDateString}]];
 
     /**
      * 자동 실행 함수
@@ -257,11 +262,12 @@
         deleteGuest();
         showPlannerInfo();
         showEditNameModal();
-        showEditDaysModal();
         hideEditNameModal();
+        showEditDaysModal();
         hideEditDaysModal();
         loadDatePicker();
         editPlannerDays();
+        editPlannerName();
     });
 
     /**
@@ -277,7 +283,7 @@
         $('.name').html(plannerName);
         var daysTemplate = `
                             <div class="start-end">${startDate} ~ ${endDate}</div>
-                            <div class="days">${daysBetween + 1}일</div>
+                            <div class="days">${daysBetween}일</div>
                         `
         $('.planner-days').append(daysTemplate);
     }
@@ -485,9 +491,47 @@
         })
     }
 
+    function hideEditNameModal() {
+        let plannerName = [[${plannerName}]]
+        $('#nameEditModal').on('hidden.bs.modal', function () {
+            // 모달 내용 초기화
+            $('input[name=plannerName]').val(plannerName);
+        });
+    }
+
+    function editPlannerName() {
+        $('#name-edit-confirm').click(function () {
+            var editName = $('input[name=plannerName]').val();
+            if(editName !== "") {
+                if(confirm("입력하신 내용을 제목으로 수정하시겠습니까?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/plan/api/editplannerName/" + plannerId  + "/" + editName,
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            plannerId: plannerId,
+                            plannerName: editName
+                        }),
+                        success: function(response) {
+                            $('#nameEditModal').modal('hide');
+                            window.location.href = '/plan/show?p_id=' + plannerId;
+                            alert('수정되었습니다.');
+                        },
+                        error:function (xhr, status, error) {
+                            alert('실패');
+                        }
+                    });
+                }
+            } else {
+                alert('여행제목은 비워둘 수 없습니다.');
+            }
+        });
+    }
+
+
+
+    // 날짜 datepicker 로드하기
     function loadDatePicker() {
-        let startDateString = [[${startDateString}]];
-        let endDateString = [[${endDateString}]];
         let daysBetween = [[${daysBetween}]];
         console.log("startDateString : " + startDateString);
         console.log("endDateString : " + endDateString);
@@ -501,12 +545,13 @@
         console.log("endDate : " + endDate);
 
 
-        let fp = flatpickr("#days", {
+        fp = flatpickr("#days", {
             mode: "range",
             inline: true,
             static: true,
             locale: "ko",
             defaultDate: [startDate, endDate],
+
             onChange: function(selectedDates, datestr, instance) {
 
                 if (selectedDates.length === 1) { // 날짜를 하루만 선택했을 때
@@ -523,9 +568,6 @@
                 }
             }
         });
-
-        // fp.setDate([startDate, endDate]);
-
     }
 
     function editPlannerDays() {
@@ -533,31 +575,57 @@
             let dateStr = $('#days').val();
             if(dateStr === "") { // 비어있으면
                 alert('날짜를 모두 입력해주세요.');
-            } else {
-                console.log(dateStr);
-                let startDate = new Date(parseInt(dateStr.substr(0, 4)), parseInt(dateStr.substr(5, 2)) - 1, parseInt(dateStr.substr(8, 2)));
-                console.log("startDate 문자열만 자른거 : " + parseInt(dateStr.substr(0, 4)), parseInt(dateStr.substr(5, 2)) - 1, parseInt(dateStr.substr(8, 2)));
-                let allDays; // 전체 여행 일수
-                let endDate;
-                if (dateStr.length > 10) {
-                    endDate = new Date(parseInt(dateStr.substr(13, 4)), parseInt(dateStr.substr(18, 2)) - 1, parseInt(dateStr.substr(21, 2)));
-                    console.log("endDate 문자열만 자른거 : " + parseInt(dateStr.substr(13, 4)), parseInt(dateStr.substr(18, 2)) - 1, parseInt(dateStr.substr(21, 2)));
-                } else {
-                    endDate = startDate;
+                return;
+            }
+            let startDate = new Date(dateStr.substr(0, 10));
+            let endDate = (dateStr.length > 10) ? new Date(dateStr.substr(13, 10)) : startDate;
+            console.log("startDate : " + startDate);
+            console.log("endDate : " + endDate);
+
+            // 두 날짜 간의 밀리초 차이 계산
+            let timeDiff = endDate.getTime() - startDate.getTime();
+
+            // 일(day) 단위로 변환
+            let daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+            console.log("daysDiff : " + daysDiff);
+            console.log("days : " + days);
+
+            function editPlannerDates(plannerId, startDate, endDate, message) {
+                $.ajax({
+                    url: '/plan/api/editplannerDates',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        plannerId: plannerId,
+                        startDate: startDate,
+                        endDate: endDate
+                    }),
+                    success: function(response) {
+                        $('#daysEditModal').modal('hide');
+                        window.location.href = '/plan/show?p_id=' + plannerId;
+                        alert('수정되었습니다.');
+                    }
+                });
+            }
+
+            function confirmAndEdit(plannerId, startDate, endDate, confirmationMessage) {
+                if (confirm(confirmationMessage)) {
+                    editPlannerDates(plannerId, startDate, endDate);
                 }
-                console.log("startDate : " + startDate);
-                console.log("endDate : " + endDate);
+            }
+
+            if (daysDiff < days) {
+                confirmAndEdit(plannerId, startDate, endDate, '기존에 등록한 여행일수보다 작습니다. 여행일수를 초과한 일정들은 삭제됩니다. 그래도 여행날짜를 변경하시겠습니까?');
+            } else if (daysDiff === days) {
+                confirmAndEdit(plannerId, startDate, endDate, '선택한 날짜로 여행 일정을 수정하시겠습니까?');
+            } else if (daysDiff > days) {
+                confirmAndEdit(plannerId, startDate, endDate, '기존에 등록한 여행일수보다 많습니다. 선택한 날짜로 여행 일정을 수정하시겠습니까?');
             }
         });
     }
 
 
-    function hideEditNameModal() {
-        $('#nameEditModal').on('hidden.bs.modal', function () {
-            // 모달 내용 초기화
-            $('#name').val(''); // 값 초기화
-        });
-    }
+
 
     // 날짜 수정 모달
     function showEditDaysModal() {
@@ -571,9 +639,11 @@
     }
 
     function hideEditDaysModal() {
+        let startDate = new Date(startDateString);
+        let endDate = new Date(endDateString);
         $('#daysEditModal').on('hidden.bs.modal', function () {
             // 모달 내용 초기화
-            $('#days').val(''); // 값 초기화
+            fp.setDate([startDate, endDate]); // 값 초기화
         });
     }
 
@@ -680,8 +750,9 @@
         var dayTemplate = `<h4 class="mb-1">${index + 1}일차</h4>`;
         $('.plan').append(dayTemplate);
 
-        places[index].forEach(function (data) {
-            var template = `
+        if(places[index].length > 0) { // 내용이 있으면 표시
+            places[index].forEach(function (data) {
+                var template = `
                                 <div class="timeline">
                                     <div class="outer planContainer">
                                         <div>
@@ -703,8 +774,15 @@
                                     </div>
                                 </div>
                             `;
+                $('.plan').append(template);
+            })
+        } else { // 내용이 없으면
+            var template = `
+                                <div>등록된 일정이 없습니다. 일정을 추가해주세요. </div>
+                            `;
             $('.plan').append(template);
-        })
+        }
+
     }
 
     /**
@@ -1241,8 +1319,8 @@
         <div class="container-fluid mt-3">
             <div id="list">
                 <div id="day-btns">
-                    <th:block th:each="i : ${#numbers.sequence(0, daysBetween)}">
-                        <button class="btn btn-dark dayButton active" th:data-day="${i + 1}" th:text="'Day ' + ${i + 1}">Day${i + 1}</button>
+                    <th:block th:each="i : ${#numbers.sequence(1, daysBetween)}">
+                        <button class="btn btn-dark dayButton active" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
                     </th:block>
                 </div>
 

@@ -86,7 +86,8 @@ public class FollowService {
 
     // 팔로우 상태를 함께 매핑하여 FollowDTO 객체 생성
     private FollowDTO followerMapper(Follow follow, User loggedInUser) {
-        boolean isFollowing = isFollowing(loggedInUser, follow.getToUser());
+        boolean isFollowing = isFollowing(loggedInUser, follow.getToUser()); // 내가 팔로우하고 있는지 판단
+        boolean areYouFollowing = isFollowing(follow.getToUser(), loggedInUser); // 나를 팔로우하고 있는지 판단
 
         return FollowDTO.builder()
                 .id(follow.getId())
@@ -94,11 +95,13 @@ public class FollowService {
                 .fromUser(userInfoMapper(follow.getFromUser()))
                 .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
                 .followCount(followRepository.countFollower(follow.getFromUser().getId())) // 로그인한 유저와 같은지 설정
+                .youFollowMeState(areYouFollowing ? 1 : 0) //
                 .build();
     }
 
     private FollowDTO followingMapper(Follow follow, User loggedInUser) {
-        boolean isFollowing = isFollowing(loggedInUser, follow.getFromUser());
+        boolean isFollowing = isFollowing(loggedInUser, follow.getFromUser()); // 내가 팔로우하고 있는지 판단
+        boolean areYouFollowing = isFollowing(follow.getFromUser(), loggedInUser); // 나를 팔로우하고 있는지 판단
 
         return FollowDTO.builder()
                 .id(follow.getId())
@@ -106,16 +109,19 @@ public class FollowService {
                 .fromUser(userInfoMapper(follow.getFromUser()))
                 .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
                 .followCount(followRepository.countFollowing(follow.getToUser().getId())) // 로그인한 유저와 같은지 설정
+                .youFollowMeState(areYouFollowing ? 1 : 0)
                 .build();
     }
 
 
     private UserInfoResponse userInfoMapper(User user) {
+        String defaultImage = "../assets/img/profile.jpg"; // 기본 이미지 경로 설정
+
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
-                .profileImg(user.getU_sfile())
+                .profileImg(user.getU_sfile()!= null && !user.getU_sfile().isEmpty() ? "/api/image/profile/" + user.getU_sfile() : defaultImage)
                 .about(user.getAbout())
                 .build();
     }

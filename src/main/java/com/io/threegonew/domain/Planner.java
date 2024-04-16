@@ -49,11 +49,18 @@ public class Planner {
         this.plannerDelete = plannerDelete;
     }
 
-    public void update(String plannerName) {
+    public void updatePlannerName(String plannerName) {
         this.plannerName = plannerName;
+    }
+
+    public void updatePlannerDays(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public void updateDelete() {
         this.plannerDelete = true;
     }
+
+
 }
