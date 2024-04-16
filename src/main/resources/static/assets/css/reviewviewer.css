@@ -125,7 +125,7 @@
     width: calc(100% - 20pt);
 }
 
-.more-reply-btn, .next-reply-btn, .close-reply-btn {
+.more-reply-btn, .next-reply-btn, .close-reply-btn, .next-comment-btn {
     display: flex;
     justify-content: center;
     margin-top: 0.5rem;

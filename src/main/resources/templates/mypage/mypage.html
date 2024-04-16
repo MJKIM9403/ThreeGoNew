@@ -719,7 +719,7 @@
         let reviewId = $(this).data('review-id');
 
         if(loginUserId === 'anonymousUser'){
-            alert('좋아요는 로그인 후 사용하실 수 있습니다.');
+            alert('관심리뷰는 로그인 후 등록하실 수 있습니다.');
             location.href = '../login'
         }else {
             $.ajax({
@@ -782,6 +782,8 @@
 
         let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
+        $('#comment-wrap').html("");
+
         let promise = new Promise((resolve) => {
             $.ajax({
                 url : '/api/review/view_count',
@@ -804,7 +806,7 @@
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
             loadDetailReview();
-            showComments();
+            showComments(0);
             showAllCommentsCount();
             postNewComment();
             parentId = null;
@@ -934,16 +936,17 @@
     }
 
     // 댓글 리스트 조회
-    function showComments() {
+    function showComments(page) {
         $.ajax({
             url : '/api/comments',
             type : 'GET',
             data : {
-                reviewId: selectedReviewId
+                reviewId: selectedReviewId,
+                page: page
             },
             success : function (result){
+                $('.next-comment-btn').remove();
                 let commentList = result.dtoList;
-                $('#comment-wrap').html("");
                 if(commentList.length > 0){
                     $.each(commentList, function (index, comment){
                         if(comment.cmtDel){
@@ -1000,6 +1003,10 @@
                             $('#comment-wrap').append(tempHtml);
                         }
                     })
+                    if(result.page < result.last){
+                        let btn = `<div class="next-comment-btn" onclick="showComments(${Number(page)+1})">- 댓글 더 보기 -</div>`
+                        $('#comment-wrap').append(btn);
+                    }
                 }else {
                     let tempHtml =
                         '<div class="no-comment-msg d-flex mb-2">아직 등록된 리뷰가 없습니다.</div>';
@@ -1100,7 +1107,7 @@
                 }
 
                 let tempHtml =
-                    '<div class="comment-info">' +
+                    '<div class="comment-info temp-reply">' +
                     '<div class="d-flex">' +
                     '<div class="rounded-circle icon-img comment-profile">' +
                     `<img src="${profileImg}" alt="...">` +
@@ -1212,10 +1219,11 @@
 
     // 댓글 수정
     $(document).on('click','.edit-comment-btn', function (){
-        let commentText = $(this).closest('.comment-info').find('.comment-text');
+        let commentText = $(this).closest('.comment-info').find('.comment-text').first();
         let commentId = $(commentText).attr('data-comment-id');
         let content = $(this).prev('.edit-comment-content').html();
-        content = content.replace(/<br>/g,'\r\n');
+        content = content.replace(/<div>/g,'\r\n');
+        content = content.replace(/<\/div>/g,'');
 
         let commentEditor = $(this).closest('.comment-editor');
         $.ajax({
@@ -1342,7 +1350,7 @@
             $(this).text(text);
             $(info).children('.reply-wrap').hide();
             $(info).children('.next-reply-btn').hide();
-            $(info).children('.reply-wrap').children('.temp-reply').remove();
+            info.find('.temp-reply').remove();
         }
     })
 
@@ -1352,7 +1360,8 @@
         let lastCommentId = $('#comment-wrap .comment-info:first .comment-text').data('comment-id');
         console.log(lastCommentId);
         if(lastCommentId === undefined){
-            showComments();
+            $('#comment-wrap').html("");
+            showComments(0);
         }else {
             $.ajax({
                 url : '/api/comments/recent',
@@ -1481,7 +1490,7 @@
                     savePage();
                     $('#viewer').modal('toggle');
                     changeTab(tabType);
-                    setScrollByMyPageInfo();
+                    setScrollByFeedInfo();
                 },
                 error : function (){
                     alert('삭제에 실패했습니다.')
@@ -1525,7 +1534,6 @@
         $('#contents-wrap').css('max-height','540px')
     })
 </script>
-
 
 <!-- 리뷰북 작성 관련 스크립트 -->
 <script th:inline="javascript">
@@ -1669,7 +1677,6 @@
     }
 
 </script>
-
 
 <!--리뷰 작성 관련 스크립트-->
 <script th:inline="javascript">

@@ -27,7 +27,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "GROUP BY r.review_id " +
             "ORDER BY " +
             "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
-            "COUNT(l.like_id) DESC, " +
+            "SUM(CASE WHEN l.reg_date <= :fromDate THEN 1 ELSE 0 END) DESC, " +
             "r.review_id DESC ",
             countQuery = "SELECT count(r.review_id) FROM review r",
             nativeQuery = true)

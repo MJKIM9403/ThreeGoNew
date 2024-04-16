@@ -160,6 +160,16 @@
             height: 100%;
         }
 
+        .card {
+            width: 600px;
+            margin-bottom: 25px;
+        }
+
+        .card .card-header img {
+            width: 24px;
+            height: 24px;
+        }
+
         .card,
         .card *,
         .card *::after,
@@ -176,6 +186,47 @@
             vertical-align: center;
         }
 
+        .review-content {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            margin-bottom: 0.4rem;
+        }
+
+        .review-icons i::before {
+            cursor: pointer;
+        }
+
+        .review-icons {
+            margin-right: 5px;
+            justify-content: flex-end;
+            padding: 5pt 0;
+            font-size: 1.8rem;
+        }
+
+        /*  피드  */
+        .feed-container {
+            margin: 0 auto;
+        }
+
+        /* Loader */
+        #load-point {
+            visibility: hidden;
+            padding: 30px 0;
+        }
+
+        .loader {
+            width: 5rem;
+            height: 5rem;
+            border: 0.6rem solid #999;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: loader 500ms linear infinite;
+        }
+
+
     </style>
 
 </head>
@@ -184,21 +235,23 @@
 <div class="d-flex">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
 
-    <div class="container flex-column">
-        <ul class="nav nav-underline mb-3 justify-content-center">
-            <li class="nav-item">
-                <a class="nav-link active" aria-current="page" onclick="changeTab('RECOMMEND')">추천 리뷰</a>
-            </li>
-            <li sec:authorize="isAuthenticated()" class="nav-item">
-                <a class="nav-link" onclick="changeTab('FOLLOW')">팔로우 리뷰</a>
-            </li>
-        </ul>
-        <div class="p-4 p-md-5 reviews-wrap gallery">
+    <div class="feed-container">
+        <div class="d-flex flex-column">
+            <ul class="nav nav-underline mb-3 justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" onclick="changeTab('RECOMMEND')">추천 리뷰</a>
+                </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <a class="nav-link" onclick="changeTab('FOLLOW')">팔로우 리뷰</a>
+                </li>
+            </ul>
+            <div class="reviews-wrap gallery">
 
+            </div>
+
+            <div class="loader"></div>
+            <div id="load-point"></div>
         </div>
-
-        <div id="load-point"></div>
-        <div class="loader"></div>
     </div>
 
     <!-- 리뷰 상세 조회 폼 -->
@@ -268,15 +321,15 @@
                                     </div>
                                     <hr class="comment-line">
                                     <div id="comment-wrap">
-                                        <div class="comment-info d-flex">
-                                            <div class="rounded-circle icon-img comment-profile">
-                                                <img src="../assets/img/profile.jpg" alt="...">
-                                            </div>
-                                            <div class="comment-text">
-                                                <span class="comment-writer me-3">댓글 아이디</span>
-                                                <span class="comment-content">댓글 내용</span>
-                                            </div>
-                                        </div>
+<!--                                        <div class="comment-info d-flex">-->
+<!--                                            <div class="rounded-circle icon-img comment-profile">-->
+<!--                                                <img src="../assets/img/profile.jpg" alt="...">-->
+<!--                                            </div>-->
+<!--                                            <div class="comment-text">-->
+<!--                                                <span class="comment-writer me-3">댓글 아이디</span>-->
+<!--                                                <span class="comment-content">댓글 내용</span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
                                     </div>
                                 </div>
                                 <div class="small-review-icons d-flex gap-2">
@@ -436,11 +489,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<!-- 댓글 작성 -->
+<!-- 리뷰 작성 -->
 <script th:inline="javascript">
     $(document).ready(function () {
         selectBook();
-        $('.swiper-controller').hide();
+        $('.editSwiper').find('.swiper-controller').hide();
         deleteImg();
     });
 
@@ -717,7 +770,7 @@
             alert("사진은 4장까지 첨부할 수 있습니다.")
         }else {
             if(files.length > 0 && images.length === 0) {
-                $('.swiper-wrapper').html("");
+                $('.editSwiper').find('.swiper-wrapper').html("");
             }
             if(files.length > 0){
                 for (let i = 0; i < files.length; i++) {
@@ -791,7 +844,7 @@
     }
 </script>
 
-<!-- 간단 댓글 조회 + 무한스크롤 -->
+<!-- 간단 리뷰 조회 + 무한스크롤 -->
 <script th:inline="javascript">
     let scrollPage = 0; // 무한스크롤로 불러올 페이지
     let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
@@ -820,7 +873,7 @@
 
     /* 간단 리뷰 */
     let simpleViewSwiper = [];
-    function createSimpleViewSwiper(review, num){
+    function createSimpleViewSwiper(photoLength, num){
         var swiper = new Swiper(`.simple-view-swiper${num}`, {
             observer: true,
             observeParents: true,
@@ -835,7 +888,7 @@
             keyboard: false,
         });
         simpleViewSwiper.push(swiper);
-        if(review.reviewPhotoList.length <= 1){
+        if(Number(photoLength) <= 1){
             $(`.swiper-controller${num}`).hide();
         }
     }
@@ -928,17 +981,19 @@
                     setTimeout(() => {
                         $(".loader").hide()
                         $.each(reviewList, function (index, review){
-                            let profileImg = review.profileImg == null ? '../assets/img/profile.jpg' : '/api/image/profile/' + review.profileImg;
+                            let profileImg = review.userInfo.profileImg == null ? '../assets/img/profile.jpg' : '/api/image/profile/' + review.userInfo.profileImg;
                             let num = (result.page * 10) + index;
 
-                            createSimpleViewSwiper(review, num);
+                            let photoLength = review.reviewPhotoList.length;
+
+                            createSimpleViewSwiper(photoLength, num);
 
                             let tempHtml =
                                 '<div class="card gallery-item">' +
                                 '<div class="d-flex card-header gap-2">' +
                                 `<img src="${profileImg}" class="rounded-circle">` +
                                 `<span>${review.userInfo.name}</span>` +
-                                `<span>${review.userInfo.id}</span>` +
+                                `<span>@${review.userInfo.id}</span>` +
                                 '</div>' +
                                 '<div class="card-body">' +
                                 `<div class="swiper simple-view-swiper simple-view-swiper${num}">` +
@@ -961,7 +1016,7 @@
                                 '</div>' +
                                 '</div>' +
                                 '<div class="review-icons d-flex gap-3">' +
-                                '<i class="bi bi-chat-square-dots" onClick="goComment(${review.reviewId})"></i>';
+                                `<i class="bi bi-chat-square-dots" onClick="goComment(${review.reviewId})"></i>`;
 
                             if(review.likeState){
                                 tempHtml += `<i class="like-btn bi bi-star-fill" data-review-id="${review.reviewId}"></i>`
@@ -982,7 +1037,7 @@
                         })
                         window.scrollTo({top: loadScroll, behavior: "instant"});
                     }, time)
-                    if(result.page <= result.last){
+                    if(reviewList.length < 12){
                         // 다음페이지가 없다면 관측을 종료
                         observer.unobserve(document.getElementById('load-point'));
                     }
@@ -1070,12 +1125,12 @@
 <!-- 좋아요 관련 스크립트 -->
 <script th:inline="javascript">
 
-    $('.like-btn').click(function (){
+    $(document).on('click','.like-btn',function (){
         let loginUserId = [[${loginUser.id}]]
         let reviewId = $(this).data('review-id');
 
         if(loginUserId === 'anonymousUser'){
-            alert('좋아요는 로그인 후 사용하실 수 있습니다.');
+            alert('관심리뷰는 로그인 후 등록하실 수 있습니다.');
             location.href = '../login'
         }else {
             $.ajax({
@@ -1138,6 +1193,8 @@
 
         let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
+        $('#comment-wrap').html("");
+
         let promise = new Promise((resolve) => {
             $.ajax({
                 url : '/api/review/view_count',
@@ -1160,7 +1217,7 @@
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
             loadDetailReview();
-            showComments();
+            showComments(0);
             showAllCommentsCount();
             postNewComment();
             parentId = null;
@@ -1290,16 +1347,17 @@
     }
 
     // 댓글 리스트 조회
-    function showComments() {
+    function showComments(page) {
         $.ajax({
             url : '/api/comments',
             type : 'GET',
             data : {
-                reviewId: selectedReviewId
+                reviewId: selectedReviewId,
+                page: page
             },
             success : function (result){
+                $('.next-comment-btn').remove();
                 let commentList = result.dtoList;
-                $('#comment-wrap').html("");
                 if(commentList.length > 0){
                     $.each(commentList, function (index, comment){
                         if(comment.cmtDel){
@@ -1356,6 +1414,10 @@
                             $('#comment-wrap').append(tempHtml);
                         }
                     })
+                    if(result.page < result.last){
+                        let btn = `<div class="next-comment-btn" onclick="showComments(${Number(page)+1})">- 댓글 더 보기 -</div>`
+                        $('#comment-wrap').append(btn);
+                    }
                 }else {
                     let tempHtml =
                         '<div class="no-comment-msg d-flex mb-2">아직 등록된 리뷰가 없습니다.</div>';
@@ -1709,7 +1771,8 @@
         let lastCommentId = $('#comment-wrap .comment-info:first .comment-text').data('comment-id');
         console.log(lastCommentId);
         if(lastCommentId === undefined){
-            showComments();
+            $('#comment-wrap').html("");
+            showComments(0);
         }else {
             $.ajax({
                 url : '/api/comments/recent',
