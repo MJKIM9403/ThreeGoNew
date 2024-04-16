@@ -407,7 +407,7 @@ Remove or comment-out the code block below to see how the browser will fall-back
     .profile-user-settings .unfollow-btn,
     .profile-user-settings .follow-btn {
         display: inline-block;
-        padding: 7px;
+        padding: 7px 15px;
         margin: 0 0 1rem 1rem;
     }
 }

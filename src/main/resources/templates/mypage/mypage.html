@@ -355,8 +355,11 @@
     }
 
     /*팔로우*/
-    .follow-state {
+    .profile-user-settings .follow-state {
         display: inline-block;
+    }
+    .modal-body .follow-btn, .modal-body .unfollow-btn {
+        width: 100%;
     }
 </style>
 <div class="d-flex flex-nowrap">
@@ -378,6 +381,10 @@
                 <div class="follow-state" th:unless="${findUser.id == loginUser.id}">
                     <button class="btn btn-secondary unfollow-btn" th:if="${isFollowing}" th:data-user-id="${findUser.id}">언팔로우</button>
                     <button class="btn btn-primary follow-btn" th:unless="${isFollowing}" th:data-user-id="${findUser.id}">팔로우</button>
+                </div>
+
+                <div th:unless="${loginUser.id == 'anonymousUser'}">
+                    <span th:if="${isFollowed}">나를 팔로우합니다.</span>
                 </div>
             </div>
 
@@ -2517,14 +2524,17 @@
             success: function(response) {
                 const modalBody = $('#followersModal .modal-body #follower-list');
                 modalBody.empty();
-                response.forEach(function(follower) {
+                response.forEach(function(data) {
                     // 팔로우 상태에 따라 버튼 속성 설정
-                    var buttonClass = follower.followState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
-                    var buttonText = follower.followState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = follower.toUser.id;
+                    var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
+                    var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
+                    var buttonDataId = data.toUser.id;
+
+                    // 나를 팔로우하고있는지에 따라 띄울 메세지
+                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
-                    if (follower.toUser.id !== loginId) {
+                    if (data.toUser.id !== loginId) {
                         var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
                     } else {
                         var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
@@ -2533,15 +2543,18 @@
 
                     var template = `
                                     <div class="list-group">
-                                        <div class="list-group-item d-flex justify-content-between">
-                                            <div class="d-flex">
-                                                <img src="${follower.toUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
+                                        <div class="list-group-item d-flex flex-wrap">
+                                            <div class="col d-flex">
+                                                <img src="${data.toUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
                                                 <div class="d-flex flex-column flex-start gap-2">
-                                                    <strong>${follower.toUser.id}</strong>
-                                                    <span>${follower.toUser.name}</span>
+                                                    <strong>${data.toUser.id}</strong>
+                                                    <span>${data.toUser.name}</span>
                                                 </div>
                                             </div>
-                                            <div class="follow-state d-flex align-self-items">
+                                            <div class="col-md-auto pe-2">
+                                                ${isFollowedText}
+                                            </div>
+                                            <div class="follow-state d-flex col col-lg-2">
                                                 ${buttonHTML}
                                             </div>
                                         </div>
@@ -2572,14 +2585,17 @@
             success: function(response) {
                 const modalBody = $('#followingModal .modal-body #following-list');
                 modalBody.empty();
-                response.forEach(function(following) {
+                response.forEach(function(data) {
                     // 팔로우 상태에 따라 버튼 속성 설정
-                    var buttonClass = following.followState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
-                    var buttonText = following.followState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = following.fromUser.id;
+                    var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
+                    var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
+                    var buttonDataId = data.fromUser.id;
+
+                    // 나를 팔로우하고있는지에 따라 띄울 메세지
+                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
-                    if (following.fromUser.id !== loginId) {
+                    if (data.fromUser.id !== loginId) {
                         var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
                     } else {
                         var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
@@ -2587,15 +2603,18 @@
 
                     var template = `
                         <div class="list-group">
-                            <div class="list-group-item d-flex justify-content-between">
-                                <div class="d-flex">
-                                    <img src="${following.fromUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center">
+                            <div class="list-group-item d-flex flex-wrap">
+                                <div class="col d-flex">
+                                    <img src="${data.fromUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center">
                                         <div class="d-flex flex-column flex-start gap-2">
-                                            <strong>${following.fromUser.id}</strong>
-                                            <span>${following.fromUser.name}</span>
+                                            <strong>${data.fromUser.id}</strong>
+                                            <span>${data.fromUser.name}</span>
                                         </div>
                                 </div>
-                                <div class="follow-state d-flex align-self-items">
+                                <div class="col-md-auto pe-2">
+                                    ${isFollowedText}
+                                </div>
+                                <div class="follow-state d-flex col col-lg-2">
                                     ${buttonHTML}
                                 </div>
                             </div>

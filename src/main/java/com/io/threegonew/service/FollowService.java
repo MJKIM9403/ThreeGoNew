@@ -139,8 +139,9 @@ public class FollowService {
                         .id(follow.getId())
                         .toUser(userInfoMapper(follow.getToUser()))
                         .fromUser(userInfoMapper(follow.getFromUser()))
-                        .followState(Optional.ofNullable(follow.getFollowState()).orElse(0))
+                        .followingState(Optional.ofNullable(follow.getFollowingState()).orElse(0))
                         .sameUserState(Optional.ofNullable(follow.getSameUserState()).orElse(0))
+                        .followedState(Optional.ofNullable(follow.getFollowedState()).orElse(0))
                         .build())
                 .collect(Collectors.toList());
     }

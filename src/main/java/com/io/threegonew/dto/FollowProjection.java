@@ -6,6 +6,7 @@ public interface FollowProjection {
     Long getId();
     String getToUser();
     String getFromUser();
-    Integer getFollowState();
+    Integer getFollowingState();
     Integer getSameUserState();
+    Integer getFollowedState();
 }
