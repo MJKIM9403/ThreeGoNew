@@ -3,6 +3,7 @@ package com.io.threegonew.repository;
 import com.io.threegonew.domain.Follow;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.FollowDTO;
+import com.io.threegonew.dto.FollowProjection;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,21 +35,25 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query(value = "SELECT COUNT(*) FROM follows WHERE from_user_id =:pageId", nativeQuery = true)
     int countFollower(@Param("fromUser") String pageId);
 
-    @Query(value = "SELECT f1.*, " +
-            "CASE WHEN f2.from_user_id IS NOT NULL THEN 1 ELSE 0 END AS follow_state, " +
-            "CASE WHEN f1.from_user_id = :loggedInId THEN 1 ELSE 0 END AS same_user_state " +
+    @Query(value = "SELECT f1.id AS id, " +
+            "f1.to_user_id AS toUser, " +
+            "f1.from_user_id AS fromUser, " +
+            "CASE WHEN f2.from_user_id IS NOT NULL THEN 1 ELSE 0 END AS followState, " +
+            "CASE WHEN f1.from_user_id = :loggedInId THEN 1 ELSE 0 END AS sameUserState " +
             "FROM follows f1 " +
             "LEFT JOIN follows f2 ON f1.from_user_id = f2.from_user_id AND f2.to_user_id = :loggedInId " +
             "WHERE f1.to_user_id = :myPageId", nativeQuery = true)
-    List<Follow> ShowFollowingList(@Param("loggedInId") String loggedInId, @Param("myPageId") String myPageId);
+    List<FollowProjection> showFollowingList(@Param("loggedInId") String loggedInId, @Param("myPageId") String myPageId);
 
-    @Query(value = "SELECT f1.*, " +
-            "CASE WHEN f2.to_user_id IS NOT NULL THEN 1 ELSE 0 END AS follow_state, " +
-            "CASE WHEN f2.to_user_id = :loggedInId THEN 1 ELSE 0 END AS same_user_state " +
+    @Query(value = "SELECT f1.id AS id, " +
+            "f1.to_user_id AS toUser, " +
+            "f1.from_user_id AS fromUser, " +
+            "CASE WHEN f2.to_user_id IS NOT NULL THEN 1 ELSE 0 END AS followState, " +
+            "CASE WHEN f2.to_user_id = :loggedInId THEN 1 ELSE 0 END AS sameUserState " +
             "FROM follows f1 " +
             "LEFT JOIN follows f2 ON f1.to_user_id = f2.from_user_id AND f2.to_user_id = :loggedInId " +
             "WHERE f1.from_user_id = :myPageId", nativeQuery = true)
-    List<Follow> showFollowerList(@Param("loggedInId") String loggedInId, @Param("myPageId") String myPageId);
+    List<FollowProjection> showFollowerList(@Param("loggedInId") String loggedInId, @Param("myPageId") String myPageId);
 
 
 }

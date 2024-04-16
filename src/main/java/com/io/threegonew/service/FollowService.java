@@ -3,6 +3,7 @@ package com.io.threegonew.service;
 import com.io.threegonew.domain.Follow;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.FollowDTO;
+import com.io.threegonew.dto.FollowProjection;
 import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.repository.FollowRepository;
 import com.io.threegonew.repository.UserRepository;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     public int countFollower(String userId) {
         return followRepository.countFollower(userId);
@@ -67,55 +69,86 @@ public class FollowService {
         return followRepository.existsByToUserAndFromUser(toUser, fromUser);
     }
 
-    // 로그인한 유저의 팔로우 상태 확인 + 마이페이지 유저가 팔로잉한 유저리스트를 뽑기
-    public List<FollowDTO> findFollowingsByFollowerWithFollowState(User loggedInUser, User toUser) {
-        List<FollowDTO> followingList = followRepository.findByToUser(toUser).stream()
-                .map(follow -> followingMapper(follow, loggedInUser))
-                .collect(Collectors.toList());
-        return followingList;
-    }
+    /**
+     * 기존에 작성했던 코드
+     */
 
-    // 로그인한 유저의 팔로우 상태 확인 + 마이페이지 유저를 팔로우한 유저리스트를 뽑기
-    public List<FollowDTO> findFollowersByFollowingWithFollowState(User loggedInUser, User fromUser) {
-        List<FollowDTO> followersList = followRepository.findByFromUser(fromUser).stream()
-                .map(follow -> followerMapper(follow, loggedInUser))
-                .collect(Collectors.toList());
-        return followersList;
-    }
+    // 로그인한 유저의 팔로우 상태 확인 + 마이페이지 유저가 팔로잉한 유저리스트를 뽑기
+//    public List<FollowDTO> findFollowingsByFollowerWithFollowState(User loggedInUser, User toUser) {
+//        List<FollowDTO> followingList = followRepository.findByToUser(toUser).stream()
+//                .map(follow -> followingMapper(follow, loggedInUser))
+//                .collect(Collectors.toList());
+//        return followingList;
+//    }
+//
+//    // 로그인한 유저의 팔로우 상태 확인 + 마이페이지 유저를 팔로우한 유저리스트를 뽑기
+//    public List<FollowDTO> findFollowersByFollowingWithFollowState(User loggedInUser, User fromUser) {
+//        List<FollowDTO> followersList = followRepository.findByFromUser(fromUser).stream()
+//                .map(follow -> followerMapper(follow, loggedInUser))
+//                .collect(Collectors.toList());
+//        return followersList;
+//    }
 
 
     // 팔로우 상태를 함께 매핑하여 FollowDTO 객체 생성
-    private FollowDTO followerMapper(Follow follow, User loggedInUser) {
-        boolean isFollowing = isFollowing(loggedInUser, follow.getToUser()); // 내가 팔로우하고 있는지 판단
-        boolean areYouFollowing = isFollowing(follow.getToUser(), loggedInUser); // 나를 팔로우하고 있는지 판단
+//    private FollowDTO followerMapper(Follow follow, User loggedInUser) {
+//        boolean isFollowing = isFollowing(loggedInUser, follow.getToUser()); // 내가 팔로우하고 있는지 판단
+//        boolean areYouFollowing = isFollowing(follow.getToUser(), loggedInUser); // 나를 팔로우하고 있는지 판단
+//
+//        return FollowDTO.builder()
+//                .id(follow.getId())
+//                .toUser(userInfoMapper(follow.getToUser()))
+//                .fromUser(userInfoMapper(follow.getFromUser()))
+//                .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
+//                .followCount(followRepository.countFollower(follow.getFromUser().getId())) // 로그인한 유저와 같은지 설정
+//                .youFollowMeState(areYouFollowing ? 1 : 0) //
+//                .build();
+//    }
+//
+//    private FollowDTO followingMapper(Follow follow, User loggedInUser) {
+//        boolean isFollowing = isFollowing(loggedInUser, follow.getFromUser()); // 내가 팔로우하고 있는지 판단
+//        boolean areYouFollowing = isFollowing(follow.getFromUser(), loggedInUser); // 나를 팔로우하고 있는지 판단
+//
+//        return FollowDTO.builder()
+//                .id(follow.getId())
+//                .toUser(userInfoMapper(follow.getToUser()))
+//                .fromUser(userInfoMapper(follow.getFromUser()))
+//                .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
+//                .followCount(followRepository.countFollowing(follow.getToUser().getId())) // 로그인한 유저와 같은지 설정
+//                .youFollowMeState(areYouFollowing ? 1 : 0)
+//                .build();
+//    }
 
-        return FollowDTO.builder()
-                .id(follow.getId())
-                .toUser(userInfoMapper(follow.getToUser()))
-                .fromUser(userInfoMapper(follow.getFromUser()))
-                .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
-                .followCount(followRepository.countFollower(follow.getFromUser().getId())) // 로그인한 유저와 같은지 설정
-                .youFollowMeState(areYouFollowing ? 1 : 0) //
-                .build();
+    /**
+     * 팔로우,팔로잉 리스트
+     * 메서드 다시 작성한 부분
+     */
+    public List<FollowDTO> showFollowingListWithFollowState(String loggedInId, String myPageId) {
+        List<FollowProjection> followingList = followRepository.showFollowingList(loggedInId, myPageId);
+        return mapToFollowDTOList(followingList, loggedInId, myPageId);
     }
 
-    private FollowDTO followingMapper(Follow follow, User loggedInUser) {
-        boolean isFollowing = isFollowing(loggedInUser, follow.getFromUser()); // 내가 팔로우하고 있는지 판단
-        boolean areYouFollowing = isFollowing(follow.getFromUser(), loggedInUser); // 나를 팔로우하고 있는지 판단
+    public List<FollowDTO> showFollowerListWithFollowState(String loggedInId, String myPageId) {
+        List<FollowProjection> followerList = followRepository.showFollowerList(loggedInId, myPageId);
+        return mapToFollowDTOList(followerList, loggedInId, myPageId);
+    }
 
-        return FollowDTO.builder()
-                .id(follow.getId())
-                .toUser(userInfoMapper(follow.getToUser()))
-                .fromUser(userInfoMapper(follow.getFromUser()))
-                .followState(isFollowing ? 1 : 0) // 팔로우 상태 설정
-                .followCount(followRepository.countFollowing(follow.getToUser().getId())) // 로그인한 유저와 같은지 설정
-                .youFollowMeState(areYouFollowing ? 1 : 0)
-                .build();
+    private List<FollowDTO> mapToFollowDTOList(List<FollowProjection> followList, String loggedInId, String myPageId) {
+        return followList.stream()
+                .map(follow -> FollowDTO.builder()
+                        .id(follow.getId())
+                        .toUser(userInfoMapper(follow.getToUser()))
+                        .fromUser(userInfoMapper(follow.getFromUser()))
+                        .followState(Optional.ofNullable(follow.getFollowState()).orElse(0))
+                        .sameUserState(Optional.ofNullable(follow.getSameUserState()).orElse(0))
+                        .build())
+                .collect(Collectors.toList());
     }
 
 
-    private UserInfoResponse userInfoMapper(User user) {
+    private UserInfoResponse userInfoMapper(String userId) {
         String defaultImage = "../assets/img/profile.jpg"; // 기본 이미지 경로 설정
+        User user = userService.findUser(userId);
 
         return UserInfoResponse.builder()
                 .id(user.getId())

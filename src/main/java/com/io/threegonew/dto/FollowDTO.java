@@ -12,6 +12,6 @@ public class FollowDTO {
     private UserInfoResponse toUser;
     private UserInfoResponse fromUser;
     private int followState; // 내가 팔로우 중인지
-    private int youFollowMeState; // 나를 팔로우 중인지
-    private int followCount; // 팔로우 중인 숫자
+    // private int followCount; // 팔로우 중인 숫자
+    private int sameUserState; // 같은 유저인지
 }
