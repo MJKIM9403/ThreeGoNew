@@ -21,7 +21,7 @@
     <!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
     <!-- jQuery가 먼저 로드 된 후 datepicker가 로드 되어야함.-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
     <title>Title</title>
@@ -83,63 +83,6 @@
             outline-width: 0;
         }
 
-        .datepicker {
-            background-color: #fff;
-            border: none;
-            border-radius: 0 !important;
-        }
-
-        .datepicker-dropdown {
-            top: 0;
-            left: 0;
-        }
-
-        .datepicker table tr td.today, span.focused {
-            border-radius: 5% !important;
-            background-image: linear-gradient(#FFF3E0, #FFE0B2);
-        }
-
-        .datepicker table tr td.today.range {
-            background-image: linear-gradient(#eeeeee, #eeeeee) !important;
-            border-radius: 0 !important;
-        }
-
-        /*Weekday title*/
-        thead tr:nth-child(3) th {
-            font-weight: bold !important;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-
-        .dow, .old-day, .day, .new-day {
-            width: 40px !important;
-            height: 40px !important;
-            border-radius: 0px !important;
-        }
-
-        .old-day:hover, .day:hover, .new-day:hover, .month:hover, .year:hover, .decade:hover, .century:hover {
-            border-radius: 5% !important;
-            background-color: #eee;
-        }
-
-        .range-start, .range-end {
-            border-radius: 5% !important;
-            background-image: linear-gradient(#FFA726, #FFA726) !important;
-        }
-
-        .prev, .next, .datepicker-switch {
-            border-radius: 0 !important;
-            padding: 10px 10px 10px 10px !important;
-            text-transform: uppercase;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .prev:hover, .next:hover, .datepicker-switch:hover {
-            background-color: inherit !important;
-            opacity: 1;
-        }
-
         .btn-black {
             background-color: #37474F !important;
             color: #fff !important;
@@ -187,6 +130,15 @@
         .row {
             margin-left: 0;
         }
+
+        .input-daterange {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+        input[name="plannerName"] {
+            width: 308px;
+        }
     </style>
 </head>
 <!-- Modal -->
@@ -199,28 +151,25 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form method="get" action="/plan/city">
             <div class="modal-body">
-                <form method="get" action="/plan/city">
-                    <input id="plannerName2" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
-                    <div class="flex-sm-row flex-column d-flex">
-                        <div class="col-sm-9 col-12 px-0 mb-2">
-                            <div class="input-group input-daterange">
-                                <input id="days2" name="days" type="date" class="form-control">
-                                <i class="bi bi-calendar fa-1"></i>
-                                <input type="hidden" id="startDate2" name="startDate" class="form-control" placeholder="Arriving Date">
-                                <input type="hidden" id="endDate2" name="endDate" class="form-control" placeholder="Leaving Date">
-                            </div>
+                <div class="flex-row d-flex justify-content-center">
+                    <div class="col-sm-9 col-12 px-0 mb-2">
+                        <div class="input-daterange">
+                            <input id="plannerName2" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
+                            <input id="days2" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
+                            <i class="bi bi-calendar fa-1"></i>
+                            <input type="hidden" id="startDate2" name="startDate" class="form-control" placeholder="Arriving Date">
+                            <input type="hidden" id="endDate2" name="endDate" class="form-control" placeholder="Leaving Date">
                         </div>
                     </div>
-                    <div class="col-sm-3 col-12 px-0">
-                        <button type="submit" class="btn btn-black">Search</button>
-                    </div>
-                </form>
-
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">시작</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -309,18 +258,17 @@
 
             <h2 class="display-6 text-center pb-5">여행 정보를 입력해주세요.</h2>
             <form method="get" action="/plan/city">
-                <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
-                <div class="flex-sm-row flex-column d-flex">
-                    <div class="col-sm-9 col-12 px-0 mb-2">
-                        <div class="input-group input-daterange">
-                            <input id="days" name="days" type="date" class="form-control">
-                            <i class="bi bi-calendar fa-1"></i>
-                            <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
-                            <input type="hidden" id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
-                        </div>
+                <div class="flex-row d-flex justify-content-center">
+                    <div class="input-daterange">
+                        <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
+                        <input id="days" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
+                        <i class="bi bi-calendar fa-1"></i>
+                        <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
+                        <input type="hidden" id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
                     </div>
-                    <div class="col-sm-3 col-12 px-0">
-                        <button type="submit" class="btn btn-black">Search</button>
+
+                    <div class="col-sm-3 col-12 ms-3">
+                        <button type="submit" class="btn btn-black">시작</button>
                     </div>
                 </div>
             </form>
