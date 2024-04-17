@@ -232,6 +232,9 @@
             }
         }
 
+        .no-data-msg {
+            margin-top: calc(50vh - 95px);
+        }
 
     </style>
 
@@ -327,15 +330,6 @@
                                     </div>
                                     <hr class="comment-line">
                                     <div id="comment-wrap">
-<!--                                        <div class="comment-info d-flex">-->
-<!--                                            <div class="rounded-circle icon-img comment-profile">-->
-<!--                                                <img src="../assets/img/profile.jpg" alt="...">-->
-<!--                                            </div>-->
-<!--                                            <div class="comment-text">-->
-<!--                                                <span class="comment-writer me-3">댓글 아이디</span>-->
-<!--                                                <span class="comment-content">댓글 내용</span>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
                                     </div>
                                 </div>
                                 <div class="small-review-icons d-flex gap-2">
@@ -975,7 +969,7 @@
                 if(firstLoad && reviewList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="no-data-msg mt-5">' +
+                    let messageHtml = '<div class="no-data-msg">' +
                         '<h4>등록된 리뷰가 없습니다.</h4>' +
                         '</div>';
                     gallery.append(messageHtml);
@@ -1085,7 +1079,7 @@
                 if(firstLoad && reviewList.length <= 0){
                     firstLoad = false;
                     $(".loader").hide()
-                    let messageHtml = '<div class="no-data-msg mt-5">' +
+                    let messageHtml = '<div class="no-data-msg">' +
                         '<h4>등록된 리뷰가 없습니다.</h4>' +
                         '</div>';
                     gallery.append(messageHtml);
