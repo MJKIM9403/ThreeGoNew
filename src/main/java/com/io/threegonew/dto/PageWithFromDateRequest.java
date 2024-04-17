@@ -17,6 +17,8 @@ public class PageWithFromDateRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime fromDate;
 
+    private String keyword;
+
     @Builder.Default
     @Min(value = 0)
     @Positive

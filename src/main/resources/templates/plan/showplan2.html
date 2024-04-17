@@ -21,9 +21,10 @@
     <!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
     <!-- jQuery가 먼저 로드 된 후 datepicker가 로드 되어야함.-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
-    <title>Title</title>
+    <title>둘레둘레</title>
 
 
 
@@ -126,21 +127,7 @@
         }
 
         /**datepicker**/
-        /*기본 제공 아이콘 숨기기*/
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            display: none;
-        }
 
-        i.bi.bi-calendar {
-            position: absolute;
-            top: 10px;
-        }
-        .fa-1 {
-            left: calc(50% - 40px);
-        }
-        .fa-2 {
-            left: calc(100% - 40px);
-        }
         input.days {
             padding: 10px 15px !important;
             border: 1px solid lightgrey !important;
@@ -190,7 +177,7 @@
             width: 308px;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
+
 </head>
 <body>
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
@@ -1256,7 +1243,6 @@
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-daterange">
                             <input id="days" name="days" type="date" class="form-control" th:placeholder="${startDateString} + ' ~ ' + ${endDateString}">
-                            <i class="bi bi-calendar fa-1"></i>
                         </div>
                     </div>
                 </div>

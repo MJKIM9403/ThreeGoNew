@@ -64,7 +64,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
                     "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
                     "AND r.reg_date <= :fromDate ",
             nativeQuery = true)
-    Page<Review> findRecommendReviewsByKeyword(Pageable pageable,@Param("keyword")String keyword, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
+    Page<Review> findRecommendReviewsByKeyword(Pageable pageable, @Param("keyword")String keyword, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
 
     @Query(value = "SELECT DISTINCT r.* " +
             "FROM review r " +
