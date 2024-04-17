@@ -174,7 +174,7 @@ public class ReviewService {
 
     // 추천 피드
     @Transactional
-    public PageResponse getRecommendReview(RecommendReviewRequest request){
+    public PageResponse getRecommendReview(PageWithFromDateRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         LocalDateTime fromDate = request.getFromDate();
@@ -196,7 +196,7 @@ public class ReviewService {
 
     // 팔로우 피드
     @Transactional
-    public PageResponse getFollowReview(MyPageRequest request) throws AccessDeniedException{
+    public PageResponse getFollowReview(PageWithFromDateRequest request) throws AccessDeniedException{
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         String loginUserId = SecurityUtils.getCurrentUsername();
@@ -205,7 +205,7 @@ public class ReviewService {
             throw new AccessDeniedException("유저 정보를 찾을 수 없습니다.");
         }
 
-        Page<SimpleReviewResponse> page = reviewRepository.findFollowReview(pageable, loginUserId)
+        Page<SimpleReviewResponse> page = reviewRepository.findFollowReview(pageable, loginUserId, request.getFromDate())
                 .map(this::simpleReviewMapper);
 
         PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()

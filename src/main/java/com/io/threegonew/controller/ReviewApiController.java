@@ -98,7 +98,7 @@ public class ReviewApiController {
     public ResponseEntity<Map<String, Object>> showSelectList(){
         String userId = userService.getCurrentUserId();
         User loginUser = userService.findUser(userId);
-        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+        List<PlannerResponse> plannerList = plannerService.getCreatedOrSharedPlanners(userId);
         List<ReviewBookResponse> reviewBookList = reviewBookService.findReviewBookByUser(loginUser);
         Map<String, Object> result = new HashMap<>();
         result.put("plannerList", plannerList);
@@ -149,7 +149,7 @@ public class ReviewApiController {
     }
 
     @GetMapping("/recommend")
-    public ResponseEntity<PageResponse> showRecommendReview(@ModelAttribute RecommendReviewRequest request){
+    public ResponseEntity<PageResponse> showRecommendReview(@ModelAttribute PageWithFromDateRequest request){
         try{
             PageResponse<SimpleReviewResponse> pageResponse = reviewService.getRecommendReview(request);
             return ResponseEntity.ok().body(pageResponse);
@@ -160,7 +160,7 @@ public class ReviewApiController {
     }
 
     @GetMapping("/follow")
-    public ResponseEntity<PageResponse> showFollowReview(@ModelAttribute MyPageRequest request){
+    public ResponseEntity<PageResponse> showFollowReview(@ModelAttribute PageWithFromDateRequest request){
         try{
             PageResponse<SimpleReviewResponse> pageResponse = reviewService.getFollowReview(request);
             return ResponseEntity.ok().body(pageResponse);

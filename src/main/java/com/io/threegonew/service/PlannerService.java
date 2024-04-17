@@ -67,6 +67,14 @@ public class PlannerService {
         return plannerResponseList;
     }
 
+    public List<PlannerResponse> getCreatedOrSharedPlanners(String userId) {
+        List<PlannerResponse> plannerResponseList =
+                plannerRepository.findByMyPlanners(userId).stream()
+                        .map(planner -> modelMapper.map(planner, PlannerResponse.class))
+                        .collect(Collectors.toList());
+        return plannerResponseList;
+    }
+
     public List<Area> findAllAreas() {
         return areaRepository.findAll();
     }

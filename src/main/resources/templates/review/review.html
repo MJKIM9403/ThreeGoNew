@@ -243,7 +243,7 @@
 
     <div class="feed-container">
         <div class="d-flex flex-column">
-            <ul class="nav nav-underline mb-3 justify-content-center">
+            <ul class="nav nav-underline mt-3 mb-3 justify-content-center">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" onclick="changeTab('RECOMMEND')">추천 리뷰</a>
                 </li>
@@ -943,9 +943,7 @@
         back = false;
         simpleViewSwiper = [];
 
-        if(type === 'RECOMMEND'){
-            fromDate = new Date().toISOString();
-        }
+        fromDate = new Date().toISOString();
 
         gallery.html("")
         // 옵저버 타겟 관측 시작
@@ -1078,6 +1076,7 @@
             url : '/api/review/follow',
             type : 'GET',
             data : {
+                fromDate : fromDate,
                 page : scrollPage
             },
             async: false,

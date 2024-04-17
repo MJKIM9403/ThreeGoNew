@@ -55,6 +55,12 @@
                     메인화면
                 </a>
             </li>
+            <li>
+                <a href="/search" class="nav-link py-2 border-bottom">
+                    <i class="bi bi-columns icon"></i>
+                    검색
+                </a>
+            </li>
             <li >
                 <a href="/info/area" class="nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-speedometer2 icon"></i>
@@ -67,17 +73,11 @@
                     여행일정
                 </a>
             </li>
-<!--            <li>-->
-<!--                <a href="#" class="nav-link py-2 border-bottom">-->
-<!--                    <i class="bi bi-columns icon"></i>-->
-<!--                    검색(개발중)-->
-<!--                </a>-->
-<!--            </li>-->
-                <li>
-        <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class=" nav-link py-2 border-bottom">
-        <i class="bi bi-people-fill icon"></i>
-        마이페이지
-        </span>
+            <li>
+                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class=" nav-link py-2 border-bottom">
+                    <i class="bi bi-people-fill icon"></i>
+                     마이페이지
+                </span>
                 <a sec:authorize="isAuthenticated()"
                    th:href="@{/mypage/{userId}(userId=${#authentication.principal.username})}"
                    class="nav-link-act nav-link py-2 border-bottom">
