@@ -219,6 +219,27 @@ public class ReviewService {
         return pageResponse;
     }
 
+    @Transactional
+    public PageResponse getRecommendReviewByKeyword(PageWithFromDateRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        LocalDateTime fromDate = request.getFromDate();
+        LocalDateTime toDate = fromDate.minusHours(72);
+        String keyword = "%" + request.getKeyword() + "%";
+        Page<SimpleReviewResponse> page = reviewRepository.findRecommendReviewsByKeyword(pageable, keyword, toDate, fromDate)
+                .map(this::simpleReviewMapper);
+
+        PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
     private SimpleReviewResponse simpleReviewMapper(Review review){
         String loginUserId = SecurityUtils.getCurrentUsername();
         return SimpleReviewResponse.builder()

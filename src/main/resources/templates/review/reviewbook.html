@@ -1544,11 +1544,15 @@
 
     const bookFileInput = $('#book-img-uploader')[0];
 
+    let bookCoverImg = null;
+
     function setBookCoverPreview(){
         let files = bookFileInput.files;
 
         if(files.length > 0){
             let file = files[0];
+
+            bookCoverImg = file;
 
             let reader = new FileReader();
 
@@ -1574,9 +1578,11 @@
         $('#book-img-delete-btn').hide();
         let files = bookFileInput.files;
         files.length = 0;
+        bookCoverImg = null;
     }
 
     function resetBookEditor() {
+        bookCoverImg = null;
         if(origin_book.coverOfile === '선택된 파일이 없습니다.') {
             $('#book-img-delete-btn').hide();
         }else {
@@ -1643,7 +1649,7 @@
         const plannerId = $("#book-select-planner option:selected").val();
         const bookTitle = $("#book-title").val();
         const bookContent = $("#book-contents").val();
-        const coverFile = bookFileInput.files[0];
+        const coverFile = bookCoverImg;
 
         if(plannerId === 'hint') {
             alert("여행일정을 선택해주세요.");
