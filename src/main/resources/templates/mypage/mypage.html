@@ -2539,7 +2539,7 @@
                     var buttonDataId = data.toUser;
 
                     // 나를 팔로우하고있는지에 따라 띄울 메세지
-                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
+                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
                     if (data.sameUserState === 0) {
@@ -2559,7 +2559,7 @@
                                                     <span>${data.listName}</span>
                                                 </div>
                                             </div>
-                                            <div class="col-md-auto pe-2">
+                                            <div class="col-md-auto pe-3 align-self-center">
                                                 ${isFollowedText}
                                             </div>
                                             <div class="follow-state d-flex col col-lg-2">
@@ -2600,7 +2600,7 @@
                     var buttonDataId = data.fromUser;
 
                     // 나를 팔로우하고있는지에 따라 띄울 메세지
-                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
+                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
                     if (data.sameUserState === 0) {
@@ -2619,7 +2619,7 @@
                                             <span>${data.listName}</span>
                                         </div>
                                 </div>
-                                <div class="col-md-auto pe-2">
+                                <div class="col-md-auto pe-3 align-self-center">
                                     ${isFollowedText}
                                 </div>
                                 <div class="follow-state d-flex col col-lg-2">

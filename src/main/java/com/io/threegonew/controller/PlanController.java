@@ -477,16 +477,6 @@ public class PlanController {
         model.addAttribute("teamList", teamList);
         model.addAttribute("exists", exists);
 
-        // 접근권한 확인하고 없으면 login 페이지로 돌리기
-//        if(!teamService.hasAccessToPlanner(userId, plannerId)) {
-//            return "redirect:/login";
-//        }
-
-        // 로그인 안되어있으면 login 페이지로 돌리기
-        if(userId.equals("anonymousUser")) {
-            return "redirect:/login";
-        }
-
         return "plan/showplan2";
     }
 
