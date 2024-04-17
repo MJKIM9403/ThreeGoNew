@@ -43,8 +43,25 @@
     .headerImg {
         margin-bottom: 0; /* 아래쪽 여백 제거 */
 
+
     }
 
+    .form-control{
+        width: 50%;
+        text-align: center;
+    }
+
+    .form-group.userInput {
+        text-align: center; /* 부모 요소를 기준으로 가운데 정렬 */
+    }
+
+    /* 이메일 입력 필드 스타일 */
+    #email {
+        width: 50%; /* 적절한 너비 조정 */
+        margin: 0 auto; /* 가운데 정렬 */
+        display: block; /* 블록 요소로 설정하여 가운데 정렬 적용 */
+        text-align: left; /* 텍스트를 왼쪽 정렬 */
+    }
 </style>
 
 
@@ -72,7 +89,7 @@
 
         <form id="findForm" action="/findId" method="post" onsubmit="return validateForm()">
             <div class="form-group userInput mb-5">
-            <h4 class="list">이메일</h4>
+<!--            <h4 class="list">이메일</h4>-->
                 <input type="email" name="email" id="email" class="form-control form-control-sm" maxlength="20" placeholder="이메일을 입력하세요">
 
             </div>
