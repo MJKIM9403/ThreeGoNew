@@ -45,7 +45,7 @@
     <div class="sidebar-color position-fixed d-flex flex-column align-items-start flex-shrink-0 p-3 bg-body-tertiary justify-content-center"
          style="width: 280px; height: 100vh">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <span class="fs-4 text-center">ThreeGo</span>
+            <span class="fs-4 text-center">둘레둘레</span>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
@@ -53,6 +53,12 @@
                 <a href="/review" class="nav-link-act nav-link py-2 border-bottom" aria-current="page">
                     <i class="bi bi-house-door-fill icon"></i>
                     메인화면
+                </a>
+            </li>
+            <li>
+                <a href="/search" class="nav-link py-2 border-bottom">
+                    <i class="bi bi-columns icon"></i>
+                    검색
                 </a>
             </li>
             <li >
@@ -67,17 +73,11 @@
                     여행일정
                 </a>
             </li>
-<!--            <li>-->
-<!--                <a href="#" class="nav-link py-2 border-bottom">-->
-<!--                    <i class="bi bi-columns icon"></i>-->
-<!--                    검색(개발중)-->
-<!--                </a>-->
-<!--            </li>-->
-                <li>
-        <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class=" nav-link py-2 border-bottom">
-        <i class="bi bi-people-fill icon"></i>
-        마이페이지
-        </span>
+            <li>
+                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class=" nav-link py-2 border-bottom">
+                    <i class="bi bi-people-fill icon"></i>
+                     마이페이지
+                </span>
                 <a sec:authorize="isAuthenticated()"
                    th:href="@{/mypage/{userId}(userId=${#authentication.principal.username})}"
                    class="nav-link-act nav-link py-2 border-bottom">

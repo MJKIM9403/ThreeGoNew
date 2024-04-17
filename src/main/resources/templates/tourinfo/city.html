@@ -140,83 +140,6 @@
             })
         }
 
-        // function showList(){
-        //     $('#gridDiv').html("");
-        //
-        //     const dataSource = {
-        //         contentType: 'application/json; charset=UTF-8',
-        //         api: {
-        //             readData: {
-        //                 url: '/info/api/touritems',
-        //                 method: 'GET',
-        //                 initParams: {
-        //                     cat1 : $('input[name=cat1]:checked').val(),
-        //                     cat2 : $('input[name=cat2]:checked').val(),
-        //                     cat3 : $('input[name=cat3]:checked').val(),
-        //                     areaCode : $('input[name=area]').val(),
-        //                     sigunguCode : $('input[name=sigungu]:checked').val(),
-        //                     contentTypeId : $('input[name=type]:checked').val()
-        //                 }
-        //             }
-        //         }
-        //     };
-        //
-        //     const Grid = tui.Grid;
-        //     Grid.applyTheme('clean',{
-        //         cell: {
-        //             normal: {
-        //                 background: '#fff',
-        //                 border: '#e0e0e0',
-        //                 showVerticalBorder: false,
-        //                 showHorizontalBorder: true
-        //             },
-        //             header: {
-        //                 background: '#fff',
-        //                 border: '#e0e0e0',
-        //                 showVerticalBorder: false,
-        //                 showHorizontalBorder: true
-        //             },
-        //             selectedHeader: {
-        //                 background: '#e0e0e0'
-        //             }
-        //         }
-        //     });
-        //
-        //     var grid = new tui.Grid({
-        //         el : document.getElementById('gridDiv'),
-        //         data : dataSource,
-        //         scrollX : false,
-        //         scrollY : false,
-        //         rowHeight : 120,
-        //         rowHeaders: [{type: 'rowNum', width: 50}],
-        //
-        //         columns : [
-        //             {
-        //                 header : '사진',
-        //                 name : 'firstimage',
-        //                 renderer: {
-        //                     styles: {
-        //                         textAlign: 'center'
-        //                     },
-        //                 },
-        //                 width : 200
-        //             },
-        //             {
-        //                 header : '관광정보',
-        //                 name : 'title',
-        //             }
-        //         ],
-        //
-        //         pageOptions: {
-        //             useClient: true,	// front에서만 페이징 하는 속성
-        //             perPage: 10
-        //         }
-        //
-        //     });
-        // }
-        //
-
-
     </script>
     <style>
         * {
@@ -258,10 +181,6 @@
         #touritems {
             width: 70%;
         }
-
-        /*.touritem-contents{*/
-        /*    border: transparent;*/
-        /*}*/
 
         .touritem-no-contents > p {
             margin: 0;

@@ -76,6 +76,14 @@ public class PlannerService {
     }
 
 
+    public List<PlannerResponse> getCreatedOrSharedPlanners(String userId) {
+        List<PlannerResponse> plannerResponseList =
+                plannerRepository.findByMyPlanners(userId).stream()
+                        .map(this::plannerMapper)
+                        .collect(Collectors.toList());
+        return plannerResponseList;
+    }
+
     public List<Area> findAllAreas() {
         return areaRepository.findAll();
     }

@@ -24,12 +24,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "FROM review r " +
             "LEFT JOIN likes l " +
             "ON r.review_id = l.review_id " +
+            "WHERE r.reg_date <= :fromDate " +
             "GROUP BY r.review_id " +
             "ORDER BY " +
             "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
             "SUM(CASE WHEN l.reg_date <= :fromDate THEN 1 ELSE 0 END) DESC, " +
             "r.review_id DESC ",
-            countQuery = "SELECT count(r.review_id) FROM review r",
+            countQuery = "SELECT count(r.review_id) FROM review r WHERE r.reg_date <= :fromDate",
             nativeQuery = true)
     Page<Review> findRecommendReviews(Pageable pageable, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
 
@@ -37,13 +38,44 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
                 "FROM review r " +
                 "INNER JOIN follows f " +
                 "ON r.user_id = f.from_user_id " +
-                "WHERE f.to_user_id = :userId OR r.user_id = :userId " +
+                "WHERE (f.to_user_id = :userId OR r.user_id = :userId) AND r.reg_date <= :fromDate " +
                 "ORDER BY r.review_id DESC",
             countQuery = "SELECT count(r.review_id) " +
                     "FROM review r " +
                     "INNER JOIN follows f " +
-                    "ON r.user_id = f.from_user_id OR r.user_id = :userId " +
-                    "WHERE f.to_user_id = :userId ",
+                    "ON r.user_id = f.from_user_id " +
+                    "WHERE (f.to_user_id = :userId OR r.user_id = :userId) AND r.reg_date <= :fromDate ",
             nativeQuery = true)
-    Page<Review> findFollowReview(Pageable pageable, @Param("userId")String userId);
+    Page<Review> findFollowReview(Pageable pageable, @Param("userId")String userId, @Param("fromDate")LocalDateTime fromDate);
+
+    @Query(value = "SELECT r.* " +
+            "FROM review r " +
+            "LEFT JOIN likes l " +
+            "ON r.review_id = l.review_id " +
+            "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword)" +
+            "AND r.reg_date <= :fromDate " +
+            "GROUP BY r.review_id " +
+            "ORDER BY " +
+            "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
+            "SUM(CASE WHEN l.reg_date <= :fromDate THEN 1 ELSE 0 END) DESC, " +
+            "r.review_id DESC ",
+            countQuery = "SELECT count(r.review_id) " +
+                    "FROM review r " +
+                    "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
+                    "AND r.reg_date <= :fromDate ",
+            nativeQuery = true)
+    Page<Review> findRecommendReviewsByKeyword(Pageable pageable,@Param("keyword")String keyword, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
+
+    @Query(value = "SELECT r.* " +
+            "FROM review r " +
+            "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
+            "AND r.reg_date <= :fromDate " +
+            "ORDER BY r.review_id DESC ",
+           countQuery = "SELECT count(r.review_id) " +
+                   "FROM review r " +
+                   "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
+                   "AND r.reg_date <= :fromDate ",
+           nativeQuery = true)
+    Page<Review> findRecentReviewsByKeyword(Pageable pageable,@Param("keyword")String keyword, @Param("fromDate")LocalDateTime fromDate);
+
 }
