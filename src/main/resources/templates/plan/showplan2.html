@@ -489,8 +489,12 @@
     function editPlannerName() {
         $('#name-edit-confirm').click(function () {
             var editName = $('input[name=plannerName]').val();
-            if(editName !== "") {
-                if(confirm("입력하신 내용을 제목으로 수정하시겠습니까?")) {
+            if(editName !== "") { // 공백이 아닌 경우
+                if(editName.length > 20) { // 20자를 초과한다면
+                    alert('제목은 20자를 초과할 수 없습니다.');
+                    editName.focus();
+                    editName.substring(0,20);
+                } else if(confirm("입력하신 내용을 제목으로 수정하시겠습니까?")) { // 20자를 초과하지 않으면
                     $.ajax({
                         type: "POST",
                         url: "/plan/api/editplannerName/" + plannerId  + "/" + editName,
@@ -509,12 +513,20 @@
                         }
                     });
                 }
-            } else {
+            } else { // 공백인 경우
                 alert('여행제목은 비워둘 수 없습니다.');
             }
         });
     }
 
+    function checkLength() {
+        let plannerName = $('input[name="plannerName"]');
+        if (plannerName.val().length > 20) {
+            alert('20자 이내로 입력해주세요');
+            plannerName.val(plannerName.val().substring(0, 20));
+            plannerName.focus();
+        }
+    }
 
 
     // 날짜 datepicker 로드하기
@@ -1210,7 +1222,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <input id="plannerName" name="plannerName" type="text" class="form-control" th:placeholder="${plannerName}" th:value="${plannerName}">
+                <input id="plannerName" name="plannerName" type="text" class="form-control" oninput="checkLength()" th:placeholder="${plannerName}" th:value="${plannerName}">
             </div>
             <div class="modal-footer">
                 <button type="button" id="name-edit-confirm" class="btn btn-primary">수정</button>
