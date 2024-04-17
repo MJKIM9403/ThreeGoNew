@@ -54,14 +54,14 @@ public class FollowService {
         followRepository.delete(follow);
     }
 
-    public Optional<Follow> findFollowing(FollowDTO followDTO) {
-        User toUser = userRepository.findById(followDTO.getToUser().getId()).orElseThrow(()->
-                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
-        User fromUser = userRepository.findById(followDTO.getToUser().getId()).orElseThrow(()->
-                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
-
-        return followRepository.findByToUserAndFromUser(toUser, fromUser);
-    }
+//    public Optional<Follow> findFollowing(FollowDTO followDTO) {
+//        User toUser = userRepository.findById(followDTO.getToUser().getId()).orElseThrow(()->
+//                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
+//        User fromUser = userRepository.findById(followDTO.getToUser().getId()).orElseThrow(()->
+//                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
+//
+//        return followRepository.findByToUserAndFromUser(toUser, fromUser);
+//    }
 
 
     // 팔로우중인지 확인하기
@@ -134,31 +134,35 @@ public class FollowService {
     }
 
     private List<FollowDTO> mapToFollowDTOList(List<FollowProjection> followList) {
+        String defaultImage = "../assets/img/profile.jpg"; // 기본 이미지 경로 설정
+
         return followList.stream()
                 .map(follow -> FollowDTO.builder()
                         .id(follow.getId())
-                        .toUser(userInfoMapper(follow.getToUser()))
-                        .fromUser(userInfoMapper(follow.getFromUser()))
+                        .toUser(follow.getToUser())
+                        .fromUser(follow.getFromUser())
                         .followingState(follow.getFollowingState())
                         .sameUserState(follow.getSameUserState())
                         .followedState(follow.getFollowedState())
+                        .listName(follow.getListName())
+                        .listSfile(follow.getListSfile()!= null && !follow.getListSfile().isEmpty() ? "/api/image/profile/" + follow.getListSfile() : defaultImage)
                         .build())
                 .collect(Collectors.toList());
     }
 
 
-    private UserInfoResponse userInfoMapper(String userId) {
-        String defaultImage = "../assets/img/profile.jpg"; // 기본 이미지 경로 설정
-        User user = userService.findUser(userId);
-
-        return UserInfoResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .profileImg(user.getU_sfile()!= null && !user.getU_sfile().isEmpty() ? "/api/image/profile/" + user.getU_sfile() : defaultImage)
-                .about(user.getAbout())
-                .build();
-    }
+//    private UserInfoResponse userInfoMapper(String userId) {
+//        String defaultImage = "../assets/img/profile.jpg"; // 기본 이미지 경로 설정
+//        User user = userService.findUser(userId);
+//
+//        return UserInfoResponse.builder()
+//                .id(user.getId())
+//                .name(user.getName())
+//                .email(user.getEmail())
+//                .profileImg(user.getU_sfile()!= null && !user.getU_sfile().isEmpty() ? "/api/image/profile/" + user.getU_sfile() : defaultImage)
+//                .about(user.getAbout())
+//                .build();
+//    }
 
 
 

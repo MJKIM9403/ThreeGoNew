@@ -38,22 +38,30 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query(value = "SELECT f1.id AS id, " +
             "f1.to_user_id AS toUser, " +
             "f1.from_user_id AS fromUser, " +
+            "u.u_name AS listName, " +
+            "u.u_sfile AS listSfile, " +
             "CASE WHEN f2.from_user_id IS NOT NULL THEN 1 ELSE 0 END AS followingState, " +
             "CASE WHEN f1.from_user_id = :loggedInId THEN 1 ELSE 0 END AS sameUserState, " +
             "CASE WHEN f3.from_user_id IS NOT NULL THEN 1 ELSE 0 END AS followedState " +
             "FROM follows f1 " +
+            "INNER JOIN users u on f1.from_user_id = u.u_id " +
             "LEFT JOIN follows f2 ON f1.from_user_id = f2.from_user_id AND f2.to_user_id = :loggedInId " +
             "LEFT JOIN follows f3 ON f1.from_user_id = f3.to_user_id AND f3.from_user_id = :loggedInId " +
             "WHERE f1.to_user_id = :myPageId", nativeQuery = true)
     List<FollowProjection> showFollowingList(@Param("loggedInId") String loggedInId, @Param("myPageId") String myPageId);
 
+
+
     @Query(value = "SELECT f1.id AS id, " +
             "f1.to_user_id AS toUser, " +
             "f1.from_user_id AS fromUser, " +
+            "u.u_name AS listName, " +
+            "u.u_sfile AS listSfile, " +
             "CASE WHEN f2.to_user_id IS NOT NULL THEN 1 ELSE 0 END AS followingState, " +
-            "CASE WHEN f2.to_user_id = :loggedInId THEN 1 ELSE 0 END AS sameUserState, " +
+            "CASE WHEN f1.to_user_id = :loggedInId THEN 1 ELSE 0 END AS sameUserState, " +
             "CASE WHEN f3.to_user_id IS NOT NULL THEN 1 ELSE 0 END AS followedState " +
             "FROM follows f1 " +
+            "INNER JOIN users u ON f1.to_user_id = u.u_id " +
             "LEFT JOIN follows f2 ON f1.to_user_id = f2.from_user_id AND f2.to_user_id = :loggedInId " +
             "LEFT JOIN follows f3 ON f1.to_user_id = f3.to_user_id AND f3.from_user_id = :loggedInId " +
             "WHERE f1.from_user_id = :myPageId", nativeQuery = true)

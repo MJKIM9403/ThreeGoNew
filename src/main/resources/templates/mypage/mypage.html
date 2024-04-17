@@ -2528,13 +2528,13 @@
                     // 팔로우 상태에 따라 버튼 속성 설정
                     var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
                     var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = data.toUser.id;
+                    var buttonDataId = data.listName;
 
                     // 나를 팔로우하고있는지에 따라 띄울 메세지
                     var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
-                    if (data.toUser.id !== loginId) {
+                    if (data.sameUserState === 0) {
                         var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
                     } else {
                         var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
@@ -2545,10 +2545,10 @@
                                     <div class="list-group">
                                         <div class="list-group-item d-flex flex-wrap">
                                             <div class="col d-flex">
-                                                <img src="${data.toUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
+                                                <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
                                                 <div class="d-flex flex-column flex-start gap-2">
-                                                    <strong>${data.toUser.id}</strong>
-                                                    <span>${data.toUser.name}</span>
+                                                    <strong>${data.toUser}</strong>
+                                                    <span>${data.listName}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-auto pe-2">
@@ -2589,13 +2589,13 @@
                     // 팔로우 상태에 따라 버튼 속성 설정
                     var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
                     var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = data.fromUser.id;
+                    var buttonDataId = data.listName;
 
                     // 나를 팔로우하고있는지에 따라 띄울 메세지
                     var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
-                    if (data.fromUser.id !== loginId) {
+                    if (data.sameUserState === 0) {
                         var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
                     } else {
                         var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
@@ -2605,10 +2605,10 @@
                         <div class="list-group">
                             <div class="list-group-item d-flex flex-wrap">
                                 <div class="col d-flex">
-                                    <img src="${data.fromUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center">
+                                    <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center">
                                         <div class="d-flex flex-column flex-start gap-2">
-                                            <strong>${data.fromUser.id}</strong>
-                                            <span>${data.fromUser.name}</span>
+                                            <strong>${data.fromUser}</strong>
+                                            <span>${data.listName}</span>
                                         </div>
                                 </div>
                                 <div class="col-md-auto pe-2">
