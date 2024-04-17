@@ -22,10 +22,5 @@ public class TestController {
     public String getLogin() {
         return "login";
     }
-
-    @GetMapping("detail")
-    public String getDetail() {
-        return "plan/detail";
-    }
 }
 

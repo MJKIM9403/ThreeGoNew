@@ -215,7 +215,7 @@
         }
 
         .planner-name {
-            width: 300px;
+            width: 350px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -226,7 +226,6 @@
         }
         .planner-date {
             font-size: 0.8rem;
-            color: #555555;
         }
     </style>
 </head>
@@ -353,7 +352,7 @@
 
     function LoadNameAndDay() {
         $('.planner-name').text(plannerName);
-        $('.planner-date').text(startDate + "~" + endDate);
+        $('.planner-date').text(startDate + " ~ " + endDate);
     }
 
     // 도시명 바꾸기
@@ -1604,9 +1603,9 @@
 
         <!--장소찾기-->
         <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
-            <div class="d-flex flex-column flex-shrink-0 px-3 py-2 link-dark text-decoration-none">
+            <div class="d-flex flex-column px-3 py-2">
                 <span class="fs-5 fw-semibold planner-name">플래너 이름</span><br>
-                <span class="fs-6 fw-semibold planner-date">날짜</span>
+                <span class="fw-semibold planner-date">날짜</span>
             </div>
             <div class="search-bar">
                 <input class="search-input" placeholder="장소를 검색하세요.">
