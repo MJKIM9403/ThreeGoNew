@@ -24,25 +24,10 @@
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
-    <title>Title</title>
+    <title>둘레둘레</title>
 
 
     <style>
-        /*기본 제공 아이콘 숨기기*/
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            display: none;
-        }
-
-        i.bi.bi-calendar {
-            position: absolute;
-            top: 10px;
-        }
-        .fa-1 {
-            left: calc(50% - 40px);
-        }
-        .fa-2 {
-            left: calc(100% - 40px);
-        }
         input.days {
             padding: 10px 15px !important;
             border: 1px solid lightgrey !important;
@@ -158,7 +143,7 @@
                         <div class="input-daterange">
                             <input id="plannerName2" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
                             <input id="days2" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
-                            <i class="bi bi-calendar fa-1"></i>
+
                             <input type="hidden" id="startDate2" name="startDate" class="form-control" placeholder="Arriving Date">
                             <input type="hidden" id="endDate2" name="endDate" class="form-control" placeholder="Leaving Date">
                         </div>
@@ -262,7 +247,7 @@
                     <div class="input-daterange">
                         <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
                         <input id="days" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
-                        <i class="bi bi-calendar fa-1"></i>
+
                         <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
                         <input type="hidden" id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
                     </div>
