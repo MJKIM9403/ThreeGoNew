@@ -223,6 +223,24 @@
             font-weight: 700;
             font-size: 17px;
         }
+
+        .user-card {
+            width: 800px;
+            border-radius: 20px;
+        }
+
+        .user-profile-img {
+            width: 80px;
+        }
+
+        .user-id {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
@@ -458,9 +476,9 @@
                 case "RECENT" :
                     showFindRecentReview();
                     break;
-                // case "USER" :
-                //     showFindUSERS();
-                //     break;
+                case "USER" :
+                    showFindUser();
+                    break;
             }
         });
     });
@@ -499,6 +517,7 @@
         }else if(searchType === 'user'){
             $('.search-tab').html("유저 검색 결과").css('display','block');
             keyword = $('#keyword-user').val();
+            $('#load-point').show();
             changeTab("USER");
         }
     })
@@ -728,6 +747,108 @@
         })
     }
 
+    function showFindUser() {
+        console.log('find user')
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(!firstLoad){
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/search/user',
+            type : 'GET',
+            data : {
+                keyword : keyword,
+                page : scrollPage
+            },
+            async: false,
+            success : function (result) {
+                console.log(result)
+                let userList = result.dtoList;
+
+                if(firstLoad && userList.length <= 0){
+                    firstLoad = false;
+                    $(".loader").hide()
+                    let messageHtml = '<div class="no-data-msg">' +
+                        '<h4>검색된 회원이 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    firstLoad = false;
+                    // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                    setTimeout(() => {
+                        $(".loader").hide()
+                        $.each(userList, function (index, user){
+                            let profileImg = user.profileImg == null ? '../assets/img/profile.jpg' : '/api/image/profile/' + user.profileImg;
+
+                            let userAbout = user.about == null ? '' : `<p class="user-about mb-0 text-muted">${user.about}</p>`;
+
+                            let followBtn;
+                            let followedText = user.followedState === 1 ? '<div class="followed-state">나를 팔로우 중입니다</div>' : '';
+
+                            if(user.id === loginUserId){
+                                followBtn = '';
+                            }else {
+                                if(user.followingState === 1) {
+                                    followBtn = `<button class="unfollow-btn btn btn-secondary ms-2" data-user-id="${user.id}">언팔로우</button>`;
+                                }else {
+                                    followBtn = `<button class="follow-btn btn btn-primary ms-2" data-user-id="${user.id}">팔로우</button>`;
+                                }
+                            }
+
+                            let tempHtml =
+                                `<div class="user-card d-flex justify-content-between align-items-center border mb-2 p-3">` +
+                                    `<div class="d-flex align-items-center">` +
+                                        `<a href="../mypage/${user.id}">` +
+                                            `<img src="${profileImg}" class="user-profile-img rounded-circle me-3">` +
+                                        `</a>` +
+                                        `<a href="../mypage/${user.id}">` +
+                                            `<div class="user-info flex-grow-1">` +
+                                                `<div class="d-flex align-items-center mb-2">` +
+                                                    `<span class="user-id me-2">@${user.id}</span>` +
+                                                    `<span class="user-name">${user.name}</span>` +
+                                                `</div>` +
+                                                `${userAbout}` +
+                                            `</div>` +
+                                        `</a>` +
+                                    `</div>` +
+                                    `<div class="d-flex align-items-center">` +
+                                        `${followedText}` +
+                                        `${followBtn}` +
+                                    `</div>` +
+                                `</div>`;
+
+
+                            gallery.append(tempHtml).trigger("create")
+
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(userList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
+                }
+                keyword = null;
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
+    }
+
 
     function savePage() {
         let findInfo = {};
@@ -751,12 +872,12 @@
                 case "RECOMMEND" :
                     showFindRecommendReview();
                     break;
-                // case "RECENT" :
-                //     showFindRecentReview();
-                //     break;
-                // case "USER" :
-                //     showFindUSERS();
-                //     break;
+                case "RECENT" :
+                    showFindRecentReview();
+                    break;
+                case "USER" :
+                    showFindUser();
+                    break;
             }
         }
         setTimeout(() => {
@@ -793,6 +914,59 @@
     }
 
 
+</script>
+
+<!-- 팔로우 관련 스크립트 -->
+<script th:inline="javascript">
+    $(document).on('click', '.follow-btn', function (){
+        const userId = this.getAttribute('data-user-id');
+        let loginId = [[${loginUser.id}]];
+
+        if(loginId === "anonymousUser") {
+            alert('로그인 후에 이용하실 수 있습니다.');
+            return;
+        }
+        var $button = $(this);
+        $.ajax({
+            url: '/api/follow/' + userId,
+            type: 'POST',
+            contentType : 'application/json; charset=UTF-8',
+            success: function(response) {
+                alert(userId + '님을 팔로우 하였습니다.');
+                $button.removeClass('btn-primary')
+                    .addClass('btn-secondary')
+                    .addClass('unfollow-btn')
+                    .html('언팔로우')
+                    .removeClass('follow-btn');
+            },
+            error: function (xhr, status, error) {
+                alert('팔로우에 실패하였습니다.');
+            }
+        })
+    });
+
+
+    // 언팔로우 기능
+    $(document).on('click', '.unfollow-btn', function () {
+        const userId = this.getAttribute('data-user-id');
+        var $button = $(this);
+        $.ajax({
+            url: '/api/unfollow/' + userId,
+            type: 'DELETE',
+            contentType : 'application/json; charset=UTF-8',
+            success: function(response) {
+                alert(userId + '님을 언팔로우 하였습니다.');
+                $button.removeClass('btn-secondary')
+                    .addClass('btn-primary')
+                    .addClass('follow-btn')
+                    .html('팔로우')
+                    .removeClass('unfollow-btn');
+            },
+            error: function (xhr, status, error) {
+                alert('언팔로우에 실패하였습니다.');
+            }
+        })
+    });
 </script>
 
 <!-- 좋아요 관련 스크립트 -->

@@ -4,9 +4,11 @@ import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.FileHandler;
+import com.io.threegonew.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserDetailService userDetailService;
     private final FileHandler fileHandler;
+    private final ModelMapper modelMapper;
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -62,16 +65,18 @@ public class UserService {
     }
 
     @Transactional
-    public PageResponse<UserInfoResponse> getUserByStartOrContainUserId(PageWithFromDateRequest request){
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+    public PageResponse<UserWithFollowStateResponse> getUserByStartOrContainUserId(String keyword, int pageNum){
+        Pageable pageable = PageRequest.of(pageNum, 12);
 
-        String startKeyword = request.getKeyword() + "%";
-        String containKeyword = "%" + request.getKeyword() + "%";
+        String startKeyword = keyword + "%";
+        String containKeyword = "%" + keyword + "%";
 
-        Page<UserInfoResponse> page = userRepository.findUsersByStartOrContainUserId(pageable, startKeyword, containKeyword)
-                .map(this::userInfoMapper);
+        String loginUserId = SecurityUtils.getCurrentUsername();
 
-        PageResponse<UserInfoResponse> pageResponse = PageResponse.<UserInfoResponse>withAll()
+        Page<UserWithFollowStateResponse> page = userRepository.findUsersByStartOrContainUserId(pageable, startKeyword, containKeyword, loginUserId)
+                .map(userWithFollowStateInterface -> modelMapper.map(userWithFollowStateInterface, UserWithFollowStateResponse.class));
+
+        PageResponse<UserWithFollowStateResponse> pageResponse = PageResponse.<UserWithFollowStateResponse>withAll()
                 .dtoList(page.getContent())
                 .page(page.getNumber())
                 .size(page.getSize())
