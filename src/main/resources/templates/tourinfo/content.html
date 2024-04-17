@@ -2,16 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- Bootstrap icons-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+          type="text/css"/>
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
     <!-- Core theme CSS (includes Bootstrap)-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="../../assets/css/style.css?after" rel="stylesheet" />
-    <link href="../../assets/css/commonstyle.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../../assets/css/style.css?after" rel="stylesheet"/>
+    <link href="../../assets/css/commonstyle.css" rel="stylesheet"/>
     <!-- jquery-->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <!--swiper-->
@@ -26,7 +30,7 @@
         let contentTypeId = [[${response.tourItemResponse.contenttypeid}]]
     </script>
     <script th:inline="javascript">
-        $(document).ready(function(){
+        $(document).ready(function () {
             initTmap(lon, lat);
         });
 
@@ -41,7 +45,7 @@
 
         function initTmap(lon, lat) {
 
-            switch (contentTypeId){
+            switch (contentTypeId) {
                 case "25":
                     // 경로 검색 시간
                     var startTime = getRealTime();
@@ -52,15 +56,15 @@
 
                     const moreItems = [[${response.moreTourItems}]]
 
-                    $.each(moreItems, function(index, item) {
-                        if(Number(item.mapy) > maxLon) maxLon = Number(item.mapy)
-                        if(Number(item.mapy) < minLon) minLon = Number(item.mapy)
-                        if(Number(item.mapx) > maxLat) maxLat = Number(item.mapx)
-                        if(Number(item.mapx) < minLat) minLat = Number(item.mapx)
+                    $.each(moreItems, function (index, item) {
+                        if (Number(item.mapy) > maxLon) maxLon = Number(item.mapy)
+                        if (Number(item.mapy) < minLon) minLon = Number(item.mapy)
+                        if (Number(item.mapx) > maxLat) maxLat = Number(item.mapx)
+                        if (Number(item.mapx) < minLat) minLat = Number(item.mapx)
                     })
 
-                    const midLon = (maxLon + minLon)/2
-                    const midLat = (maxLat + minLat)/2
+                    const midLon = (maxLon + minLon) / 2
+                    const midLat = (maxLat + minLat) / 2
 
                     const courseCount = moreItems.length
 
@@ -68,9 +72,9 @@
                     const startLon = moreItems[0].mapy
                     const startLat = moreItems[0].mapx
 
-                    const endTitle = moreItems[courseCount-1].title
-                    const endLon = moreItems[courseCount-1].mapy
-                    const endLat = moreItems[courseCount-1].mapx
+                    const endTitle = moreItems[courseCount - 1].title
+                    const endLon = moreItems[courseCount - 1].mapy
+                    const endLat = moreItems[courseCount - 1].mapx
 
                     resultMarkerArr = [];
                     viaPoints = [];
@@ -78,32 +82,32 @@
                     // 1. 지도 띄우기
                     map = new Tmapv2.Map("map_div", {
                         center: new Tmapv2.LatLng(midLon, midLat),
-                        width : "100%",
-                        height : "600px",
-                        zoom : 14,
-                        zoomControl : true,
-                        scrollwheel : true
+                        width: "100%",
+                        height: "600px",
+                        zoom: 14,
+                        zoomControl: true,
+                        scrollwheel: true
 
                     });
 
                     // 2. 시작, 도착 심볼찍기
-                    $.each(moreItems, function(index, item) {
-                        let markerName = index+1;
-                        label="<span style='font-size: 15px; background-color: #46414E;color:white'>"+item.title+"</span>";
+                    $.each(moreItems, function (index, item) {
+                        let markerName = index + 1;
+                        label = "<span style='font-size: 15px; background-color: #46414E;color:white'>" + item.title + "</span>";
                         marker = new Tmapv2.Marker({
-                            position : new Tmapv2.LatLng(item.mapy, item.mapx),
-                            icon : `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
-                            iconSize : new Tmapv2.Size(24, 38),
-                            map:map,
-                            label:label
+                            position: new Tmapv2.LatLng(item.mapy, item.mapx),
+                            icon: `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
+                            iconSize: new Tmapv2.Size(24, 38),
+                            map: map,
+                            label: label
                         });
                         resultMarkerArr.push(marker);
-                        if(index > 0 && index < courseCount -1){
+                        if (index > 0 && index < courseCount - 1) {
                             let viaPoint = {
-                                "viaPointId" : `course${index}`,
-                                "viaPointName" : item.title,
-                                "viaX" : item.mapx ,
-                                "viaY" : item.mapy
+                                "viaPointId": `course${index}`,
+                                "viaPointName": item.title,
+                                "viaX": item.mapx,
+                                "viaY": item.mapy
                             }
                             viaPoints.push(viaPoint);
                         }
@@ -117,51 +121,51 @@
                     headers["Content-Type"] = "application/json";
 
                     var param = JSON.stringify({
-                        "startName" : startTitle,
-                        "startX" : startLat,
-                        "startY" : startLon,
-                        "startTime" : startTime,
-                        "endName" : endTitle,
-                        "endX" : endLat,
-                        "endY" : endLon,
-                        "viaPoints" : viaPoints,
-                        "reqCoordType" : "WGS84GEO",
-                        "resCoordType" : "EPSG3857",
+                        "startName": startTitle,
+                        "startX": startLat,
+                        "startY": startLon,
+                        "startTime": startTime,
+                        "endName": endTitle,
+                        "endX": endLat,
+                        "endY": endLon,
+                        "viaPoints": viaPoints,
+                        "reqCoordType": "WGS84GEO",
+                        "resCoordType": "EPSG3857",
                         "searchOption": "0"
                     });
 
                     console.log(param)
 
                     $.ajax({
-                        method:"POST",
-                        url:"https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",//
-                        headers : headers,
-                        async:false,
+                        method: "POST",
+                        url: "https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",//
+                        headers: headers,
+                        async: false,
                         contentType: "application/json",
-                        data:param,
-                        success:function(response){
+                        data: param,
+                        success: function (response) {
 
                             //var resultData = response.properties;
                             var resultFeatures = response.features;
 
                             //기존  라인 초기화
 
-                            if(resultInfoArr.length>0){
-                                for(var i in resultInfoArr){
+                            if (resultInfoArr.length > 0) {
+                                for (var i in resultInfoArr) {
                                     resultInfoArr[i].setMap(null);
                                 }
-                                resultInfoArr=[];
+                                resultInfoArr = [];
                             }
 
-                            for(var i in resultFeatures) {
+                            for (var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
                                 var properties = resultFeatures[i].properties;
                                 var polyline_;
 
                                 drawInfoArr = [];
 
-                                if(geometry.type == "LineString") {
-                                    for(var j in geometry.coordinates){
+                                if (geometry.type == "LineString") {
+                                    for (var j in geometry.coordinates) {
                                         // 경로들의 결과값(구간)들을 포인트 객체로 변환
                                         var latlng = new Tmapv2.Point(geometry.coordinates[j][0], geometry.coordinates[j][1]);
                                         // 포인트 객체를 받아 좌표값으로 변환
@@ -173,24 +177,24 @@
                                     }
 
                                     polyline_ = new Tmapv2.Polyline({
-                                        path : drawInfoArr,
-                                        strokeColor : "#FF0000",
+                                        path: drawInfoArr,
+                                        strokeColor: "#FF0000",
                                         strokeWeight: 6,
-                                        map : map
+                                        map: map
                                     });
                                     resultInfoArr.push(polyline_);
 
-                                }else{
+                                } else {
                                     var markerImg = "";
                                     var size = "";			//아이콘 크기 설정합니다.
 
-                                    if(properties.pointType == "S"){	//출발지 마커
+                                    if (properties.pointType == "S") {	//출발지 마커
                                         markerImg = "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png";
                                         size = new Tmapv2.Size(24, 38);
-                                    }else if(properties.pointType == "E"){	//도착지 마커
+                                    } else if (properties.pointType == "E") {	//도착지 마커
                                         markerImg = `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${courseCount}.png`;
                                         size = new Tmapv2.Size(24, 38);
-                                    }else{	//각 포인트 마커
+                                    } else {	//각 포인트 마커
                                         markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
                                         size = new Tmapv2.Size(8, 8);
                                     }
@@ -202,17 +206,17 @@
 
                                     marker_p = new Tmapv2.Marker({
                                         position: new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng),
-                                        icon : markerImg,
-                                        iconSize : size,
-                                        map:map
+                                        icon: markerImg,
+                                        iconSize: size,
+                                        map: map
                                     });
 
                                     resultMarkerArr.push(marker_p);
                                 }
                             }
                         },
-                        error:function(request,status,error){
-                            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        error: function (request, status, error) {
+                            console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                         }
                     });
 
@@ -220,25 +224,25 @@
                 default:
                     // 지도 띄우기
                     map = new Tmapv2.Map("map_div", {
-                        center : new Tmapv2.LatLng(lon, lat),
-                        width : "100%",
-                        height : "400px",
-                        zoom : 17,
-                        zoomControl : true,
-                        scrollwheel : true
+                        center: new Tmapv2.LatLng(lon, lat),
+                        width: "100%",
+                        height: "400px",
+                        zoom: 17,
+                        zoomControl: true,
+                        scrollwheel: true
 
                     });
 
                     const touritemTitle = [[${response.tourItemResponse.title}]]
 
-                    label="<span style='font-size: 15px; background-color: #46414E;color:white'>"+ touritemTitle +"</span>";
+                    label = "<span style='font-size: 15px; background-color: #46414E;color:white'>" + touritemTitle + "</span>";
 
                     // 마커 초기화
                     marker = new Tmapv2.Marker(
                         {
-                            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
-                            iconSize : new Tmapv2.Size(24, 38),
-                            map : map,
+                            icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
+                            iconSize: new Tmapv2.Size(24, 38),
+                            map: map,
                         });
 
                     marker.setMap(null);
@@ -247,11 +251,11 @@
                     //마커 올리기
                     marker = new Tmapv2.Marker(
                         {
-                            position : markerPosition,
-                            icon : "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
-                            iconSize : new Tmapv2.Size(24, 38),
-                            map : map,
-                            label : label
+                            position: markerPosition,
+                            icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
+                            iconSize: new Tmapv2.Size(24, 38),
+                            map: map,
+                            label: label
                         });
             }
         }
@@ -271,27 +275,27 @@
 
         function checkBookmark() {
             let userId = [[${userId}]]
-            if(userId === 'anonymousUser'){
+            if (userId === 'anonymousUser') {
                 alert("북마크는 로그인 후 이용하실 수 있습니다.");
                 location.href = '/login';
-            }else {
+            } else {
                 $.ajax({
                     url: '/bookmark/check',
                     type: 'POST',
                     data: JSON.stringify({
-                        "contentId" : [[${response.tourItemResponse.contentid}]],
-                        "userId" : userId
+                        "contentId": [[${response.tourItemResponse.contentid}]],
+                        "userId": userId
                     }),
-                    contentType : 'application/json; charset=utf-8',
-                    success : function(data){
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
                         let isChecked = data.isChecked;
                         let checkCount = data.bookmarkCount;
-                        if(isChecked){
+                        if (isChecked) {
                             // 이미 북마크를 등록한 경우
                             $('.bookmark').removeClass('checked-bookmark')
                             $('.bookmark-icon').removeClass('bi-bookmark-star-fill')
                             $('.bookmark-icon').addClass('bi-bookmark-plus')
-                        }else {
+                        } else {
                             // 아직 북마크를 등록하지 않았을 경우
                             $('.bookmark').addClass('checked-bookmark')
                             $('.bookmark-icon').addClass('bi-bookmark-star-fill')
@@ -299,7 +303,7 @@
                         }
                         $('.bookmark-count').html(checkCount)
                     },
-                    error : function (err){
+                    error: function (err) {
                         console.log(err)
                     }
                 })
@@ -308,21 +312,21 @@
 
     </script>
     <style>
-        #myCarousel{
+        #myCarousel {
             height: 400px;
         }
 
-        #myCarousel img{
+        #myCarousel img {
             height: 400px;
             object-fit: cover;
         }
 
-        #wrap{
+        #wrap {
             width: 1200px;
             margin: 0 auto;
         }
 
-        th, td{
+        th, td {
             vertical-align: top;
             padding: 10px;
         }
@@ -348,13 +352,14 @@
             object-fit: cover;
         }
 
-        .title-box{
+        .title-box {
             display: flex;
             align-items: center;
             gap: 10px;
             padding: 50px 0 0;
         }
-        #period{
+
+        #period {
             background-color: #333333;
             color: #FFFFFF;
             padding: 8px;
@@ -363,45 +368,52 @@
             letter-spacing: -1px;
             border-radius: 10px;
         }
-        #category{
+
+        #category {
             font-weight: 500;
             color: #333333;
         }
-        .row{
+
+        .row {
             padding: 20px 0;
         }
-        .sub-title{
+
+        .sub-title {
             padding: 10px 0;
         }
 
-        .wrap-loading{ /*화면 전체를 어둡게 합니다.*/
+        .wrap-loading { /*화면 전체를 어둡게 합니다.*/
             position: fixed;
             z-index: 100;
-            left:0;
-            right:0;
-            top:0;
-            bottom:0;
-            background: rgba(0,0,0,0.2); /*not in ie */
-            filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000',endColorstr='#20000000');    /* ie */
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2); /*not in ie */
+            filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000', endColorstr='#20000000'); /* ie */
         }
-        .wrap-loading div{ /*로딩 이미지*/
+
+        .wrap-loading div { /*로딩 이미지*/
             position: fixed;
             z-index: 300;
-            top:50%;
-            left:50%;
+            top: 50%;
+            left: 50%;
             width: 100px;
             height: 100px;
             margin-left: -21px;
             margin-top: -21px;
         }
-        .wrap-loading div>img{
+
+        .wrap-loading div > img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .display-none{ /*감추기*/
-            display:none;
+
+        .display-none { /*감추기*/
+            display: none;
         }
+
         .bookmark {
             padding: 5px;
             border-radius: 20%;
@@ -414,10 +426,12 @@
             color: #FFFFFF;
             background-color: #000000;
         }
+
         .bookmark-count {
             font-size: 20px;
         }
-        .bi-bookmark-plus, .bi-bookmark-star-fill{
+
+        .bi-bookmark-plus, .bi-bookmark-star-fill {
             font-size: 20px;
         }
 
@@ -427,350 +441,372 @@
 </head>
 <body>
 <!-- header-->
-<th:block th:replace="~{fragments/header}"></th:block>
-<div id="wrap">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="title-box">
-                    <h3 th:text="${response.tourItemResponse.title}" id="title"></h3>
-                    <h5 id="period" th:if='${response.tourItemResponse.contenttypeid.equals("15")}' th:text='${response.detailInfo.get("진행상태")}'></h5>
-                    <div class="bookmark" th:classappend="${isBookmarkChecked ? 'checked-bookmark' : ''}" onclick="checkBookmark()">
-                        <i class="bi bookmark-icon" th:classappend="${isBookmarkChecked ? 'bi-bookmark-star-fill' : 'bi-bookmark-plus'}"></i>
-                        <span class="bookmark-count" th:text="${response.bookmarkCount}"></span>
+<!--<th:block th:replace="~{fragments/header}"></th:block>-->
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+    <div id="wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="title-box">
+                        <h3 th:text="${response.tourItemResponse.title}" id="title"></h3>
+                        <h5 id="period" th:if='${response.tourItemResponse.contenttypeid.equals("15")}'
+                            th:text='${response.detailInfo.get("진행상태")}'></h5>
+                        <div class="bookmark" th:classappend="${isBookmarkChecked ? 'checked-bookmark' : ''}"
+                             onclick="checkBookmark()">
+                            <i class="bi bookmark-icon"
+                               th:classappend="${isBookmarkChecked ? 'bi-bookmark-star-fill' : 'bi-bookmark-plus'}"></i>
+                            <span class="bookmark-count" th:text="${response.bookmarkCount}"></span>
+                        </div>
                     </div>
-                </div>
-                <div id="category" th:text="${response.tourItemResponse.fullCategoryName}"></div>
-                <div class="row" id="row1">
-                    <!--캐러셀-->
-                    <th:block th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>
-                        <div id="carousel_grid" class="col-md-6">
-                            <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <!--indicators-->
-                                <div class="carousel-indicators" th:if="${response.imagesURL.size() > 1}">
-                                    <th:block  th:each="imgUrl, stat : ${response.imagesURL}">
-                                        <button type="button" data-bs-target="#myCarousel" th:data-bs-slide-to="${stat.index}" th:classappend="${stat.index == 0 ? 'active' : ''}"></button>
-                                    </th:block>
-                                </div>
-                                <!--이미지-->
-                                <div class="carousel-inner">
-                                    <th:block th:if="${response.imagesURL.size() > 1}" th:each="imgUrl, stat : ${response.imagesURL}">
-                                        <div class="carousel-item" data-bs-interval="5000" th:classappend="${stat.index == 0 ? 'active' : ''}">
-                                            <img th:src='${imgUrl}' class="d-block w-100">
-                                        </div>
-                                    </th:block>
-                                    <th:block th:if="${response.imagesURL.isEmpty()}">
-                                        <div class="carousel-item active">
-                                            <img th:if="${!response.tourItemResponse.firstimage.isEmpty()}" th:src="${response.tourItemResponse.firstimage}">
-                                            <img th:unless="${!response.tourItemResponse.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
-                                        </div>
-                                    </th:block>
-                                </div>
+                    <div id="category" th:text="${response.tourItemResponse.fullCategoryName}"></div>
+                    <div class="row" id="row1">
+                        <!--캐러셀-->
+                        <th:block th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>
+                            <div id="carousel_grid" class="col-md-6">
+                                <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <!--indicators-->
+                                    <div class="carousel-indicators" th:if="${response.imagesURL.size() > 1}">
+                                        <th:block th:each="imgUrl, stat : ${response.imagesURL}">
+                                            <button type="button" data-bs-target="#myCarousel"
+                                                    th:data-bs-slide-to="${stat.index}"
+                                                    th:classappend="${stat.index == 0 ? 'active' : ''}"></button>
+                                        </th:block>
+                                    </div>
+                                    <!--이미지-->
+                                    <div class="carousel-inner">
+                                        <th:block th:if="${response.imagesURL.size() > 1}"
+                                                  th:each="imgUrl, stat : ${response.imagesURL}">
+                                            <div class="carousel-item" data-bs-interval="5000"
+                                                 th:classappend="${stat.index == 0 ? 'active' : ''}">
+                                                <img th:src='${imgUrl}' class="d-block w-100">
+                                            </div>
+                                        </th:block>
+                                        <th:block th:if="${response.imagesURL.isEmpty()}">
+                                            <div class="carousel-item active">
+                                                <img th:if="${!response.tourItemResponse.firstimage.isEmpty()}"
+                                                     th:src="${response.tourItemResponse.firstimage}">
+                                                <img th:unless="${!response.tourItemResponse.firstimage.isEmpty()}"
+                                                     src="../../assets/img/no_img.jpg">
+                                            </div>
+                                        </th:block>
+                                    </div>
 
-                                <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel"
+                                            data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel"
+                                            data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </th:block>
+                        <!--지도-->
+                        <div id="map_grid"
+                             th:classappend="${response.tourItemResponse.contenttypeid.equals('25')} ? 'col-md-12' : 'col-md-6'">
+                            <div id="map_wrap">
+                                <div id="map_div"></div>
                             </div>
                         </div>
-                    </th:block>
-                    <!--지도-->
-                    <div id="map_grid" th:classappend="${response.tourItemResponse.contenttypeid.equals('25')} ? 'col-md-12' : 'col-md-6'">
-                        <div id="map_wrap">
-                            <div id="map_div"></div>
+                    </div>
+                    <div class="row">
+                        <!--소개-->
+                        <div class="col-md-12">
+                            <h4 class="sub-title"> 소개 </h4>
+                            <div id="overview">
+                                <p th:if='${response.overview.equals("-")}'>관련 소개글이 없습니다.</p>
+                                <p th:unless='${response.overview.equals("-")}' th:utext="${response.overview}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="sub-title">상세정보</h4>
+                            <table id="detailInfo" border="1" width="100%">
+                                <th:block th:switch="${response.tourItemResponse.contenttypeid}">
+                                    <th:block th:case="12">
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text="${response.tourItemResponse.address}"></td>
+                                            <th>관광안내원</th>
+                                            <td th:utext='${response.detailInfo.get("관광안내원")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>이용문의</th>
+                                            <td th:utext='${response.detailInfo.get("이용문의")}'></td>
+                                            <th>입장제한연령</th>
+                                            <td th:utext='${response.detailInfo.get("입장제한연령")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>이용시간</th>
+                                            <td th:utext='${response.detailInfo.get("이용시간")}'></td>
+                                            <th>수용인원</th>
+                                            <td th:utext='${response.detailInfo.get("수용인원")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>휴무일</th>
+                                            <td th:utext='${response.detailInfo.get("휴무일")}'></td>
+                                            <th>주차여부</th>
+                                            <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="14">
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text="${response.tourItemResponse.address}"></td>
+                                            <th>이용요금</th>
+                                            <td th:utext='${response.detailInfo.get("이용요금")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>이용문의</th>
+                                            <td th:utext='${response.detailInfo.get("이용문의")}'></td>
+                                            <th>관람소요시간</th>
+                                            <td th:utext='${response.detailInfo.get("관람소요시간")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>이용시간</th>
+                                            <td th:utext='${response.detailInfo.get("이용시간")}'></td>
+                                            <th>수용인원</th>
+                                            <td th:utext='${response.detailInfo.get("수용인원")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>휴무일</th>
+                                            <td th:utext='${response.detailInfo.get("휴무일")}'></td>
+                                            <th>주차여부</th>
+                                            <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="15">
+                                        <tr>
+                                            <th>행사기간</th>
+                                            <td th:utext='${response.detailInfo.get("행사기간")}'></td>
+                                            <th>공연시간</th>
+                                            <td th:utext='${response.detailInfo.get("공연시간")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>장소</th>
+                                            <td th:utext='${response.detailInfo.get("장소")}'></td>
+                                            <th>이용요금</th>
+                                            <td th:utext='${response.detailInfo.get("이용요금")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주관</th>
+                                            <td th:utext='${response.detailInfo.get("주관")}'></td>
+                                            <th>입장제한연령</th>
+                                            <td th:utext='${response.detailInfo.get("입장제한연령")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주최</th>
+                                            <td th:utext='${response.detailInfo.get("주최")}'></td>
+                                            <th>예매</th>
+                                            <td th:utext='${response.detailInfo.get("예매")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>이용문의</th>
+                                            <td th:utext='${response.detailInfo.get("이용문의")}'></td>
+                                            <th>위치안내</th>
+                                            <td th:utext='${response.detailInfo.get("위치안내")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="25">
+                                        <tr>
+                                            <th>코스 테마</th>
+                                            <td th:utext='${response.tourItemResponse.fullCategoryName}'></td>
+                                            <th>코스 총 거리</th>
+                                            <td th:utext='${response.detailInfo.get("코스 총 거리")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text='${response.tourItemResponse.address}'></td>
+                                            <th>소요시간</th>
+                                            <td th:utext='${response.detailInfo.get("소요시간")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>문의 및 안내</th>
+                                            <td colspan="3" th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="28">
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text="${response.tourItemResponse.address}"></td>
+                                            <th>휴무일</th>
+                                            <td th:utext='${response.detailInfo.get("휴무일")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>문의 및 안내</th>
+                                            <td th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
+                                            <th>주차여부</th>
+                                            <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>이용요금</th>
+                                            <td th:utext='${response.detailInfo.get("이용요금")}'></td>
+                                            <th>이용시간</th>
+                                            <td th:utext='${response.detailInfo.get("이용시간")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="32">
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text="${response.tourItemResponse.address}"></td>
+                                            <th>객실유형</th>
+                                            <td th:utext='${response.detailInfo.get("객실유형")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>문의 및 안내</th>
+                                            <td th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
+                                            <th>체크인</th>
+                                            <td th:utext='${response.detailInfo.get("체크인")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>예약안내</th>
+                                            <td th:utext='${response.detailInfo.get("예약안내")}'></td>
+                                            <th>체크아웃</th>
+                                            <td th:utext='${response.detailInfo.get("체크아웃")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>부대시설</th>
+                                            <td th:utext='${response.detailInfo.get("부대시설")}'></td>
+                                            <th>주차여부</th>
+                                            <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="38">
+                                        <tr>
+                                            <th>판매품목</th>
+                                            <td th:utext='${response.detailInfo.get("판매품목")}'></td>
+                                            <th>운영시간</th>
+                                            <td th:utext='${response.detailInfo.get("운영시간")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text="${response.tourItemResponse.address}"></td>
+                                            <th>휴무일</th>
+                                            <td th:utext='${response.detailInfo.get("휴무일")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>전화번호</th>
+                                            <td th:utext='${response.detailInfo.get("전화번호")}'></td>
+                                            <th>주차여부</th>
+                                            <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                    <th:block th:case="39">
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <th></th>
+                                            <td th:utext='${response.detailInfo.get("")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>분류</th>
+                                            <td th:utext='${response.tourItemResponse.fullCategoryName}'></td>
+                                            <th>포장</th>
+                                            <td th:utext='${response.detailInfo.get("포장")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>대표메뉴</th>
+                                            <td th:utext='${response.detailInfo.get("대표메뉴")}'></td>
+                                            <th>영업시간</th>
+                                            <td th:utext='${response.detailInfo.get("영업시간")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>메뉴</th>
+                                            <td th:utext='${response.detailInfo.get("메뉴")}'></td>
+                                            <th>휴무일</th>
+                                            <td th:utext='${response.detailInfo.get("휴무일")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>주소</th>
+                                            <td th:text="${response.tourItemResponse.address}"></td>
+                                            <th>카드사용여부</th>
+                                            <td th:utext='${response.detailInfo.get("카드사용여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>전화번호</th>
+                                            <td th:utext='${response.detailInfo.get("전화번호")}'></td>
+                                            <th>주차여부</th>
+                                            <td th:utext='${response.detailInfo.get("주차여부")}'></td>
+                                        </tr>
+                                        <tr>
+                                            <th>홈페이지</th>
+                                            <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
+                                        </tr>
+                                    </th:block>
+                                </th:block>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 th:if='${response.tourItemResponse.contenttypeid.equals("25")}'>코스 안내</h4>
+                            <h4 th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>동일 카테고리의 주변 관광지
+                                추천</h4>
+                            <div th:if="${response.moreTourItems.size() > 0}" id="sub-items">
+                                <swiper-container class="mySwiper" pagination="true" pagination-clickable="true"
+                                                  space-between="30"
+                                                  slides-per-view="5">
+                                    <th:block th:each="moreitem : ${response.moreTourItems}">
+                                        <swiper-slide>
+                                            <div class="card">
+                                                <a th:href="@{/info/content/{contentid}(contentid=${moreitem.contentid})}">
+                                                    <img th:if="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}"
+                                                         src="../../assets/img/no_img.jpg">
+                                                    <img th:unless="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}"
+                                                         th:src="${moreitem.firstimage}"/>
+                                                    <div class="card-body">
+                                                        <p class="card-text" th:text="${moreitem.title}"></p>
+                                                        <p class="card-text"
+                                                           th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'
+                                                           th:text="|${moreitem.distance} km|"></p>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </swiper-slide>
+                                    </th:block>
+                                </swiper-container>
+                            </div>
+                            <div th:unless="${response.moreTourItems.size() > 0}">
+                                <p>반경 3km 내에 조회된 관광지가 없습니다.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <!--소개-->
-                    <div class="col-md-12">
-                        <h4 class="sub-title"> 소개 </h4>
-                        <div id="overview">
-                            <p th:if='${response.overview.equals("-")}'>관련 소개글이 없습니다.</p>
-                            <p th:unless='${response.overview.equals("-")}' th:utext="${response.overview}"></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h4 class="sub-title">상세정보</h4>
-                        <table id="detailInfo" border="1" width="100%">
-                            <th:block th:switch="${response.tourItemResponse.contenttypeid}">
-                                <th:block th:case="12">
-                                    <tr>
-                                       <th>주소</th>
-                                       <td th:text="${response.tourItemResponse.address}"></td>
-                                       <th>관광안내원</th>
-                                       <td th:utext='${response.detailInfo.get("관광안내원")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>이용문의</th>
-                                        <td th:utext='${response.detailInfo.get("이용문의")}'></td>
-                                        <th>입장제한연령</th>
-                                        <td th:utext='${response.detailInfo.get("입장제한연령")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>이용시간</th>
-                                        <td th:utext='${response.detailInfo.get("이용시간")}'></td>
-                                        <th>수용인원</th>
-                                        <td th:utext='${response.detailInfo.get("수용인원")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>휴무일</th>
-                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
-                                        <th>주차여부</th>
-                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="14">
-                                    <tr>
-                                        <th>주소</th>
-                                        <td th:text="${response.tourItemResponse.address}"></td>
-                                        <th>이용요금</th>
-                                        <td th:utext='${response.detailInfo.get("이용요금")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>이용문의</th>
-                                        <td th:utext='${response.detailInfo.get("이용문의")}'></td>
-                                        <th>관람소요시간</th>
-                                        <td th:utext='${response.detailInfo.get("관람소요시간")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>이용시간</th>
-                                        <td th:utext='${response.detailInfo.get("이용시간")}'></td>
-                                        <th>수용인원</th>
-                                        <td th:utext='${response.detailInfo.get("수용인원")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>휴무일</th>
-                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
-                                        <th>주차여부</th>
-                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="15">
-                                    <tr>
-                                        <th>행사기간</th>
-                                        <td th:utext='${response.detailInfo.get("행사기간")}'></td>
-                                        <th>공연시간</th>
-                                        <td th:utext='${response.detailInfo.get("공연시간")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>장소</th>
-                                        <td th:utext='${response.detailInfo.get("장소")}'></td>
-                                        <th>이용요금</th>
-                                        <td th:utext='${response.detailInfo.get("이용요금")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>주관</th>
-                                        <td th:utext='${response.detailInfo.get("주관")}'></td>
-                                        <th>입장제한연령</th>
-                                        <td th:utext='${response.detailInfo.get("입장제한연령")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>주최</th>
-                                        <td th:utext='${response.detailInfo.get("주최")}'></td>
-                                        <th>예매</th>
-                                        <td th:utext='${response.detailInfo.get("예매")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>이용문의</th>
-                                        <td th:utext='${response.detailInfo.get("이용문의")}'></td>
-                                        <th>위치안내</th>
-                                        <td th:utext='${response.detailInfo.get("위치안내")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="25">
-                                    <tr>
-                                        <th>코스 테마</th>
-                                        <td th:utext='${response.tourItemResponse.fullCategoryName}'></td>
-                                        <th>코스 총 거리</th>
-                                        <td th:utext='${response.detailInfo.get("코스 총 거리")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>주소</th>
-                                        <td th:text='${response.tourItemResponse.address}'></td>
-                                        <th>소요시간</th>
-                                        <td th:utext='${response.detailInfo.get("소요시간")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>문의 및 안내</th>
-                                        <td colspan="3" th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="28">
-                                    <tr>
-                                        <th>주소</th>
-                                        <td th:text="${response.tourItemResponse.address}"></td>
-                                        <th>휴무일</th>
-                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>문의 및 안내</th>
-                                        <td th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
-                                        <th>주차여부</th>
-                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>이용요금</th>
-                                        <td th:utext='${response.detailInfo.get("이용요금")}'></td>
-                                        <th>이용시간</th>
-                                        <td th:utext='${response.detailInfo.get("이용시간")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="32">
-                                    <tr>
-                                        <th>주소</th>
-                                        <td th:text="${response.tourItemResponse.address}"></td>
-                                        <th>객실유형</th>
-                                        <td th:utext='${response.detailInfo.get("객실유형")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>문의 및 안내</th>
-                                        <td th:utext='${response.detailInfo.get("문의 및 안내")}'></td>
-                                        <th>체크인</th>
-                                        <td th:utext='${response.detailInfo.get("체크인")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>예약안내</th>
-                                        <td th:utext='${response.detailInfo.get("예약안내")}'></td>
-                                        <th>체크아웃</th>
-                                        <td th:utext='${response.detailInfo.get("체크아웃")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>부대시설</th>
-                                        <td th:utext='${response.detailInfo.get("부대시설")}'></td>
-                                        <th>주차여부</th>
-                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="38">
-                                    <tr>
-                                        <th>판매품목</th>
-                                        <td th:utext='${response.detailInfo.get("판매품목")}'></td>
-                                        <th>운영시간</th>
-                                        <td th:utext='${response.detailInfo.get("운영시간")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>주소</th>
-                                        <td th:text="${response.tourItemResponse.address}"></td>
-                                        <th>휴무일</th>
-                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>전화번호</th>
-                                        <td th:utext='${response.detailInfo.get("전화번호")}'></td>
-                                        <th>주차여부</th>
-                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                                <th:block th:case="39">
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th></th>
-                                        <td th:utext='${response.detailInfo.get("")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>분류</th>
-                                        <td th:utext='${response.tourItemResponse.fullCategoryName}'></td>
-                                        <th>포장</th>
-                                        <td th:utext='${response.detailInfo.get("포장")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>대표메뉴</th>
-                                        <td th:utext='${response.detailInfo.get("대표메뉴")}'></td>
-                                        <th>영업시간</th>
-                                        <td th:utext='${response.detailInfo.get("영업시간")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>메뉴</th>
-                                        <td th:utext='${response.detailInfo.get("메뉴")}'></td>
-                                        <th>휴무일</th>
-                                        <td th:utext='${response.detailInfo.get("휴무일")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>주소</th>
-                                        <td th:text="${response.tourItemResponse.address}"></td>
-                                        <th>카드사용여부</th>
-                                        <td th:utext='${response.detailInfo.get("카드사용여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>전화번호</th>
-                                        <td th:utext='${response.detailInfo.get("전화번호")}'></td>
-                                        <th>주차여부</th>
-                                        <td th:utext='${response.detailInfo.get("주차여부")}'></td>
-                                    </tr>
-                                    <tr>
-                                        <th>홈페이지</th>
-                                        <td colspan="3" th:text='${response.detailInfo.get("홈페이지")}'></td>
-                                    </tr>
-                                </th:block>
-                            </th:block>
-                        </table>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h4 th:if='${response.tourItemResponse.contenttypeid.equals("25")}'>코스 안내</h4>
-                        <h4 th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>동일 카테고리의 주변 관광지 추천</h4>
-                        <div th:if="${response.moreTourItems.size() > 0}" id="sub-items">
-                            <swiper-container class="mySwiper" pagination="true" pagination-clickable="true" space-between="30"
-                                              slides-per-view="5">
-                                <th:block th:each="moreitem : ${response.moreTourItems}">
-                                    <swiper-slide>
-                                        <div class="card">
-                                            <a th:href="@{/info/content/{contentid}(contentid=${moreitem.contentid})}">
-                                                <img th:if="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
-                                                <img th:unless="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}" th:src="${moreitem.firstimage}"/>
-                                                <div class="card-body">
-                                                    <p class="card-text" th:text="${moreitem.title}"></p>
-                                                    <p class="card-text" th:unless='${response.tourItemResponse.contenttypeid.equals("25")}' th:text="|${moreitem.distance} km|"></p>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </swiper-slide>
-                                </th:block>
-                            </swiper-container>
-                        </div>
-                        <div th:unless="${response.moreTourItems.size() > 0}">
-                            <p>반경 3km 내에 조회된 관광지가 없습니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             </div>
         </div>
     </div>
 </div>
+</div>
+
 <!--footer-->
 <th:block th:replace="~{fragments/footer}"></th:block>
 
