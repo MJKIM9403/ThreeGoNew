@@ -6,6 +6,7 @@ import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.Sigungu;
 import com.io.threegonew.dto.AddPlanRequest;
 import com.io.threegonew.dto.AddPlannerRequest;
+import com.io.threegonew.dto.MyPlannerResponse;
 import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.service.PlannerService;
 import com.io.threegonew.service.TeamService;
@@ -47,7 +48,7 @@ public class PlannerController {
         System.out.println(userId);
 
         // 사용자의 아이디와 동일한 Planner가 있는지 확인
-        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+        List<PlannerResponse> plannerList = plannerService.findPlannerByUser(userId);
 
         // 내가 작성한 plannerList
         if(userId != null) {

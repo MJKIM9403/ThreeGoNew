@@ -5,10 +5,6 @@
 ALTER DATABASE test DEFAULT CHARACTER SET='utf8' COLLATE='utf8_general_ci';
 
 
--- 이미 플래너, 플랜, 팀 테이블을 추가했다면 P_DEL 컬럼을 추가해주세요 04/11--
-alter table planner add p_del BOOLEAN default '0' not null;
-alter table plan add p_del BOOLEAN default '0' not null;
-alter table team add t_del BOOLEAN default '0' not null;
 
 -- 이미 comment테이블을 추가한 경우 기존 group, order 컬럼 변경 --
 ALTER TABLE test.comment CHANGE `group` cmt_group int(11) NOT NULL;
@@ -299,6 +295,13 @@ CREATE TABLE test.bookmark (
     ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb3
 COLLATE=utf8mb3_general_ci;
+
 -- 북마크 외래키 추가
 ALTER TABLE test.bookmark ADD CONSTRAINT bookmarks_FK FOREIGN KEY (content_id) REFERENCES test.touritem(contentid);
 ALTER TABLE test.bookmark ADD CONSTRAINT bookmarks_FK_1 FOREIGN KEY (u_id) REFERENCES test.users(U_ID);
+
+
+-- 이미 플래너, 플랜, 팀 테이블을 추가했다면 P_DEL 컬럼을 추가해주세요 04/11--
+alter table planner add p_del BOOLEAN default '0' not null;
+alter table plan add p_del BOOLEAN default '0' not null;
+alter table team add t_del BOOLEAN default '0' not null;

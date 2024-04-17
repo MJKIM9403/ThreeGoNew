@@ -18,4 +18,5 @@ public class PlannerResponse {
     private String plannerName;
     private LocalDate startDate;
     private LocalDate endDate;
+    private boolean plannerDelete;
 }

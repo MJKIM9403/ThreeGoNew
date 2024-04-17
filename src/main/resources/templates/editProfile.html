@@ -176,7 +176,7 @@
                                     </div>
                                 </div>
                                 <textarea id="about" rows="4" class="form-control form-control-sm" maxlength="50"
-                                          th:placeholder="${loginUser.about} == null ? '아직 내용이 없습니다.' : ${loginUser.about}"></textarea>
+                                          th:placeholder="${loginUser.about} == null ? '아직 내용이 없습니다.' : ${loginUser.about}" th:text="${loginUser.about}"></textarea>
                             </div>
                         </div>
 
