@@ -20,7 +20,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
     @Query("UPDATE Review r SET r.viewCount = r.viewCount + 1 WHERE r.reviewId = :reviewId")
     int increaseViewCount(@Param("reviewId") Long reviewId);
 
-    @Query(value = "SELECT r.* " +
+    @Query(value = "SELECT DISTINCT r.* " +
             "FROM review r " +
             "LEFT JOIN likes l " +
             "ON r.review_id = l.review_id " +
@@ -30,17 +30,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
             "SUM(CASE WHEN l.reg_date <= :fromDate THEN 1 ELSE 0 END) DESC, " +
             "r.review_id DESC ",
-            countQuery = "SELECT count(r.review_id) FROM review r WHERE r.reg_date <= :fromDate",
+            countQuery = "SELECT count(DISTINCT r.review_id) FROM review r WHERE r.reg_date <= :fromDate",
             nativeQuery = true)
     Page<Review> findRecommendReviews(Pageable pageable, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
 
-    @Query(value = "SELECT r.* " +
+    @Query(value = "SELECT DISTINCT r.* " +
                 "FROM review r " +
                 "INNER JOIN follows f " +
                 "ON r.user_id = f.from_user_id " +
                 "WHERE (f.to_user_id = :userId OR r.user_id = :userId) AND r.reg_date <= :fromDate " +
                 "ORDER BY r.review_id DESC",
-            countQuery = "SELECT count(r.review_id) " +
+            countQuery = "SELECT count(DISTINCT r.review_id) " +
                     "FROM review r " +
                     "INNER JOIN follows f " +
                     "ON r.user_id = f.from_user_id " +
@@ -48,7 +48,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             nativeQuery = true)
     Page<Review> findFollowReview(Pageable pageable, @Param("userId")String userId, @Param("fromDate")LocalDateTime fromDate);
 
-    @Query(value = "SELECT r.* " +
+    @Query(value = "SELECT DISTINCT r.* " +
             "FROM review r " +
             "LEFT JOIN likes l " +
             "ON r.review_id = l.review_id " +
@@ -59,19 +59,19 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
             "SUM(CASE WHEN l.reg_date <= :fromDate THEN 1 ELSE 0 END) DESC, " +
             "r.review_id DESC ",
-            countQuery = "SELECT count(r.review_id) " +
+            countQuery = "SELECT count(DISTINCT r.review_id) " +
                     "FROM review r " +
                     "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
                     "AND r.reg_date <= :fromDate ",
             nativeQuery = true)
     Page<Review> findRecommendReviewsByKeyword(Pageable pageable,@Param("keyword")String keyword, @Param("toDate")LocalDateTime toDate, @Param("fromDate")LocalDateTime fromDate);
 
-    @Query(value = "SELECT r.* " +
+    @Query(value = "SELECT DISTINCT r.* " +
             "FROM review r " +
             "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
             "AND r.reg_date <= :fromDate " +
             "ORDER BY r.review_id DESC ",
-           countQuery = "SELECT count(r.review_id) " +
+           countQuery = "SELECT count(DISTINCT r.review_id) " +
                    "FROM review r " +
                    "WHERE (r.touritem_title LIKE :keyword OR r.review_content LIKE :keyword) " +
                    "AND r.reg_date <= :fromDate ",
