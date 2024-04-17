@@ -827,7 +827,8 @@
         // 각 탭 요소들을 선택
         var tabs = document.querySelectorAll('.dayButton');
         // 첫 번째 탭을 활성화하고 해당 내용을 보이도록 설정
-        tabs[0].classList.add('active');
+        tabs[0].classList.add('btn-primary');
+        tabs[0].classList.remove('btn-secondary');
         index = 0;
         // 처음으로 첫 번째 날짜의 계획을 로드
         addPrintDayList();
@@ -840,10 +841,12 @@
 
                 // 모든 탭에서 'active' 클래스 제거
                 tabs.forEach(function (otherTab) {
-                    otherTab.classList.remove('active');
+                    otherTab.classList.remove('btn-primary');
+                    otherTab.classList.add('btn-secondary');
                 });
                 // 현재 클릭된 탭에만 'active' 클래스 추가
-                tab.classList.add('active');
+                tab.classList.add('btn-primary');
+                tab.classList.remove('btn-secondary');
 
 
                 // 다른 탭으로 이동할 경우

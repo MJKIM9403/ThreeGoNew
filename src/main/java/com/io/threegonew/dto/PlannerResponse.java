@@ -19,4 +19,5 @@ public class PlannerResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean plannerDelete;
+    private int isAfter;
 }

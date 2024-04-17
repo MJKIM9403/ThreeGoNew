@@ -72,6 +72,7 @@ public class PlannerService {
                 .startDate(planner.getStartDate())
                 .endDate(planner.getEndDate())
                 .plannerDelete(planner.getPlannerDelete())
+                .isAfter(planner.getEndDate().compareTo(LocalDate.now()))
                 .build();
     }
 

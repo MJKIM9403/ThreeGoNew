@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,8 @@ public class PlannerController {
 
     @GetMapping
     public String showAreaCode(Model model) {
-
+        LocalDate today = LocalDate.now();
+        model.addAttribute(today);
 
         // 현재 사용자의 인증 정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
