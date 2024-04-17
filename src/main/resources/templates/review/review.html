@@ -751,8 +751,6 @@
             formData.append("photoList", image);
         }
 
-        console.log(formData)
-
         $.ajax({
             url: '/api/review/create',
             type: 'POST',
@@ -859,7 +857,8 @@
     let tabType = "RECOMMEND"; // 화면에 보여줄 탭
     let back = false;
 
-    let fromDate = new Date().toISOString();
+    const time_offset = new Date().getTimezoneOffset() * 60000;
+    let fromDate = new Date(Date.now() - time_offset).toISOString();
 
     $(document).ready(function (){
         /*무한스크롤 & 페이지 로드 설정*/
@@ -943,7 +942,7 @@
         back = false;
         simpleViewSwiper = [];
 
-        fromDate = new Date().toISOString();
+        fromDate = new Date(Date.now() - time_offset).toISOString()
 
         gallery.html("")
         // 옵저버 타겟 관측 시작
