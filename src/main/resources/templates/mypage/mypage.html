@@ -687,7 +687,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="followersModalLabel">팔로워리스트</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -708,7 +708,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="followingModalLabel">팔로잉리스트</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -2553,11 +2553,15 @@
                                     <div class="list-group">
                                         <div class="list-group-item d-flex flex-wrap">
                                             <div class="col d-flex">
-                                                <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
-                                                <div class="d-flex flex-column flex-start gap-2">
-                                                    <strong>${data.toUser}</strong>
-                                                    <span>${data.listName}</span>
-                                                </div>
+                                                <a href="/mypage/${data.toUser}">
+                                                    <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
+                                                </a>
+                                                <a href="/mypage/${data.toUser}">
+                                                    <div class="d-flex flex-column flex-start gap-2">
+                                                        <strong>${data.toUser}</strong>
+                                                        <span>${data.listName}</span>
+                                                    </div>
+                                                </a>
                                             </div>
                                             <div class="col-md-auto pe-3 align-self-center">
                                                 ${isFollowedText}
@@ -2613,11 +2617,15 @@
                         <div class="list-group">
                             <div class="list-group-item d-flex flex-wrap">
                                 <div class="col d-flex">
-                                    <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center">
+                                    <a href="/mypage/${data.toUser}">
+                                        <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center">
+                                    </a>
+                                    <a href="/mypage/${data.toUser}">
                                         <div class="d-flex flex-column flex-start gap-2">
                                             <strong>${data.fromUser}</strong>
                                             <span>${data.listName}</span>
                                         </div>
+                                    </a>
                                 </div>
                                 <div class="col-md-auto pe-3 align-self-center">
                                     ${isFollowedText}

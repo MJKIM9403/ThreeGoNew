@@ -126,6 +126,10 @@
             font-size: 13px;
         }
 
+        .btn_route, .btn_optimize {
+            padding: 5px 10px;
+        }
+
         /**datepicker**/
 
         input.days {
@@ -146,19 +150,6 @@
             box-shadow: none !important;
             border: 1px solid #512DA8;
             outline-width: 0;
-        }
-
-        ::placeholder {
-            color: #BDBDBD;
-            opacity: 1;
-        }
-
-        :-ms-input-placeholder {
-            color: #BDBDBD;
-        }
-
-        ::-ms-input-placeholder {
-            color: #BDBDBD;
         }
 
         button:focus {
@@ -279,9 +270,9 @@
         $('.name').html(plannerName);
         var daysTemplate = `
                             <div class="start-end">${startDate} ~ ${endDate}</div>
-                            <div class="days">${daysBetween}일</div>
+                            <div class="days">(${daysBetween}일)</div>
                         `
-        $('.planner-days').append(daysTemplate);
+        $('.planner-days').html(daysTemplate);
     }
 
 
@@ -810,14 +801,14 @@
                 map.setZoom(10); // 마커가 하나 뿐이면 그것만 줌
             } else {
                 var PTbounds = new Tmapv2.LatLngBounds();
-                for (var dayIndex = 0; dayIndex < viaMarkers.length; dayIndex++) {
-                    if (viaMarkers[dayIndex].length > 0) {
-                        for (var i = 0; i < viaMarkers[dayIndex].length; i++) {
-                            var marker = viaMarkers[dayIndex][i];
+
+                    if (viaMarkers[index].length > 0) {
+                        for (var i = 0; i < viaMarkers[index].length; i++) {
+                            var marker = viaMarkers[index][i];
                             PTbounds.extend(marker.getPosition());
                         }
                     }
-                }
+
                 var paddingOptions = {
                     top: 40, // 상단 패딩
                     right: 40, // 우측 패딩
@@ -1164,7 +1155,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">일정을 공유할 친구를 선택해주세요.</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-sm close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -1190,7 +1181,7 @@
 <!--                    <i class="bi bi-search"></i>-->
                     <!--유저의 검색결과가 보일 창-->
                     <div style="height: 60px;">
-                        <div class="alert alert-success" id="searchResult" style="display: none;">
+                        <div class="alert alert-success d-flex align-items-center" id="searchResult" style="display: none;">
                             <span id="typedText"></span>
                         </div>
                     </div>
@@ -1211,12 +1202,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="nameEditModalLabel">여행 일정의 제목을 수정하세요.</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button class="btn btn-sm close" type="button" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <input id="plannerName" name="plannerName" type="text" class="form-control" th:placeholder="${plannerName}">
+                <input id="plannerName" name="plannerName" type="text" class="form-control" th:placeholder="${plannerName}" th:value="${plannerName}">
             </div>
             <div class="modal-footer">
                 <button type="button" id="name-edit-confirm" class="btn btn-primary">수정</button>
@@ -1234,7 +1225,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="daysEditModalLabel">여행 일정의 날짜를 수정하세요.</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-sm close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -1242,7 +1233,7 @@
                 <div class="flex-sm-row flex-column d-flex justify-content-center">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-daterange">
-                            <input id="days" name="days" type="date" class="form-control" th:placeholder="${startDateString} + ' ~ ' + ${endDateString}">
+                            <input id="days" name="days" type="date" class="form-control" th:placeholder="${startDateString} + ' ~ ' + ${endDateString}" th:value="${startDateString} + ' ~ ' + ${endDateString}">
                         </div>
                     </div>
                 </div>
@@ -1280,30 +1271,30 @@
 
         <!--플래너 이름과 플래너 날짜 표시-->
         <div class="info-header">
-            <div class="planner-name">
-                <h4 class="name"></h4>
-                <button class="edit-name-btn">
+            <div class="planner-name d-flex flex-row align-items-center">
+                <h4 class="name mb-0"></h4>
+                <button class="btn btn-sm edit-name-btn ms-3 btn-outline-secondary">
                     <i class="bi bi-pencil-square"></i>
                 </button>
             </div>
 
-            <div class="planner-date">
-                <div class="planner-days">
+            <div class="planner-date d-flex flex-row align-items-center">
+                <div class="planner-days d-flex flex-row gap-3">
                     <div class="start-end"></div>
                     <div class="days"></div>
                 </div>
-                <button class="edit-days-btn">
+                <button class="btn btn-sm edit-days-btn ms-3 btn-outline-secondary">
                     <i class="bi bi-pencil-square"></i>
                 </button>
             </div>
         </div>
 
         <!--지도-->
-        <div id="map" class="d-flex flex-column align-items-stretch default">
+        <div id="map" class="d-flex flex-column align-items-stretch default pt-4">
             <div class="map-result position-absolute">
-                <p class="result"></p>
                 <button class="btn btn-primary btn_route">경로 확인</button>
                 <button class="btn btn-primary btn_optimize">동선 추천</button>
+                <p class="result"></p>
             </div>
             <div id="map_div">
             </div>
@@ -1315,7 +1306,7 @@
             <div id="list">
                 <div id="day-btns">
                     <th:block th:each="i : ${#numbers.sequence(1, daysBetween)}">
-                        <button class="btn btn-dark dayButton active" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
+                        <button class="btn btn-secondary dayButton" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
                     </th:block>
                 </div>
 
