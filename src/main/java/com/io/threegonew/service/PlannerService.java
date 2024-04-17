@@ -101,7 +101,7 @@ public class PlannerService {
     public List<PlannerResponse> getCreatedOrSharedPlanners(String userId) {
         List<PlannerResponse> plannerResponseList =
                 plannerRepository.findByMyPlanners(userId).stream()
-                        .map(planner -> modelMapper.map(planner, PlannerResponse.class))
+                        .map(this::plannerMapper)
                         .collect(Collectors.toList());
         return plannerResponseList;
     }
