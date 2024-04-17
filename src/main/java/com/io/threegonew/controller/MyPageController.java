@@ -60,7 +60,6 @@ public class MyPageController {
         User fromUser = userService.findUser(userId);
 
         String myId = "";
-        boolean isFollowed = false;
         // 로그인 중인 유저
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(principal.equals("anonymousUser")) {
@@ -71,7 +70,9 @@ public class MyPageController {
             User toUser = userService.findUser(myId);
 
             boolean isFollowing = followService.isFollowing(toUser, fromUser);
+            boolean isFollowed = followService.isFollowing(fromUser, toUser);
             model.addAttribute("isFollowing", isFollowing);
+            model.addAttribute("isFollowed", isFollowed);
         }
 
         return "mypage/mypage";

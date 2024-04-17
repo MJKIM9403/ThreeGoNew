@@ -9,9 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 public class FollowDTO {
     private Long id;
-    private UserInfoResponse toUser;
-    private UserInfoResponse fromUser;
-    private int followState; // 내가 팔로우 중인지
-    private int youFollowMeState; // 나를 팔로우 중인지
-    private int followCount; // 팔로우 중인 숫자
+    private String toUser;
+    private String fromUser;
+    private String listName;
+    private String listSfile;
+    private int followingState; // 내가 팔로우 중인지
+    private int sameUserState; // 같은 유저인지
+    private int followedState; // 그 유저가 다를 팔로우 중인지
+
 }

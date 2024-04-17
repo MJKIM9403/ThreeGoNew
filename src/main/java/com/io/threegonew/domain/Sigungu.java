@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "t_sigungu")
+@EqualsAndHashCode
 @IdClass(SigunguPk.class)
 public class Sigungu {
     @Id
@@ -20,4 +21,12 @@ public class Sigungu {
     private Integer areaCode;
     @Column(name = "sigungu_name")
     private String sigunguName;
+
+    public void updateEntityFromApiResponse(Sigungu newSigungu){
+        if(this.equals(newSigungu)){
+            this.sigunguCode = newSigungu.sigunguCode;
+            this.areaCode = newSigungu.areaCode;
+            this.sigunguName = newSigungu.sigunguName;
+        }
+    }
 }

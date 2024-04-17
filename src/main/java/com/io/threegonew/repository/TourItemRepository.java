@@ -15,6 +15,8 @@ import java.util.Optional;
 
 public interface TourItemRepository extends JpaRepository<TourItem, String>, JpaSpecificationExecutor<TourItem>, TourItemRepositoryCustom {
 
+    boolean existsById(String contentid);
+
     // 키워드로 검색 추가
     List<TourItem> findByTitleContaining(String keyword);
     // 키워드로 검색 추가 끝

@@ -223,6 +223,10 @@
         height: 24px;
     }
 
+    .card-header {
+        background-color: transparent;
+    }
+
     .simple-view-swiper{
         height: 480px !important;
         overflow: hidden;
@@ -669,7 +673,7 @@
                 pagination: {
                     el: `.swiper-pagination${idx}`,
                 },
-                mousewheel: true,
+                mousewheel: false,
                 keyboard: false,
             });
             simpleViewSwiper.push(swiper);
@@ -701,7 +705,7 @@
         let reviewId = $(this).data('review-id');
 
         if(loginUserId === 'anonymousUser'){
-            alert('좋아요는 로그인 후 사용하실 수 있습니다.');
+            alert('관심리뷰는 로그인 후 등록하실 수 있습니다.');
             location.href = '../login'
         }else {
             $.ajax({
@@ -764,6 +768,8 @@
 
         let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
+        $('#comment-wrap').html("");
+
         let promise = new Promise((resolve) => {
             $.ajax({
                 url : '/api/review/view_count',
@@ -786,7 +792,7 @@
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
             loadDetailReview();
-            showComments();
+            showComments(0);
             showAllCommentsCount();
             postNewComment();
             parentId = null;
@@ -916,16 +922,17 @@
     }
 
     // 댓글 리스트 조회
-    function showComments() {
+    function showComments(page) {
         $.ajax({
             url : '/api/comments',
             type : 'GET',
             data : {
-                reviewId: selectedReviewId
+                reviewId: selectedReviewId,
+                page: page
             },
             success : function (result){
+                $('.next-comment-btn').remove();
                 let commentList = result.dtoList;
-                $('#comment-wrap').html("");
                 if(commentList.length > 0){
                     $.each(commentList, function (index, comment){
                         if(comment.cmtDel){
@@ -982,6 +989,10 @@
                             $('#comment-wrap').append(tempHtml);
                         }
                     })
+                    if(result.page < result.last){
+                        let btn = `<div class="next-comment-btn" onclick="showComments(${Number(page)+1})">- 댓글 더 보기 -</div>`
+                        $('#comment-wrap').append(btn);
+                    }
                 }else {
                     let tempHtml =
                         '<div class="no-comment-msg d-flex mb-2">아직 등록된 리뷰가 없습니다.</div>';
@@ -1335,7 +1346,8 @@
         let lastCommentId = $('#comment-wrap .comment-info:first .comment-text').data('comment-id');
         console.log(lastCommentId);
         if(lastCommentId === undefined){
-            showComments();
+            $('#comment-wrap').html("");
+            showComments(0);
         }else {
             $.ajax({
                 url : '/api/comments/recent',

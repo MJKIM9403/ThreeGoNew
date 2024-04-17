@@ -3,7 +3,9 @@ package com.io.threegonew.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.io.threegonew.Key;
 import com.io.threegonew.domain.*;
+import com.io.threegonew.domain.pk.SigunguPk;
 import com.io.threegonew.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -73,6 +75,7 @@ public class InsertData {
     }
 
     //TOURITEM 데이터 추가
+    @Transactional
     public void insertMainTable(String table){
         String searchType = "";
         Map<String, Object> params = new HashMap<>();
@@ -111,13 +114,23 @@ public class InsertData {
                 String itemStr = itemObj.toString();
                 if(table.equals("TourItem")){
                     TourItem tourItem = objectMapper.readValue(itemStr, TourItem.class);
-                    tourItemRepository.save(tourItem);
+                    if(tourItemRepository.existsById(tourItem.getContentid())){
+                        TourItem existingTourItem = tourItemRepository.findById(tourItem.getContentid()).get();
+                        existingTourItem.updateEntityFromApiResponse(tourItem);
+                    }else {
+                        tourItemRepository.save(tourItem);
+                    }
                 }else if(table.equals("Area")){
                     Area area = Area.builder()
                             .areaCode(Integer.parseInt(itemJson.get("code").toString()))
                             .areaName(itemJson.get("name").toString())
                             .build();
-                    areaRepository.save(area);
+                    if(areaRepository.existsById(area.getAreaCode())){
+                        Area existingArea = areaRepository.findById(area.getAreaCode()).get();
+                        existingArea.updateEntityFromApiResponse(area);
+                    }else {
+                        areaRepository.save(area);
+                    }
                     params.put("Area", area.getAreaCode());
                     insertSigungu(makeURI(table,params), params);
                 }else if(table.equals("Category")){
@@ -125,7 +138,12 @@ public class InsertData {
                                     .cat1(itemJson.get("code").toString())
                                     .cat1Name(itemJson.get("name").toString())
                                     .build();
-                    cat1Repository.save(cat1);
+                    if(cat1Repository.existsById(cat1.getCat1())){
+                        Cat1 existingCat1 = cat1Repository.findById(cat1.getCat1()).get();
+                        existingCat1.updateEntityFromApiResponse(cat1);
+                    }else {
+                        cat1Repository.save(cat1);
+                    }
                     params.put("Cat1",cat1);
                     insertCat2(makeURI(table,params), params);
                 }
@@ -135,6 +153,7 @@ public class InsertData {
         }
     }
 
+    @Transactional
     public void insertSigungu(String url, Map<String,Object> params){
         String result = "";
         try {
@@ -159,14 +178,24 @@ public class InsertData {
                                 .areaCode(Integer.parseInt(params.get("Area").toString()))
                                 .sigunguName(itemJson.get("name").toString())
                                 .build();
+                SigunguPk pk = SigunguPk.builder()
+                                .sigunguCode(sigungu.getSigunguCode())
+                                .areaCode(sigungu.getAreaCode())
+                                .build();
 
-                sigunguRepository.save(sigungu);
+                if(sigunguRepository.existsById(pk)){
+                    Sigungu existingSigungu = sigunguRepository.findById(pk).get();
+                    existingSigungu.updateEntityFromApiResponse(sigungu);
+                }else {
+                    sigunguRepository.save(sigungu);
+                }
             }
         }catch(Exception e) {
             e.printStackTrace();
         }
     }
 
+    @Transactional
     public void insertCat2(String url, Map<String, Object> params){
         System.out.println(url);
         String result = "";
@@ -192,8 +221,12 @@ public class InsertData {
                                 .cat2Name(itemJson.get("name").toString())
                                 .cat1((Cat1) params.get("Cat1"))
                                 .build();
-                cat2Repository.save(cat2);
-
+                if(cat2Repository.existsById(cat2.getCat2())){
+                    Cat2 existingCat2 = cat2Repository.findById(cat2.getCat2()).get();
+                    existingCat2.updateEntityFromApiResponse(cat2);
+                }else {
+                    cat2Repository.save(cat2);
+                }
                 params.put("Cat2",cat2);
                 insertCat3(makeURI("Category",params), params);
             }
@@ -202,6 +235,7 @@ public class InsertData {
         }
     }
 
+    @Transactional
     public void insertCat3(String url, Map<String, Object> params){
         String result = "";
         System.out.println(url);
@@ -228,7 +262,12 @@ public class InsertData {
                         .cat1((Cat1) params.get("Cat1"))
                         .cat2((Cat2) params.get("Cat2"))
                         .build();
-                cat3Repository.save(cat3);
+                if(cat3Repository.existsById(cat3.getCat3())){
+                    Cat3 existingCat3 = cat3Repository.findById(cat3.getCat3()).get();
+                    existingCat3.updateEntityFromApiResponse(cat3);
+                }else {
+                    cat3Repository.save(cat3);
+                }
             }
         }catch(Exception e) {
             e.printStackTrace();

@@ -355,8 +355,11 @@
     }
 
     /*팔로우*/
-    .follow-state {
+    .profile-user-settings .follow-state {
         display: inline-block;
+    }
+    .modal-body .follow-btn, .modal-body .unfollow-btn {
+        width: 100%;
     }
 </style>
 <div class="d-flex flex-nowrap">
@@ -378,6 +381,10 @@
                 <div class="follow-state" th:unless="${findUser.id == loginUser.id}">
                     <button class="btn btn-secondary unfollow-btn" th:if="${isFollowing}" th:data-user-id="${findUser.id}">언팔로우</button>
                     <button class="btn btn-primary follow-btn" th:unless="${isFollowing}" th:data-user-id="${findUser.id}">팔로우</button>
+                </div>
+
+                <div th:unless="${loginUser.id == 'anonymousUser'}">
+                    <span th:if="${isFollowed}">나를 팔로우합니다.</span>
                 </div>
             </div>
 
@@ -726,7 +733,7 @@
         let reviewId = $(this).data('review-id');
 
         if(loginUserId === 'anonymousUser'){
-            alert('좋아요는 로그인 후 사용하실 수 있습니다.');
+            alert('관심리뷰는 로그인 후 등록하실 수 있습니다.');
             location.href = '../login'
         }else {
             $.ajax({
@@ -789,6 +796,8 @@
 
         let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
+        $('#comment-wrap').html("");
+
         let promise = new Promise((resolve) => {
             $.ajax({
                 url : '/api/review/view_count',
@@ -811,7 +820,7 @@
                 $('#login-user-profile-img').attr('src','/api/image/profile/' + loginUserProfile);
             }
             loadDetailReview();
-            showComments();
+            showComments(0);
             showAllCommentsCount();
             postNewComment();
             parentId = null;
@@ -941,16 +950,17 @@
     }
 
     // 댓글 리스트 조회
-    function showComments() {
+    function showComments(page) {
         $.ajax({
             url : '/api/comments',
             type : 'GET',
             data : {
-                reviewId: selectedReviewId
+                reviewId: selectedReviewId,
+                page: page
             },
             success : function (result){
+                $('.next-comment-btn').remove();
                 let commentList = result.dtoList;
-                $('#comment-wrap').html("");
                 if(commentList.length > 0){
                     $.each(commentList, function (index, comment){
                         if(comment.cmtDel){
@@ -1007,6 +1017,10 @@
                             $('#comment-wrap').append(tempHtml);
                         }
                     })
+                    if(result.page < result.last){
+                        let btn = `<div class="next-comment-btn" onclick="showComments(${Number(page)+1})">- 댓글 더 보기 -</div>`
+                        $('#comment-wrap').append(btn);
+                    }
                 }else {
                     let tempHtml =
                         '<div class="no-comment-msg d-flex mb-2">아직 등록된 리뷰가 없습니다.</div>';
@@ -1107,7 +1121,7 @@
                 }
 
                 let tempHtml =
-                    '<div class="comment-info">' +
+                    '<div class="comment-info temp-reply">' +
                     '<div class="d-flex">' +
                     '<div class="rounded-circle icon-img comment-profile">' +
                     `<img src="${profileImg}" alt="...">` +
@@ -1219,10 +1233,11 @@
 
     // 댓글 수정
     $(document).on('click','.edit-comment-btn', function (){
-        let commentText = $(this).closest('.comment-info').find('.comment-text');
+        let commentText = $(this).closest('.comment-info').find('.comment-text').first();
         let commentId = $(commentText).attr('data-comment-id');
         let content = $(this).prev('.edit-comment-content').html();
-        content = content.replace(/<br>/g,'\r\n');
+        content = content.replace(/<div>/g,'\r\n');
+        content = content.replace(/<\/div>/g,'');
 
         let commentEditor = $(this).closest('.comment-editor');
         $.ajax({
@@ -1349,7 +1364,7 @@
             $(this).text(text);
             $(info).children('.reply-wrap').hide();
             $(info).children('.next-reply-btn').hide();
-            $(info).children('.reply-wrap').children('.temp-reply').remove();
+            info.find('.temp-reply').remove();
         }
     })
 
@@ -1359,7 +1374,8 @@
         let lastCommentId = $('#comment-wrap .comment-info:first .comment-text').data('comment-id');
         console.log(lastCommentId);
         if(lastCommentId === undefined){
-            showComments();
+            $('#comment-wrap').html("");
+            showComments(0);
         }else {
             $.ajax({
                 url : '/api/comments/recent',
@@ -1488,7 +1504,7 @@
                     savePage();
                     $('#viewer').modal('toggle');
                     changeTab(tabType);
-                    setScrollByMyPageInfo();
+                    setScrollByFeedInfo();
                 },
                 error : function (){
                     alert('삭제에 실패했습니다.')
@@ -1532,7 +1548,6 @@
         $('#contents-wrap').css('max-height','540px')
     })
 </script>
-
 
 <!-- 리뷰북 작성 관련 스크립트 -->
 <script th:inline="javascript">
@@ -1676,7 +1691,6 @@
     }
 
 </script>
-
 
 <!--리뷰 작성 관련 스크립트-->
 <script th:inline="javascript">
@@ -2510,14 +2524,17 @@
             success: function(response) {
                 const modalBody = $('#followersModal .modal-body #follower-list');
                 modalBody.empty();
-                response.forEach(function(follower) {
+                response.forEach(function(data) {
                     // 팔로우 상태에 따라 버튼 속성 설정
-                    var buttonClass = follower.followState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
-                    var buttonText = follower.followState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = follower.toUser.id;
+                    var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
+                    var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
+                    var buttonDataId = data.listName;
+
+                    // 나를 팔로우하고있는지에 따라 띄울 메세지
+                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
-                    if (follower.toUser.id !== loginId) {
+                    if (data.sameUserState === 0) {
                         var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
                     } else {
                         var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
@@ -2526,15 +2543,18 @@
 
                     var template = `
                                     <div class="list-group">
-                                        <div class="list-group-item d-flex justify-content-between">
-                                            <div class="d-flex">
-                                                <img src="${follower.toUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
+                                        <div class="list-group-item d-flex flex-wrap">
+                                            <div class="col d-flex">
+                                                <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center" alt="프로필 이미지">
                                                 <div class="d-flex flex-column flex-start gap-2">
-                                                    <strong>${follower.toUser.id}</strong>
-                                                    <span>${follower.toUser.name}</span>
+                                                    <strong>${data.toUser}</strong>
+                                                    <span>${data.listName}</span>
                                                 </div>
                                             </div>
-                                            <div class="follow-state d-flex align-self-items">
+                                            <div class="col-md-auto pe-2">
+                                                ${isFollowedText}
+                                            </div>
+                                            <div class="follow-state d-flex col col-lg-2">
                                                 ${buttonHTML}
                                             </div>
                                         </div>
@@ -2565,14 +2585,17 @@
             success: function(response) {
                 const modalBody = $('#followingModal .modal-body #following-list');
                 modalBody.empty();
-                response.forEach(function(following) {
+                response.forEach(function(data) {
                     // 팔로우 상태에 따라 버튼 속성 설정
-                    var buttonClass = following.followState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
-                    var buttonText = following.followState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = following.fromUser.id;
+                    var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
+                    var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
+                    var buttonDataId = data.listName;
+
+                    // 나를 팔로우하고있는지에 따라 띄울 메세지
+                    var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
 
                     // 로그인한 유저와 같은 경우 버튼을 추가하지 않음
-                    if (following.fromUser.id !== loginId) {
+                    if (data.sameUserState === 0) {
                         var buttonHTML = `<button class="btn ${buttonClass}" data-user-id="${buttonDataId}">${buttonText}</button>`;
                     } else {
                         var buttonHTML = ''; // 로그인한 유저와 같은 경우 버튼을 생성하지 않음
@@ -2580,15 +2603,18 @@
 
                     var template = `
                         <div class="list-group">
-                            <div class="list-group-item d-flex justify-content-between">
-                                <div class="d-flex">
-                                    <img src="${following.fromUser.profileImg}" class="profile-list-img rounded-circle me-2 align-self-center">
+                            <div class="list-group-item d-flex flex-wrap">
+                                <div class="col d-flex">
+                                    <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center">
                                         <div class="d-flex flex-column flex-start gap-2">
-                                            <strong>${following.fromUser.id}</strong>
-                                            <span>${following.fromUser.name}</span>
+                                            <strong>${data.fromUser}</strong>
+                                            <span>${data.listName}</span>
                                         </div>
                                 </div>
-                                <div class="follow-state d-flex align-self-items">
+                                <div class="col-md-auto pe-2">
+                                    ${isFollowedText}
+                                </div>
+                                <div class="follow-state d-flex col col-lg-2">
                                     ${buttonHTML}
                                 </div>
                             </div>

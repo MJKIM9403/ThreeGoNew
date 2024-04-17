@@ -4,15 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 @Table(name = "t_c_type")
 public class ContentType {
     @Id
@@ -20,4 +18,11 @@ public class ContentType {
     private String contentTypeId;
     @Column(name = "ctype_name")
     private String contentTypeName;
+
+    public void updateEntityFromApiResponse(ContentType newContentType){
+        if(this.equals(newContentType)){
+            this.contentTypeId = newContentType.contentTypeId;
+            this.contentTypeName = newContentType.contentTypeName;
+        }
+    }
 }

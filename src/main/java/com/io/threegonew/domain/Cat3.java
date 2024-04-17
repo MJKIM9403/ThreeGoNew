@@ -1,16 +1,14 @@
 package com.io.threegonew.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "t_cat3")
 public class Cat3 {
     @Id
@@ -26,4 +24,13 @@ public class Cat3 {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat1")
     private Cat1 cat1;
+
+    public void updateEntityFromApiResponse(Cat3 newCat3){
+        if(this.equals(newCat3)){
+            this.cat3 = newCat3.cat3;
+            this.cat3Name = newCat3.cat3Name;
+            this.cat2 = newCat3.cat2;
+            this.cat1 = newCat3.cat1;
+        }
+    }
 }

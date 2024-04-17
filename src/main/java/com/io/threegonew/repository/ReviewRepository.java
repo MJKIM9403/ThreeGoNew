@@ -27,7 +27,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "GROUP BY r.review_id " +
             "ORDER BY " +
             "SUM(CASE WHEN l.reg_date BETWEEN :toDate AND :fromDate THEN 1 ELSE 0 END) DESC, " +
-            "COUNT(l.like_id) DESC, " +
+            "SUM(CASE WHEN l.reg_date <= :fromDate THEN 1 ELSE 0 END) DESC, " +
             "r.review_id DESC ",
             countQuery = "SELECT count(r.review_id) FROM review r",
             nativeQuery = true)
@@ -37,12 +37,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
                 "FROM review r " +
                 "INNER JOIN follows f " +
                 "ON r.user_id = f.from_user_id " +
-                "WHERE f.to_user_id = :userId " +
+                "WHERE f.to_user_id = :userId OR r.user_id = :userId " +
                 "ORDER BY r.review_id DESC",
             countQuery = "SELECT count(r.review_id) " +
                     "FROM review r " +
                     "INNER JOIN follows f " +
-                    "ON r.user_id = f.from_user_id " +
+                    "ON r.user_id = f.from_user_id OR r.user_id = :userId " +
                     "WHERE f.to_user_id = :userId ",
             nativeQuery = true)
     Page<Review> findFollowReview(Pageable pageable, @Param("userId")String userId);
