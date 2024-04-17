@@ -6,89 +6,91 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet">
     <!-- Bootstrap icons-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+          type="text/css"/>
     <!--css-->
-    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="../../assets/css/style.css?after" rel="stylesheet" />
-    <link href="../../assets/css/commonstyle.css" rel="stylesheet" />
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../../assets/css/style.css?after" rel="stylesheet"/>
+    <link href="../../assets/css/commonstyle.css" rel="stylesheet"/>
     <!--jquery-->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <!-- toast grid -->
     <script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.js"></script>
     <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.css" />
-    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.css"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
 
     <script>
 
-        $(document).ready(function (){
+        $(document).ready(function () {
             checkCategory();
             selectAndShow();
             showTourItems();
-            $("#morebtn").click(function() {
+            $("#morebtn").click(function () {
                 $(".invisiblecard").slideToggle(300);
             });
         })
 
-        function selectAndShow(){
-            $(document).on('click','.select-btn',function () {
+        function selectAndShow() {
+            $(document).on('click', '.select-btn', function () {
                 const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 let cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
                 let cat3 = $('input[name=cat3]:checked').val() === '' ? null : $('input[name=cat3]:checked').val();
-                if(cat1 == null){
+                if (cat1 == null) {
                     cat2 = null;
                     cat3 = null;
                 }
-                if(cat2 == null){
+                if (cat2 == null) {
                     cat3 = null;
                 }
 
                 $.ajax({
-                    url : '/info/api/touritems',
+                    url: '/info/api/touritems',
                     type: 'POST',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : JSON.stringify({
-                        page : 0,
-                        cat1 : cat1,
-                        cat2 : cat2,
-                        cat3 : cat3,
-                        areaCode : $('input[name=area]').val(),
-                        sigunguCode : $('input[name=sigungu]:checked').val(),
-                        contentTypeId : $('input[name=type]:checked').val()
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify({
+                        page: 0,
+                        cat1: cat1,
+                        cat2: cat2,
+                        cat3: cat3,
+                        areaCode: $('input[name=area]').val(),
+                        sigunguCode: $('input[name=sigungu]:checked').val(),
+                        contentTypeId: $('input[name=type]:checked').val()
                     }),
-                    success : function(data){
+                    success: function (data) {
                         //$("html").scrollTop(0);
                         $('#touritems').replaceWith(data);
                     },
-                    error : function (err){
+                    error: function (err) {
                         console.log(err)
                     }
                 })
             })
         }
-        function showTourItems(){
-            $(document).on('click','.page-item',function (e) {
+
+        function showTourItems() {
+            $(document).on('click', '.page-item', function (e) {
                 const target = e.target;
                 // sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
-                if(!target.classList.contains('disabled')){
+                if (!target.classList.contains('disabled')) {
                     $.ajax({
-                        url : '/info/api/touritems',
+                        url: '/info/api/touritems',
                         type: 'POST',
-                        contentType : 'application/json; charset=UTF-8',
-                        data : JSON.stringify({
-                            page : target.getAttribute('data-num'),
-                            cat1 : $('input[name=cat1]:checked').val(),
-                            cat2 : $('input[name=cat2]:checked').val(),
-                            cat3 : $('input[name=cat3]:checked').val(),
-                            areaCode : $('input[name=area]').val(),
-                            sigunguCode : $('input[name=sigungu]:checked').val(),
-                            contentTypeId : $('input[name=type]:checked').val()
+                        contentType: 'application/json; charset=UTF-8',
+                        data: JSON.stringify({
+                            page: target.getAttribute('data-num'),
+                            cat1: $('input[name=cat1]:checked').val(),
+                            cat2: $('input[name=cat2]:checked').val(),
+                            cat3: $('input[name=cat3]:checked').val(),
+                            areaCode: $('input[name=area]').val(),
+                            sigunguCode: $('input[name=sigungu]:checked').val(),
+                            contentTypeId: $('input[name=type]:checked').val()
                         }),
-                        success : function(data){
+                        success: function (data) {
                             $("html").scrollTop(0);
                             $('#touritems').replaceWith(data);
                         },
-                        error : function (err){
+                        error: function (err) {
                             console.log(err)
                         }
                     })
@@ -96,28 +98,28 @@
             })
         }
 
-        function checkCategory(){
+        function checkCategory() {
 
             // 카테고리(분류) 선택
-            $('.catSelect').click(function (){
+            $('.catSelect').click(function () {
                 const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 $.ajax({
-                    url : '/info/api/cat2',
+                    url: '/info/api/cat2',
                     type: 'POST',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : JSON.stringify({
-                        cat1 : cat1
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify({
+                        cat1: cat1
                     }),
-                    success : function(data){
+                    success: function (data) {
                         $('#category-middle').replaceWith(data);
                     },
-                    error : function (err){
+                    error: function (err) {
                         console.log(err)
                     }
                 })
             })
 
-            $(document).on('click','.cat2Select',function () {
+            $(document).on('click', '.cat2Select', function () {
                 const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
                 $.ajax({
@@ -217,40 +219,43 @@
 
     </script>
     <style>
-        *{
+        * {
             font-family: 'Noto Sans KR', sans-serif;
         }
-        #content_container{
+
+        #content_container {
             display: flex;
             gap: 30px;
             align-items: flex-start;
         }
 
-        #tagSelector{
+        #tagSelector {
             border: 1px solid #DDDDDD;
             border-radius: 20px;
             width: 30%;
             height: auto;
         }
 
-        #content_type, #category, #sigungu{
+        #content_type, #category, #sigungu {
             padding: 20px;
         }
 
-        #category, #sigungu{
+        #category, #sigungu {
             border-top: 1px solid #DDDDDD;
             padding: 20px;
         }
 
-        #wrap{
+        #wrap {
             width: 1200px;
             margin: 0 auto;
         }
-        .thumbnail{
+
+        .thumbnail {
             width: 150px;
             height: 100px;
         }
-        #touritems{
+
+        #touritems {
             width: 70%;
         }
 
@@ -262,22 +267,24 @@
             margin: 0;
             text-align: center;
         }
+
         .touritem-contents > p {
             margin: 0;
         }
+
         .touritem-img {
             width: 150px;
         }
 
-        .list_title{
+        .list_title {
             font-weight: 700;
         }
 
-        .list_address, .list_category{
+        .list_address, .list_category {
             font-weight: 400;
         }
 
-        .btn-2{
+        .btn-2 {
             padding: 10px !important;
             font-size: 13px !important;
             border-radius: 15px !important;
@@ -288,35 +295,36 @@
             border-radius: 15px !important;
         }
 
-        #areaName{
+        #areaName {
             padding: 20px 0;
         }
 
-        label.btn-area{
+        label.btn-area {
             padding: 0;
         }
-        label.btn-area a{
+
+        label.btn-area a {
             display: block;
             padding: 10px;
         }
 
-        .flex-box{
+        .flex-box {
             display: flex;
             gap: 20px;
             align-items: center;
         }
 
-        .btn-select-area{
+        .btn-select-area {
             border-color: #333333;
             color: #333333;
         }
 
-        .btn-select-area:hover{
+        .btn-select-area:hover {
             border-color: #666666;
             color: #666666;
         }
 
-        #area-list-box{
+        #area-list-box {
             margin-bottom: 10px;
         }
 
@@ -325,42 +333,51 @@
 </head>
 <body>
 <!-- header-->
-<th:block th:replace="~{fragments/header}"></th:block>
-<div id="wrap">
-    <div class="flex-box">
-        <h2 id="areaName" th:text="${selectedArea.areaName}"></h2>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-2 btn-primary2 btn-select-area " id="morebtn" >지역선택</button>
-    </div>
-    <div id="area-list-box" class = "invisiblecard">
+<!--<th:block th:replace="~{fragments/header}"></th:block>-->
+<div class="d-flex flex-nowrap">
+    <th:block th:replace="~{fragments/sidebar}"></th:block>
+    <div id="wrap">
+        <div class="flex-box">
+            <h2 id="areaName" th:text="${selectedArea.areaName}"></h2>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-2 btn-primary2 btn-select-area " id="morebtn">지역선택</button>
+        </div>
+        <div id="area-list-box" class="invisiblecard">
             <th:block th:each="area, idx : ${areaList}">
-                <input type="radio" class="areaSelect btn-check" name="areaSelect" th:id="|area${idx.count}|" autocomplete="off"
+                <input type="radio" class="areaSelect btn-check" name="areaSelect" th:id="|area${idx.count}|"
+                       autocomplete="off"
                        th:value="${area.areaCode}" th:checked="${selectedArea.areaCode == area.areaCode}">
-                <label class="btn btn-3 btn-area" th:for="|area${idx.count}|"><a th:href="@{/info/city/{areaCode}(areaCode = ${area.areaCode})}" th:text="|${area.areaName}|"></a></label>
+                <label class="btn btn-3 btn-area" th:for="|area${idx.count}|"><a
+                        th:href="@{/info/city/{areaCode}(areaCode = ${area.areaCode})}"
+                        th:text="|${area.areaName}|"></a></label>
             </th:block>
-    </div>
+        </div>
 
-    <div id="content_container">
-        <!--리스트-->
-        <!--<div id="gridDiv"></div>-->
-        <div id="touritems">
-            <div>
-                <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
-            </div>
-            <table class="table">
-                <thead>
+        <div id="content_container">
+            <!--리스트-->
+            <!--<div id="gridDiv"></div>-->
+            <div id="touritems">
+                <div>
+                    <h4 th:text="|${pageResponse.total}건의 관광지|"></h4>
+                </div>
+                <table class="table">
+                    <thead>
                     <tr>
                         <th scope="col">대표이미지</th>
                         <th scope="col">관광정보</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
                         <tr>
                             <td rowspan="3" class="touritem-img">
                                 <a th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
-                                    <img class="thumbnail" th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" src="../../assets/img/no_img.jpg">
-                                    <img class="thumbnail" th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}" th:src="${touritem.firstimage}">
+                                    <img class="thumbnail"
+                                         th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}"
+                                         src="../../assets/img/no_img.jpg">
+                                    <img class="thumbnail"
+                                         th:unless="${touritem.firstimage == null || touritem.firstimage.isEmpty()}"
+                                         th:src="${touritem.firstimage}">
                                 </a>
                             </td>
                             <td class="touritem-contents">
@@ -390,88 +407,104 @@
                             </td>
                         </tr>
                     </th:block>
-                </tbody>
-            </table>
-            <nav aria-label="page-bar">
-                <ul class="pagination">
-                    <li class="page-item">
-                        <i class="bi bi-chevron-double-left page-link" data-num="0"></i>
-                    </li>
-                    <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
-                        <i class="bi bi-chevron-left page-link" th:attr="data-num=${pageResponse.start -1}"></i>
-                    </li>
-                    <th:block th:each="pageNo : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
-                        <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}" th:classappend="${pageResponse.page == pageNo} ? 'active' : ''" th:text="${pageNo + 1}"></span></li>
-                    </th:block>
-                    <li class="page-item" th:classappend="${pageResponse.next} ? '' : 'disabled'">
-                        <i class="bi bi-chevron-right page-link" th:attr="data-num=${pageResponse.end +1}"></i>
-                    </li>
-                    <li class="page-item">
-                        <i class="bi bi-chevron-double-right page-link" th:attr="data-num=${pageResponse.last}"></i>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <!--카테고리 셀렉터-->
-        <div id="tagSelector">
-            <input type="hidden" name="area" th:value="${selectedArea.areaCode}">
-            <div id="content_type">
-                <h5>- 관광 타입 -</h5>
-                <input type="radio" class="typeSelect btn-check select-btn" name="type" id="type0" autocomplete="off" value="" checked>
-                <label class="btn btn-2" for="type0" th:text="전체"></label>
-                <th:block th:each="type, idx : ${contentTypeList}">
-                    <input type="radio" class="typeSelect btn-check select-btn" name="type" th:id="|type${idx.count}|" autocomplete="off" th:value="${type.contentTypeId}">
-                    <label class="btn btn-2" th:for="|type${idx.count}|" th:text="${type.contentTypeName}"></label>
-                </th:block>
+                    </tbody>
+                </table>
+                <nav aria-label="page-bar">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <i class="bi bi-chevron-double-left page-link" data-num="0"></i>
+                        </li>
+                        <li class="page-item" th:classappend="${pageResponse.prev} ? '' : 'disabled'">
+                            <i class="bi bi-chevron-left page-link" th:attr="data-num=${pageResponse.start -1}"></i>
+                        </li>
+                        <th:block th:each="pageNo : ${#numbers.sequence(pageResponse.start, pageResponse.end)}">
+                            <li class="page-item"><span class="page-link" th:attr="data-num=${pageNo}"
+                                                        th:classappend="${pageResponse.page == pageNo} ? 'active' : ''"
+                                                        th:text="${pageNo + 1}"></span></li>
+                        </th:block>
+                        <li class="page-item" th:classappend="${pageResponse.next} ? '' : 'disabled'">
+                            <i class="bi bi-chevron-right page-link" th:attr="data-num=${pageResponse.end +1}"></i>
+                        </li>
+                        <li class="page-item">
+                            <i class="bi bi-chevron-double-right page-link" th:attr="data-num=${pageResponse.last}"></i>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-            <div id="category">
-                <div id="cat1Selector">
-                    <h5>- 대분류 -</h5>
-                    <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0" autocomplete="off" value="" checked>
-                    <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
-                    <th:block th:each="cat1, idx : ${cat1List}">
-                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
-                        <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
+            <!--카테고리 셀렉터-->
+            <div id="tagSelector">
+                <input type="hidden" name="area" th:value="${selectedArea.areaCode}">
+                <div id="content_type">
+                    <h5>- 관광 타입 -</h5>
+                    <input type="radio" class="typeSelect btn-check select-btn" name="type" id="type0"
+                           autocomplete="off" value="" checked>
+                    <label class="btn btn-2" for="type0" th:text="전체"></label>
+                    <th:block th:each="type, idx : ${contentTypeList}">
+                        <input type="radio" class="typeSelect btn-check select-btn" name="type"
+                               th:id="|type${idx.count}|" autocomplete="off" th:value="${type.contentTypeId}">
+                        <label class="btn btn-2" th:for="|type${idx.count}|" th:text="${type.contentTypeName}"></label>
                     </th:block>
                 </div>
-
-                <div id="category-middle">
-                    <div id="cat2Selector" th:if="${cat2List.size() > 0}">
-                        <h5>- 중분류 -</h5>
-                        <input type="radio" class="cat2Select btn-check select-btn" name="cat2" id="cat2-0" autocomplete="off" value="" checked>
-                        <label class="btn btn-2" for="cat2-0" th:text="전체"></label>
-                        <th:block th:each="cat2, idx : ${cat2List}">
-                            <input type="radio" class="cat2Select btn-check select-btn" name="cat2" th:id="|cat2-${idx.count}|" autocomplete="off" th:value="${cat2.cat2}">
-                            <label class="btn btn-2" th:for="|cat2-${idx.count}|" th:text="${cat2.cat2Name}"></label>
+                <div id="category">
+                    <div id="cat1Selector">
+                        <h5>- 대분류 -</h5>
+                        <input type="radio" class="catSelect btn-check select-btn" name="cat1" id="cat1-0"
+                               autocomplete="off" value="" checked>
+                        <label class="btn btn-2" for="cat1-0" th:text="전체"></label>
+                        <th:block th:each="cat1, idx : ${cat1List}">
+                            <input type="radio" class="catSelect btn-check select-btn" name="cat1"
+                                   th:id="|cat1-${idx.count}|" autocomplete="off" th:value="${cat1.cat1}">
+                            <label class="btn btn-2" th:for="|cat1-${idx.count}|" th:text="${cat1.cat1Name}"></label>
                         </th:block>
                     </div>
-                    <div id="category-row">
-                        <div id="cat3Selector" th:if="${cat3List.size() > 0}">
-                            <h5>- 소분류 -</h5>
-                            <input type="radio" class="cat3Select btn-check select-btn" name="cat3" id="cat3-0" autocomplete="off" value="" checked>
-                            <label class="btn btn-2" for="cat3-0" th:text="전체"></label>
-                            <th:block th:each="cat3, idx : ${cat3List}">
-                                <input type="radio" class="cat3Select btn-check select-btn" name="cat3" th:id="|cat3-${idx.count}|" autocomplete="off" th:value="${cat3.cat3}">
-                                <label class="btn btn-2" th:for="|cat3-${idx.count}|" th:text="${cat3.cat3Name}"></label>
+
+                    <div id="category-middle">
+                        <div id="cat2Selector" th:if="${cat2List.size() > 0}">
+                            <h5>- 중분류 -</h5>
+                            <input type="radio" class="cat2Select btn-check select-btn" name="cat2" id="cat2-0"
+                                   autocomplete="off" value="" checked>
+                            <label class="btn btn-2" for="cat2-0" th:text="전체"></label>
+                            <th:block th:each="cat2, idx : ${cat2List}">
+                                <input type="radio" class="cat2Select btn-check select-btn" name="cat2"
+                                       th:id="|cat2-${idx.count}|" autocomplete="off" th:value="${cat2.cat2}">
+                                <label class="btn btn-2" th:for="|cat2-${idx.count}|"
+                                       th:text="${cat2.cat2Name}"></label>
                             </th:block>
+                        </div>
+                        <div id="category-row">
+                            <div id="cat3Selector" th:if="${cat3List.size() > 0}">
+                                <h5>- 소분류 -</h5>
+                                <input type="radio" class="cat3Select btn-check select-btn" name="cat3" id="cat3-0"
+                                       autocomplete="off" value="" checked>
+                                <label class="btn btn-2" for="cat3-0" th:text="전체"></label>
+                                <th:block th:each="cat3, idx : ${cat3List}">
+                                    <input type="radio" class="cat3Select btn-check select-btn" name="cat3"
+                                           th:id="|cat3-${idx.count}|" autocomplete="off" th:value="${cat3.cat3}">
+                                    <label class="btn btn-2" th:for="|cat3-${idx.count}|"
+                                           th:text="${cat3.cat3Name}"></label>
+                                </th:block>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="sigungu">
-                <h5>- 상세 지역 -</h5>
-                <input type="radio" class="areaSelect btn-check select-btn" name="sigungu" id="sigungu0" autocomplete="off" value="" checked>
-                <label class="btn btn-2" for="sigungu0" th:text="전체"></label>
-                <th:block th:each="sigungu, idx : ${sigunguList}">
-                    <input type="radio" class="areaSelect btn-check select-btn" name="sigungu" th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
-                    <label class="btn btn-2" th:for="|sigungu${idx.count}|" th:text="${sigungu.sigunguName}"></label>
-                </th:block>
+                <div id="sigungu">
+                    <h5>- 상세 지역 -</h5>
+                    <input type="radio" class="areaSelect btn-check select-btn" name="sigungu" id="sigungu0"
+                           autocomplete="off" value="" checked>
+                    <label class="btn btn-2" for="sigungu0" th:text="전체"></label>
+                    <th:block th:each="sigungu, idx : ${sigunguList}">
+                        <input type="radio" class="areaSelect btn-check select-btn" name="sigungu"
+                               th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
+                        <label class="btn btn-2" th:for="|sigungu${idx.count}|"
+                               th:text="${sigungu.sigunguName}"></label>
+                    </th:block>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!--footer-->
-<th:block th:replace="~{fragments/footer}"></th:block>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!--footer-->
+    <th:block th:replace="~{fragments/footer}"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
