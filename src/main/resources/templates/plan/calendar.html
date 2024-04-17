@@ -169,14 +169,14 @@
         </div>
 
         <div class="mb-5">
-            <p class="fs-5">내가 작성한 여행</p>
+            <h5 class="fs-5">내가 작성한 여행</h5>
             <th:block th:if="${plannerList.size() > 0}">
                 <th:block th:each="planner, idx : ${plannerList}">
                     <div class="card mb-3">
                         <div class="card-body">
                             <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
                                 <div class="d-flex flex-column flex-lg-row">
-                                    <img class="img " src="../../assets/img/no_img.jpg">
+                                    <i class="bi bi-calendar h3 d-flex align-items-center pe-3"></i>
                                     <div class="row flex-fill">
                                         <div class="col-sm-10">
                                             <h4 class="h5" th:text="${planner.plannerName}"></h4>
@@ -201,14 +201,14 @@
 
 
         <div class="mb-5">
-            <p class="fs-5">공유받은 여행</p>
+            <h5 class="fs-5">공유받은 여행</h5>
             <th:block th:if="${sharedPlannerList.size() > 0}">
                 <th:block th:each="planner, idx : ${sharedPlannerList}">
                     <div class="card mb-3">
                         <div class="card-body">
                             <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
                                 <div class="d-flex flex-column flex-lg-row">
-                                    <img class="img " src="../../assets/img/no_img.jpg">
+                                    <i class="bi bi-calendar h3 d-flex align-items-center pe-3"></i>
                                     <div class="row flex-fill">
                                         <div class="col-sm-10">
                                             <h4 class="h5" th:text="${planner.plannerName}"></h4>
