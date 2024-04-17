@@ -174,7 +174,7 @@ public class ReviewService {
 
     // 추천 피드
     @Transactional
-    public PageResponse getRecommendReview(PageWithFromDateRequest request){
+    public PageResponse<SimpleReviewResponse> getRecommendReview(PageWithFromDateRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         LocalDateTime fromDate = request.getFromDate();
@@ -196,7 +196,7 @@ public class ReviewService {
 
     // 팔로우 피드
     @Transactional
-    public PageResponse getFollowReview(PageWithFromDateRequest request) throws AccessDeniedException{
+    public PageResponse<SimpleReviewResponse> getFollowReview(PageWithFromDateRequest request) throws AccessDeniedException{
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         String loginUserId = SecurityUtils.getCurrentUsername();
@@ -220,13 +220,33 @@ public class ReviewService {
     }
 
     @Transactional
-    public PageResponse getRecommendReviewByKeyword(PageWithFromDateRequest request){
+    public PageResponse<SimpleReviewResponse> getRecommendReviewByKeyword(PageWithFromDateRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
         LocalDateTime fromDate = request.getFromDate();
         LocalDateTime toDate = fromDate.minusHours(72);
         String keyword = "%" + request.getKeyword() + "%";
         Page<SimpleReviewResponse> page = reviewRepository.findRecommendReviewsByKeyword(pageable, keyword, toDate, fromDate)
+                .map(this::simpleReviewMapper);
+
+        PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
+    @Transactional
+    public PageResponse<SimpleReviewResponse> getRecentReviewByKeyword(PageWithFromDateRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        LocalDateTime fromDate = request.getFromDate();
+        String keyword = "%" + request.getKeyword() + "%";
+        Page<SimpleReviewResponse> page = reviewRepository.findRecentReviewsByKeyword(pageable, keyword, fromDate)
                 .map(this::simpleReviewMapper);
 
         PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()

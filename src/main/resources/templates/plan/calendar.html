@@ -132,7 +132,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">여행 정보를 입력해주세요.</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-sm close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -165,18 +165,18 @@
     <div class="container mt-5" th:if="${plannerList.size() > 0 || sharedPlannerList.size() > 0}">
 
         <div class="text-center mb-5">
-            <h2 class="display-6 text-center">등록한 여행일정을 확인해보세요.</h2>
+            <h2>등록한 여행일정을 확인해보세요.</h2>
         </div>
 
         <div class="mb-5">
-            <p class="fs-5">내가 작성한 여행</p>
+            <h5 class="fs-5">내가 작성한 여행</h5>
             <th:block th:if="${plannerList.size() > 0}">
                 <th:block th:each="planner, idx : ${plannerList}">
                     <div class="card mb-3">
                         <div class="card-body">
                             <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
                                 <div class="d-flex flex-column flex-lg-row">
-                                    <img class="img " src="../../assets/img/no_img.jpg">
+                                    <i class="bi bi-calendar h3 d-flex align-items-center pe-3"></i>
                                     <div class="row flex-fill">
                                         <div class="col-sm-10">
                                             <h4 class="h5" th:text="${planner.plannerName}"></h4>
@@ -201,14 +201,14 @@
 
 
         <div class="mb-5">
-            <p class="fs-5">공유받은 여행</p>
+            <h5 class="fs-5">공유받은 여행</h5>
             <th:block th:if="${sharedPlannerList.size() > 0}">
                 <th:block th:each="planner, idx : ${sharedPlannerList}">
                     <div class="card mb-3">
                         <div class="card-body">
                             <a th:href="@{/plan/show(p_id=${planner.plannerId})}">
                                 <div class="d-flex flex-column flex-lg-row">
-                                    <img class="img " src="../../assets/img/no_img.jpg">
+                                    <i class="bi bi-calendar h3 d-flex align-items-center pe-3"></i>
                                     <div class="row flex-fill">
                                         <div class="col-sm-10">
                                             <h4 class="h5" th:text="${planner.plannerName}"></h4>

@@ -1,15 +1,16 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.User;
-import com.io.threegonew.dto.AddUserRequest;
-import com.io.threegonew.dto.UpdateUserProfileRequest;
-import com.io.threegonew.dto.UserInfoResponse;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.util.FileHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -57,6 +59,27 @@ public class UserService {
     public User findUser(String userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public PageResponse<UserInfoResponse> getUserByStartOrContainUserId(PageWithFromDateRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+        String startKeyword = request.getKeyword() + "%";
+        String containKeyword = "%" + request.getKeyword() + "%";
+
+        Page<UserInfoResponse> page = userRepository.findUsersByStartOrContainUserId(pageable, startKeyword, containKeyword)
+                .map(this::userInfoMapper);
+
+        PageResponse<UserInfoResponse> pageResponse = PageResponse.<UserInfoResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
     }
 
 
