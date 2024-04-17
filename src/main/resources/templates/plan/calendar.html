@@ -316,7 +316,7 @@
                             <input id="days" name="days" type="date" class="form-control">
                             <i class="bi bi-calendar fa-1"></i>
                             <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
-                            <input  id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
+                            <input type="hidden" id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
                         </div>
                     </div>
                     <div class="col-sm-3 col-12 px-0">
@@ -363,13 +363,15 @@
             $('form').submit(function(e) {
                 e.preventDefault(); // 폼 기본 제출 동작을 방지
 
-                let dateStr = $('input[name="days"]').val();
+                let dateStr = $(this).find('input[name="days"]').val();
                 console.log(dateStr);
                 let plannerName = $(this).find('input[name="plannerName"]').val();
                 if (dateStr) {
                     let dates = dateStr.split(' ~ '); // ' to '를 기준으로 문자열 분리
                     let startDate = dates[0]; // 시작 날짜
                     let endDate = dates.length > 1 ? dates[1] : startDate; // 종료 날짜가 없으면 시작 날짜 사용
+
+
 
                     $(this).find('input[name="startDate"]').val(startDate); // 시작 날짜 설정
                     $(this).find('input[name="endDate"]').val(endDate); // 종료 날짜 설정
@@ -379,12 +381,15 @@
                 if (plannerName === "" || dateStr === "") {
                     e.preventDefault();
                     alert('모든 여행 정보를 입력해주세요');
+                } else {
+                    // 특정 input의 값을 넘기지 않도록 disabled 속성 설정
+                    $('input[name="days"]').prop('disabled', true);
+                    this.submit(); // 폼 실제 제출
                 }
 
-                // 특정 input의 값을 넘기지 않도록 disabled 속성 설정
-                $('input[name="days"]').prop('disabled', true);
 
-                this.submit(); // 폼 실제 제출
+
+
             });
         });
     </script>

@@ -67,7 +67,7 @@ public class ReviewBookApiController {
     @GetMapping("/show_planner")
     public ResponseEntity<List<PlannerResponse>> showSelectList(){
         String userId = userService.getCurrentUserId();
-        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+        List<PlannerResponse> plannerList = plannerService.findPlannerByUser(userId);
 
         return ResponseEntity.ok().body(plannerList);
     }

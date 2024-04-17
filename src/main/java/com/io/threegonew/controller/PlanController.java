@@ -431,7 +431,7 @@ public class PlanController {
         }
 
         // 사용자의 아이디와 동일한 Planner가 있는지 확인
-        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+        List<PlannerResponse> plannerList = plannerService.findPlannerByUser(userId);
 
         // 사용자가 해당 플래너를 작성한 사람인지 확인
         boolean exists = plannerService.isUserPlannerOwner(userId, plannerId);

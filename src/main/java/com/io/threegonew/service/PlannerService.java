@@ -1,8 +1,10 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
+import com.io.threegonew.dto.MyPlannerResponse;
 import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.repository.*;
+import com.io.threegonew.util.AesUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,15 +30,6 @@ public class PlannerService {
     private final TourItemRepository tourItemRepository;
     private final PlanRepository planRepository;
 
-//    // 유저가 특정 Planner를 공유받았는지 확인
-//    public boolean isSharedUser(Long plannerId, String userId) {
-//        Planner planner = plannerRepository.findById(plannerId)
-//                .orElseThrow(() -> new RuntimeException("Planner not found"));
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        return plannerShareRepository.existsByPlannerAndUser(planner, user);
-//    }
 
     // 날짜 간의 차이를 계산하는 메서드 추가
     public long getDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
@@ -57,15 +50,53 @@ public class PlannerService {
         return plannerRepository.findAll();
     }
 
-    public List<PlannerResponse> findMyPlannerList(String userId) {
+//    public List<PlannerResponse> findMyPlannerList(String userId) {
+//        List<PlannerResponse> plannerResponseList =
+//                plannerRepository.findByUserId(userId).stream()
+//                        .filter(planner -> Boolean.FALSE.equals(planner.getPlannerDelete())) // p_del 값이 false인 경우만
+//                        .map(planner -> modelMapper.map(planner, PlannerResponse.class))
+//                        .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
+//                        .collect(Collectors.toList());
+//        return plannerResponseList;
+//    }
+
+    public PlannerResponse findPlannerResponse(Long plannerId) {
+        return plannerMapper(findPlanner(plannerId));
+    }
+
+    public List<PlannerResponse> findPlannerByUser(String userId) {
         List<PlannerResponse> plannerResponseList =
                 plannerRepository.findByUserId(userId).stream()
                         .filter(planner -> Boolean.FALSE.equals(planner.getPlannerDelete())) // p_del 값이 false인 경우만
-                        .map(planner -> modelMapper.map(planner, PlannerResponse.class))
+                        .map(this::plannerMapper)
                         .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
                         .collect(Collectors.toList());
         return plannerResponseList;
     }
+
+    private PlannerResponse plannerMapper(Planner planner) {
+        return PlannerResponse.builder()
+                .plannerId(planner.getPlannerId())
+                .userId(planner.getUserId())
+                .plannerName(planner.getPlannerName())
+                .startDate(planner.getStartDate())
+                .endDate(planner.getEndDate())
+                .plannerDelete(planner.getPlannerDelete())
+                .build();
+    }
+
+    private MyPlannerResponse myPlannerMapper(Planner planner) throws Exception {
+        String plannerIdString = planner.getPlannerId().toString();
+        String encryptedPlannerId = AesUtil.aesCBCEncode(plannerIdString);
+
+        return MyPlannerResponse.builder()
+                .plannerId(encryptedPlannerId) // 암호화된 ID 사용
+                .plannerName(planner.getPlannerName())
+                .startDate(planner.getStartDate())
+                .endDate(planner.getEndDate())
+                .build();
+    }
+
 
     public List<Area> findAllAreas() {
         return areaRepository.findAll();

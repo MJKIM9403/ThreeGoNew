@@ -98,7 +98,7 @@ public class ReviewApiController {
     public ResponseEntity<Map<String, Object>> showSelectList(){
         String userId = userService.getCurrentUserId();
         User loginUser = userService.findUser(userId);
-        List<PlannerResponse> plannerList = plannerService.findMyPlannerList(userId);
+        List<PlannerResponse> plannerList = plannerService.findPlannerByUser(userId);
         List<ReviewBookResponse> reviewBookList = reviewBookService.findReviewBookByUser(loginUser);
         Map<String, Object> result = new HashMap<>();
         result.put("plannerList", plannerList);
