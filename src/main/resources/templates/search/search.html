@@ -266,14 +266,14 @@
                             <option value="recent">최신순</option>
                         </select>
                     </div>
-                    <input id="keyword-review" class="form-control mb-2" type="search" placeholder="리뷰 검색" aria-label="리뷰 검색">
+                    <input id="keyword-review" class="form-control mb-2" type="text" placeholder="리뷰 검색" aria-label="리뷰 검색">
                     <button class="search-btn btn btn-primary" data-search-type="review">검색</button>
                 </div>
             </div>
             <!-- 유저 검색 탭 -->
             <div class="tab-pane fade" id="user-search" role="tabpanel" aria-labelledby="user-search-tab">
                 <div class="d-flex flex-column mt-2">
-                    <input id="keyword-user" class="form-control mb-2" type="search" placeholder="유저 검색" aria-label="유저 검색">
+                    <input id="keyword-user" class="form-control mb-2" type="text" placeholder="유저 검색" aria-label="유저 검색">
                     <button class="search-btn btn btn-primary" data-search-type="user">검색</button>
                 </div>
             </div>
@@ -455,9 +455,9 @@
                 case "RECOMMEND" :
                     showFindRecommendReview();
                     break;
-                // case "RECENT" :
-                //     showFindRecentReview();
-                //     break;
+                case "RECENT" :
+                    showFindRecentReview();
+                    break;
                 // case "USER" :
                 //     showFindUSERS();
                 //     break;
@@ -516,6 +516,118 @@
         }
         $.ajax({
             url : '/api/search/review/recommend',
+            type : 'GET',
+            data : {
+                fromDate : fromDate,
+                keyword : keyword,
+                page : scrollPage
+            },
+            async: false,
+            success : function (result) {
+                let reviewList = result.dtoList;
+
+                if(firstLoad && reviewList.length <= 0){
+                    firstLoad = false;
+                    $(".loader").hide()
+                    let messageHtml = '<div class="no-data-msg">' +
+                        '<h4>검색된 리뷰가 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    firstLoad = false;
+                    // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                    setTimeout(() => {
+                        $(".loader").hide()
+                        $.each(reviewList, function (index, review){
+                            let profileImg = review.userInfo.profileImg == null ? '../assets/img/profile.jpg' : '/api/image/profile/' + review.userInfo.profileImg;
+                            let num = (result.page * 10) + index;
+
+                            let photoLength = review.reviewPhotoList.length;
+
+                            let tempHtml =
+                                '<div class="card gallery-item">' +
+                                '<div class="d-flex card-header gap-2">' +
+                                `<img src="${profileImg}" class="rounded-circle">` +
+                                `<span>${review.userInfo.name}</span>` +
+                                `<span>@${review.userInfo.id}</span>` +
+                                '</div>' +
+                                '<div class="card-body">' +
+                                `<div class="swiper simple-view-swiper simple-view-swiper${num}">` +
+                                '<div class="swiper-wrapper">';
+
+                            $.each(review.reviewPhotoList, function (index, photo){
+                                let slide =
+                                    '<div class="swiper-slide">' +
+                                    `<img class="simple-view-img" src="/api/image/review/${photo.filePath}"/>` +
+                                    '</div>';
+                                tempHtml += slide;
+                            })
+
+                            tempHtml +=
+                                '</div>' +
+                                `<div class="swiper-controller swiper-controller${num}">` +
+                                `<div class="swiper-button-next swiper-button-next${num}"></div>` +
+                                `<div class="swiper-button-prev swiper-button-prev${num}"></div>` +
+                                `<div class="swiper-pagination swiper-pagination${num}"></div>` +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="review-icons d-flex gap-3">' +
+                                `<i class="bi bi-chat-square-dots" onClick="goComment(${review.reviewId})"></i>`;
+
+                            if(review.likeState){
+                                tempHtml += `<i class="like-btn bi bi-star-fill" data-review-id="${review.reviewId}"></i>`
+                            }else {
+                                tempHtml += `<i class="like-btn bi bi-star" data-review-id="${review.reviewId}"></i>`
+                            }
+
+                            tempHtml +=
+                                '</div>' +
+                                `<p class="like-count text-muted card-text" data-review-id="${review.reviewId}">${review.likeCount} 명이 이 리뷰를 좋아합니다.</p>` +
+                                `<div class="review-content">${review.reviewContent}</div>` +
+                                `<div class="card-text"><small class="text-muted comment-count" data-review-id="${review.reviewId}">댓글 ${review.commentCount}개</small></div>` +
+                                `<div class="card-text show-more" onClick="openViewer(${review.reviewId})"><small class="text-muted">자세히 보기</small></div>` +
+                                '</div>' +
+                                '</div>';
+
+                            gallery.append(tempHtml).trigger("create")
+
+                            createSimpleViewSwiper(photoLength, num);
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(reviewList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
+                }
+                keyword = null;
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
+    }
+
+    function showFindRecentReview() {
+        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(!firstLoad){
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/search/review/recent',
             type : 'GET',
             data : {
                 fromDate : fromDate,
