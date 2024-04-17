@@ -2532,7 +2532,7 @@
                     // 팔로우 상태에 따라 버튼 속성 설정
                     var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
                     var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = data.listName;
+                    var buttonDataId = data.toUser;
 
                     // 나를 팔로우하고있는지에 따라 띄울 메세지
                     var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';
@@ -2593,7 +2593,7 @@
                     // 팔로우 상태에 따라 버튼 속성 설정
                     var buttonClass = data.followingState == 1 ? 'btn-secondary unfollow-btn' : 'btn-primary follow-btn';
                     var buttonText = data.followingState == 1 ? '언팔로우' : '팔로우';
-                    var buttonDataId = data.listName;
+                    var buttonDataId = data.fromUser;
 
                     // 나를 팔로우하고있는지에 따라 띄울 메세지
                     var isFollowedText = data.followedState == 1 ? '나를 팔로우 중입니다.' : '';

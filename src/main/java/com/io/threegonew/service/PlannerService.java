@@ -50,16 +50,6 @@ public class PlannerService {
         return plannerRepository.findAll();
     }
 
-//    public List<PlannerResponse> findMyPlannerList(String userId) {
-//        List<PlannerResponse> plannerResponseList =
-//                plannerRepository.findByUserId(userId).stream()
-//                        .filter(planner -> Boolean.FALSE.equals(planner.getPlannerDelete())) // p_del 값이 false인 경우만
-//                        .map(planner -> modelMapper.map(planner, PlannerResponse.class))
-//                        .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
-//                        .collect(Collectors.toList());
-//        return plannerResponseList;
-//    }
-
     public PlannerResponse findPlannerResponse(Long plannerId) {
         return plannerMapper(findPlanner(plannerId));
     }
@@ -82,18 +72,6 @@ public class PlannerService {
                 .startDate(planner.getStartDate())
                 .endDate(planner.getEndDate())
                 .plannerDelete(planner.getPlannerDelete())
-                .build();
-    }
-
-    private MyPlannerResponse myPlannerMapper(Planner planner) throws Exception {
-        String plannerIdString = planner.getPlannerId().toString();
-        String encryptedPlannerId = AesUtil.aesCBCEncode(plannerIdString);
-
-        return MyPlannerResponse.builder()
-                .plannerId(encryptedPlannerId) // 암호화된 ID 사용
-                .plannerName(planner.getPlannerName())
-                .startDate(planner.getStartDate())
-                .endDate(planner.getEndDate())
                 .build();
     }
 
