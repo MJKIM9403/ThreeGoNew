@@ -35,6 +35,6 @@ public interface UserRepository extends JpaRepository<User, String> {
             "U_ID ASC ",
             countQuery = "SELECT count(u.U_ID) FROM users u WHERE u.U_ID LIKE :containKeyword ",
             nativeQuery = true)
-    Page<User> findUsersStartOrContain(Pageable pageable, @Param("startKeyword")String startKeyword, @Param("containKeyword")String containKeyword);
+    Page<User> findUsersByStartOrContainUserId(Pageable pageable, @Param("startKeyword")String startKeyword, @Param("containKeyword")String containKeyword);
 
 }

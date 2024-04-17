@@ -149,7 +149,7 @@ public class ReviewApiController {
     }
 
     @GetMapping("/recommend")
-    public ResponseEntity<PageResponse> showRecommendReview(@ModelAttribute PageWithFromDateRequest request){
+    public ResponseEntity<PageResponse<SimpleReviewResponse>> showRecommendReview(@ModelAttribute PageWithFromDateRequest request){
         try{
             PageResponse<SimpleReviewResponse> pageResponse = reviewService.getRecommendReview(request);
             return ResponseEntity.ok().body(pageResponse);
@@ -160,7 +160,7 @@ public class ReviewApiController {
     }
 
     @GetMapping("/follow")
-    public ResponseEntity<PageResponse> showFollowReview(@ModelAttribute PageWithFromDateRequest request){
+    public ResponseEntity<PageResponse<SimpleReviewResponse>> showFollowReview(@ModelAttribute PageWithFromDateRequest request){
         try{
             PageResponse<SimpleReviewResponse> pageResponse = reviewService.getFollowReview(request);
             return ResponseEntity.ok().body(pageResponse);
