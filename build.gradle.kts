@@ -82,6 +82,9 @@ dependencies {
     //url 암호화 인코딩/디코딩을 위한 codec
     implementation("commons-codec:commons-codec:1.15")
 
+    // non-blocking 방식의 api호출을 위한 webclient(webflux)
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.2.4")
+
 }
 
 tasks.withType<Test> {
