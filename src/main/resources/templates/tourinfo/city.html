@@ -30,6 +30,14 @@
             $("#morebtn").click(function () {
                 $(".invisiblecard").slideToggle(300);
             });
+
+            // 엔터 입력 시에도 검색 가능하게 설정
+            $('.search-input').on("keydown",function(e){
+                if(e.keyCode === 13){
+                    e.preventDefault();
+                    $('.search-btn').trigger('click');
+                }
+            });
         })
 
         // 검색 기능 시작
