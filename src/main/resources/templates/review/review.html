@@ -946,7 +946,7 @@
 
 
     function showRecommend() {
-        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let time = 300;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
         if(!firstLoad){
             scrollPage += 1;
@@ -1056,7 +1056,7 @@
     }
 
     function showFollowReview() {
-        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let time = 300;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
         if(!firstLoad){
             scrollPage += 1;
@@ -1184,7 +1184,7 @@
         console.log(scrollPosition);
         for(let page = 0; page <= sessionPage; page++){
             back = true;
-            console.log(`${scrollPage}, ${page}`);
+
             switch (tabType){
                 case "RECOMMEND":
                     showRecommend();
@@ -1347,6 +1347,7 @@
                 let regDate = (findReview.regDate === findReview.modDate) ? formatRegDate(findReview.regDate) : formatRegDate(findReview.modDate) + ' (수정됨)';
 
                 $('#writer-info').click(function (){
+                    savePage
                     location.href = `/mypage/${writer.id}`
                 })
                 $('#writer-name').text(writer.name);
@@ -1372,6 +1373,7 @@
                     $('#review-book-info').addClass('d-flex').show();
                     $('#review-book-info').addClass('cursor-pointer')
                     $('#review-book-info').off().click(function (){
+                        savePage
                         location.href = `../book?bookId=${findReview.reviewBookId}`;
                     })
                     $('#review-book-title').text(findReview.reviewBookTitle);
@@ -1961,11 +1963,12 @@
         if(tourItemId !== undefined){
             $('#touritem-wrap').css('cursor','pointer');
             $('#touritem-wrap').click(function (){
+                savePage
                 location.href = `../info/content/${tourItemId}`;
             })
             touritemInfoTimer = setTimeout(function () {
                 showTourItemSimpleInfo(tourItemId)
-            },300)
+            },200)
         }
     })
     $('#touritem-wrap').mouseleave(function (){

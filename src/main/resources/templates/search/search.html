@@ -231,6 +231,8 @@
 
         .user-profile-img {
             width: 80px;
+            height: 80px;
+            object-fit: cover;
         }
 
         .user-id {
@@ -285,14 +287,20 @@
                         </select>
                     </div>
                     <input id="keyword-review" class="form-control mb-2" type="text" placeholder="리뷰 검색" aria-label="리뷰 검색">
-                    <button class="search-btn btn btn-primary" data-search-type="review">검색</button>
+                    <button id="review-search-btn" class="search-btn btn btn-primary" data-search-type="review">검색</button>
                 </div>
             </div>
             <!-- 유저 검색 탭 -->
             <div class="tab-pane fade" id="user-search" role="tabpanel" aria-labelledby="user-search-tab">
                 <div class="d-flex flex-column mt-2">
+                    <div class="mb-2">
+                        <select id="user-search-option" class="form-select" aria-label="검색 정렬">
+                            <option value="id" selected>아이디</option>
+                            <option value="name">이름</option>
+                        </select>
+                    </div>
                     <input id="keyword-user" class="form-control mb-2" type="text" placeholder="유저 검색" aria-label="유저 검색">
-                    <button class="search-btn btn btn-primary" data-search-type="user">검색</button>
+                    <button id="user-search-btn" class="search-btn btn btn-primary" data-search-type="user">검색</button>
                 </div>
             </div>
         </div>
@@ -476,8 +484,11 @@
                 case "RECENT" :
                     showFindRecentReview();
                     break;
-                case "USER" :
-                    showFindUser();
+                case "USERID" :
+                    showFindUserId();
+                    break;
+                case "USERNAME" :
+                    showFindUserName();
                     break;
             }
         });
@@ -504,9 +515,9 @@
     $(document).on('click','.search-btn',function (){
         let searchType = $(this).attr('data-search-type');
         if(searchType === 'review'){
-            keyword = $('#keyword-review').val();
-            searchOption = $('#review-search-option option:selected').val();
             $('.search-tab').html("리뷰 검색 결과").css('display','block');
+            keyword = $('#keyword-review').val();
+            let searchOption = $('#review-search-option option:selected').val();
             if(searchOption === 'recommend'){
                 $('#load-point').show();
                 changeTab("RECOMMEND");
@@ -516,15 +527,36 @@
             }
         }else if(searchType === 'user'){
             $('.search-tab').html("유저 검색 결과").css('display','block');
-            keyword = $('#keyword-user').val();
-            $('#load-point').show();
-            changeTab("USER");
+            keyword = $('#keyword-user').val().replace(/@/g,'');
+            let searchOption = $('#user-search-option option:selected').val();
+            if(searchOption === 'id'){
+                $('#load-point').show();
+                changeTab("USERID");
+            }else if(searchOption === 'name'){
+                $('#load-point').show();
+                changeTab("USERNAME");
+            }
         }
     })
 
+    $('#keyword-user').on("keydown",function(e){
+        if(e.keyCode === 13){
+            e.preventDefault();
+            $('#user-search-btn').trigger('click');
+        }
+    });
+
+    $('#keyword-review').on("keydown",function(e){
+        if(e.keyCode === 13){
+            e.preventDefault();
+            $('#review-search-btn').trigger('click');
+        }
+    });
+
+
 
     function showFindRecommendReview() {
-        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let time = 300;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
         if(!firstLoad){
             scrollPage += 1;
@@ -636,7 +668,7 @@
     }
 
     function showFindRecentReview() {
-        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let time = 300;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
         if(!firstLoad){
             scrollPage += 1;
@@ -747,9 +779,8 @@
         })
     }
 
-    function showFindUser() {
-        console.log('find user')
-        let time = 500;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+    function showFindUserId() {
+        let time = 300;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
         let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
         if(!firstLoad){
             scrollPage += 1;
@@ -759,7 +790,7 @@
             back = false;
         }
         $.ajax({
-            url : '/api/search/user',
+            url : '/api/search/user/id',
             type : 'GET',
             data : {
                 keyword : keyword,
@@ -802,7 +833,7 @@
 
                             let tempHtml =
                                 `<div class="user-card d-flex justify-content-between align-items-center border mb-2 p-3">` +
-                                    `<div class="d-flex align-items-center">` +
+                                    `<div class="d-flex align-items-center" onclick="savePageInfoToSession()">` +
                                         `<a href="../mypage/${user.id}">` +
                                             `<img src="${profileImg}" class="user-profile-img rounded-circle me-3">` +
                                         `</a>` +
@@ -816,7 +847,7 @@
                                             `</div>` +
                                         `</a>` +
                                     `</div>` +
-                                    `<div class="d-flex align-items-center">` +
+                                    `<div class="d-flex align-items-center" onclick="savePageInfoToSession()">` +
                                         `${followedText}` +
                                         `${followBtn}` +
                                     `</div>` +
@@ -849,34 +880,175 @@
         })
     }
 
+    function showFindUserName() {
+        let time = 300;  // 페이지 로딩 시 로더를 일정시간 이상 보여주기 위한 시간 지정
+        let loadScroll; // 다음 페이지 로딩 후에도 유지할 스크롤 위치를 저장할 변수
+        if(!firstLoad){
+            scrollPage += 1;
+        }
+        if(firstLoad || back) {
+            time = 0;
+            back = false;
+        }
+        $.ajax({
+            url : '/api/search/user/name',
+            type : 'GET',
+            data : {
+                keyword : keyword,
+                page : scrollPage
+            },
+            async: false,
+            success : function (result) {
+                console.log(result)
+                let userList = result.dtoList;
 
-    function savePage() {
-        let findInfo = {};
-        findInfo.tabType = tabType;
-        findInfo.scrollPage = scrollPage;
-        findInfo.scrollPosition = window.scrollY.toString();
-        sessionStorage.setItem("feedInfo", JSON.stringify(findInfo));
+                if(firstLoad && userList.length <= 0){
+                    firstLoad = false;
+                    $(".loader").hide()
+                    let messageHtml = '<div class="no-data-msg">' +
+                        '<h4>검색된 회원이 없습니다.</h4>' +
+                        '</div>';
+                    gallery.append(messageHtml);
+                }else {
+                    firstLoad = false;
+                    // 로더를 일정시간 이상 노출하기 위한 setTimeout
+                    setTimeout(() => {
+                        $(".loader").hide()
+                        $.each(userList, function (index, user){
+                            let profileImg = user.profileImg == null ? '../assets/img/profile.jpg' : '/api/image/profile/' + user.profileImg;
+
+                            let userAbout = user.about == null ? '' : `<p class="user-about mb-0 text-muted">${user.about}</p>`;
+
+                            let followBtn;
+                            let followedText = user.followedState === 1 ? '<div class="followed-state">나를 팔로우 중입니다</div>' : '';
+
+                            if(user.id === loginUserId){
+                                followBtn = '';
+                            }else {
+                                if(user.followingState === 1) {
+                                    followBtn = `<button class="unfollow-btn btn btn-secondary ms-2" data-user-id="${user.id}">언팔로우</button>`;
+                                }else {
+                                    followBtn = `<button class="follow-btn btn btn-primary ms-2" data-user-id="${user.id}">팔로우</button>`;
+                                }
+                            }
+
+                            let tempHtml =
+                                `<div class="user-card d-flex justify-content-between align-items-center border mb-2 p-3">` +
+                                `<div class="d-flex align-items-center" onclick="savePageInfoToSession()">` +
+                                `<a href="../mypage/${user.id}">` +
+                                `<img src="${profileImg}" class="user-profile-img rounded-circle me-3">` +
+                                `</a>` +
+                                `<a href="../mypage/${user.id}">` +
+                                `<div class="user-info flex-grow-1">` +
+                                `<div class="d-flex align-items-center mb-2">` +
+                                `<span class="user-id me-2">@${user.id}</span>` +
+                                `<span class="user-name">${user.name}</span>` +
+                                `</div>` +
+                                `${userAbout}` +
+                                `</div>` +
+                                `</a>` +
+                                `</div>` +
+                                `<div class="d-flex align-items-center" onclick="savePageInfoToSession()">` +
+                                `${followedText}` +
+                                `${followBtn}` +
+                                `</div>` +
+                                `</div>`;
+
+
+                            gallery.append(tempHtml).trigger("create")
+
+                        })
+                        window.scrollTo({top: loadScroll, behavior: "instant"});
+                    }, time)
+                    if(userList.length < 12){
+                        // 다음페이지가 없다면 관측을 종료
+                        observer.unobserve(document.getElementById('load-point'));
+                    }
+                }
+                keyword = null;
+            },
+            error : function (err) {
+                console.log(err)
+            },
+            beforeSend : function () {
+                scrollCheck = true;
+                $(".loader").show()
+                loadScroll = window.scrollY;
+            },
+            complete : function () {
+                scrollCheck = false;
+            }
+        })
     }
 
-    function setScrollByFindInfo(){
-        let session_findInfo = JSON.parse(sessionStorage.getItem("findInfo"));
-        let tabType = session_findInfo.tabType;
-        let sessionPage = Number(session_findInfo.scrollPage);
-        let scrollPosition = Number(session_findInfo.scrollPosition);
-        changeTab(tabType)
-        console.log(sessionPage);
-        console.log(scrollPosition);
+    function savePageInfoToSession() {
+        let search_info = {};
+        search_info.tabType = tabType;
+        search_info.scrollPage = scrollPage;
+        search_info.scrollPosition = window.scrollY.toString();
+        if(tabType === 'USERID' || tabType === 'USERNAME'){
+            search_info.keyword = $('#keyword-user').val();
+        }else if(tabType === 'RECOMMEND' || tabType === 'RECENT'){
+            search_info.keyword = $('#keyword-review').val();
+        }
+        sessionStorage.setItem("search_info", JSON.stringify(search_info));
+    }
+
+    function setScrollBySession(){
+        let search_info = JSON.parse(sessionStorage.getItem("search_info"));
+        let tabType = search_info.tabType;
+        let sessionPage = Number(search_info.scrollPage);
+        let scrollPosition = Number(search_info.scrollPosition);
+        let sessionKeyword = search_info.keyword;
+
+        changeTab(tabType);
+
+        switch (tabType){
+            case "RECOMMEND":
+                $('.search-tab').html("리뷰 검색 결과").css('display','block');
+                $('#review-search-tab').click();
+                $('#review-search-option').val('recommend').prop('selected', true);
+                $('#keyword-review').val(sessionKeyword);
+                break;
+            case "RECENT":
+                $('.search-tab').html("리뷰 검색 결과").css('display','block');
+                $('#review-search-tab').click();
+                $('#review-search-option').val('recent').prop('selected', true);
+                $('#keyword-review').val(sessionKeyword);
+                break;
+            case "USERID":
+                $('.search-tab').html("유저 검색 결과").css('display','block');
+                $('#user-search-tab').click();
+                $('#user-search-option').val('id').prop('selected', true);
+                $('#keyword-user').val(sessionKeyword);
+                break;
+            case "USERNAME":
+                $('.search-tab').html("유저 검색 결과").css('display','block');
+                $('#user-search-tab').click();
+                $('#user-search-option').val('name').prop('selected', true);
+                $('#keyword-user').val(sessionKeyword);
+                break;
+        }
+
         for(let page = 0; page <= sessionPage; page++){
             back = true;
+
             switch (tabType){
-                case "RECOMMEND" :
+                case "RECOMMEND":
+                    keyword = sessionKeyword;
                     showFindRecommendReview();
                     break;
-                case "RECENT" :
+                case "RECENT":
+                    keyword = sessionKeyword;
                     showFindRecentReview();
                     break;
-                case "USER" :
-                    showFindUser();
+                case "USERID":
+                    keyword = sessionKeyword.replace(/@/g,'');
+                    showFindUserId();
+                    break;
+                case "USERNAME":
+                    keyword = sessionKeyword.replace(/@/g,'');
+                    showFindUserName();
                     break;
             }
         }
@@ -894,19 +1066,20 @@
         }, 550)
     }
 
+
     function loadPage() {
         window.addEventListener('pageshow', function (event) {
             if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
-                if(sessionStorage.getItem("feedInfo") != null){
+                if(sessionStorage.getItem("search_info") != null){
                     // 다른페이지에서 뒤로가기로 돌아왔을 시 세션에 저장된 정보로 기존 위치로 이동
-                    setScrollByFindInfo();
+                    setScrollBySession();
                 }else {
                     $('#load-point').hide();
                 }
             }else {
-                // 그 외의 방법으로 페이지 접근 시 바로 타겟을 노출, 데이터 로딩
-                if(sessionStorage.getItem("feedInfo") != null){
-                    sessionStorage.removeItem("feedInfo");
+                // 그 외의 방법으로 페이지 접근 시 세션에 저장된 데이터 삭제
+                if(sessionStorage.getItem("search_info") != null){
+                    sessionStorage.removeItem("search_info");
                 }
                 $('#load-point').hide();
             }
@@ -1086,8 +1259,8 @@
                 let regDate = (findReview.regDate === findReview.modDate) ? formatRegDate(findReview.regDate) : formatRegDate(findReview.modDate) + ' (수정됨)';
 
                 $('#writer-info').off().click(function (){
+                    savePageInfoToSession();
                     location.href = `/mypage/${writer.id}`;
-                    savePage();
                 })
                 $('#writer-name').text(writer.name);
                 $('#writer-id').text('@' + writer.id);
@@ -1112,8 +1285,8 @@
                     $('#review-book-info').addClass('d-flex').show();
                     $('#review-book-info').addClass('cursor-pointer')
                     $('#review-book-info').off().click(function (){
+                        savePageInfoToSession()
                         location.href = `../book?bookId=${findReview.reviewBookId}`;
-                        savePage();
                     })
                     $('#review-book-title').text(findReview.reviewBookTitle);
                     if(findReview.reviewBookCoverImg != null){
@@ -1697,20 +1870,21 @@
     // 리뷰 뷰어에서 관광지 정보 조회
     let touritemInfoTimer;
 
-    $('#touritem-wrap').mouseenter(function (){
+    $(document).on('mouseenter', '#touritem-wrap', function () {
         let tourItemId = $('#touritem-name').attr('data-touritem-id');
         if(tourItemId !== undefined){
             $('#touritem-wrap').css('cursor','pointer');
             $('#touritem-wrap').off().click(function (){
+                savePageInfoToSession()
                 location.href = `../info/content/${tourItemId}`;
-                savePage();
             })
             touritemInfoTimer = setTimeout(function () {
                 showTourItemSimpleInfo(tourItemId)
-            },300)
+            },200)
         }
     })
-    $('#touritem-wrap').mouseleave(function (){
+
+    $(document).on('mouseleave', '#touritem-wrap', function () {
         $('#touritem-wrap').css('cursor','');
         clearTimeout(touritemInfoTimer);
         $('#touritem-info').hide();
@@ -1748,10 +1922,9 @@
                 },
                 success : function (){
                     alert('삭제 되었습니다.')
-                    savePage();
+                    savePageInfoToSession();
                     $('#viewer').modal('toggle');
-                    changeTab(tabType);
-                    setScrollByFeedInfo();
+                    setScrollBySession();
                 },
                 error : function (){
                     alert('삭제에 실패했습니다.')
