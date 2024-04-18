@@ -26,16 +26,52 @@
             checkCategory();
             selectAndShow();
             showTourItems();
+            searchItems();
             $("#morebtn").click(function () {
                 $(".invisiblecard").slideToggle(300);
             });
         })
+
+        // 검색 기능 시작
+        function searchItems(){
+            $('.search-btn').click(function () {
+                let keyword = $('.search-input').val();
+
+                    $.ajax({
+                        url: '/info/api/touritems',
+                        type: 'POST',
+                        contentType: 'application/json; charset=UTF-8',
+                        data: JSON.stringify({
+                            page: 0,
+                            cat1: $('input[name=cat1]:checked').val(),
+                            cat2: $('input[name=cat2]:checked').val(),
+                            cat3: $('input[name=cat3]:checked').val(),
+                            areaCode: $('input[name=area]').val(),
+                            sigunguCode: $('input[name=sigungu]:checked').val(),
+                            contentTypeId: $('input[name=type]:checked').val(),
+                            keyword: keyword
+                        }),
+                        success: function (data) {
+                            $('#touritems').replaceWith(data);
+                        },
+                        error: function (err) {
+                            console.log(err)
+                        }
+                    })
+
+            })
+        }
+        // 검색 기능 끝
+
+
 
         function selectAndShow() {
             $(document).on('click', '.select-btn', function () {
                 const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 let cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
                 let cat3 = $('input[name=cat3]:checked').val() === '' ? null : $('input[name=cat3]:checked').val();
+                let keyword = $('.search-input').val();
+
                 if (cat1 == null) {
                     cat2 = null;
                     cat3 = null;
@@ -55,7 +91,8 @@
                         cat3: cat3,
                         areaCode: $('input[name=area]').val(),
                         sigunguCode: $('input[name=sigungu]:checked').val(),
-                        contentTypeId: $('input[name=type]:checked').val()
+                        contentTypeId: $('input[name=type]:checked').val(),
+                        keyword: keyword
                     }),
                     success: function (data) {
                         //$("html").scrollTop(0);
@@ -71,6 +108,7 @@
         function showTourItems() {
             $(document).on('click', '.page-item', function (e) {
                 const target = e.target;
+                let keyword = $('.search-input').val();
                 // sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
                 if (!target.classList.contains('disabled')) {
                     $.ajax({
@@ -84,7 +122,8 @@
                             cat3: $('input[name=cat3]:checked').val(),
                             areaCode: $('input[name=area]').val(),
                             sigunguCode: $('input[name=sigungu]:checked').val(),
-                            contentTypeId: $('input[name=type]:checked').val()
+                            contentTypeId: $('input[name=type]:checked').val(),
+                            keyword: keyword
                         }),
                         success: function (data) {
                             $("html").scrollTop(0);
@@ -103,12 +142,14 @@
             // 카테고리(분류) 선택
             $('.catSelect').click(function () {
                 const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
+                let keyword = $('.search-input').val();
                 $.ajax({
                     url: '/info/api/cat2',
                     type: 'POST',
                     contentType: 'application/json; charset=UTF-8',
                     data: JSON.stringify({
-                        cat1: cat1
+                        cat1: cat1,
+                        keyword: keyword
                     }),
                     success: function (data) {
                         $('#category-middle').replaceWith(data);
@@ -122,13 +163,15 @@
             $(document).on('click', '.cat2Select', function () {
                 const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
                 const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
+                let keyword = $('.search-input').val();
                 $.ajax({
                     url: '/info/api/cat3',
                     type: 'POST',
                     contentType: 'application/json; charset=UTF-8',
                     data: JSON.stringify({
                         cat1: cat1,
-                        cat2: cat2
+                        cat2: cat2,
+                        keyword: keyword
                     }),
                     success: function (data) {
                         $('#category-row').replaceWith(data);
@@ -247,6 +290,25 @@
             margin-bottom: 10px;
         }
 
+
+        /* search btn */
+        .search-btn {
+            width: 20px;
+            height: 20px;
+            background: none;
+            border: none;
+        }
+        input.search-input {
+            border: none;
+            outline: none;
+            width: 90%;
+        }
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin: 8px;
+        }
     </style>
     <title>관광지 정보 | 둘레둘레</title>
 </head>
@@ -353,6 +415,13 @@
             <!--카테고리 셀렉터-->
             <div id="tagSelector">
                 <input type="hidden" name="area" th:value="${selectedArea.areaCode}">
+
+                <!--키워드 검색-->
+                <div class="search-bar">
+                    <input class="search-input" placeholder="장소를 검색하세요.">
+                    <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+
                 <div id="content_type">
                     <h5>- 관광 타입 -</h5>
                     <input type="radio" class="typeSelect btn-check select-btn" name="type" id="type0"
