@@ -961,7 +961,7 @@
         $(document).on('click','.plus',function () {
             if(places[index].length < 9) {
                 // 이름 가져오기
-                const areaname = $(this).prev('div').children('a').eq(0).text();
+                const areaname = $(this).prev('div').find('.content-title').text();
                 console.log(areaname);
 
                 // 위치 가져오기
@@ -1645,9 +1645,9 @@
                                     </div>
 
                                     <div th:title="${touritem.title}" class="ps-3">
-                                        <input type="hidden" th:id="mapx" th:value="${touritem.mapx}">
-                                        <input type="hidden" th:id="mapy" th:value="${touritem.mapy}">
-                                        <input type="hidden" th:id="contentId" th:value="${touritem.contentid}">
+                                        <input type="hidden" th:id="|mapx${touritem.contentid}|" th:value="${touritem.mapx}">
+                                        <input type="hidden" th:id="|mapy${touritem.contentid}|" th:value="${touritem.mapy}">
+                                        <input type="hidden" th:id="|contentId${touritem.contentid}|" th:value="${touritem.contentid}">
                                         <a th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
                                             <div class="content-title" th:text="${touritem.title}"></div>
                                         </a>
