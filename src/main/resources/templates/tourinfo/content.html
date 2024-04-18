@@ -38,7 +38,7 @@
         var marker;
         var label;
         var marker_s, marekr_e, waypoint;
-        var resultMarkerArr = [];
+        var viaMarkers = [];
         //경로그림정보
         var drawInfoArr = [];
         var resultInfoArr = [];
@@ -76,7 +76,7 @@
                     const endLon = moreItems[courseCount - 1].mapy
                     const endLat = moreItems[courseCount - 1].mapx
 
-                    resultMarkerArr = [];
+                    viaMarkers = [];
                     viaPoints = [];
 
                     // 1. 지도 띄우기
@@ -96,12 +96,12 @@
                         label = "<span style='font-size: 15px; background-color: #46414E;color:white'>" + item.title + "</span>";
                         marker = new Tmapv2.Marker({
                             position: new Tmapv2.LatLng(item.mapy, item.mapx),
-                            icon: `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
+                            icon: `https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_${markerName}.png`,
                             iconSize: new Tmapv2.Size(24, 38),
                             map: map,
                             label: label
                         });
-                        resultMarkerArr.push(marker);
+                        viaMarkers.push(marker);
                         if (index > 0 && index < courseCount - 1) {
                             let viaPoint = {
                                 "viaPointId": `course${index}`,
@@ -113,8 +113,8 @@
                         }
                     })
 
-                    // 4. 경로탐색 API 사용요청
-                    // var routeLayer;
+
+                    // 3. 경로탐색 API 사용요청
 
                     var headers = {};
                     headers["appKey"] = "aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf";
@@ -134,8 +134,6 @@
                         "searchOption": "0"
                     });
 
-                    console.log(param)
-
                     $.ajax({
                         method: "POST",
                         url: "https://apis.openapi.sk.com/tmap/routes/routeSequential30?version=1&format=json",//
@@ -145,11 +143,9 @@
                         data: param,
                         success: function (response) {
 
-                            //var resultData = response.properties;
                             var resultFeatures = response.features;
 
                             //기존  라인 초기화
-
                             if (resultInfoArr.length > 0) {
                                 for (var i in resultInfoArr) {
                                     resultInfoArr[i].setMap(null);
@@ -157,6 +153,7 @@
                                 resultInfoArr = [];
                             }
 
+                            var PTbounds = new Tmapv2.LatLngBounds();
                             for (var i in resultFeatures) {
                                 var geometry = resultFeatures[i].geometry;
                                 var properties = resultFeatures[i].properties;
@@ -174,6 +171,10 @@
                                         var convertChange = new Tmapv2.LatLng(convertPoint._lat, convertPoint._lng);
 
                                         drawInfoArr.push(convertChange);
+
+                                        // 경유지 최적화 결과 반경만큼 지도 레벨 조정
+                                        var linePt = new Tmapv2.LatLng(convertChange._lat, convertChange._lng);
+                                        PTbounds.extend(linePt);
                                     }
 
                                     polyline_ = new Tmapv2.Polyline({
@@ -183,16 +184,23 @@
                                         map: map
                                     });
                                     resultInfoArr.push(polyline_);
+                                    var paddingOptions = {
+                                        top: 40, // 상단 패딩
+                                        right: 40, // 우측 패딩
+                                        bottom: 40, // 하단 패딩
+                                        left: 40 // 좌측 패딩
+                                    };
+                                    map.fitBounds(PTbounds, paddingOptions);
 
                                 } else {
                                     var markerImg = "";
                                     var size = "";			//아이콘 크기 설정합니다.
 
                                     if (properties.pointType == "S") {	//출발지 마커
-                                        markerImg = "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_1.png";
+                                        markerImg = "https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_1.png";
                                         size = new Tmapv2.Size(24, 38);
                                     } else if (properties.pointType == "E") {	//도착지 마커
-                                        markerImg = `https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_${courseCount}.png`;
+                                        markerImg = `https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_${courseCount}.png`;
                                         size = new Tmapv2.Size(24, 38);
                                     } else {	//각 포인트 마커
                                         markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
@@ -211,7 +219,7 @@
                                         map: map
                                     });
 
-                                    resultMarkerArr.push(marker_p);
+                                    viaMarkers.push(marker_p);
                                 }
                             }
                         },
@@ -240,7 +248,7 @@
                     // 마커 초기화
                     marker = new Tmapv2.Marker(
                         {
-                            icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_a.png",
+                            icon: "https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_a.png",
                             iconSize: new Tmapv2.Size(24, 38),
                             map: map,
                         });
@@ -252,7 +260,7 @@
                     marker = new Tmapv2.Marker(
                         {
                             position: markerPosition,
-                            icon: "https://tmapapi.sktelecom.com/upload/tmap/marker/pin_b_m_p.png",
+                            icon: "https://tmapapi.tmapmobility.com/upload/tmap/marker/pin_b_m_p.png",
                             iconSize: new Tmapv2.Size(24, 38),
                             map: map,
                             label: label
@@ -436,6 +444,10 @@
             font-size: 20px;
         }
 
+        .moreitem-card {
+            width: 100%;
+        }
+
     </style>
 
     <title>관광지 정보 | 둘레둘레</title>
@@ -520,8 +532,8 @@
                         <div class="col-md-12">
                             <h4 class="sub-title"> 소개 </h4>
                             <div id="overview">
-                                <p th:if='${response.overview.equals("-")}'>관련 소개글이 없습니다.</p>
-                                <p th:unless='${response.overview.equals("-")}' th:utext="${response.overview}"></p>
+                                <p th:if='${response.overview.equals("-")} or ${response.overview.equals("")}'>관련 소개글이 없습니다.</p>
+                                <p th:unless='${response.overview.equals("-")} or ${response.overview.equals("")}' th:utext="${response.overview}"></p>
                             </div>
                         </div>
                     </div>
@@ -770,8 +782,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <h4 th:if='${response.tourItemResponse.contenttypeid.equals("25")}'>코스 안내</h4>
-                            <h4 th:unless='${response.tourItemResponse.contenttypeid.equals("25")}'>동일 카테고리의 주변 관광지
+                            <h4 th:if='${response.tourItemResponse.contenttypeid.equals("25")}' class="mb-4">코스 안내</h4>
+                            <h4 th:unless='${response.tourItemResponse.contenttypeid.equals("25")}' class="mb-4">동일 카테고리의 주변 관광지
                                 추천</h4>
                             <div th:if="${response.moreTourItems.size() > 0}" id="sub-items">
                                 <swiper-container class="mySwiper" pagination="true" pagination-clickable="true"
@@ -779,7 +791,7 @@
                                                   slides-per-view="5">
                                     <th:block th:each="moreitem : ${response.moreTourItems}">
                                         <swiper-slide>
-                                            <div class="card">
+                                            <div class="card moreitem-card">
                                                 <a th:href="@{/info/content/{contentid}(contentid=${moreitem.contentid})}">
                                                     <img th:if="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}"
                                                          src="../../assets/img/no_img.jpg">
@@ -813,5 +825,16 @@
 <th:block th:replace="~{fragments/footer}"></th:block>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+<script>
+    function saveSearchInfo(){
+        let searchInfo = {};
+        searchInfo.type = $('input[name="type"]:checked').val();
+        searchInfo.cat1 = $('input[name="cat1"]:checked').val();
+        searchInfo.cat2 = $('input[name="cat2"]:checked').val();
+        searchInfo.cat3 = $('input[name="cat3"]:checked').val();
+        searchInfo.sigungu = $('input[name="sigungu"]:checked').val();
+        sessionStorage.setItem("feedInfo", JSON.stringify(feeInfo));
+    }
+</script>
 </body>
 </html>

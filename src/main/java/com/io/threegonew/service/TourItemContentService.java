@@ -41,7 +41,6 @@ public class TourItemContentService {
 
     private String homepage;
 
-    /*@Async("customAsyncExecutor")*/
     public TourItemContentResponse getContentInfo(TourItemResponse tourItemResponse){
         TourItemContentResponse contentResponse = TourItemContentResponse.builder()
                 .tourItemResponse(tourItemResponse)

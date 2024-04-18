@@ -3,12 +3,10 @@ package com.io.threegonew.controller;
 import com.io.threegonew.domain.Bookmark;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
-import com.io.threegonew.dto.BookmarkRequest;
-import com.io.threegonew.dto.PageResponse;
-import com.io.threegonew.dto.TourItemResponse;
-import com.io.threegonew.dto.TourItemSelectRequest;
+import com.io.threegonew.dto.*;
 import com.io.threegonew.service.BookmarkService;
 import com.io.threegonew.service.TourItemContentService;
+import com.io.threegonew.service.TourItemContentService2;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +25,7 @@ public class TourItemController {
 
     private final TourItemService tourItemService;
     private final TourItemContentService tourItemContentService;
+    private final TourItemContentService2 tourItemContentService2;
     private final BookmarkService bookmarkService;
 
     @GetMapping("/area")
@@ -92,7 +91,9 @@ public class TourItemController {
             isBookmarkChecked = bookmark.isPresent();
         }
 
-        model.addAttribute("response", tourItemContentService.getContentInfo(tourItemResponse));
+        TourItemContentResponse tourItemContentResponse = tourItemContentService2.getContentInfo(tourItemResponse).block();
+
+        model.addAttribute("response", tourItemContentResponse);
         model.addAttribute("userId", userId);
         model.addAttribute("isBookmarkChecked", isBookmarkChecked);
         return "tourinfo/content";
@@ -106,27 +107,5 @@ public class TourItemController {
         return "tourinfo/city :: #touritems";
     }
 
-//    @GetMapping("/api/touritems")
-//    @ResponseBody
-//    public ResponseEntity<Map<String,Object>> getTourItemList(@RequestParam Map<String, String> params) {
-//        Map<String,Object> returnData = new HashMap<>();
-//        Map<String,Object> data = new HashMap<>();
-//        TourItemSelectRequest request = TourItemSelectRequest.builder()
-//                .areaCode(params.get("areaCode"))
-//                .sigunguCode(params.get("sigunguCode"))
-//                .cat1(params.get("cat1"))
-//                .cat2(params.get("cat2"))
-//                .cat3(params.get("cat3"))
-//                .contentTypeId(params.get("contentTypeId"))
-//                .build();
-//        List<TourItem> tourItemList = tourItemService.findSelectedTourItemList(request);
-//        data.put("contents", tourItemList);
-//
-//        returnData.put("result", true);
-//        returnData.put("data", data);
-//
-//
-//        return ResponseEntity.ok().body(returnData);
-//    }
 
 }
