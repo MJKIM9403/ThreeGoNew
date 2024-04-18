@@ -2658,7 +2658,7 @@
             type: 'POST',
             contentType : 'application/json; charset=UTF-8',
             success: function(response) {
-                alert(userId + '님을 팔로우햇슴~');
+                alert(userId + '님을 팔로우했습니다.');
                 $button.removeClass('btn-primary')
                     .addClass('btn-secondary')
                     .addClass('unfollow-btn')
@@ -2667,7 +2667,7 @@
                 updateFollowCounts();
             },
             error: function (xhr, status, error) {
-                alert('팔로우실패~~');
+                alert('팔로우에 실패했습니다.');
             }
         })
     });
@@ -2682,7 +2682,7 @@
             type: 'DELETE',
             contentType : 'application/json; charset=UTF-8',
             success: function(response) {
-                alert(userId + '님을 언팔로우햇슴~');
+                alert(userId + '님을 언팔로우했습니다.');
                 $button.removeClass('btn-secondary')
                     .addClass('btn-primary')
                     .addClass('follow-btn')
@@ -2691,7 +2691,7 @@
                 updateFollowCounts();
             },
             error: function (xhr, status, error) {
-                alert('언팔로우실패~~');
+                alert('언팔로우에 실패했습니다.');
             }
         })
     });
