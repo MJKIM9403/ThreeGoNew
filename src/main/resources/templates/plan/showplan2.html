@@ -121,9 +121,9 @@
         }
 
         .grant {
-            background: #808080;
             color: #fff;
             font-size: 13px;
+            width: 100%;
         }
 
         .btn_route, .btn_optimize {
@@ -166,6 +166,11 @@
         }
         input[name="plannerName"] {
             width: 308px;
+        }
+        .profile-img {
+            object-fit: cover;
+            width: 50px !important;
+            height: 50px !important;
         }
     </style>
 
@@ -224,8 +229,10 @@
     // 검색창에 입력한 아이디
     let typedText = "";
 
-    // 로드된 plannerId를 작성한 유저가 지금 로그인한 유저가 맞는지
-    let isWriter = [[${exists}]];
+    // 해당 플래너를 작성한 사람이 지금 로그인한 유저가 맞는지
+    let isWriter = [[${isWriter}]];
+    // 해당 플래너의 게스트가 지금 로그인한 유저가 맞는지
+    let isGuest = [[${isGuest}]];
 
     // flatpickr 인스턴스
     let fp;
@@ -265,7 +272,6 @@
         let startDate = [[${startLocalDate}]];
         let endDate = [[${endLocalDate}]];
         let daysBetween = [[${daysBetween}]];
-
 
         $('.name').html(plannerName);
         var daysTemplate = `
@@ -662,9 +668,7 @@
      */
     function deletePlanner() {
         $('.delete-planner-btn').click(function () {
-            if (isWriter == false) {
-                alert('삭제 권한이 없습니다.');
-            } else {
+            if(isWriter == true) {
                 const deleteConfirm = "등록한 여행 일정을 정말로 삭제하시겠습니까? 삭제하면 복구할 수 없습니다.";
                 if (confirm(deleteConfirm)) {
                     $.ajax({
@@ -682,6 +686,29 @@
                         }
                     });
                 }
+            } else if(isGuest == true){
+                const deleteConfirm = "초대받은 여행에서 삭제하시겠습니까? 삭제하시면 더 이상 공유받을 수 없습니다.";
+                let guestId = [[${userId}]];
+                if(confirm(deleteConfirm)) {
+                    $.ajax({
+                        url: `/api/removeGuest/${plannerId}/${guestId}`,
+                        type: 'DELETE',
+                        data: {
+                            plannerId: plannerId,
+                            guestId: guestId
+                        },
+                        success: function (response) {
+                            alert(`초대받은 여행에서 삭제되었습니다.`);
+                            $('#shareModal').modal('hide');
+                            window.location.href = '/planner';
+                        },
+                        error: function (xhr, status, error) {
+                            alert("오류가 발생했습니다:" + error);
+                        }
+                    })
+                }
+            } else {
+                alert('삭제 권한이 없습니다.');
             }
         })
     }
@@ -746,7 +773,7 @@
     function addPrintDayList() {
         $('.plan').empty(); // 계획을 비우고 다시 채움
 
-        var dayTemplate = `<h4 class="mb-1">${index + 1}일차</h4>`;
+        var dayTemplate = `<h4 class="mb-4">${index + 1}일차</h4>`;
         $('.plan').append(dayTemplate);
 
         if(places[index].length > 0) { // 내용이 있으면 표시
@@ -1175,15 +1202,17 @@
                 </button>
             </div>
             <div class="modal-body">
-                    <div style="height: 60px;" th:if="${guestList.size() > 0}">
+                    <div style="height: 60px;" th:if="${teamList.size() > 0}">
                         <div id="guestList">
                             공유중인 친구
-                        <th:block th:each="guest, idx : ${guestList}">
-                            <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${guest.id}" th:text="${guest.id}"></button>
-                            <button class="btn delete-user-btn">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </th:block>
+                            <th:block th:each="member, idx : ${teamList}">
+                                <th:block th:if="${member.teamLevel == 0}">
+                                    <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></button>
+                                    <button class="btn delete-user-btn">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </th:block>
+                            </th:block>
                         </div>
                     </div>
                     <!--선택한 유저의 목록이 보일 창-->
@@ -1264,18 +1293,20 @@
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
     <div class="container mt-5">
-        <div class="d-flex flex-row gap-2">
+        <div class="d-flex flex-row gap-4">
             <th:block th:each="member, idx : ${teamList}">
                 <div th:if="${member.teamLevel == 9}">
-                    <a th:href="@{/mypage/{userId}(userId=${member.user.id})}">
-                        <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></button>
-                        <div class="grant rounded-pill d-flex justify-content-center">host</div>
+                    <a th:href="@{/mypage/{userId}(userId=${member.user.id})}" class="d-flex flex-column align-items-center gap-1">
+                        <img th:src="${member.user.profileImg}" th:data-user-id="${member.user.id}" alt="프로필 이미지" class="profile-img rounded-circle">
+                        <span class="user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></span>
+                        <div class="grant bg-dark rounded-pill d-flex justify-content-center">host</div>
                     </a>
                 </div>
                 <div th:if="${member.teamLevel == 0}">
-                    <a th:href="@{/mypage/{userId}(userId=${member.user.id})}">
-                        <button class="btn btn-sm btn-dark user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></button>
-                        <div class="grant rounded-pill d-flex justify-content-center">guest</div>
+                    <a th:href="@{/mypage/{userId}(userId=${member.user.id})}"  class="d-flex flex-column align-items-center gap-1">
+                        <img th:src="${member.user.profileImg}" th:data-user-id="${member.user.id}" alt="프로필 이미지" class="profile-img rounded-circle">
+                        <span class="user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></span>
+                        <div class="grant bg-secondary rounded-pill d-flex justify-content-center">guest</div>
                     </a>
                 </div>
             </th:block>

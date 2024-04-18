@@ -13,6 +13,19 @@ public interface PlannerRepository extends JpaRepository<Planner, Long> {
 
     boolean existsByUserIdAndPlannerNameAndStartDateAndEndDate(String userId, String plannerName, LocalDate startDate, LocalDate endDate);
     boolean existsByUserIdAndPlannerId(String userId, Long plannerId);
+
+    // 로그인한 유저가 플래너를 공유했는지 확인하기
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM team WHERE p_id = :plannerId" +
+            " AND u_id = :loginId " +
+            " AND team_level = 9) ", nativeQuery = true)
+    int existsByPlannerIdAndLoginIdAndHost(@Param("plannerId") Long plannerId, @Param("loginId") String loginId);
+
+    // 로그인한 유저가 플래너를 공유받았는지 확인하기
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM team WHERE p_id = :plannerId" +
+            " AND u_id = :loginId " +
+            " AND team_level = 0) ", nativeQuery = true)
+    int existsByPlannerIdAndLoginIdAndGuest(@Param("plannerId") Long plannerId, @Param("loginId") String loginId);
+
     Optional<Planner> findByPlannerId(Long plannerId);
 
     @Query(value = "select distinct p.* " +

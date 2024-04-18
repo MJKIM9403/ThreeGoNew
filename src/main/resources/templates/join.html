@@ -210,6 +210,7 @@
                 let inputNum = $("#number").val();
 
                 // 간단한 유효성 검사
+                let reg_id = /^[a-zA-Z][0-9a-zA-Z]{4,7}$/;
                 let reg_pw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
                 let id = document.getElementsByName('id')[0].value;
                 let pw = document.getElementsByName('pw')[0].value;
@@ -278,7 +279,12 @@
                     event.preventDefault(); // 폼 제출 막기
                     document.getElementsByName('email')[0].focus();
                     return false;
-                }
+                } else if  (!reg_id.test(id)) {
+                    alert('아이디 양식을 다시 확인하여 주십시오.');
+                    event.preventDefault(); // 폼 제출 막기
+                    console.log(event.target);
+                    document.getElementsByName('id')[0].focus();
+                    return false;}
 
                 // 데이터를 JSON 형식으로 구성
                 let userData = {
@@ -310,11 +316,29 @@
 
             document.getElementById('idCheckBtn').addEventListener('click', function () {
                 let enteredId = document.getElementsByName('id')[0].value;
+                let reg_id = /^[a-zA-Z][0-9a-zA-Z]{4,7}$/;
+                // 메시지 초기화
+                $('#idAvailable').hide().text('');
+                $('#idNotAvailable').hide().text('');
+
                 // 빈 칸인 경우 처리
                 if (enteredId === "") {
                     alert('아이디를 입력해주세요.');
                     return;
                 }
+
+                // 빈 칸이 아닌 경우에만 정규식 검사 수행
+                if (enteredId !== "") {
+                    // 정규식 검사
+                    if (!reg_id.test(enteredId)) {
+                        alert('아이디는 영문자로 시작하고, 5~8자 사이의 영문자 또는 숫자로 이루어져야 합니다.');
+                        event.preventDefault(); // 폼 제출 막기
+                        return false;
+                    }
+                }
+
+
+                // 중복 검사
                 $.ajax({
                     url: '/checkDuplicateId',
                     type: 'GET',
@@ -346,7 +370,11 @@
                         console.error("XHR:", xhr);
                     }
                 });
+
+
             });
+
+
 
             function sendNumber() {
                 let email = document.getElementsByName('email')[0].value;

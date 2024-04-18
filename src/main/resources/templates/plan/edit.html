@@ -43,7 +43,6 @@
         .search-scroll {
             overflow: auto;
             height: calc(100vh - 112px);
-            padding: 10px;
         }
         .scroll {
             overflow: auto;
@@ -353,17 +352,6 @@
     function LoadNameAndDay() {
         $('.planner-name').text(plannerName);
         $('.planner-date').text(startDate + " ~ " + endDate);
-    }
-
-    // 도시명 바꾸기
-    function updateCityName() {
-        $('.areaSelect').change(function() {
-            // 변경된 라디오 버튼의 label 요소를 찾습니다.
-            var cityName = $(this).next('label').text();
-
-            // $('.city-name')의 텍스트를 변경된 label의 텍스트로 설정합니다.
-            $('.city-name').text(cityName);
-        });
     }
 
     // 토글로 창 접기
@@ -1454,7 +1442,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">검색설정</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -1629,8 +1617,7 @@
                     <!--장소 불러오기-->
                     <div id="touritems">
                         <div>
-                            <span class="fs-5 fw-semibold city-name">전국</span>
-                            <span class="fs-5 fw-semibold" th:text="|${pageResponse.total}건의 관광지|"></span>
+                            <span class="fs-5 fw-semibold ps-3" th:text="|${pageResponse.total}건의 관광지|"></span>
                         </div>
 
                         <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">

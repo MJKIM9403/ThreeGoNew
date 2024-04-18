@@ -4,6 +4,8 @@ import com.io.threegonew.domain.Planner;
 import com.io.threegonew.domain.Team;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.PlannerResponse;
+import com.io.threegonew.dto.TeamUserResponse;
+import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.repository.PlannerRepository;
 import com.io.threegonew.repository.TeamRepository;
 import com.io.threegonew.repository.UserRepository;
@@ -93,30 +95,46 @@ public class TeamService {
         return sharedPlannerResponseList;
     }
 
+    private TeamUserResponse teamMapper(Team team) {
+        return TeamUserResponse.builder()
+                .plannerId(team.getPlanner().getPlannerId())
+                .teamId(team.getTeamId())
+                .user(userInfoMapper(team.getUser()))
+                .teamLevel(team.getTeamLevel())
+                .build();
+    }
+
+    private UserInfoResponse userInfoMapper(User user) {
+        String defaultImage = "../assets/img/profile.jpg"; // 기본 이미지 경로 설정
+
+        return UserInfoResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .profileImg(user.getU_sfile()!= null && !user.getU_sfile().isEmpty() ? "/api/image/profile/" + user.getU_sfile() : defaultImage)
+                .about(user.getAbout())
+                .build();
+    }
+
     // 특정 플래너의 멤버들을 전부 조회합니다.
-    public List<User> getAllMembersOfPlanner(Long plannerId) {
+    public List<TeamUserResponse> getAllMembersOfPlanner(Long plannerId) {
         // 특정 플래너에 속한 모든 팀 멤버를 조회합니다.
-        List<Team> teamMembers = teamRepository.findByPlannerPlannerId(plannerId);
-        // 호스트를 필터링 하여 호스트를 제외한 게스트들만 선택합니다.
-        List<User> teamList = teamMembers.stream()
-                .map(Team::getUser) // 사용자로 매핑
+        List<TeamUserResponse> teamList = teamRepository.findByPlannerPlannerId(plannerId).stream()
+                .map(this::teamMapper)
                 .collect(Collectors.toList());
 
         return teamList;
     }
 
     // 특정 플래너의 게스트들을 조회합니다.
-    public List<User> getGuestsOfPlanner(Long plannerId) {
+    public List<TeamUserResponse> getGuestsOfPlanner(Long plannerId) {
         // 특정 플래너에 속한 모든 팀 멤버를 조회합니다.
-        List<Team> teamMembers = teamRepository.findByPlannerPlannerId(plannerId);
-
-        // 호스트를 필터링 하여 호스트를 제외한 게스트들만 선택합니다.
-        List<User> guests = teamMembers.stream()
-                .filter(team -> team.getTeamLevel() == 0) // 게스트 필터링
-                .map(Team::getUser) // 사용자로 매핑
+        List<TeamUserResponse> guestList = teamRepository.findByPlannerPlannerId(plannerId).stream()
+                .filter(team -> team.getTeamLevel() == 0)
+                .map(this::teamMapper)
                 .collect(Collectors.toList());
 
-        return guests;
+        return guestList;
     }
 
     // 특정 플래너의 호스트를 조회합니다.
@@ -138,8 +156,8 @@ public class TeamService {
 
     // 특정 게스트가 특정 플래너에 이미 초대되었는지 확인합니다.
     public boolean isGuestAlreadyInvited(Long plannerId, String guestId) {
-        List<User> guests = getGuestsOfPlanner(plannerId);
-        return guests.stream().anyMatch(guest -> guest.getId().equals(guestId));
+        List<TeamUserResponse> guests = getGuestsOfPlanner(plannerId);
+        return guests.stream().anyMatch(guest -> guest.getUser().getId().equals(guestId));
     }
 
     // 특정 게스트를 삭제합니다.
