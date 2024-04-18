@@ -236,7 +236,6 @@
 
                     reader.onload = function(data) {
                         let index = fileLength + i;
-                        console.log(index)
                         const targetSlide = $(`.swiper .swiper-wrapper .swiper-slide:eq(${index})`);
                         targetSlide.find('.preview-img').attr('src', data.target.result);
                     };
@@ -270,7 +269,7 @@
                 let idx_offset = savedFiles.length - deleteFilesId.length;
                 uploadFiles.splice((idx - idx_offset),1);
             }
-            console.log(uploadFiles)
+
             swiper.slideTo(idx-1,300,false);
             swiper.removeSlide(idx);
             swiper.update();

@@ -825,16 +825,5 @@
 <th:block th:replace="~{fragments/footer}"></th:block>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
-<script>
-    function saveSearchInfo(){
-        let searchInfo = {};
-        searchInfo.type = $('input[name="type"]:checked').val();
-        searchInfo.cat1 = $('input[name="cat1"]:checked').val();
-        searchInfo.cat2 = $('input[name="cat2"]:checked').val();
-        searchInfo.cat3 = $('input[name="cat3"]:checked').val();
-        searchInfo.sigungu = $('input[name="sigungu"]:checked').val();
-        sessionStorage.setItem("feedInfo", JSON.stringify(feeInfo));
-    }
-</script>
 </body>
 </html>
