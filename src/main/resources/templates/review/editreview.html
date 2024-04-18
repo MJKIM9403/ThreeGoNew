@@ -172,6 +172,12 @@
             $('.swiper-controller').hide()
         };
 
+        if(fileLength >= 4) {
+            $('.uploader').hide();
+        }else {
+            $('.uploader').show();
+        }
+
         deleteImg();
     })
 
@@ -204,17 +210,18 @@
     // 이미지 추가, 삭제, 수정 관련
     function setPreview(){
         let files = fileInput.files;
-        if(files.length + images.length > 4){
+        if(files.length + calcFileLength() > 4){
             files.length = 0;
             alert("사진은 4장까지 첨부할 수 있습니다.")
         }else {
-            if(files.length > 0 && images.length === 0) {
-                $('.swiper-wrapper').html("");
+            if(files.length > 0 && calcFileLength() === 0) {
+                $('.swiper').find('.swiper-wrapper').html("");
             }
             if(files.length > 0){
+                let fileLength = calcFileLength();
                 for (let i = 0; i < files.length; i++) {
                     let file = files[i];
-                    images.push(file);
+                    uploadFiles.push(file);
 
                     let reader = new FileReader();
 
@@ -224,25 +231,28 @@
                         `</button>` +
                         `<img class="preview-img" style="object-fit: contain" onload="goLastSlide()"/>` +
                         `</div>`;
-                    editSwiper.appendSlide(tempHtml);
-                    editSwiper.update();
+                    swiper.appendSlide(tempHtml);
+                    swiper.update();
 
                     reader.onload = function(data) {
-                        const swiperSlides = $('.editSwiper .swiper-wrapper .swiper-slide');
-                        const targetSlide = $(swiperSlides[images.length - files.length + i]);
+                        let index = fileLength + i;
+                        console.log(index)
+                        const targetSlide = $(`.swiper .swiper-wrapper .swiper-slide:eq(${index})`);
                         targetSlide.find('.preview-img').attr('src', data.target.result);
                     };
 
                     reader.readAsDataURL(file);
                 }
             }
-            if(images.length > 1){
-                $('.editSwiper .swiper-controller').show()
+            if(calcFileLength() > 1){
+                $('.swiper .swiper-controller').show()
             }else {
-                $('.editSwiper .swiper-controller').hide()
+                $('.swiper .swiper-controller').hide()
             }
-            if(images.length >= 4){
+            if(calcFileLength() >= 4){
                 $('.uploader').hide()
+            }else {
+                $('.uploader').show()
             }
         }
         setTimeout(function (){
@@ -256,7 +266,11 @@
             let deleteFileId = $('.swiper-wrapper .swiper-slide').eq(idx).find('img').attr('data-file-id');
             if(deleteFileId !== undefined){
                 deleteFilesId.push(deleteFileId);
+            }else {
+                let idx_offset = savedFiles.length - deleteFilesId.length;
+                uploadFiles.splice((idx - idx_offset),1);
             }
+            console.log(uploadFiles)
             swiper.slideTo(idx-1,300,false);
             swiper.removeSlide(idx);
             swiper.update();
