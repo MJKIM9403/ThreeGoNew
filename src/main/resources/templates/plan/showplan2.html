@@ -934,7 +934,7 @@
         $(".btn_optimize").click(function () {
             // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
             if (viaMarkers[index].length < 3) {
-                alert('경유지는 1개 이상이어야합니다.');
+                alert('여행지를 3곳 이상 추가해주세요.');
                 return false;
             } else {
                 var headers = {};
@@ -1053,7 +1053,7 @@
         $(".btn_route").click(function () {
             // 마커가 3곳 이상이 아니면 실행되지 않도록 막음
             if (viaMarkers[index].length < 3) {
-                alert('경유지는 1개 이상이어야합니다.');
+                alert('여행지를 3곳 이상 추가해주세요.');
                 return false;
             } else {
                 var headers = {};
@@ -1248,7 +1248,7 @@
                 <div class="flex-sm-row flex-column d-flex justify-content-center">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-daterange">
-                            <input id="days" name="days" type="date" class="form-control" th:placeholder="${startDateString} + ' ~ ' + ${endDateString}" th:value="${startDateString} + ' ~ ' + ${endDateString}">
+                            <input id="days" name="days" type="date" class="form-control" th:placeholder="${startDateString} + ' ~ ' + ${endDateString}">
                         </div>
                     </div>
                 </div>
