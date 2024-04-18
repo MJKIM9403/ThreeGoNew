@@ -961,7 +961,7 @@
         $(document).on('click','.plus',function () {
             if(places[index].length < 9) {
                 // 이름 가져오기
-                const areaname = $(this).prev('div').children('div').text();
+                const areaname = $(this).prev('div').children('a').eq(0).text();
                 console.log(areaname);
 
                 // 위치 가져오기
@@ -1604,8 +1604,8 @@
         <!--장소찾기-->
         <div id="select_item" class="vh-100 d-flex flex-column align-items-stretch bg-white" style="width: 380px;">
             <div class="d-flex flex-column px-3 py-2">
-                <span class="fs-5 fw-semibold planner-name">플래너 이름</span><br>
-                <span class="fw-semibold planner-date">날짜</span>
+                <span class="fs-5 fw-semibold planner-name">플래너 이름</span>
+                <span class="text-secondary planner-date">날짜</span>
             </div>
             <div class="search-bar">
                 <input class="search-input" placeholder="장소를 검색하세요.">
@@ -1636,7 +1636,7 @@
                         <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
 
                             <!--선택된 객체에는 active 클래스를 주면 파란 배경이 됨-->
-                            <a class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
+                            <div class="list-group-item list-group-item-action py-3 lh-tight" aria-current="true">
                                 <div class="d-flex w-100 align-items-center justify-content-between">
                                     <!-- 이미지 출력하기 -->
                                     <div style="width: 60px; height: 60px;">
@@ -1648,7 +1648,9 @@
                                         <input type="hidden" th:id="mapx" th:value="${touritem.mapx}">
                                         <input type="hidden" th:id="mapy" th:value="${touritem.mapy}">
                                         <input type="hidden" th:id="contentId" th:value="${touritem.contentid}">
-                                        <div class="content-title" th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}" th:text="${touritem.title}"></div>
+                                        <a th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
+                                            <div class="content-title" th:text="${touritem.title}"></div>
+                                        </a>
                                         <p class="content-address" th:text="${touritem.address}"></p>
                                     </div>
 
@@ -1660,7 +1662,7 @@
                                 <div class="col-10 mb-1 small" >
                                     <label th:text="${touritem.fullCategoryName}"></label>
                                 </div>
-                            </a>
+                            </div>
                         </th:block>
 
 
