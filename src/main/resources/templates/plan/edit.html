@@ -304,13 +304,15 @@
         showTourItems();
         loadPlanForDay();
         listSortable();
-
-        // 지역을 선택하면 선택한 지역의 areaCode를 저장합니다.
-        $(document).on('click', '.areaSelect', function() {
-            selectedAreaCode = $(this).val();
-            updateCityName();
-        });
         LoadNameAndDay();
+
+        // 엔터 입력 시에도 검색 가능하게 설정
+        $('.search-input').on("keydown",function(e){
+            if(e.keyCode === 13){
+                e.preventDefault();
+                $('.search-btn').trigger('click');
+            }
+        });
     })
 
     /**
