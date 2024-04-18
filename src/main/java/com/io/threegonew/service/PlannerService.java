@@ -1,10 +1,8 @@
 package com.io.threegonew.service;
 
 import com.io.threegonew.domain.*;
-import com.io.threegonew.dto.MyPlannerResponse;
 import com.io.threegonew.dto.PlannerResponse;
 import com.io.threegonew.repository.*;
-import com.io.threegonew.util.AesUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -40,6 +38,16 @@ public class PlannerService {
     // 특정 유저가 특정 플래너를 작성했는지 확인하는 메서드
     public boolean isUserPlannerOwner(String userId, Long plannerId) {
         return plannerRepository.existsByUserIdAndPlannerId(userId, plannerId);
+    }
+
+    // 특정 유저가 특정 플래너를 공유했는지 확인하는 메서드
+    public int isUserPlannerHost(Long plannerId, String userId) {
+        return plannerRepository.existsByPlannerIdAndLoginIdAndHost(plannerId, userId);
+    }
+
+    // 특정 유저가 특정 플래너를 공유받았는지 확인하는 메서드
+    public int isUserPlannerGuest(Long plannerId, String userId) {
+        return plannerRepository.existsByPlannerIdAndLoginIdAndGuest(plannerId, userId);
     }
 
     public Planner findPlanner(Long plannerId) {

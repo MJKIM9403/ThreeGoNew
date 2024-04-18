@@ -434,7 +434,11 @@ public class PlanController {
         List<PlannerResponse> plannerList = plannerService.findPlannerByUser(userId);
 
         // 사용자가 해당 플래너를 작성한 사람인지 확인
-        boolean exists = plannerService.isUserPlannerOwner(userId, plannerId);
+        boolean isWriter = plannerService.isUserPlannerOwner(userId, plannerId);
+
+        // 사용자가 해당 플래너를 공유받았는지 확인
+        int isGuest = plannerService.isUserPlannerGuest(plannerId, userId);
+
 
         // 내가 작성한 plannerList
         if(!userId.equals("anonymousUser")) {
@@ -443,25 +447,12 @@ public class PlanController {
             model.addAttribute("plannerList", new ArrayList<Planner>());
         }
 
-
-
-
-        // 게스트+호스트 조회
-        List<User> memberList = teamService.getAllMembersOfPlanner(plannerId);
-
         // 게스트 리스트 조회
-        List<User> guestList = teamService.getGuestsOfPlanner(plannerId);
+        List<TeamUserResponse> guestList = teamService.getGuestsOfPlanner(plannerId);
 
         // 전체 팀 리스트 조회
-        List<Team> teamList = teamRepository.findByPlannerPlannerId(plannerId);
+        List<TeamUserResponse> teamList = teamService.getAllMembersOfPlanner(plannerId);
 
-
-        // 팀 리스트중에 로그인한 유저와 아이디가 같다면 팀 멤버 개인을 모델에 넣어 전달
-        for(Team teamMember: teamList) {
-            if(teamMember.getUser().getId().equals(userId)) {
-                model.addAttribute("teamMember",teamMember);
-            }
-        }
 
         // 모델에 groupedPlans와 Plan과 TourItem 정보를 넣어서 view로 전달
         model.addAttribute("userId", userId);
@@ -475,7 +466,8 @@ public class PlanController {
         model.addAttribute("daysBetween", daysBetween);
         model.addAttribute("guestList", guestList);
         model.addAttribute("teamList", teamList);
-        model.addAttribute("exists", exists);
+        model.addAttribute("isWriter", isWriter);
+        model.addAttribute("isGuest", isGuest);
 
         return "plan/showplan2";
     }

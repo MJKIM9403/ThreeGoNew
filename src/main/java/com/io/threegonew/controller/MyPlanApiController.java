@@ -1,7 +1,5 @@
 package com.io.threegonew.controller;
 
-import com.io.threegonew.domain.Plan;
-import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.PlanService;
 import com.io.threegonew.service.PlannerService;
