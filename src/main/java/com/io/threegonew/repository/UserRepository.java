@@ -28,8 +28,8 @@ public interface UserRepository extends JpaRepository<User, String> {
             "u.u_name AS name, " +
             "u.u_sfile AS profileImg, " +
             "u.u_about AS about, " +
-            "CASE WHEN f_out.id IS NOT NULL THEN 1 ELSE 0 END AS followingState, " +
-            "CASE WHEN f_in.id IS NOT NULL THEN 1 ELSE 0 END AS followedState " +
+            "CASE WHEN f_out.id IS NOT NULL THEN 1 ELSE 0 END AS followedState, " +
+            "CASE WHEN f_in.id IS NOT NULL THEN 1 ELSE 0 END AS followingState " +
             "FROM users u " +
             "LEFT JOIN follows f_out ON u.u_id = f_out.to_user_id AND f_out.from_user_id = :loginUser " +
             "LEFT JOIN follows f_in ON u.u_id = f_in.from_user_id AND f_in.to_user_id = :loginUser " +
@@ -45,4 +45,24 @@ public interface UserRepository extends JpaRepository<User, String> {
             nativeQuery = true)
     Page<UserWithFollowStateInterface> findUsersByStartOrContainUserId(Pageable pageable, @Param("startKeyword")String startKeyword, @Param("containKeyword")String containKeyword, @Param("loginUser")String loginUser);
 
+    @Query(value = "SELECT u.u_id AS id, " +
+            "u.u_name AS name, " +
+            "u.u_sfile AS profileImg, " +
+            "u.u_about AS about, " +
+            "CASE WHEN f_out.id IS NOT NULL THEN 1 ELSE 0 END AS followedState, " +
+            "CASE WHEN f_in.id IS NOT NULL THEN 1 ELSE 0 END AS followingState " +
+            "FROM users u " +
+            "LEFT JOIN follows f_out ON u.u_id = f_out.to_user_id AND f_out.from_user_id = :loginUser " +
+            "LEFT JOIN follows f_in ON u.u_id = f_in.from_user_id AND f_in.to_user_id = :loginUser " +
+            "WHERE u.u_name LIKE :containKeyword " +
+            "ORDER BY " +
+            "CASE " +
+            "WHEN u.u_name LIKE :startKeyword " +
+            "THEN 1 " +
+            "ELSE 2 " +
+            "END, " +
+            "u.u_name ASC ",
+            countQuery = "SELECT count(u.u_id) FROM users u WHERE u.u_name LIKE :containKeyword ",
+            nativeQuery = true)
+    Page<UserWithFollowStateInterface> findUsersByStartOrContainUserName(Pageable pageable, @Param("startKeyword")String startKeyword, @Param("containKeyword")String containKeyword, @Param("loginUser")String loginUser);
 }

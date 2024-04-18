@@ -87,6 +87,29 @@ public class UserService {
         return pageResponse;
     }
 
+    @Transactional
+    public PageResponse<UserWithFollowStateResponse> getUserByStartOrContainUserName(String keyword, int pageNum){
+        Pageable pageable = PageRequest.of(pageNum, 12);
+
+        String startKeyword = keyword + "%";
+        String containKeyword = "%" + keyword + "%";
+
+        String loginUserId = SecurityUtils.getCurrentUsername();
+
+        Page<UserWithFollowStateResponse> page = userRepository.findUsersByStartOrContainUserName(pageable, startKeyword, containKeyword, loginUserId)
+                .map(userWithFollowStateInterface -> modelMapper.map(userWithFollowStateInterface, UserWithFollowStateResponse.class));
+
+        PageResponse<UserWithFollowStateResponse> pageResponse = PageResponse.<UserWithFollowStateResponse>withAll()
+                .dtoList(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .total(page.getTotalElements())
+                .build();
+
+        return pageResponse;
+    }
+
 
     private UserInfoResponse userInfoMapper(User user) {
         return UserInfoResponse.builder()

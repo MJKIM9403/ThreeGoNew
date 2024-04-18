@@ -24,6 +24,7 @@
 }
 
 #review-book-info {
+    cursor: pointer;
     position: absolute;
     z-index: 100;
     top: 1rem;

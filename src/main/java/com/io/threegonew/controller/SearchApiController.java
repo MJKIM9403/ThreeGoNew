@@ -37,12 +37,25 @@ public class SearchApiController {
         }
     }
 
-    @GetMapping("/user")
+    @GetMapping("/user/id")
     public ResponseEntity<PageResponse<UserWithFollowStateResponse>> showUsersByStartOrContainUserId(@RequestParam(name = "keyword") String keyword,
                                                                                                      @RequestParam(name = "page") int page)
     {
         try{
             PageResponse<UserWithFollowStateResponse> pageResponse = userService.getUserByStartOrContainUserId(keyword, page);
+            return ResponseEntity.ok().body(pageResponse);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/user/name")
+    public ResponseEntity<PageResponse<UserWithFollowStateResponse>> showUsersByStartOrContainUserName(@RequestParam(name = "keyword") String keyword,
+                                                                                                     @RequestParam(name = "page") int page)
+    {
+        try{
+            PageResponse<UserWithFollowStateResponse> pageResponse = userService.getUserByStartOrContainUserName(keyword, page);
             return ResponseEntity.ok().body(pageResponse);
         }catch (Exception e){
             e.printStackTrace();
