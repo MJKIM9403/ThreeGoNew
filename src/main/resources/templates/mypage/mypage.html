@@ -583,7 +583,7 @@
                         <div class="preview-container col-md-7">
                             <div class="add-file">
                                 <label for="img-uploader" class="uploader border border-primary rounded-pill">사진 추가</label>
-                                <input type="file" id="img-uploader" accept="image/*" onchange="setPreview()" multiple/>
+                                <input type="file" id="img-uploader" accept=".gif, .jpg, .png" onchange="setPreview()" multiple/>
                             </div>
                             <div class="swiper editSwiper">
                                 <div class="swiper-wrapper">
@@ -651,7 +651,7 @@
                     <div class="mb-2">
                         <span for="book-img-uploader" class="form-label cursor-default">커버 이미지 선택</span>
                         <label for="book-img-uploader" id="book-img-uploader-label" class="cursor-pointer ms-1"><i class="bi bi-camera-fill"></i></label>
-                        <input type="file" id="book-img-uploader" accept="image/*" onchange="setBookCoverPreview()"/>
+                        <input type="file" id="book-img-uploader" accept=".gif, .jpg, .png" onchange="setBookCoverPreview()"/>
                         <div class="mt-1 ms-2">
                             <sapn id="select-book-img">선택된 파일이 없습니다.</sapn>
                             <i id="book-img-delete-btn" class="bi bi-x ms-1 p-1 cursor-pointer" onclick="deleteBookCoverImg()"></i>
