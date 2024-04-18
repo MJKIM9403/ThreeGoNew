@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
 
+
     List<Team> findByUserId(String userId);
 
     List<Team> findByPlannerPlannerId(Long PlannerId);

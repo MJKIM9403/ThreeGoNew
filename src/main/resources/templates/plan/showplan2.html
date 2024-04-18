@@ -167,7 +167,7 @@
         input[name="plannerName"] {
             width: 308px;
         }
-        .profile-img {
+        .team-profile-img {
             object-fit: cover;
             width: 50px !important;
             height: 50px !important;
@@ -1297,14 +1297,14 @@
             <th:block th:each="member, idx : ${teamList}">
                 <div th:if="${member.teamLevel == 9}">
                     <a th:href="@{/mypage/{userId}(userId=${member.user.id})}" class="d-flex flex-column align-items-center gap-1">
-                        <img th:src="${member.user.profileImg}" th:data-user-id="${member.user.id}" alt="프로필 이미지" class="profile-img rounded-circle">
+                        <img th:src="${member.user.profileImg}" th:data-user-id="${member.user.id}" alt="프로필 이미지" class="team-profile-img rounded-circle">
                         <span class="user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></span>
                         <div class="grant bg-dark rounded-pill d-flex justify-content-center">host</div>
                     </a>
                 </div>
                 <div th:if="${member.teamLevel == 0}">
                     <a th:href="@{/mypage/{userId}(userId=${member.user.id})}"  class="d-flex flex-column align-items-center gap-1">
-                        <img th:src="${member.user.profileImg}" th:data-user-id="${member.user.id}" alt="프로필 이미지" class="profile-img rounded-circle">
+                        <img th:src="${member.user.profileImg}" th:data-user-id="${member.user.id}" alt="프로필 이미지" class="team-profile-img rounded-circle">
                         <span class="user-btn" th:data-user-id="${member.user.id}" th:text="${member.user.id}"></span>
                         <div class="grant bg-secondary rounded-pill d-flex justify-content-center">guest</div>
                     </a>
