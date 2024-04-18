@@ -141,7 +141,7 @@
                 <div class="flex-row d-flex justify-content-center">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-daterange">
-                            <input id="plannerName2" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
+                            <input id="plannerName2" name="plannerName" type="text" class="form-control" oninput="checkLength()" placeholder="여행 제목을 입력해주세요.">
                             <input id="days2" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
 
                             <input type="hidden" id="startDate2" name="startDate" class="form-control" placeholder="Arriving Date">
@@ -275,7 +275,7 @@
             <form method="get" action="/plan/city">
                 <div class="flex-row d-flex justify-content-center">
                     <div class="input-daterange">
-                        <input id="plannerName" name="plannerName" type="text" class="form-control" placeholder="여행 제목을 입력해주세요.">
+                        <input id="plannerName" name="plannerName" type="text" class="form-control" oninput="checkLength()" placeholder="여행 제목을 입력해주세요.">
                         <input id="days" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
 
                         <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
@@ -292,8 +292,6 @@
 </div>
     <script>
         $(document).ready(function(){
-
-
             // 공통 flatpickr 설정을 함수로 만들기
             function setupFlatpickr(inputId) {
                 let fp = flatpickr(inputId, {
@@ -336,11 +334,10 @@
                     let startDate = dates[0]; // 시작 날짜
                     let endDate = dates.length > 1 ? dates[1] : startDate; // 종료 날짜가 없으면 시작 날짜 사용
 
-
-
                     $(this).find('input[name="startDate"]').val(startDate); // 시작 날짜 설정
                     $(this).find('input[name="endDate"]').val(endDate); // 종료 날짜 설정
                 }
+
 
 
                 if (plannerName === "" || dateStr === "") {
@@ -351,12 +348,18 @@
                     $('input[name="days"]').prop('disabled', true);
                     this.submit(); // 폼 실제 제출
                 }
-
-
-
-
             });
         });
+
+        function checkLength() {
+            $('input[name="plannerName"]').each(function() {
+                if ($(this).val().length > 20) {
+                    alert('20자 이내로 입력해주세요');
+                    $(this).val($(this).val().substring(0, 20));
+                    $(this).focus();
+                }
+            });
+        }
     </script>
 
 </body>

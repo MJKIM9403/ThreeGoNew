@@ -6,10 +6,7 @@ import com.io.threegonew.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +38,11 @@ public class SearchApiController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<PageResponse<UserInfoResponse>> showUsersByStartOrContainUserId(@ModelAttribute PageWithFromDateRequest request) {
+    public ResponseEntity<PageResponse<UserWithFollowStateResponse>> showUsersByStartOrContainUserId(@RequestParam(name = "keyword") String keyword,
+                                                                                                     @RequestParam(name = "page") int page)
+    {
         try{
-            PageResponse<UserInfoResponse> pageResponse = userService.getUserByStartOrContainUserId(request);
+            PageResponse<UserWithFollowStateResponse> pageResponse = userService.getUserByStartOrContainUserId(keyword, page);
             return ResponseEntity.ok().body(pageResponse);
         }catch (Exception e){
             e.printStackTrace();
