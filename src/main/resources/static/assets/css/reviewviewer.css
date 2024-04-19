@@ -161,6 +161,7 @@
     flex: auto;
 }
 #comment-content {
+    width: 310px;
     transition: all 0.2s ease-in-out;
     height: 50px;
     padding: 0.3rem 0.5rem;
@@ -172,6 +173,7 @@
 }
 .edit-comment-content {
     max-height: 90px;
+    width: 320px;
     padding: 0.3rem 0.5rem;
     overflow-y: scroll;
 }
