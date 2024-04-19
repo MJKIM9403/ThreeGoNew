@@ -210,13 +210,25 @@
         function loadSearchInfo(){
             let searchInfo = JSON.parse(sessionStorage.getItem("searchInfo"));
 
+            let cat1 = searchInfo.cat1 === '' ? null : searchInfo.cat1;
+            let cat2 = searchInfo.cat2 === '' ? null : searchInfo.cat2;
+            let cat3 = searchInfo.cat3 === '' ? null : searchInfo.cat3;
+
+            if (cat1 == null) {
+                cat2 = null;
+                cat3 = null;
+            }
+            if (cat2 == null) {
+                cat3 = null;
+            }
+
             let promise = new Promise((resolve) => {
                     $.ajax({
                         url: '/info/api/cat2',
                         type: 'POST',
                         contentType: 'application/json; charset=UTF-8',
                         data: JSON.stringify({
-                            cat1: searchInfo.cat1
+                            cat1: cat1
                         }),
                         async: false,
                         success: function (data) {
@@ -234,8 +246,8 @@
                         type: 'POST',
                         contentType: 'application/json; charset=UTF-8',
                         data: JSON.stringify({
-                            cat1: searchInfo.cat1,
-                            cat2: searchInfo.cat2
+                            cat1: cat1,
+                            cat2: cat2
                         }),
                         async: false,
                         success: function (data) {
@@ -255,15 +267,27 @@
         function showContentBySearchInfo() {
             let searchInfo = JSON.parse(sessionStorage.getItem("searchInfo"));
 
+            let cat1 = searchInfo.cat1 === '' ? null : searchInfo.cat1;
+            let cat2 = searchInfo.cat2 === '' ? null : searchInfo.cat2;
+            let cat3 = searchInfo.cat3 === '' ? null : searchInfo.cat3;
+
+            if (cat1 == null) {
+                cat2 = null;
+                cat3 = null;
+            }
+            if (cat2 == null) {
+                cat3 = null;
+            }
+
             $.ajax({
                 url: '/info/api/touritems',
                 type: 'POST',
                 contentType: 'application/json; charset=UTF-8',
                 data: JSON.stringify({
                     page: searchInfo.page,
-                    cat1: searchInfo.cat1,
-                    cat2: searchInfo.cat2,
-                    cat3: searchInfo.cat3,
+                    cat1: cat1,
+                    cat2: cat2,
+                    cat3: cat3,
                     areaCode: searchInfo.area,
                     sigunguCode: searchInfo.sigungu,
                     contentTypeId: searchInfo.type,
