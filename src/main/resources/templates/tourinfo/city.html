@@ -206,45 +206,85 @@
             sessionStorage.setItem("searchInfo", JSON.stringify(searchInfo));
         }
 
+
         function loadSearchInfo(){
             let searchInfo = JSON.parse(sessionStorage.getItem("searchInfo"));
 
-            $('.search-input').val(`${searchInfo.keyword}`);
-            $(`input[type="radio"].typeSelect[value="${searchInfo.type}"]`).click();
-            $(`input[type="radio"].catSelect[value="${searchInfo.cat1}"]`).click();
-            $(`input[type="radio"].sigunguSelect[value="${searchInfo.sigungu}"]`).click();
-            setTimeout(function (){
-                $(`input[type="radio"].cat2Select[value="${searchInfo.cat2}"]`).click();
-            },200)
-            setTimeout(function (){
-                $(`input[type="radio"].cat3Select[value="${searchInfo.cat3}"]`).click();
-            },400)
+            let promise = new Promise((resolve) => {
+                    $.ajax({
+                        url: '/info/api/cat2',
+                        type: 'POST',
+                        contentType: 'application/json; charset=UTF-8',
+                        data: JSON.stringify({
+                            cat1: searchInfo.cat1
+                        }),
+                        async: false,
+                        success: function (data) {
+                            $('#category-middle').replaceWith(data);
+                            resolve();
+                        },
+                        error: function (err) {
+                            console.log(err)
+                        }
+                    })
+                }
+            ).then(() => {
+                    $.ajax({
+                        url: '/info/api/cat3',
+                        type: 'POST',
+                        contentType: 'application/json; charset=UTF-8',
+                        data: JSON.stringify({
+                            cat1: searchInfo.cat1,
+                            cat2: searchInfo.cat2
+                        }),
+                        async: false,
+                        success: function (data) {
+                            $('#category-row').replaceWith(data);
 
-            setTimeout(function (){
-                $.ajax({
-                    url: '/info/api/touritems',
-                    type: 'POST',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
-                        page: searchInfo.page,
-                        cat1: $('input[name=cat1]:checked').val(),
-                        cat2: $('input[name=cat2]:checked').val(),
-                        cat3: $('input[name=cat3]:checked').val(),
-                        areaCode: $('input[name=area]').val(),
-                        sigunguCode: $('input[name=sigungu]:checked').val(),
-                        contentTypeId: $('input[name=type]:checked').val(),
-                        keyword: searchInfo.keyword
-                    }),
-                    success: function (data) {
-                        $("html").scrollTop(0);
-                        $('#touritems').replaceWith(data);
-                    },
-                    error: function (err) {
-                        console.log(err)
-                    }
-                })
-            },600)
+                            setTimeout(showContentBySearchInfo, 100);
+                        },
+                        error: function (err) {
+                            console.log(err)
+                        }
+                    })
+                }
+            )
+
         }
+
+        function showContentBySearchInfo() {
+            let searchInfo = JSON.parse(sessionStorage.getItem("searchInfo"));
+
+            $.ajax({
+                url: '/info/api/touritems',
+                type: 'POST',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify({
+                    page: searchInfo.page,
+                    cat1: searchInfo.cat1,
+                    cat2: searchInfo.cat2,
+                    cat3: searchInfo.cat3,
+                    areaCode: searchInfo.area,
+                    sigunguCode: searchInfo.sigungu,
+                    contentTypeId: searchInfo.type,
+                    keyword: searchInfo.keyword
+                }),
+                success: function (data) {
+                    $('.search-input').val(`${searchInfo.keyword}`);
+                    $(`input[type="radio"].typeSelect[value="${searchInfo.type}"]`).prop("checked", true);
+                    $(`input[type="radio"].catSelect[value="${searchInfo.cat1}"]`).prop("checked", true);
+                    $(`input[type="radio"].cat2Select[value="${searchInfo.cat2}"]`).prop("checked", true);
+                    $(`input[type="radio"].cat3Select[value="${searchInfo.cat3}"]`).prop("checked", true);
+                    $(`input[type="radio"].sigunguSelect[value="${searchInfo.sigungu}"]`).prop("checked", true);
+
+                    $('#touritems').replaceWith(data);
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            })
+        }
+
 
         function loadPage() {
             window.addEventListener('pageshow', function (event) {
@@ -556,11 +596,11 @@
                 </div>
                 <div id="sigungu">
                     <h5>- 상세 지역 -</h5>
-                    <input type="radio" class="areaSelect btn-check select-btn" name="sigungu" id="sigungu0"
+                    <input type="radio" class="sigunguSelect btn-check select-btn" name="sigungu" id="sigungu0"
                            autocomplete="off" value="" checked>
                     <label class="btn btn-2" for="sigungu0" th:text="전체"></label>
                     <th:block th:each="sigungu, idx : ${sigunguList}">
-                        <input type="radio" class="areaSelect btn-check select-btn" name="sigungu"
+                        <input type="radio" class="sigunguSelect btn-check select-btn" name="sigungu"
                                th:id="|sigungu${idx.count}|" autocomplete="off" th:value="${sigungu.sigunguCode}">
                         <label class="btn btn-2" th:for="|sigungu${idx.count}|"
                                th:text="${sigungu.sigunguName}"></label>
