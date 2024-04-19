@@ -1355,6 +1355,7 @@
         let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
         $('#comment-wrap').html("");
+        $('#comment-content').html('');
 
         let promise = new Promise((resolve) => {
             $.ajax({
