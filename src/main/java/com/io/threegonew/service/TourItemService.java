@@ -253,7 +253,7 @@ public class TourItemService {
     /* TourItemResponse 매핑을 위한 메소드*/
 
     private TourItemResponse tourItemMapper(TourItem tourItem){
-        String defaultImage = "../assets/img/no_img.jpg"; // 기본 이미지 경로 설정
+        String defaultImage = "/assets/img/no_img.jpg"; // 기본 이미지 경로 설정
 
         return TourItemResponse.builder()
                 .contentid(tourItem.getContentid())
