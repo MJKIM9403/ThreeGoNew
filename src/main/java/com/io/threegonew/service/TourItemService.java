@@ -253,6 +253,8 @@ public class TourItemService {
     /* TourItemResponse 매핑을 위한 메소드*/
 
     private TourItemResponse tourItemMapper(TourItem tourItem){
+        String defaultImage = "../assets/img/no_img.jpg"; // 기본 이미지 경로 설정
+
         return TourItemResponse.builder()
                 .contentid(tourItem.getContentid())
                 .cat1(tourItem.getCat1())
@@ -262,7 +264,7 @@ public class TourItemService {
                 .areacode(tourItem.getAreacode())
                 .contenttypeid(tourItem.getContenttypeid())
                 .address(getAddress(tourItem))
-                .firstimage(tourItem.getFirstimage())
+                .firstimage(tourItem.getFirstimage()!= null && !tourItem.getFirstimage().isEmpty() ? tourItem.getFirstimage() : defaultImage)
                 .mapx(tourItem.getMapx())
                 .mapy(tourItem.getMapy())
                 .mlevel(tourItem.getMlevel())

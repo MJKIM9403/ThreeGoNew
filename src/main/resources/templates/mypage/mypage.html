@@ -1025,7 +1025,7 @@
                     }
                 }else {
                     let tempHtml =
-                        '<div class="no-comment-msg d-flex mb-2">아직 등록된 리뷰가 없습니다.</div>';
+                        '<div class="no-comment-msg d-flex mb-2">아직 등록된 댓글이 없습니다.</div>';
                     $('#comment-wrap').append(tempHtml);
                 }
             },
@@ -2623,7 +2623,7 @@
                                     <a href="/mypage/${data.toUser}">
                                         <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center">
                                     </a>
-                                    <a href="/mypage/${data.toUser}">
+                                    <a href="/mypage/${data.fromUser}">
                                         <div class="d-flex flex-column flex-start gap-2">
                                             <strong>${data.fromUser}</strong>
                                             <span>${data.listName}</span>
