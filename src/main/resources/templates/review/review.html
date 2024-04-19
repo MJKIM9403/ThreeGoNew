@@ -587,8 +587,6 @@
 
         $("#comment-content").on("propertychange change paste input", function() {
             let comment = $(this).html().replace;
-            comment = comment.replace(/<div>/g,'');
-            comment = comment.replace(/<\/div>/g,'');
             if(comment.length > 2000) {
                 comment = comment.substring(0, 2000);
                 $("#comment-content").val(comment);
@@ -597,7 +595,7 @@
         });
 
         $("#edit-comment-content").on("propertychange change paste input", function() {
-            let comment = $(this).html().replace;
+            let comment = $(this).html();
             comment = comment.replace(/<div>/g,'');
             comment = comment.replace(/<\/div>/g,'');
             if(comment.length > 2000) {

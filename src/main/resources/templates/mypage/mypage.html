@@ -2241,7 +2241,7 @@
         });
 
         $("#comment-content").on("propertychange change paste input", function() {
-            let comment = $(this).html().replace;
+            let comment = $(this).html();
             comment = comment.replace(/<div>/g,'');
             comment = comment.replace(/<\/div>/g,'');
             if(comment.length > 2000) {
