@@ -2077,7 +2077,7 @@
         /* 리뷰 작성 관련 설정 */
         selectBook();
         deleteImg();
-        checkInputLength;
+        checkInputLength();
         /*리뷰 북 작성 관련 설정*/
         changeBookTitle();
         checkBookContents();
@@ -2224,10 +2224,41 @@
 
         $("#selected-touritem-name").on("propertychange change paste input", function() {
             let name = $(this).val();
-            if(name.length > 20) {
-                name = name.substring(0, 20);
+            if(name.length > 30) {
+                name = name.substring(0, 30);
                 $("#selected-touritem-name").val(name);
-                alert("관광지 이름은 20자까지 입력할 수 있습니다.");
+                alert("관광지 이름은 30자까지 입력할 수 있습니다.");
+            }
+        });
+
+        $("#review-contents").on("propertychange change paste input", function() {
+            let text = $(this).val();
+            if(text.length > 2000) {
+                text = text.substring(0, 2000);
+                $("#review-contents").val(text);
+                alert("리뷰 본문은 2000자까지 입력할 수 있습니다.");
+            }
+        });
+
+        $("#comment-content").on("propertychange change paste input", function() {
+            let comment = $(this).html().replace;
+            comment = comment.replace(/<div>/g,'');
+            comment = comment.replace(/<\/div>/g,'');
+            if(comment.length > 2000) {
+                comment = comment.substring(0, 2000);
+                $("#comment-content").val(comment);
+                alert("댓글은 2000자까지 입력할 수 있습니다.");
+            }
+        });
+
+        $("#edit-comment-content").on("propertychange change paste input", function() {
+            let comment = $(this).html().replace;
+            comment = comment.replace(/<div>/g,'');
+            comment = comment.replace(/<\/div>/g,'');
+            if(comment.length > 2000) {
+                comment = comment.substring(0, 2000);
+                $("#edit-comment-content").val(comment);
+                alert("댓글은 2000자까지 입력할 수 있습니다.");
             }
         });
     }
