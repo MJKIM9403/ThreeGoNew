@@ -2,12 +2,10 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.service.SendEmailService;
-import com.io.threegonew.util.TempPassword;
-import com.io.threegonew.util.TempPasswordEmail;
+import com.io.threegonew.commons.TempPasswordEmail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;

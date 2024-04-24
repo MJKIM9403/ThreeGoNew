@@ -6,9 +6,9 @@ import com.io.threegonew.repository.CommentRepository;
 import com.io.threegonew.repository.LikesRepository;
 import com.io.threegonew.repository.ReviewPhotoRepository;
 import com.io.threegonew.repository.ReviewRepository;
-import com.io.threegonew.util.AesUtil;
-import com.io.threegonew.util.FileHandler;
-import com.io.threegonew.util.SecurityUtils;
+import com.io.threegonew.commons.AesUtil;
+import com.io.threegonew.commons.FileHandler;
+import com.io.threegonew.commons.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class ReviewService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public Review saveReview(ReviewBook reviewBook, User user, TourItem tourItem, AddReviewRequest request) throws Exception{
+    public Review saveReview(ReviewBook reviewBook, User user, TourItem tourItem, AddReviewRequest request) throws IOException {
         Review review = Review.builder()
                             .reviewBook(reviewBook)
                             .user(user)
@@ -56,7 +57,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateReview(ReviewBook reviewBook, TourItem tourItem, UpdateReviewRequest request) throws Exception{
+    public void updateReview(ReviewBook reviewBook, TourItem tourItem, UpdateReviewRequest request) throws IOException{
         Review review = reviewRepository.findById(request.getReviewId()).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
 

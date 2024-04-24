@@ -1,4 +1,4 @@
-package com.io.threegonew.util;
+package com.io.threegonew.commons;
 
 import java.security.SecureRandom;
 import java.util.regex.Pattern;

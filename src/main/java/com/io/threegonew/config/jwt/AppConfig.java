@@ -1,6 +1,6 @@
 package com.io.threegonew.config.jwt;
 
-import com.io.threegonew.util.JavaMailSenderImpl;
+import com.io.threegonew.commons.JavaMailSenderImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

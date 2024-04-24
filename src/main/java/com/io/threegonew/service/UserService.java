@@ -3,13 +3,12 @@ package com.io.threegonew.service;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.UserRepository;
-import com.io.threegonew.util.FileHandler;
-import com.io.threegonew.util.SecurityUtils;
+import com.io.threegonew.commons.FileHandler;
+import com.io.threegonew.commons.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

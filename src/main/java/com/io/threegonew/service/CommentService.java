@@ -5,7 +5,7 @@ import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.CommentRepository;
 import com.io.threegonew.repository.UserRepository;
-import com.io.threegonew.util.SecurityUtils;
+import com.io.threegonew.commons.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

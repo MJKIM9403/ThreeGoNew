@@ -1,6 +1,6 @@
 package com.io.threegonew.config.filter;
 
-import com.io.threegonew.util.AesUtil;
+import com.io.threegonew.commons.AesUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.http.HttpServletRequestWrapper;

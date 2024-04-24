@@ -1,4 +1,4 @@
-package com.io.threegonew.util;
+package com.io.threegonew.commons;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

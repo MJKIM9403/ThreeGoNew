@@ -3,7 +3,7 @@ package com.io.threegonew.controller;
 
 import com.io.threegonew.dto.*;
 import com.io.threegonew.service.LikesService;
-import com.io.threegonew.util.SecurityUtils;
+import com.io.threegonew.commons.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -33,7 +33,7 @@ public class PlanService {
 
     public List<SelectPlanResponse> findPlanListByPlannerId(Long plannerId) {
         List<SelectPlanResponse> planList = planRepository.findByPlannerId(plannerId).stream()
-                .map(plan -> selectPlanMapper(plan))
+                .map(this::selectPlanMapper)
                 .collect(Collectors.toList());
         return planList;
     }

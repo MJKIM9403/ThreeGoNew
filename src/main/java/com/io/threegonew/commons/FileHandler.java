@@ -1,4 +1,4 @@
-package com.io.threegonew.util;
+package com.io.threegonew.commons;
 
 import com.io.threegonew.domain.Review;
 import com.io.threegonew.domain.ReviewBook;
@@ -144,7 +144,7 @@ public class FileHandler {
         return deleteFile.delete();
     }
 
-    public List<ReviewPhoto> parseReviewPhoto(Review review, List<MultipartFile> multipartFiles) throws Exception {
+    public List<ReviewPhoto> parseReviewPhoto(Review review, List<MultipartFile> multipartFiles) throws IOException {
         // 반환할 파일 리스트
         List<ReviewPhoto> fileList = new ArrayList<>();
 
@@ -188,7 +188,7 @@ public class FileHandler {
                     }else if(contentType.contains("image/gif")) {
                         oFileExtension = ".gif";
                     }else {
-                        break; // 다른 확장자일 경우 처리 x
+                        throw new IOException("저장할 수 없는 확장자 입니다."); // 다른 확장자일 경우 처리 x
                     }
                 }
 

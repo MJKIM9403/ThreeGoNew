@@ -1,4 +1,4 @@
-package com.io.threegonew.util;
+package com.io.threegonew.commons;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

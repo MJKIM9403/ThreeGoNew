@@ -308,10 +308,10 @@
             $('#select-touritem-info').html('<option value="direct">직접 입력</option>')
         }else {
             $.ajax({
-                url : '/api/review/show_plan',
+                url : '/api/review/me/show-plan',
                 type : 'GET',
                 data : {
-                    bookId : bookId
+                    bookid : bookId
                 },
                 contentType : 'application/json; charset=UTF-8',
                 success : function (result) {
@@ -380,7 +380,7 @@
         }
 
         $.ajax({
-            url : '/api/review/update',
+            url : `/api/review/${reviewId}`,
             type : 'PUT',
             data : formData,
             processData : false,

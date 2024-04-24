@@ -603,7 +603,7 @@
 
     function showSelectList() {
         $.ajax({
-            url: '/api/review/show_list',
+            url: '/api/review/me/show-list',
             type: 'GET',
             contentType: 'application/json; charset=UTF-8',
             success: function (result) {
@@ -725,10 +725,10 @@
     function AddPlanList() {
         let promise = new Promise((resolve) => {
             $.ajax({
-                url: '/api/review/show_plan',
+                url: '/api/review/me/show-plan',
                 type: 'GET',
                 data: {
-                    bookId: selectedBookId
+                    bookid: selectedBookId
                 },
                 contentType: 'application/json; charset=UTF-8',
                 success: function (result) {
@@ -792,7 +792,7 @@
         }
 
         $.ajax({
-            url: '/api/review/create',
+            url: '/api/review',
             type: 'POST',
             data: formData,
             processData: false,
@@ -1002,7 +1002,7 @@
             back = false;
         }
         $.ajax({
-            url : '/api/review/recommend',
+            url : '/api/reviews/me/recommend',
             type : 'GET',
             data : {
                 fromDate : fromDate,
@@ -1112,7 +1112,7 @@
             back = false;
         }
         $.ajax({
-            url : '/api/review/follow',
+            url : '/api/reviews/me/follow',
             type : 'GET',
             data : {
                 fromDate : fromDate,
@@ -1217,7 +1217,7 @@
         feedInfo.tabType = tabType;
         feedInfo.scrollPage = scrollPage;
         feedInfo.scrollPosition = window.scrollY.toString();
-        sessionStorage.setItem("feedInfo", JSON.stringify(feeInfo));
+        sessionStorage.setItem("feedInfo", JSON.stringify(feedInfo));
     }
 
     function setScrollByFeedInfo(){
@@ -1352,11 +1352,8 @@
 
         let promise = new Promise((resolve) => {
             $.ajax({
-                url : '/api/review/view_count',
+                url : `/api/review/${selectedReviewId}/view-count`,
                 type : 'PUT',
-                data : {
-                    reviewId : selectedReviewId
-                },
                 success : function (viewCount) {
                     resolve();
                 },
@@ -1382,11 +1379,8 @@
     }
     function loadDetailReview(){
         $.ajax({
-            url : '/api/review/detail',
+            url : `/api/review/${selectedReviewId}`,
             type : 'GET',
-            data : {
-                reviewId : selectedReviewId
-            },
             contentType : 'application/json; charset=UTF-8',
             success : function (findReview) {
                 let writer = findReview.userInfo;
@@ -2026,11 +2020,8 @@
 
     function showTourItemSimpleInfo(tourItemId){
         $.ajax({
-            url : '/api/review/simple-touritem',
+            url : `/api/review/simple-touritem/${tourItemId}`,
             type : 'GET',
-            data : {
-                tourItemId : tourItemId
-            },
             contentType : 'application/json; charset=UTF-8',
             success : function (tourItem){
                 $('#touritem-info-img').attr('src',tourItem.firstimage);
@@ -2049,11 +2040,8 @@
         const deleteConfirm = confirm("리뷰를 삭제하시겠습니까?");
         if(deleteConfirm){
             $.ajax({
-                url : '/api/review/delete',
+                url : `/api/review/${selectedReviewId}`,
                 type : 'DELETE',
-                data : {
-                    reviewId : selectedReviewId
-                },
                 success : function (){
                     alert('삭제 되었습니다.')
                     savePage();
