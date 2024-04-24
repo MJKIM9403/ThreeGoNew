@@ -15,8 +15,4 @@ public class PlanDTO<E> {
     private Integer day;
     private Integer order;
     private List<E> dtoList;
-
-    public void setDtoList(List<E> dtoList) {
-        this.dtoList = dtoList;
-    }
 }
