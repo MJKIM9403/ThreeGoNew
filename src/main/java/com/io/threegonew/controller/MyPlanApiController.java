@@ -296,9 +296,12 @@ public class MyPlanApiController {
 //        return new ResponseEntity<>(planDTOs, HttpStatus.OK);
 //    }
 
+    /**
+     * 조회 메서드
+     */
     // 플랜 전체를 가져와서 보여주기
-    @GetMapping("/allShowplan")
-    public ResponseEntity<List<PlanDTO<TourItemResponse>>> allShowPlan(@ModelAttribute PlanRequest request) {
+    @GetMapping("/planner/{plannerId}")
+    public ResponseEntity<List<PlanDTO<TourItemResponse>>> allShowPlan(@PathVariable Long plannerId, @ModelAttribute PlanRequest request) {
         List<PlanDTO<TourItemResponse>> planDTOs = planService.findByPlannerId(request);
         return new ResponseEntity<>(planDTOs, HttpStatus.OK);
     }

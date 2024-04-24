@@ -838,7 +838,7 @@
     function loadPlanForDay() {
         $.ajax({
             type: "GET",
-            url: "/api/allShowplan",
+            url: "/api/planner/" + plannerId,
             contentType: 'application/json; charset=UTF-8',
             data: {
                 "plannerId": plannerId
