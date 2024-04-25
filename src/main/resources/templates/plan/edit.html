@@ -584,45 +584,23 @@
             }
             let keyword = $('.search-input').val();
 
-            if(tabType == 'TOTAL') {
-                $.ajax({
-                    url: '/api/planner/sigungu',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data: {
-                        page: 0,
-                        areaCode: areaCode,
-                        keyword: keyword
-                    },
-                    success: function(data) {
-                        //$("html").scrollTop(0);
-                        $('#sigungu').replaceWith(data);
-                    },
-                    error: function(err) {
-                        console.log(err)
-                    }
-                })
-            }
-
-            if(tabType == 'BOOKMARK') {
-                $.ajax({
-                    url : '/api/planner/bookmark/sigungu',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : {
-                        userId : [[${userId}]],
-                        page : 0,
-                        areaCode : areaCode,
-                        keyword: keyword
-                    },
-                    success : function(data){
-                        $('#sigungu').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    }
-                })
-            }
+            $.ajax({
+                url: '/api/planner/sigungu',
+                type: 'GET',
+                contentType : 'application/json; charset=UTF-8',
+                data: {
+                    page: 0,
+                    areaCode: areaCode,
+                    keyword: keyword
+                },
+                success: function(data) {
+                    //$("html").scrollTop(0);
+                    $('#sigungu').replaceWith(data);
+                },
+                error: function(err) {
+                    console.log(err)
+                }
+            })
         })
     }
 
@@ -633,46 +611,23 @@
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
             let keyword = $('.search-input').val();
 
-            if(tabType == 'TOTAL') {
-                $.ajax({
-                    url : '/api/planner/cat2',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : {
-                        page : 0,
-                        areaCode : $('input[name=area]:checked').val(),
-                        cat1 : cat1,
-                        keyword : keyword
-                    },
-                    success : function(data){
-                        $('#category-middle').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    }
-                })
-            }
-
-            if(tabType == 'BOOKMARK') {
-                $.ajax({
-                    url : '/api/planner/bookmark/cat2',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : {
-                        userId : [[${userId}]],
-                        page : 0,
-                        cat1 : cat1,
-                        areaCode : $('input[name=area]:checked').val(),
-                        keyword: keyword
-                    },
-                    success : function(data){
-                        $('#category-middle').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    }
-                })
-            }
+            $.ajax({
+                url : '/api/planner/cat2',
+                type: 'GET',
+                contentType : 'application/json; charset=UTF-8',
+                data : {
+                    page : 0,
+                    areaCode : $('input[name=area]:checked').val(),
+                    cat1 : cat1,
+                    keyword : keyword
+                },
+                success : function(data){
+                    $('#category-middle').replaceWith(data);
+                },
+                error : function (err){
+                    console.log(err)
+                }
+            })
         })
 
         // 중분류 선택
@@ -681,48 +636,25 @@
             const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
             let keyword = $('.search-input').val();
 
-            if(tabType == 'TOTAL') {
-                $.ajax({
-                    url: '/api/planner/cat3',
-                    type: 'GET',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: {
-                        page: 0,
-                        areaCode: $('input[name=area]:checked').val(),
-                        cat1: cat1,
-                        cat2: cat2,
-                        keyword: keyword
-                    },
-                    success: function (data) {
-                        $('#category-row').replaceWith(data);
-                    },
-                    error: function (err) {
-                        console.log(err)
-                    }
-                })
-            }
 
-            if(tabType == 'BOOKMARK') {
-                $.ajax({
-                    url: '/api/planner/bookmark/cat3',
-                    type: 'GET',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: {
-                        userId : [[${userId}]],
-                        page: 0,
-                        areaCode: $('input[name=area]:checked').val(),
-                        cat1: cat1,
-                        cat2: cat2,
-                        keyword: keyword
-                    },
-                    success: function (data) {
-                        $('#category-row').replaceWith(data);
-                    },
-                    error: function (err) {
-                        console.log(err)
-                    }
-                })
-            }
+            $.ajax({
+                url: '/api/planner/cat3',
+                type: 'GET',
+                contentType: 'application/json; charset=UTF-8',
+                data: {
+                    page: 0,
+                    areaCode: $('input[name=area]:checked').val(),
+                    cat1: cat1,
+                    cat2: cat2,
+                    keyword: keyword
+                },
+                success: function (data) {
+                    $('#category-row').replaceWith(data);
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            })
         })
     }
 
@@ -1392,10 +1324,11 @@
                             })
                         }), // 전송할 데이터
                         success: function(response) { // 요청이 성공적으로 완료되었을 때 실행될 함수
-                            var p_id = response.p_id; // 응답에서 p_id 추출
-                            // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
-                            window.location.href = '/plan/show?p_id=' + p_id;
-                            console.log('성공');
+                            console.log(response);
+                            // var p_id = response.p_id; // 응답에서 p_id 추출
+                            // // p_id를 파라미터로 포함하는 새로운 URL로 페이지 이동
+                            // window.location.href = '/plan/show?p_id=' + p_id;
+                            // console.log('성공');
                         },
                         error: function(xhr, status, error) { // 요청이 실패했을 때 실행될 함수
                             alert('실패');
