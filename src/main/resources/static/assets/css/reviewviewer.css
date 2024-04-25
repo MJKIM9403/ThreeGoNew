@@ -81,18 +81,17 @@
 }
 
     /* 댓글 리스트 */
-.comment-info {
+.comment-info > .d-flex {
     padding: 0.5rem 0;
     margin: 0.4rem 0;
 }
 
 .deleted-comment {
-    display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1.5rem 0;
+    padding: 1.5rem 0 !important;
+    margin: 0.4rem 0 !important;
     background: rgba(200, 200, 200, 0.1);
-
 }
 
 .comment-text {

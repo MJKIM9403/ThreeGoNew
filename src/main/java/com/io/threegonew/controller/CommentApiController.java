@@ -17,6 +17,16 @@ import java.util.*;
 public class CommentApiController {
     private final CommentService commentService;
 
+    @PostMapping("")
+    public ResponseEntity<Long> saveComment(@RequestBody AddCommentRequest request){
+        try{
+            Comment savedComment = commentService.saveComment(request);
+            return ResponseEntity.ok(savedComment.getCommentId());
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
     @GetMapping("")
     public ResponseEntity<PageResponse<CommentResponse>> showComments(@ModelAttribute CommentRequest request){
         PageResponse<CommentResponse> pageResponse = commentService.getComments(request);
@@ -62,16 +72,6 @@ public class CommentApiController {
         return ResponseEntity.ok().body(recentComments);
     }
 
-    @PostMapping("")
-    public ResponseEntity<Long> saveComment(@RequestBody AddCommentRequest request){
-        try{
-            Comment savedComment = commentService.saveComment(request);
-            return ResponseEntity.ok(savedComment.getCommentId());
-        }catch (IllegalArgumentException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    }
 
     @PutMapping("/{commentId}")
     public ResponseEntity<Map<String, Object>> updateComment(@RequestBody EditCommentRequest request) {
