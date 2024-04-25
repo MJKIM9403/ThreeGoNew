@@ -33,10 +33,10 @@ public class ReviewApiController {
         TourItem selectedTourItem = null;
         String loginUserId = userService.getCurrentUserId();
         try {
-            if(request.getBookId() != null){
+            if (request.getBookId() != null) {
                 selectedReviewBook = reviewBookService.findReviewBook(request.getBookId());
             }
-            if(request.getTouritemId() != null){
+            if (request.getTouritemId() != null) {
                 selectedTourItem = tourItemService.findTourItem(request.getTouritemId());
             }
             User author = userService.findUser(loginUserId);
@@ -44,8 +44,10 @@ public class ReviewApiController {
             reviewService.saveReview(selectedReviewBook, author, selectedTourItem, request);
 
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "리뷰 저장에 실패했습니다.");
+        } catch (IOException e) {
+            return ErrorResponse.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "500", "리뷰 저장에 실패했습니다.");
         }
     }
 

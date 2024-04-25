@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class ReviewBookService {
     private final FileHandler fileHandler;
     private final ModelMapper modelMapper;
 
-    public ReviewBook createReviewBook(User user, Planner planner, AddReviewBookRequest request) throws Exception {
+    public ReviewBook createReviewBook(User user, Planner planner, AddReviewBookRequest request) throws IOException {
         ReviewBook reviewBook = ReviewBook.builder()
                                         .user(user)
                                         .planner(planner)
@@ -43,7 +44,7 @@ public class ReviewBookService {
     }
 
     @Transactional
-    public void updateReviewBook(Long reviewBookId, AddReviewBookRequest request) throws Exception {
+    public void updateReviewBook(Long reviewBookId, AddReviewBookRequest request) throws IOException, IllegalArgumentException {
         ReviewBook reviewBook = reviewBookRepository.findById(reviewBookId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰북 정보를 찾을 수 없습니다."));
         Planner reviewPlanner = plannerRepository.findByPlannerId(request.getPlannerId()).orElseThrow(
@@ -148,9 +149,7 @@ public class ReviewBookService {
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .email(user.getEmail())
                 .profileImg(user.getU_sfile())
-                .about(user.getAbout())
                 .build();
     }
 }

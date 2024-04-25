@@ -36,7 +36,7 @@ public class FileHandler {
     }
 
 
-    public void updateUserProfile(User user, MultipartFile newProfileImg) throws Exception {
+    public void updateUserProfile(User user, MultipartFile newProfileImg) throws IOException {
         deleteUserProfile(user);
 
         if(!newProfileImg.isEmpty()){
@@ -67,7 +67,7 @@ public class FileHandler {
                 }else if(contentType.contains("image/gif")) {
                     oFileExtension = ".gif";
                 }else {
-                    return; // 다른 확장자일 경우 처리 x
+                    throw new IOException("저장할 수 없는 확장자 입니다."); // 다른 확장자일 경우 처리 x
                 }
             }
 
@@ -90,7 +90,7 @@ public class FileHandler {
         return deleteFile.delete();
     }
 
-    public void updateBookCover(ReviewBook reviewBook, MultipartFile newBookCover) throws Exception {
+    public void updateBookCover(ReviewBook reviewBook, MultipartFile newBookCover) throws IOException {
         if(reviewBook.getCoverFilePath() != null){
             deleteBookCover(reviewBook);
         }
@@ -122,7 +122,7 @@ public class FileHandler {
                 }else if(contentType.contains("image/gif")) {
                     oFileExtension = ".gif";
                 }else {
-                    return; // 다른 확장자일 경우 처리 x
+                    throw new IOException("저장할 수 없는 확장자 입니다."); // 다른 확장자일 경우 처리 x
                 }
             }
 
