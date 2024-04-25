@@ -27,120 +27,9 @@ import java.util.*;
 public class PlanController {
     private final PlanService planService;
     private final TourItemService tourItemService;
-    private final TourItemContentService tourItemContentService;
-    private final HttpSession httpSession;
     private final TeamService teamService;
-    private final TeamRepository teamRepository;
     private final PlannerService plannerService;
 
-    // 북마크 포스트 매핑
-    @PostMapping("/api/bookmark")
-    public String getMyBookmark(@RequestBody MyPageRequest request, Model model){
-        PageResponse pageResponse = tourItemService.findMyBookmark(request);
-        model.addAttribute(pageResponse);
-
-        return "plan/plan2 :: #touritems";
-    }
-
-    @PostMapping("/api/bookmark/touritems")
-    public String getMyBookmarkTourItemList(@RequestBody TourItemBookmarkRequest request, Model model) {
-        PageResponse pageResponse = tourItemService.findMyBookmarkedTourItemList(request);
-        model.addAttribute("pageResponse", pageResponse);
-        return "plan/plan2 :: #touritems";
-    }
-
-    @PostMapping("/api/bookmark/cat2")
-    public String getMyBookmarkCat2List(@RequestBody TourItemBookmarkRequest request, Model model) {
-
-        System.out.println("Cat1 : " + request.getCat1());
-
-        if(request.getCat1() != null){
-            model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
-            model.addAttribute("cat3List", new ArrayList<>());
-        }else {
-            model.addAttribute("cat2List", new ArrayList<>());
-            model.addAttribute("cat3List", new ArrayList<>());
-        }
-
-        return "plan/plan2 :: #category-middle";
-    }
-
-    @PostMapping("/api/bookmark/sigungu")
-    public String getMyBookmarkSigunguList(@RequestBody TourItemBookmarkRequest request, Model model) {
-
-        System.out.println("areaCode : " + request.getAreaCode());
-
-        if(request.getAreaCode() != null){
-            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getAreaCode())));
-
-        }else {
-            model.addAttribute("sigunguList", new ArrayList<>());
-        }
-
-        return "plan/plan2 :: #sigungu";
-    }
-
-    @PostMapping("/api/bookmark/cat3")
-    public String getMyBookmarkCat3List(@RequestBody TourItemBookmarkRequest request, Model model){
-        if(request.getCat2() != null){
-            model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
-        }else {
-            model.addAttribute("cat3List", new ArrayList<>());
-        }
-
-        return "plan/plan2 :: #category-row";
-    }
-
-
-    // 북마크 아닌 경우
-    @PostMapping("/api/touritems")
-    public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
-        model.addAttribute("pageResponse", pageResponse);
-        return "plan/plan2 :: #touritems";
-    }
-
-    @PostMapping("/api/cat2")
-    public String getCat2List(@RequestBody TourItemSelectRequest request, Model model) {
-
-        System.out.println("Cat1 : " + request.getCat1());
-
-        if(request.getCat1() != null){
-            model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
-            model.addAttribute("cat3List", new ArrayList<>());
-        }else {
-            model.addAttribute("cat2List", new ArrayList<>());
-            model.addAttribute("cat3List", new ArrayList<>());
-        }
-
-        return "plan/plan2 :: #category-middle";
-    }
-
-    @PostMapping("/api/sigungu")
-    public String getSigunguList(@RequestBody TourItemSelectRequest request, Model model) {
-
-        System.out.println("areaCode : " + request.getAreaCode());
-
-        if(request.getAreaCode() != null){
-            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getAreaCode())));
-
-        }else {
-            model.addAttribute("sigunguList", new ArrayList<>());
-        }
-
-        return "plan/plan2 :: #sigungu";
-    }
-
-    @PostMapping("/api/cat3")
-    public String getCat3List(@RequestBody TourItemSelectRequest request, Model model){
-        if(request.getCat2() != null){
-            model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
-        }else {
-            model.addAttribute("cat3List", new ArrayList<>());
-        }
-
-        return "plan/plan2 :: #category-row";
-    }
 
     @GetMapping("/city")
     public String getSelectList(HttpServletRequest request, Model model){
@@ -208,118 +97,13 @@ public class PlanController {
 
 
 
-        return "plan/plan2";
+        return "plan/plan";
     }
 
     private TourItemSelectRequest buildTourItemSelectRequest() {
 
         return TourItemSelectRequest.builder()
                 .build();
-    }
-
-    @PostMapping(value = "/api/saveplans", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody CompletePlannerRequest request) {
-
-        String plannerName = request.getPlannerName();
-        LocalDate startDate = request.getStartDate();
-        LocalDate endDate = request.getEndDate();
-        List<AddPlanRequest> places = request.getPlans();
-
-        try {
-            // 여기서 날짜와 플래너 이름을 받아서 사용할 수 있습니다.
-            System.out.println("Planner Name: " + plannerName);
-            System.out.println("Start Date: " + startDate);
-            System.out.println("End Date: " + endDate);
-
-            // 현재 사용자의 인증 정보를 가져옴
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            // 인증 정보에서 사용자 아이디를 추출
-            String userId = authentication.getName();
-            System.out.println(userId);
-
-            // 플래너를 생성하고 식별자를 반환합니다.
-            Planner planner = plannerService.save(plannerName, startDate, endDate, userId);
-            Long plannerId = planner.getPlannerId();
-
-            if (plannerId == null) {
-                // plannerId가 null인 경우 처리
-                System.out.println("plannerId 반환 실패~~~");
-            } else {
-                for(AddPlanRequest place: places) {
-                    place.setUserId(userId);
-                    place.setPlannerId(plannerId);
-                    planService.save(place, userId);
-                }
-            }
-
-            return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
-        }
-    }
-
-    /** 수정 메서드 **/
-    @PostMapping(value = "api/editplannerDates")
-    public ResponseEntity<?> updatePlannerDates(@RequestBody UpdatePlannerDatesRequest request) {
-        try {
-            plannerService.updatePlannerDates(request.getPlannerId(), request.getStartDate(), request.getEndDate());
-            return ResponseEntity.ok("날짜가 성공적으로 업데이트 되었습니다!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("날짜 업데이트 실패: " + e.getMessage());
-        }
-    }
-
-    @PostMapping(value = "/api/editplannerName/{plannerId}/{plannerName}")
-    public ResponseEntity<?> updatePlannerName(@PathVariable Long plannerId, @PathVariable String plannerName) {
-        try {
-            plannerService.updatePlannerName(plannerId, plannerName);
-            return ResponseEntity.ok().body("플래너 제목이 성공적으로 업데이트 되었습니다!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("플래너 제목 업데이트 실패 : " + e.getMessage());
-        }
-    }
-
-
-    @PostMapping(value = "/api/editplans/{plannerId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Long>> updatePlan(@PathVariable("plannerId") Long plannerId, @RequestBody CompletePlannerRequest request) {
-
-        String plannerName = request.getPlannerName();
-        LocalDate startDate = request.getStartDate();
-        LocalDate endDate = request.getEndDate();
-        List<AddPlanRequest> places = request.getPlans();
-
-        try {
-            // 여기서 날짜와 플래너 이름을 받아서 사용할 수 있습니다.
-            System.out.println("Planner Name: " + plannerName);
-            System.out.println("Start Date: " + startDate);
-            System.out.println("End Date: " + endDate);
-
-            // 현재 사용자의 인증 정보를 가져옴
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            // 인증 정보에서 사용자 아이디를 추출
-            String userId = authentication.getName();
-            System.out.println(userId);
-
-            // 기존 계획을 삭제
-            planService.deleteByPlannerId(plannerId); // 이 메서드도 필요에 따라 구현되어야 함
-
-            // 플래너를 업데이트하고 식별자를 반환
-            // Planner planner = plannerService.update(plannerId, plannerName, startDate, endDate, userId);
-
-
-                for(AddPlanRequest place: places) {
-                    place.setUserId(userId);
-                    place.setPlannerId(plannerId);
-                    planService.save(place, userId); // 저장된 엔터티 반환
-                }
-
-
-            return ResponseEntity.ok().body(Collections.singletonMap("p_id", plannerId));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(Collections.singletonMap("p_id", null));
-        }
     }
 
 
@@ -469,18 +253,7 @@ public class PlanController {
         model.addAttribute("isWriter", isWriter);
         model.addAttribute("isGuest", isGuest);
 
-        return "plan/showplan2";
-    }
-
-    @PostMapping(value = "/api/delete/{plannerId}")
-    public ResponseEntity<String> updatePlannerDeleteFlag(@PathVariable Long plannerId) {
-        try {
-            plannerService.updatePlannerDeleteFlag(plannerId);
-            return ResponseEntity.ok().body("플래너와 관련된 삭제 플래그가 성공적으로 수정되었습니다");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("플래너와 관련된 삭제 플래그를 수정하는 데 실패했습니다");
-        }
+        return "plan/showplan";
     }
 }
 

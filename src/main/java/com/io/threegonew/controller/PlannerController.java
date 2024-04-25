@@ -32,7 +32,6 @@ import java.util.List;
 @RequestMapping("/planner")
 @RequiredArgsConstructor
 public class PlannerController {
-    private final HttpSession httpSession;
     private final PlannerService plannerService;
     private final TeamService teamService;
 
@@ -70,15 +69,4 @@ public class PlannerController {
 
         return "plan/calendar";
     }
-
-//    @PostMapping("/city")
-//    public String getSelectList(@RequestParam("plannerName") String plannerName,
-//                                @RequestParam("startDate") String startDate,
-//                                @RequestParam("endDate") String endDate,
-//                                RedirectAttributes redirectAttributes){
-//        redirectAttributes.addAttribute("plannerName", plannerName);
-//        redirectAttributes.addAttribute("startDate", startDate);
-//        redirectAttributes.addAttribute("endDate", endDate);
-//        return "redirect:/plan/city";
-//    }
 }

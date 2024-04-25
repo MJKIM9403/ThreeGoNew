@@ -177,7 +177,7 @@
         .nav-item {
             padding: 0 !important;
         }
-        .btn-2, .btn-3 {
+        .btn-2 {
             width: 110px;
             padding: 10px 0px;
             margin: 0 0 10px 0px;
@@ -233,9 +233,6 @@
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
 <script th:inline="javascript">
     let plannerId = [[${plannerId}]];
-
-    // areacode
-    let selectedAreaCode = "";
 
     // 날짜
     let days = [[${daysBetween}]];
@@ -385,7 +382,7 @@
                 $('input[name=cat1]').prop('checked', false);
                 $('input[name=cat2]').prop('checked', false);
                 $('input[name=cat3]').prop('checked', false);
-                $('input[name=areaSelect]').prop('checked', false);
+                $('input[name=area]').prop('checked', false);
                 $('input[name=sigungu]').prop('checked', false);
                 $('input[name=type]').prop('checked', false);
                 break;
@@ -398,7 +395,7 @@
                 $('input[name=cat1]').prop('checked', false);
                 $('input[name=cat2]').prop('checked', false);
                 $('input[name=cat3]').prop('checked', false);
-                $('input[name=areaSelect]').prop('checked', false);
+                $('input[name=area]').prop('checked', false);
                 $('input[name=sigungu]').prop('checked', false);
                 $('input[name=type]').prop('checked', false);
                 break;
@@ -412,12 +409,12 @@
     // 전체 검색
     function totalSearch() {
         $.ajax({
-            url: '/plan/api/touritems',
-            type: 'POST',
+            url: '/api/planner/touritems',
+            type: 'GET',
             contentType: 'application/json; charset=UTF-8',
-            data: JSON.stringify({
+            data: {
                 page: 0
-            }),
+            },
             success: function (data) {
                 $('#touritems').replaceWith(data);
             },
@@ -430,13 +427,13 @@
     // 북마크 검색
     function bookmarkSearch() {
         $.ajax({
-            url: '/plan/api/bookmark',
-            type: 'POST',
+            url: '/api/planner/bookmark/touritems',
+            type: 'GET',
             contentType: 'application/json; charset=UTF-8',
-            data: JSON.stringify({
+            data: {
                 page: 0,
                 userId: [[${userId}]],
-            }),
+            },
             success: function (data) {
                 $('#touritems').replaceWith(data);
             },
@@ -453,19 +450,19 @@
 
             if(tabType == 'TOTAL') {
                 $.ajax({
-                    url: '/plan/api/touritems',
-                    type: 'POST',
+                    url: '/api/planner/touritems',
+                    type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         page: 0,
                         cat1: $('input[name=cat1]:checked').val(),
                         cat2: $('input[name=cat2]:checked').val(),
                         cat3: $('input[name=cat3]:checked').val(),
-                        areaCode: selectedAreaCode,
+                        areaCode: $('input[name=area]:checked').val(),
                         sigunguCode: $('input[name=sigungu]:checked').val(),
                         contentTypeId: $('input[name=type]:checked').val(),
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         $('#touritems').replaceWith(data);
                     },
@@ -476,20 +473,20 @@
             }
             if(tabType == 'BOOKMARK') {
                 $.ajax({
-                    url: '/plan/api/bookmark/touritems',
-                    type: 'POST',
+                    url: '/api/planner/bookmark/touritems',
+                    type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         userId: [[${userId}]],
                         page: 0,
                         cat1: $('input[name=cat1]:checked').val(),
                         cat2: $('input[name=cat2]:checked').val(),
                         cat3: $('input[name=cat3]:checked').val(),
-                        areaCode: selectedAreaCode,
+                        areaCode: $('input[name=area]:checked').val(),
                         sigunguCode: $('input[name=sigungu]:checked').val(),
                         contentTypeId: $('input[name=type]:checked').val(),
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         $('#touritems').replaceWith(data);
                     },
@@ -504,7 +501,7 @@
 
     // 페이지네이션
     function showTourItems(){
-        $(document).on('click','.page-item, .areaSelect',function (e) {
+        $(document).on('click','.page-item', function (e) {
             const target = e.target;
             let keyword = $('.search-input').val();
 
@@ -512,19 +509,19 @@
 
                 if(!target.classList.contains('disabled')){
                     $.ajax({
-                        url : '/plan/api/touritems',
-                        type: 'POST',
+                        url : '/api/planner/touritems',
+                        type: 'GET',
                         contentType : 'application/json; charset=UTF-8',
-                        data : JSON.stringify({
+                        data : {
                             page : target.getAttribute('data-num'),
                             cat1 : $('input[name=cat1]:checked').val(),
                             cat2 : $('input[name=cat2]:checked').val(),
                             cat3 : $('input[name=cat3]:checked').val(),
-                            areaCode : selectedAreaCode,
+                            areaCode : $('input[name=area]:checked').val(),
                             sigunguCode : $('input[name=sigungu]:checked').val(),
                             contentTypeId : $('input[name=type]:checked').val(),
                             keyword: keyword
-                        }),
+                        },
                         success : function(data){
                             // var offset = $('.search-scroll').offset();
                             // $('.search-scroll').animate({scrollTop: (offset.top - $('.search-scroll').height() / 2)}, 500);
@@ -545,20 +542,20 @@
             if(tabType == 'BOOKMARK') {
                 if (!target.classList.contains('disabled')) {
                     $.ajax({
-                        url: '/plan/api/bookmark/touritems',
-                        type: 'POST',
+                        url: '/api/planner/bookmark/touritems',
+                        type: 'GET',
                         contentType: 'application/json; charset=UTF-8',
-                        data: JSON.stringify({
+                        data: {
                             userId: [[${userId}]],
                             page: target.getAttribute('data-num'),
                             cat1: $('input[name=cat1]:checked').val(),
                             cat2: $('input[name=cat2]:checked').val(),
                             cat3: $('input[name=cat3]:checked').val(),
-                            areaCode: selectedAreaCode,
+                            areaCode: $('input[name=area]:checked').val(),
                             sigunguCode: $('input[name=sigungu]:checked').val(),
                             contentTypeId: $('input[name=type]:checked').val(),
                             keyword: keyword
-                        }),
+                        },
                         success: function (data) {
                             // var offset = $('.search-scroll').offset();
                             // $('.search-scroll').animate({scrollTop: (offset.top - $('.search-scroll').height() / 2)}, 500);
@@ -581,22 +578,22 @@
     function checkSigungu() {
         // 지역을 선택하면
         $('.areaSelect').off('click').on('click', function () {
-            selectedAreaCode = $(this).val(); // 선택된 지역 코드
-            if(selectedAreaCode == null) {
+            let areaCode = $(this).val(); // 선택된 지역 코드
+            if(areaCode == null) {
                 sigunguCode = null;
             }
             let keyword = $('.search-input').val();
 
             if(tabType == 'TOTAL') {
                 $.ajax({
-                    url: '/plan/api/sigungu',
-                    type: 'POST',
+                    url: '/api/planner/sigungu',
+                    type: 'GET',
                     contentType : 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         page: 0,
-                        areaCode: selectedAreaCode,
+                        areaCode: areaCode,
                         keyword: keyword
-                    }),
+                    },
                     success: function(data) {
                         //$("html").scrollTop(0);
                         $('#sigungu').replaceWith(data);
@@ -609,15 +606,15 @@
 
             if(tabType == 'BOOKMARK') {
                 $.ajax({
-                    url : '/plan/api/bookmark/sigungu',
-                    type: 'POST',
+                    url : '/api/planner/bookmark/sigungu',
+                    type: 'GET',
                     contentType : 'application/json; charset=UTF-8',
-                    data : JSON.stringify({
+                    data : {
                         userId : [[${userId}]],
                         page : 0,
-                        areaCode : selectedAreaCode,
+                        areaCode : areaCode,
                         keyword: keyword
-                    }),
+                    },
                     success : function(data){
                         $('#sigungu').replaceWith(data);
                     },
@@ -638,15 +635,15 @@
 
             if(tabType == 'TOTAL') {
                 $.ajax({
-                    url : '/plan/api/cat2',
-                    type: 'POST',
+                    url : '/api/planner/cat2',
+                    type: 'GET',
                     contentType : 'application/json; charset=UTF-8',
-                    data : JSON.stringify({
+                    data : {
                         page : 0,
-                        areaCode : selectedAreaCode,
+                        areaCode : $('input[name=area]:checked').val(),
                         cat1 : cat1,
                         keyword : keyword
-                    }),
+                    },
                     success : function(data){
                         $('#category-middle').replaceWith(data);
                     },
@@ -658,16 +655,16 @@
 
             if(tabType == 'BOOKMARK') {
                 $.ajax({
-                    url : '/plan/api/bookmark/cat2',
-                    type: 'POST',
+                    url : '/api/planner/bookmark/cat2',
+                    type: 'GET',
                     contentType : 'application/json; charset=UTF-8',
-                    data : JSON.stringify({
+                    data : {
                         userId : [[${userId}]],
                         page : 0,
                         cat1 : cat1,
-                        areaCode : selectedAreaCode,
+                        areaCode : $('input[name=area]:checked').val(),
                         keyword: keyword
-                    }),
+                    },
                     success : function(data){
                         $('#category-middle').replaceWith(data);
                     },
@@ -686,16 +683,16 @@
 
             if(tabType == 'TOTAL') {
                 $.ajax({
-                    url: '/plan/api/cat3',
-                    type: 'POST',
+                    url: '/api/planner/cat3',
+                    type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         page: 0,
-                        areaCode: selectedAreaCode,
+                        areaCode: $('input[name=area]:checked').val(),
                         cat1: cat1,
                         cat2: cat2,
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         $('#category-row').replaceWith(data);
                     },
@@ -707,17 +704,17 @@
 
             if(tabType == 'BOOKMARK') {
                 $.ajax({
-                    url: '/plan/api/bookmark/cat3',
-                    type: 'POST',
+                    url: '/api/planner/bookmark/cat3',
+                    type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         userId : [[${userId}]],
                         page: 0,
-                        areaCode: selectedAreaCode,
+                        areaCode: $('input[name=area]:checked').val(),
                         cat1: cat1,
                         cat2: cat2,
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         $('#category-row').replaceWith(data);
                     },
@@ -735,6 +732,7 @@
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
             let cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
             let cat3 = $('input[name=cat3]:checked').val() === '' ? null : $('input[name=cat3]:checked').val();
+            let areaCode = $('input[name=area]:checked').val() === '' ? null : $('input[name=area]:checked').val();
             let sigunguCode = $('input[name=sigungu]:checked').val() === '' ? null : $('input[name=sigungu]:checked').val();
             let keyword = $('.search-input').val();
 
@@ -745,25 +743,25 @@
             if(cat2 == null){
                 cat3 = null;
             }
-            if(selectedAreaCode == null) {
+            if(areaCode == null) {
                 sigunguCode = null;
             }
 
             if(tabType == 'TOTAL') {
                 $.ajax({
-                    url: '/plan/api/touritems',
-                    type: 'POST',
+                    url: '/api/planner/touritems',
+                    type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         page: 0,
                         cat1: cat1,
                         cat2: cat2,
                         cat3: cat3,
-                        areaCode: selectedAreaCode,
+                        areaCode: areaCode,
                         sigunguCode: sigunguCode,
                         contentTypeId: $('input[name=type]:checked').val(),
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         //$("html").scrollTop(0);
                         $('#touritems').replaceWith(data);
@@ -776,20 +774,20 @@
 
             if(tabType == 'BOOKMARK') {
                 $.ajax({
-                    url: '/plan/api/bookmark/touritems',
-                    type: 'POST',
+                    url: '/api/planner/bookmark/touritems',
+                    type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    data: {
                         userId : [[${userId}]],
                         page: 0,
                         cat1: cat1,
                         cat2: cat2,
                         cat3: cat3,
-                        areaCode: selectedAreaCode,
+                        areaCode: areaCode,
                         sigunguCode: sigunguCode,
                         contentTypeId: $('input[name=type]:checked').val(),
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         //$("html").scrollTop(0);
                         $('#touritems').replaceWith(data);
@@ -839,12 +837,12 @@
     // 여행 일정 목록 불러오기
     function loadPlanForDay() {
         $.ajax({
-            type: "POST",
-            url: "/api/allShowplan",
+            type: "GET",
+            url: "/api/planner/" + plannerId,
             contentType: 'application/json; charset=UTF-8',
-            data: JSON.stringify({
+            data: {
                 "plannerId": plannerId
-            }),
+            },
             success: function (response) {
                 // 응답으로 받은 계획을 표시
                 insertPlaces(response);
@@ -1375,8 +1373,8 @@
             if (allPlacesAdded) {
                 if(confirm("입력하신 내용으로 여행을 수정하시겠습니까?")) {
                     $.ajax({
-                        type: "POST", // HTTP 요청 방식
-                        url: "/plan/api/editplans/" + plannerId, // 데이터를 전송할 서버의 URL
+                        type: "PUT", // HTTP 요청 방식
+                        url: "/api/planner/" + plannerId + '/plans', // 데이터를 전송할 서버의 URL
                         contentType: "application/json", // 전송할 데이터의 타입
                         data: JSON.stringify({
                             plannerName: plannerName,
@@ -1452,13 +1450,11 @@
                     <div>
                         <h4>지역</h4>
                         <div id="area-list-box">
-                            <input type="radio" class="areaSelect btn-check" name="areaSelect" id="areaSelect0" autocomplete="off" value="" checked>
-                            <label class="btn btn-2" for="areaSelect0" th:text="전체"></label>
+                            <input type="radio" class="areaSelect btn-check select-btn" name="area" id="area0" autocomplete="off" value="" checked>
+                            <label class="btn btn-2" for="area0" th:text="전체"></label>
                             <th:block th:each="area, idx : ${areaList}">
-                                <input type="radio" class="areaSelect btn-check" name="areaSelect" th:id="|area${idx.count}|" autocomplete="off"
-                                       th:value="${area.areaCode}">
-                                <label class="btn btn-3 btn-area" th:for="|area${idx.count}|" th:text="|${area.areaName}|">
-                                </label>
+                                <input type="radio" class="areaSelect btn-check select-btn" name="area" th:id="|area${idx.count}|" autocomplete="off" th:value="${area.areaCode}">
+                                <label class="btn btn-2 btn-area" th:for="|area${idx.count}|" th:text="|${area.areaName}|"></label>
                             </th:block>
                         </div>
                         <div id="sigungu">
@@ -1473,7 +1469,6 @@
                             </div>
                         </div>
                         <div id="tagSelector">
-                            <input type="hidden" name="area">
                             <div id="content_type">
                                 <h5>- 관광 타입 -</h5>
                                 <input type="radio" class="typeSelect btn-check select-btn" name="type" id="type0" autocomplete="off" value="" checked>

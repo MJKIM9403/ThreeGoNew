@@ -11,8 +11,10 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdatePlannerDatesRequest {
+public class UpdatePlannerRequest {
     private Long plannerId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String plannerName;
 }
+
