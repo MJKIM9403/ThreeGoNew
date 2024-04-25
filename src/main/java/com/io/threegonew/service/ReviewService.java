@@ -348,9 +348,7 @@ public class ReviewService {
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .email(user.getEmail())
                 .profileImg(user.getU_sfile())
-                .about(user.getAbout())
                 .build();
     }
 }

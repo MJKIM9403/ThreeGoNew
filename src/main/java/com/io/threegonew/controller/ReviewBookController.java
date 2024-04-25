@@ -26,7 +26,7 @@ public class ReviewBookController {
     private final UserService userService;
 
     @GetMapping("")
-    public String showDetailReviewBook(@RequestParam Long bookId, Model model){
+    public String showDetailReviewBook(@RequestParam(value = "bookid") Long bookId, Model model){
         ReviewBookResponse reviewBook = reviewBookService.findReviewBookResponse(bookId);
         ReviewBook book = reviewBookService.findReviewBook(bookId);
         List<SimpleReviewResponse> reviewList = reviewService.getReviewsByReviewBook(book);

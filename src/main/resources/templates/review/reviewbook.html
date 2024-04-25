@@ -769,6 +769,7 @@
         let loginUser = [[${loginUser.id}]] === 'anonymousUser' ? "로그인 후 이용해주세요." : [[${loginUser.id}]];
         let loginUserProfile = [[${loginUser.profileImg}]] === null ? null : [[${loginUser.profileImg}]];
         $('#comment-wrap').html("");
+        $('#comment-content').html('');
 
         let promise = new Promise((resolve) => {
             $.ajax({
@@ -808,6 +809,7 @@
                 let regDate = (findReview.regDate === findReview.modDate) ? formatRegDate(findReview.regDate) : formatRegDate(findReview.modDate) + ' (수정됨)';
 
                 $('#writer-info').click(function (){
+                    savePage
                     location.href = `/mypage/${writer.id}`
                 })
                 $('#writer-name').text(writer.name);
@@ -833,7 +835,8 @@
                     $('#review-book-info').addClass('d-flex').show();
                     $('#review-book-info').addClass('cursor-pointer')
                     $('#review-book-info').off().click(function (){
-                        location.href = `../book?bookId=${findReview.reviewBookId}`;
+                        savePage
+                        location.href = `../book?bookid=${findReview.reviewBookId}`;
                     })
                     $('#review-book-title').text(findReview.reviewBookTitle);
                     if(findReview.reviewBookCoverImg != null){
@@ -930,7 +933,7 @@
                 if(commentList.length > 0){
                     $.each(commentList, function (index, comment){
                         if(comment.cmtDel){
-                            let tempHtml = '<div class="comment-info deleted-comment">삭제된 댓글 입니다.</div>'
+                            let tempHtml = '<div class="comment-info"><div class="d-flex deleted-comment">삭제된 댓글 입니다.</div></div>'
                             $('#comment-wrap').append(tempHtml);
                         }else {
                             let profileImg;
@@ -945,11 +948,13 @@
                                 '<div class="comment-info">' +
                                 '<div class="d-flex">' +
                                 '<div class="rounded-circle icon-img comment-profile">' +
+                                `<a href="/mypage/${comment.writer.id}">` +
                                 `<img src="${profileImg}" alt="...">` +
+                                '</a>' +
                                 '</div>' +
                                 `<div class="comment-text" data-comment-id="${comment.commentId}">` +
                                 '<div class="d-flex justify-content-between gap-2">' +
-                                `<span class="comment-writer me-3">@${comment.writer.id}</span>` +
+                                `<a href="/mypage/${comment.writer.id}" class="comment-writer me-3">@${comment.writer.id}</a>` +
                                 '<div class="d-flex">' +
                                 `<span class="comment-regdate">${regDate}</span>`;
 
@@ -1087,14 +1092,16 @@
                 }
 
                 let tempHtml =
-                    '<div class="comment-info temp-reply">' +
+                    `<div class="comment-info temp-reply" data-comment-id="${reply.commentId}">` +
                     '<div class="d-flex">' +
                     '<div class="rounded-circle icon-img comment-profile">' +
+                    `<a href="/mypage/${reply.writer.id}">` +
                     `<img src="${profileImg}" alt="...">` +
+                    '</a>' +
                     '</div>' +
                     `<div class="comment-text" data-comment-id="${reply.commentId}">` +
                     '<div class="d-flex justify-content-between gap-2">' +
-                    `<span class="comment-writer me-3">@${reply.writer.id}</span>` +
+                    `<a href="/mypage/${reply.writer.id}" class="comment-writer me-3">@${reply.writer.id}</a>` +
                     '<div class="d-flex">' +
                     `<span class="comment-regdate">${regDate}</span>`;
 
@@ -1158,14 +1165,14 @@
     // 답글 삭제
     $(document).on('click','.comment-delete', function (){
         let commentId = $(this).closest('.comment-text').attr('data-comment-id');
-        let commentInfo = $(this).closest('.comment-info');
+        let comment = $(this).closest('.comment-info').children('.d-flex').first();
 
         $.ajax({
             url : `/api/comments/${commentId}`,
             type : 'DELETE',
             success : function (){
-                $(commentInfo).addClass('deleted-comment');
-                $(commentInfo).html('삭제된 댓글 입니다.');
+                $(comment).addClass('deleted-comment');
+                $(comment).html('삭제된 댓글 입니다.');
             },
             error : function (err){
                 alert("댓글 삭제에 실패했습니다.");
@@ -1251,8 +1258,10 @@
             success : function (result){
                 let replyList = result.dtoList;
                 $.each(replyList, function (index, reply){
+                    // 답글 작성 시 임시로 추가된 답글이 더보기로 정상 출력되면 삭제.
+                    $(`.reply-wrap[data-group="${group}"]`).find(`.temp-reply[data-comment-id="${reply.commentId}"]`).remove();
                     if(reply.cmtDel){
-                        let tempHtml = '<div class="comment-info deleted-comment">삭제된 댓글 입니다.</div>'
+                        let tempHtml = '<div class="comment-info"><div class="d-flex deleted-comment">삭제된 댓글 입니다.</div></div>'
                         $(`.reply-wrap[data-group="${group}"]`).append(tempHtml);
                     }else {
                         let profileImg;
@@ -1267,11 +1276,13 @@
                             '<div class="comment-info">' +
                             '<div class="d-flex">' +
                             '<div class="rounded-circle icon-img comment-profile">' +
+                            `<a href="/mypage/${reply.writer.id}">` +
                             `<img src="${profileImg}" alt="...">` +
+                            '</a>' +
                             '</div>' +
                             `<div class="comment-text" data-comment-id="${reply.commentId}">` +
                             '<div class="d-flex justify-content-between gap-2">' +
-                            `<span class="comment-writer me-3">@${reply.writer.id}</span>` +
+                            `<a href="/mypage/${reply.writer.id}" class="comment-writer me-3">@${reply.writer.id}</a>` +
                             '<div class="d-flex">' +
                             `<span class="comment-regdate">${regDate}</span>`;
 
@@ -1306,7 +1317,7 @@
                     $(`.next-reply-btn[data-group="${group}"]`).attr('data-page','last');
                     $(`.next-reply-btn[data-group="${group}"]`).hide();
                 }
-                $(`.more-reply-btn[data-group="${group}"]`).text(`답글 더 보기(${result.total}개)`)
+                $(`.more-reply-btn[data-group="${group}"]`).text(`답글 더 보기(${result.total}개)`);
             },
             error : function (err){
                 console.log(err)
@@ -1319,18 +1330,19 @@
         const info = $(this).closest('.comment-info');
         const page = $(info).children('.next-reply-btn').attr('data-page');
 
-        if($(info).children('.reply-wrap').css('display') === 'none'){
+        if($(info).children('.reply-wrap').hasClass('hide')){
+            $(info).children('.reply-wrap').removeClass('hide');
             $(this).text('답글 접기');
-            $(info).children('.reply-wrap').show();
+            $(info).children('.reply-wrap').children().show();
             if(page !== 'last'){
                 $(info).children('.next-reply-btn').show();
             }
         }else {
+            $(info).children('.reply-wrap').addClass('hide')
             const text = $(info).children('.more-reply-btn').text();
             $(this).text(text);
-            $(info).children('.reply-wrap').hide();
+            $(info).children('.reply-wrap').children().hide();
             $(info).children('.next-reply-btn').hide();
-            info.find('.temp-reply').remove();
         }
     })
 
@@ -1422,6 +1434,7 @@
         if(tourItemId !== undefined){
             $('#touritem-wrap').css('cursor','pointer');
             $('#touritem-wrap').click(function (){
+                savePage
                 location.href = `../info/content/${tourItemId}`;
             })
             touritemInfoTimer = setTimeout(function () {
@@ -1460,8 +1473,11 @@
                 url : `/api/review/${selectedReviewId}`,
                 type : 'DELETE',
                 success : function (){
-                    alert('삭제 되었습니다.');
-                    location.reload();
+                    alert('삭제 되었습니다.')
+                    savePage();
+                    $('#viewer').modal('toggle');
+                    changeTab(tabType);
+                    setScrollByFeedInfo();
                 },
                 error : function (){
                     alert('삭제에 실패했습니다.')
@@ -1582,7 +1598,7 @@
 
     function showPlannerList() {
         $.ajax({
-            url : '/api/book/show_planner',
+            url : '/api/book/me/show-planner',
             type : 'GET',
             success : function (plannerList) {
                 if(plannerList.length > 0){
