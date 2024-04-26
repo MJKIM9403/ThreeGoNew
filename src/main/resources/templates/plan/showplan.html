@@ -324,7 +324,7 @@
                             // 입력한 아이디가 내 아이디가 아니라면
                             // 이미 초대받은 게스트인지 확인
                             $.ajax({
-                                url: `/api/checkInvitation/${plannerId}/${result.id}`,
+                                url: `/api/planner/share/${plannerId}/${result.id}`,
                                 type: "GET",
                                 success: function (response) {
                                     if (!response.invited) { // 초대되지 않은 게스트일 경우에만 버튼 추가
@@ -389,7 +389,7 @@
             const guestId = this.previousElementSibling.getAttribute('data-user-id');
             if (confirm(`삭제하면 더 이상 일정을 공유할 수 없게 됩니다. 정말 ${guestId} 님을 초대받은 친구에서 삭제하시겠습니까?`)) {
                 $.ajax({
-                    url: `/api/removeGuest/${plannerId}/${guestId}`,
+                    url: `/api/planner/share/${plannerId}/${guestId}`,
                     type: 'DELETE',
                     data: {
                         plannerId: plannerId,
@@ -435,7 +435,7 @@
                 if (confirm(confirmMessage)) {
                     // AJAX를 사용하여 userIds를 서버로 POST 방식으로 전송
                     $.ajax({
-                        url: '/api/sharePlanner',
+                        url: '/api/planner/share',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify(dataToSend),
@@ -510,6 +510,7 @@
                             plannerName: editName
                         }),
                         success: function(response) {
+                            console.log(response);
                             $('#nameEditModal').modal('hide');
                             window.location.href = '/plan/show?p_id=' + plannerId;
                             alert('수정되었습니다.');
@@ -691,7 +692,7 @@
                 let guestId = [[${userId}]];
                 if(confirm(deleteConfirm)) {
                     $.ajax({
-                        url: `/api/removeGuest/${plannerId}/${guestId}`,
+                        url: `/api/planner/share/${plannerId}/${guestId}`,
                         type: 'DELETE',
                         data: {
                             plannerId: plannerId,
@@ -727,6 +728,7 @@
             },
             success: function (response) {
                 // 응답으로 받은 계획을 표시
+                console.log(response);
                 insertPlaces(response);
                 addPrintDayList();
                 // 모든 마커가 추가된 후에 fitBounds 호출
