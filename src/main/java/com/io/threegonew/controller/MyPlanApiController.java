@@ -22,7 +22,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class MyPlanApiController {
+public class    MyPlanApiController {
     private final TourItemService tourItemService;
     private final PlanService planService;
     private final PlannerService plannerService;

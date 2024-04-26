@@ -1154,7 +1154,7 @@
             location.href = '../login'
         }else {
             $.ajax({
-                url : `/api/likes/${reviewId}`,
+                url : `/api/like/${reviewId}`,
                 type : 'POST',
                 success : function (result){
                     const likeCount = result.likeCount;
@@ -1312,7 +1312,7 @@
             }
         })
         $.ajax({
-            url : `/api/likes/${selectedReviewId}`,
+            url : `/api/like/${selectedReviewId}`,
             type : 'GET',
             success : function (result){
                 const likeCount = result.likeCount;
