@@ -921,10 +921,9 @@
     // 댓글 리스트 조회
     function showComments(page) {
         $.ajax({
-            url : '/api/comments',
+            url : `/api/review/${selectedReviewId}/comments`,
             type : 'GET',
             data : {
-                reviewId: selectedReviewId,
                 page: page
             },
             success : function (result){
@@ -1009,11 +1008,8 @@
     function showAllCommentsCount(){
         let test = $(`small.comment-count[data-review-id="${selectedReviewId}"]`).html();
         $.ajax({
-            url : '/api/comments/count',
+            url : `/api/review/${selectedReviewId}/comments/count`,
             type : 'GET',
-            data : {
-                reviewId : selectedReviewId
-            },
             success : function (count){
                 $('.small-review-icons .comment-count').html(count);
                 $(`small.comment-count[data-review-id="${selectedReviewId}"]`).html(`댓글 ${count}개`);
@@ -1049,7 +1045,7 @@
                 }
 
                 $.ajax({
-                    url : '/api/comments',
+                    url : `/api/review/${selectedReviewId}/comment`,
                     type : 'POST',
                     data : JSON.stringify(data),
                     contentType : 'application/json; charset=UTF-8',
@@ -1060,7 +1056,7 @@
                         showAllCommentsCount();
                         $('.invisible-parent-writer').html("");
                         if(parentId != null){
-                            addReply(commentId);
+                            addTempReply(commentId);
                         }
                         parentId = null;
                     },
@@ -1072,13 +1068,10 @@
         })
     }
 
-    function addReply(commentId){
+    function addTempReply(commentId){
         $.ajax({
-            url : '/api/comments/new-reply',
+            url : `/api/comment/${commentId}/temp-reply`,
             type : 'GET',
-            data : {
-                commentId : commentId
-            },
             success : function (result){
                 let reply = result.reply;
                 let replyCount = result.replyCount;
@@ -1168,7 +1161,7 @@
         let comment = $(this).closest('.comment-info').children('.d-flex').first();
 
         $.ajax({
-            url : `/api/comments/${commentId}`,
+            url : `/api/comment/${commentId}`,
             type : 'DELETE',
             success : function (){
                 $(comment).addClass('deleted-comment');
@@ -1214,7 +1207,7 @@
 
         let commentEditor = $(this).closest('.comment-editor');
         $.ajax({
-            url : `/api/comments/${commentId}`,
+            url : `/api/comment/${commentId}`,
             type : 'PUT',
             data : JSON.stringify({
                 commentId : commentId,
@@ -1248,11 +1241,9 @@
         let page = $(this).attr('data-page');
 
         $.ajax({
-            url : '/api/comments/replies',
+            url : `/api/review/${selectedReviewId}/comment/${group}/replies`,
             type : 'GET',
             data : {
-                reviewId : selectedReviewId,
-                group : group,
                 page : page
             },
             success : function (result){
@@ -1356,11 +1347,10 @@
             showComments(0);
         }else {
             $.ajax({
-                url : '/api/comments/recent',
+                url : `/api/review/${selectedReviewId}/comments/recent`,
                 type : 'GET',
                 data : {
-                    reviewId : selectedReviewId,
-                    lastCommentId : lastCommentId
+                    last : lastCommentId
                 },
                 success : function (result){
                     let commentList = result;
