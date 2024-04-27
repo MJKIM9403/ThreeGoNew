@@ -18,6 +18,11 @@ public interface UserRepository extends JpaRepository<User, String> {
     // Email 존재 여부 확인
     boolean existsByEmail(String email);
     Optional<User> findById(String id);
+
+    // 아이디 대소문자 구분을 위해 findById 메서드 수정
+    @Query(value = "SELECT * FROM users u WHERE BINARY u.u_id = :userId", nativeQuery = true)
+    Optional<User> findByUserIdCaseSensitive(@Param("userId") String userId);
+
     List<User> findAll();
     Optional<User> findByEmail(String email);
 
