@@ -282,32 +282,29 @@
         }
 
         function checkBookmark() {
-            let userId = [[${userId}]]
+            let userId = [[${userId}]];
+            let contentId = [[${response.tourItemResponse.contentid}]];
             if (userId === 'anonymousUser') {
                 alert("북마크는 로그인 후 이용하실 수 있습니다.");
                 location.href = '/login';
             } else {
                 $.ajax({
-                    url: '/bookmark/check',
+                    url: `/api/contents/${contentId}/bookmarks`,
                     type: 'POST',
-                    data: JSON.stringify({
-                        "contentId": [[${response.tourItemResponse.contentid}]],
-                        "userId": userId
-                    }),
                     contentType: 'application/json; charset=utf-8',
                     success: function (data) {
-                        let isChecked = data.isChecked;
+                        let bookmarkState = data.bookmarkState;
                         let checkCount = data.bookmarkCount;
-                        if (isChecked) {
-                            // 이미 북마크를 등록한 경우
-                            $('.bookmark').removeClass('checked-bookmark')
-                            $('.bookmark-icon').removeClass('bi-bookmark-star-fill')
-                            $('.bookmark-icon').addClass('bi-bookmark-plus')
-                        } else {
-                            // 아직 북마크를 등록하지 않았을 경우
+                        if (bookmarkState) {
+                            // 북마크 등록
                             $('.bookmark').addClass('checked-bookmark')
                             $('.bookmark-icon').addClass('bi-bookmark-star-fill')
                             $('.bookmark-icon').removeClass('bi-bookmark-plus')
+                        } else {
+                            // 북마크 해제
+                            $('.bookmark').removeClass('checked-bookmark')
+                            $('.bookmark-icon').removeClass('bi-bookmark-star-fill')
+                            $('.bookmark-icon').addClass('bi-bookmark-plus')
                         }
                         $('.bookmark-count').html(checkCount)
                     },

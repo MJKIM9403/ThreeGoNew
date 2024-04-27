@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,7 +56,7 @@ public class CommentService {
     public Comment saveComment(AddCommentRequest request){
         String loginUserId = SecurityUtils.getCurrentUsername();
         User commentWriter = userRepository.findById(loginUserId).orElseThrow(() ->
-                new IllegalArgumentException("유저 정보를 찾을 수 없습니다."));
+                new AccessDeniedException("유저 정보를 찾을 수 없습니다."));
 
         Comment parentComment = null;
         Integer group;
@@ -107,10 +107,10 @@ public class CommentService {
     }
 
     @Transactional
-    public PageResponse getComments(CommentRequest request){
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+    public PageResponse getComments(Long reviewId, Integer pageNo){
+        Pageable pageable = PageRequest.of(pageNo, 10);
 
-        Page<CommentResponse> page = commentRepository.findComments(pageable, request.getReviewId())
+        Page<CommentResponse> page = commentRepository.findComments(pageable, reviewId)
                 .map(this::commentMapper);
 
         PageResponse<CommentResponse> pageResponse = PageResponse.<CommentResponse>withAll()
@@ -145,10 +145,10 @@ public class CommentService {
     }
 
     @Transactional
-    public PageResponse getReplies(CommentRequest request){
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+    public PageResponse getReplies(Long reviewId, Integer group, Integer pageNo){
+        Pageable pageable = PageRequest.of(pageNo, 10);
 
-        Page<ReplyResponse> page = commentRepository.findReplies(pageable, request.getReviewId(), request.getGroup())
+        Page<ReplyResponse> page = commentRepository.findReplies(pageable, reviewId, group)
                 .map(this::replyMapper);
 
         PageResponse<ReplyResponse> pageResponse = PageResponse.<ReplyResponse>withAll()
@@ -203,9 +203,7 @@ public class CommentService {
         return UserInfoResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .email(user.getEmail())
                 .profileImg(user.getU_sfile())
-                .about(user.getAbout())
                 .build();
     }
 }

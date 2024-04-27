@@ -84,11 +84,7 @@ public class TourItemController {
         }else {
             UserDetails userDetails = (UserDetails)principal;
             userId = userDetails.getUsername();
-            Optional<Bookmark> bookmark = bookmarkService.findBookmark(BookmarkRequest.builder()
-                                        .contentId(contentid)
-                                        .userId(userId)
-                                        .build());
-            isBookmarkChecked = bookmark.isPresent();
+            isBookmarkChecked = bookmarkService.existBookmark(userId, contentid);
         }
 
         TourItemContentResponse tourItemContentResponse = tourItemContentService2.getContentInfo(tourItemResponse).block();

@@ -8,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 public class BookmarkResponse {
     private Long bookmarkCount;
-    private Boolean isChecked;
+    private Boolean bookmarkState;
 }
