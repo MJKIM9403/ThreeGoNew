@@ -231,16 +231,14 @@ public class    MyPlanApiController {
     public ResponseEntity<?> sharePlanner(@RequestBody SharePlannerRequest request) {
         try {
             boolean isWriter = plannerService.isUserPlannerOwner(request.getOwnerId(), request.getPlannerId());
-            if(isWriter == true) {
+            if(isWriter) {
                 teamService.sharePlanner(request.getPlannerId(), request.getOwnerId(), request.getSharedWithUserIds());
-                return ResponseEntity.ok().body("플래너가 성공적으로 공유되었습니다.");
+                return new ResponseEntity<>(HttpStatus.OK);
             } else {
-                return ResponseEntity.badRequest().body("플래너는 작성자만 공유할 수 있습니다.");
+                return ErrorResponse.createErrorResponse(HttpStatus.FORBIDDEN, "403", "플래너는 작성자만 공유할 수 있습니다.");
             }
-
-
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("플래너 공유 실패: " + e.getMessage());
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "플래너 공유에 실패했습니다.");
         }
     }
 
