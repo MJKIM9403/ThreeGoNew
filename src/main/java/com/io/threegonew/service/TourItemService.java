@@ -214,10 +214,10 @@ public class TourItemService {
     public PageResponse findMyBookmark(MyPageRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-        Page<TourItemResponse> page = tourItemRepository.findMyBookmark(pageable, request.getUserId())
-                .map(this::tourItemMapper);
+        Page<TourItemSimpleResponse> page = tourItemRepository.findMyBookmark(pageable, request.getUserId())
+                .map(this::tourItemSimpleMapper);
 
-        PageResponse<TourItemResponse> pageResponse = PageResponse.<TourItemResponse>withAll()
+        PageResponse<TourItemSimpleResponse> pageResponse = PageResponse.<TourItemSimpleResponse>withAll()
                 .dtoList(page.getContent())
                 .page(page.getNumber())
                 .size(page.getSize())
@@ -232,20 +232,7 @@ public class TourItemService {
         TourItem tourItem = tourItemRepository.findById(contentid).orElseThrow(
                 () -> new IllegalArgumentException("관광지 정보를 찾을 수 없습니다."));
 
-        String firstImg;
-        if(tourItem.getFirstimage() == null || tourItem.getFirstimage().isEmpty()){
-            firstImg = "../assets/img/no_img.jpg";
-        }else {
-            firstImg = tourItem.getFirstimage();
-        }
-
-        return TourItemSimpleResponse.builder()
-                                    .contentid(tourItem.getContentid())
-                                    .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
-                                    .address(getAddress(tourItem))
-                                    .firstimage(firstImg)
-                                    .title(tourItem.getTitle())
-                                    .build();
+        return tourItemSimpleMapper(tourItem);
     }
 
 
@@ -272,6 +259,23 @@ public class TourItemService {
                 .tel(tourItem.getTel())
                 .title(cropTitle(tourItem.getTitle()))
                 .bookmarkCount((long) tourItem.getBookmarkList().size())
+                .build();
+    }
+
+    private TourItemSimpleResponse tourItemSimpleMapper(TourItem tourItem){
+        String firstImg;
+        if(tourItem.getFirstimage() == null || tourItem.getFirstimage().isEmpty()){
+            firstImg = "../assets/img/no_img.jpg";
+        }else {
+            firstImg = tourItem.getFirstimage();
+        }
+
+        return TourItemSimpleResponse.builder()
+                .contentid(tourItem.getContentid())
+                .fullCategoryName(getFullCategoryName(tourItem.getCat3()))
+                .address(getAddress(tourItem))
+                .firstimage(firstImg)
+                .title(tourItem.getTitle())
                 .build();
     }
 

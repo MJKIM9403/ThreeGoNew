@@ -2043,6 +2043,7 @@
 
 <!-- 마이페이지 무한스크롤 관련 스크립트 -->
 <script th:inline="javascript">
+    let findUserId = [[${findUser.id}]];
     let scrollPage = 0; // 무한스크롤로 불러올 페이지
     let scrollCheck = false; // 페이지 데이터를 불러오는 중인지 여부
     let firstLoad = true; // 첫 로딩인지 체크
@@ -2140,10 +2141,10 @@
             back = false;
         }
         $.ajax({
-            url : '/api/mypage/bookmarks',
+            url : `/api/mypage/${findUserId}/bookmarks`,
             type : 'GET',
             data : {
-                userId : [[${findUser.id}]],
+                userId : findUserId,
                 page : scrollPage
             },
             async: false,
@@ -2262,10 +2263,10 @@
             back = false;
         }
         $.ajax({
-            url : '/api/mypage/reviews',
+            url : `/api/mypage/${findUserId}/reviews`,
             type : 'GET',
             data : {
-                userId : [[${findUser.id}]],
+                userId : findUserId,
                 page : scrollPage
             },
             async: false,
@@ -2336,10 +2337,10 @@
             back = false;
         }
         $.ajax({
-            url : '/api/mypage/reviewbooks',
+            url : `/api/mypage/${findUserId}/books`,
             type : 'GET',
             data : {
-                userId : [[${findUser.id}]],
+                userId : findUserId,
                 page : scrollPage
             },
             async: false,
@@ -2401,10 +2402,10 @@
             back = false;
         }
         $.ajax({
-            url : '/api/mypage/likes',
+            url : `/api/mypage/${findUserId}/likes`,
             type : 'GET',
             data : {
-                userId : [[${findUser.id}]],
+                userId : findUserId,
                 page : scrollPage
             },
             async: false,
@@ -2661,7 +2662,7 @@
                         <div class="list-group">
                             <div class="list-group-item d-flex flex-wrap">
                                 <div class="col d-flex">
-                                    <a href="/mypage/${data.toUser}">
+                                    <a href="/mypage/${data.fromUser}">
                                         <img src="${data.listSfile}" class="profile-list-img rounded-circle me-2 align-self-center">
                                     </a>
                                     <a href="/mypage/${data.fromUser}">
