@@ -135,6 +135,7 @@
 
             // 카테고리(분류) 선택
             $('.catSelect').click(function () {
+
                 $.ajax({
                     url: '/tour/cat2',
                     type: 'GET',
@@ -146,6 +147,9 @@
                     },
                     error: function (err) {
                         console.log(err)
+                    },
+                    beforeSend: function (){
+                        $('input[type="radio"].cat2Select[value=""]').prop("checked", true);
                     }
                 })
             })
@@ -162,6 +166,9 @@
                     },
                     error: function (err) {
                         console.log(err)
+                    },
+                    beforeSend: function (){
+                        $('input[type="radio"].cat3Select[value=""]').prop("checked", true);
                     }
                 })
             })
