@@ -43,6 +43,7 @@ public class    MyPlanApiController {
     public String getTourItemList(@ModelAttribute TourItemSelectRequest request, Model model) {
         PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
         model.addAttribute("pageResponse", pageResponse);
+
         return "plan/plan :: #touritems";
     }
 
