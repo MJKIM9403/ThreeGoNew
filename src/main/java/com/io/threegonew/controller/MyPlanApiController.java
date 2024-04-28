@@ -129,7 +129,6 @@ public class    MyPlanApiController {
             responseData.put("startDate", startDate);
             responseData.put("endDate", endDate);
             responseData.put("plans", places);
-            System.out.println(responseData.get("p_id").toString());
             return ResponseEntity.ok().body(responseData);
         } catch (Exception e) {
             return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "플래너 저장에 실패했습니다.");
