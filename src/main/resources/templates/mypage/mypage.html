@@ -1453,7 +1453,7 @@
             $('#touritem-wrap').css('cursor','pointer');
             $('#touritem-wrap').click(function (){
                 savePage
-                location.href = `../info/content/${tourItemId}`;
+                location.href = `../tour/content/${tourItemId}`;
             })
             touritemInfoTimer = setTimeout(function () {
                 showTourItemSimpleInfo(tourItemId)
@@ -2165,7 +2165,7 @@
                         $(".loader").hide()
                         $.each(bookmarkList, function (index, bookmark){
                             let tempHtml = `<div class="gallery-item" tabIndex="0" onclick="savePage()">` +
-                                `<a href="/info/content/${bookmark.contentid}">` +
+                                `<a href="/tour/content/${bookmark.contentid}">` +
                                 `<img src="${bookmark.firstimage}"` +
                                 `class="gallery-image" alt="">` +
                                 `<div class="gallery-item-info d-flex">` +

@@ -797,7 +797,7 @@
                                     <th:block th:each="moreitem : ${response.moreTourItems}">
                                         <swiper-slide>
                                             <div class="card moreitem-card">
-                                                <a th:href="@{/info/content/{contentid}(contentid=${moreitem.contentid})}">
+                                                <a th:href="@{/tour/content/{contentid}(contentid=${moreitem.contentid})}">
                                                     <img th:if="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}"
                                                          src="../../assets/img/no_img.jpg">
                                                     <img th:unless="${moreitem.firstimage == null || moreitem.firstimage.isEmpty()}"
