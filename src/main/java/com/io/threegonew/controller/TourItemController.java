@@ -49,8 +49,8 @@ public class TourItemController {
         return "tourinfo/city";
     }
 
-    @PostMapping("/api/cat2")
-    public String getCat2List(@RequestBody TourItemSelectRequest request, Model model){
+    @GetMapping("/api/cat2")
+    public String getCat2List(@ModelAttribute TourItemSelectRequest request, Model model){
         if(request.getCat1() != null){
             model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
             model.addAttribute("cat3List", new ArrayList<>());
@@ -61,8 +61,8 @@ public class TourItemController {
 
         return "tourinfo/city :: #category-middle";
     }
-    @PostMapping("/api/cat3")
-    public String getCat3List(@RequestBody TourItemSelectRequest request, Model model){
+    @GetMapping("/api/cat3")
+    public String getCat3List(@ModelAttribute TourItemSelectRequest request, Model model){
         if(request.getCat2() != null){
             model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
         }else {
@@ -70,6 +70,13 @@ public class TourItemController {
         }
 
         return "tourinfo/city :: #category-row";
+    }
+
+    @GetMapping("/api/touritems")
+    public String getTourItemList(@ModelAttribute TourItemSelectRequest request, Model model) {
+        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
+        model.addAttribute("pageResponse", pageResponse);
+        return "tourinfo/city :: #touritems";
     }
 
     @GetMapping("/content/{contentid}")
@@ -93,14 +100,6 @@ public class TourItemController {
         model.addAttribute("userId", userId);
         model.addAttribute("isBookmarkChecked", isBookmarkChecked);
         return "tourinfo/content";
-    }
-
-
-    @PostMapping("/api/touritems")
-    public String getTourItemList(@RequestBody TourItemSelectRequest request, Model model) {
-        PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
-        model.addAttribute("pageResponse", pageResponse);
-        return "tourinfo/city :: #touritems";
     }
 
 

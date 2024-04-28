@@ -49,9 +49,8 @@
 
                     $.ajax({
                         url: '/info/api/touritems',
-                        type: 'POST',
-                        contentType: 'application/json; charset=UTF-8',
-                        data: JSON.stringify({
+                        type: 'GET',
+                        data: {
                             page: 0,
                             cat1: $('input[name=cat1]:checked').val(),
                             cat2: $('input[name=cat2]:checked').val(),
@@ -60,7 +59,7 @@
                             sigunguCode: $('input[name=sigungu]:checked').val(),
                             contentTypeId: $('input[name=type]:checked').val(),
                             keyword: keyword
-                        }),
+                        },
                         success: function (data) {
                             $('#touritems').replaceWith(data);
                         },
@@ -92,9 +91,8 @@
 
                 $.ajax({
                     url: '/info/api/touritems',
-                    type: 'POST',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    type: 'GET',
+                    data: {
                         page: 0,
                         cat1: cat1,
                         cat2: cat2,
@@ -103,9 +101,8 @@
                         sigunguCode: $('input[name=sigungu]:checked').val(),
                         contentTypeId: $('input[name=type]:checked').val(),
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
-                        //$("html").scrollTop(0);
                         $('#touritems').replaceWith(data);
                     },
                     error: function (err) {
@@ -119,13 +116,11 @@
             $(document).on('click', '.page-item', function (e) {
                 const target = e.target;
                 let keyword = $('.search-input').val();
-                // sessionStorage.setItem("cityPageNum", target.getAttribute('data-num'));
                 if (!target.classList.contains('disabled')) {
                     $.ajax({
                         url: '/info/api/touritems',
-                        type: 'POST',
-                        contentType: 'application/json; charset=UTF-8',
-                        data: JSON.stringify({
+                        type: 'GET',
+                        data: {
                             page: target.getAttribute('data-num'),
                             cat1: $('input[name=cat1]:checked').val(),
                             cat2: $('input[name=cat2]:checked').val(),
@@ -134,7 +129,7 @@
                             sigunguCode: $('input[name=sigungu]:checked').val(),
                             contentTypeId: $('input[name=type]:checked').val(),
                             keyword: keyword
-                        }),
+                        },
                         success: function (data) {
                             $("html").scrollTop(0);
                             $('#touritems').replaceWith(data);
@@ -155,12 +150,11 @@
                 let keyword = $('.search-input').val();
                 $.ajax({
                     url: '/info/api/cat2',
-                    type: 'POST',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    type: 'GET',
+                    data: {
                         cat1: cat1,
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         $('#category-middle').replaceWith(data);
                     },
@@ -176,13 +170,12 @@
                 let keyword = $('.search-input').val();
                 $.ajax({
                     url: '/info/api/cat3',
-                    type: 'POST',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
+                    type: 'GET',
+                    data: {
                         cat1: cat1,
                         cat2: cat2,
                         keyword: keyword
-                    }),
+                    },
                     success: function (data) {
                         $('#category-row').replaceWith(data);
                     },
@@ -225,11 +218,10 @@
             let promise = new Promise((resolve) => {
                     $.ajax({
                         url: '/info/api/cat2',
-                        type: 'POST',
-                        contentType: 'application/json; charset=UTF-8',
-                        data: JSON.stringify({
+                        type: 'GET',
+                        data: {
                             cat1: cat1
-                        }),
+                        },
                         async: false,
                         success: function (data) {
                             $('#category-middle').replaceWith(data);
@@ -243,12 +235,11 @@
             ).then(() => {
                     $.ajax({
                         url: '/info/api/cat3',
-                        type: 'POST',
-                        contentType: 'application/json; charset=UTF-8',
-                        data: JSON.stringify({
+                        type: 'GET',
+                        data: {
                             cat1: cat1,
                             cat2: cat2
-                        }),
+                        },
                         async: false,
                         success: function (data) {
                             $('#category-row').replaceWith(data);
@@ -281,9 +272,8 @@
 
             $.ajax({
                 url: '/info/api/touritems',
-                type: 'POST',
-                contentType: 'application/json; charset=UTF-8',
-                data: JSON.stringify({
+                type: 'GET',
+                data: {
                     page: searchInfo.page,
                     cat1: cat1,
                     cat2: cat2,
@@ -292,7 +282,7 @@
                     sigunguCode: searchInfo.sigungu,
                     contentTypeId: searchInfo.type,
                     keyword: searchInfo.keyword
-                }),
+                },
                 success: function (data) {
                     $('.search-input').val(`${searchInfo.keyword}`);
                     $(`input[type="radio"].typeSelect[value="${searchInfo.type}"]`).prop("checked", true);
@@ -360,6 +350,7 @@
 
         #wrap {
             width: 1200px;
+            min-height: calc(100vh - 180px);
             margin: 0 auto;
         }
 
@@ -376,7 +367,12 @@
         .touritem-no-contents {
             margin: 0;
             text-align: center;
-            padding: 10px 0;
+            padding: 2rem 0;
+            font-size: 1.2rem;
+        }
+
+        .touritem-no-contents > p {
+            margin: 0;
         }
 
         .touritem-contents {

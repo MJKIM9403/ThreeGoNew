@@ -1453,7 +1453,7 @@
     function showAllCommentsCount(){
         let test = $(`small.comment-count[data-review-id="${selectedReviewId}"]`).html();
         $.ajax({
-            uurl : `/api/review/${selectedReviewId}/comments/count`,
+            url : `/api/review/${selectedReviewId}/comments/count`,
             type : 'GET',
             success : function (count){
                 $('.small-review-icons .comment-count').html(count);
