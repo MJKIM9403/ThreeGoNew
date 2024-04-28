@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/info")
+@RequestMapping("/tour")
 @RequiredArgsConstructor
 public class TourItemController {
 
@@ -49,10 +49,10 @@ public class TourItemController {
         return "tourinfo/city";
     }
 
-    @GetMapping("/api/cat2")
-    public String getCat2List(@ModelAttribute TourItemSelectRequest request, Model model){
-        if(request.getCat1() != null){
-            model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
+    @GetMapping("/cat2")
+    public String getCat2List(@RequestParam(required = false, value = "cat1") String cat1, Model model){
+        if(!cat1.isEmpty()){
+            model.addAttribute("cat2List", tourItemService.findCat2List(cat1));
             model.addAttribute("cat3List", new ArrayList<>());
         }else {
             model.addAttribute("cat2List", new ArrayList<>());
@@ -61,10 +61,10 @@ public class TourItemController {
 
         return "tourinfo/city :: #category-middle";
     }
-    @GetMapping("/api/cat3")
-    public String getCat3List(@ModelAttribute TourItemSelectRequest request, Model model){
-        if(request.getCat2() != null){
-            model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
+    @GetMapping("/cat3")
+    public String getCat3List(@RequestParam(required = false, value = "cat2") String cat2, Model model){
+        if(!cat2.isEmpty()){
+            model.addAttribute("cat3List", tourItemService.findCat3List(cat2));
         }else {
             model.addAttribute("cat3List", new ArrayList<>());
         }
@@ -72,7 +72,7 @@ public class TourItemController {
         return "tourinfo/city :: #category-row";
     }
 
-    @GetMapping("/api/touritems")
+    @GetMapping("/touritems")
     public String getTourItemList(@ModelAttribute TourItemSelectRequest request, Model model) {
         PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
         model.addAttribute("pageResponse", pageResponse);

@@ -44,7 +44,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
                 .authorizeRequests()
-                .requestMatchers("/test", "/bookmark/**","/review/**", "/book/**", "/mypage/**", "/checkDuplicateId","/checkDuplicateEmail", "/api/**", "/plan/**","planner/**","/login", "/join", "/user", "/error", "/index", "/info/**","/insertData", "/findId", "/findPw/**", "/delete").permitAll()
+                .requestMatchers("/test", "/bookmark/**","/review/**", "/book/**", "/mypage/**", "/checkDuplicateId","/checkDuplicateEmail", "/api/**", "/plan/**","planner/**","/login", "/join", "/user", "/error", "/index", "/tour/**","/insertData", "/findId", "/findPw/**", "/delete").permitAll()
                 //.requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

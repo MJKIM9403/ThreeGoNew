@@ -48,7 +48,7 @@
                 let keyword = $('.search-input').val();
 
                     $.ajax({
-                        url: '/info/api/touritems',
+                        url: '/tour/touritems',
                         type: 'GET',
                         data: {
                             page: 0,
@@ -76,27 +76,16 @@
 
         function selectAndShow() {
             $(document).on('click', '.select-btn', function () {
-                const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
-                let cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
-                let cat3 = $('input[name=cat3]:checked').val() === '' ? null : $('input[name=cat3]:checked').val();
                 let keyword = $('.search-input').val();
 
-                if (cat1 == null) {
-                    cat2 = null;
-                    cat3 = null;
-                }
-                if (cat2 == null) {
-                    cat3 = null;
-                }
-
                 $.ajax({
-                    url: '/info/api/touritems',
+                    url: '/tour/touritems',
                     type: 'GET',
                     data: {
                         page: 0,
-                        cat1: cat1,
-                        cat2: cat2,
-                        cat3: cat3,
+                        cat1: $('input[name=cat1]:checked').val(),
+                        cat2: $('input[name=cat2]:checked').val(),
+                        cat3: $('input[name=cat3]:checked').val(),
                         areaCode: $('input[name=area]').val(),
                         sigunguCode: $('input[name=sigungu]:checked').val(),
                         contentTypeId: $('input[name=type]:checked').val(),
@@ -118,7 +107,7 @@
                 let keyword = $('.search-input').val();
                 if (!target.classList.contains('disabled')) {
                     $.ajax({
-                        url: '/info/api/touritems',
+                        url: '/tour/touritems',
                         type: 'GET',
                         data: {
                             page: target.getAttribute('data-num'),
@@ -146,14 +135,11 @@
 
             // 카테고리(분류) 선택
             $('.catSelect').click(function () {
-                const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
-                let keyword = $('.search-input').val();
                 $.ajax({
-                    url: '/info/api/cat2',
+                    url: '/tour/cat2',
                     type: 'GET',
                     data: {
-                        cat1: cat1,
-                        keyword: keyword
+                        cat1 : $('input[name=cat1]:checked').val()
                     },
                     success: function (data) {
                         $('#category-middle').replaceWith(data);
@@ -165,16 +151,11 @@
             })
 
             $(document).on('click', '.cat2Select', function () {
-                const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
-                const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
-                let keyword = $('.search-input').val();
                 $.ajax({
-                    url: '/info/api/cat3',
+                    url: '/tour/cat3',
                     type: 'GET',
                     data: {
-                        cat1: cat1,
-                        cat2: cat2,
-                        keyword: keyword
+                        cat2 : $('input[name=cat2]:checked').val()
                     },
                     success: function (data) {
                         $('#category-row').replaceWith(data);
@@ -203,24 +184,12 @@
         function loadSearchInfo(){
             let searchInfo = JSON.parse(sessionStorage.getItem("searchInfo"));
 
-            let cat1 = searchInfo.cat1 === '' ? null : searchInfo.cat1;
-            let cat2 = searchInfo.cat2 === '' ? null : searchInfo.cat2;
-            let cat3 = searchInfo.cat3 === '' ? null : searchInfo.cat3;
-
-            if (cat1 == null) {
-                cat2 = null;
-                cat3 = null;
-            }
-            if (cat2 == null) {
-                cat3 = null;
-            }
-
             let promise = new Promise((resolve) => {
                     $.ajax({
-                        url: '/info/api/cat2',
+                        url: '/tour/cat2',
                         type: 'GET',
                         data: {
-                            cat1: cat1
+                            cat1 : searchInfo.cat1
                         },
                         async: false,
                         success: function (data) {
@@ -234,11 +203,10 @@
                 }
             ).then(() => {
                     $.ajax({
-                        url: '/info/api/cat3',
+                        url: '/tour/cat3',
                         type: 'GET',
                         data: {
-                            cat1: cat1,
-                            cat2: cat2
+                            cat2 : searchInfo.cat2
                         },
                         async: false,
                         success: function (data) {
@@ -258,26 +226,14 @@
         function showContentBySearchInfo() {
             let searchInfo = JSON.parse(sessionStorage.getItem("searchInfo"));
 
-            let cat1 = searchInfo.cat1 === '' ? null : searchInfo.cat1;
-            let cat2 = searchInfo.cat2 === '' ? null : searchInfo.cat2;
-            let cat3 = searchInfo.cat3 === '' ? null : searchInfo.cat3;
-
-            if (cat1 == null) {
-                cat2 = null;
-                cat3 = null;
-            }
-            if (cat2 == null) {
-                cat3 = null;
-            }
-
             $.ajax({
-                url: '/info/api/touritems',
+                url: '/tour/touritems',
                 type: 'GET',
                 data: {
                     page: searchInfo.page,
-                    cat1: cat1,
-                    cat2: cat2,
-                    cat3: cat3,
+                    cat1: searchInfo.cat1,
+                    cat2: searchInfo.cat2,
+                    cat3: searchInfo.cat3,
                     areaCode: searchInfo.area,
                     sigunguCode: searchInfo.sigungu,
                     contentTypeId: searchInfo.type,
@@ -350,7 +306,7 @@
 
         #wrap {
             width: 1200px;
-            min-height: calc(100vh - 180px);
+            min-height: 1200px;
             margin: 0 auto;
         }
 
@@ -367,7 +323,7 @@
         .touritem-no-contents {
             margin: 0;
             text-align: center;
-            padding: 2rem 0;
+            padding: 2rem 0 !important;
             font-size: 1.2rem;
         }
 
@@ -478,7 +434,7 @@
                        autocomplete="off"
                        th:value="${area.areaCode}" th:checked="${selectedArea.areaCode == area.areaCode}">
                 <label class="btn btn-3 btn-area" th:for="|area${idx.count}|"><a
-                        th:href="@{/info/city/{areaCode}(areaCode = ${area.areaCode})}"
+                        th:href="@{/tour/city/{areaCode}(areaCode = ${area.areaCode})}"
                         th:text="|${area.areaName}|"></a></label>
             </th:block>
         </div>
@@ -501,7 +457,7 @@
                         <th:block th:if="${pageResponse.total > 0}" th:each="touritem : ${pageResponse.dtoList}">
                             <tr>
                                 <td class="touritem-img">
-                                    <a onclick="saveSearchInfo()" th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
+                                    <a onclick="saveSearchInfo()" th:href="@{/tour/content/{contentid}(contentid=${touritem.contentid})}">
                                         <img class="thumbnail"
                                              th:if="${touritem.firstimage == null || touritem.firstimage.isEmpty()}"
                                              src="../../assets/img/no_img.jpg">
@@ -511,7 +467,7 @@
                                     </a>
                                 </td>
                                 <td class="touritem-contents d-flex flex-column justify-content-center">
-                                    <a onclick="saveSearchInfo()" th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
+                                    <a onclick="saveSearchInfo()" th:href="@{/tour/content/{contentid}(contentid=${touritem.contentid})}">
                                         <h5 th:text="${touritem.title}"></h5>
                                     </a>
                                     <p th:text="${touritem.address}"></p>

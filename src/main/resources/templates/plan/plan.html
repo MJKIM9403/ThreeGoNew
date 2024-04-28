@@ -1566,7 +1566,7 @@
                                             <input type="hidden" th:id="|mapx${touritem.contentid}|" th:value="${touritem.mapx}">
                                             <input type="hidden" th:id="|mapy${touritem.contentid}|" th:value="${touritem.mapy}">
                                             <input type="hidden" th:id="|contentId${touritem.contentid}|" th:value="${touritem.contentid}">
-                                            <a th:href="@{/info/content/{contentid}(contentid=${touritem.contentid})}">
+                                            <a th:href="@{/tour/content/{contentid}(contentid=${touritem.contentid})}">
                                                 <div class="content-title" th:text="${touritem.title}"></div>
                                             </a>
                                             <p class="content-address" th:text="${touritem.address}"></p>
