@@ -50,41 +50,45 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="/review" class="nav-link-act nav-link py-2 border-bottom" aria-current="page">
+                <a href="/review" class="menu-review nav-link-act nav-link py-2 border-bottom" aria-current="page">
                     <i class="bi bi-house-door-fill icon"></i>
                     메인화면
                 </a>
             </li>
             <li>
-                <a href="/search" class="nav-link-act nav-link py-2 border-bottom">
+                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class="menu-search nav-link-act nav-link py-2 border-bottom">
+                    <i class="bi bi-columns icon"></i>
+                    검색
+                </span>
+                <a sec:authorize="isAuthenticated()" href="/search" class="menu-search nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-columns icon"></i>
                     검색
                 </a>
             </li>
             <li >
-                <a href="/tour/area" class="nav-link-act nav-link py-2 border-bottom">
+                <a href="/tour/area" class="menu-tour nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-speedometer2 icon"></i>
                     여행정보
                 </a>
             </li>
             <li>
-                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class="nav-link py-2 border-bottom">
+                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class="menu-planner nav-link py-2 border-bottom">
                     <i class="bi bi-card-checklist icon"></i>
                     여행일정
                 </span>
-                <a sec:authorize="isAuthenticated()" href="/planner" class="nav-link-act nav-link py-2 border-bottom">
+                <a sec:authorize="isAuthenticated()" href="/planner" class="menu-planner nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-card-checklist icon"></i>
                     여행일정
                 </a>
             </li>
             <li>
-                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class=" nav-link py-2 border-bottom">
+                <span sec:authorize="isAnonymous()" onclick="anonymousUserClick()" class="menu-mypage nav-link py-2 border-bottom">
                     <i class="bi bi-people-fill icon"></i>
                      마이페이지
                 </span>
                 <a sec:authorize="isAuthenticated()"
                    th:href="@{/mypage/{userId}(userId=${#authentication.principal.username})}"
-                   class="nav-link-act nav-link py-2 border-bottom">
+                   class="menu-mypage nav-link-act nav-link py-2 border-bottom">
                     <i class="bi bi-people-fill icon"></i>
                     마이페이지
                 </a>
@@ -135,25 +139,34 @@
     }
 
     $(document).ready(function() {
-        // 페이지가 로드될 때 활성화된 메뉴에 active 클래스를 적용
-        var activeMenu = localStorage.getItem('activeMenu');
-        if (activeMenu) {
-            $('.nav-link-act').removeClass('active');
-            $('a[href="' + activeMenu + '"]').addClass('active');
-        } else {
-            // 만약 로컬 스토리지에 저장된 활성화된 메뉴가 없으면 첫 번째 메뉴에 active 클래스를 적용
-            $('.nav-link-act:first').addClass('active');
-        }
+        // // 페이지가 로드될 때 활성화된 메뉴에 active 클래스를 적용
+        // var activeMenu = localStorage.getItem('activeMenu');
+        // if (activeMenu) {
+        //     $('.nav-link-act').removeClass('active');
+        //     $('a[href="' + activeMenu + '"]').addClass('active');
+        // } else {
+        //     // 만약 로컬 스토리지에 저장된 활성화된 메뉴가 없으면 첫 번째 메뉴에 active 클래스를 적용
+        //     $('.nav-link-act:first').addClass('active');
+        // }
+        //
+        // // 메뉴를 클릭할 때마다 active 클래스를 적용하고, 활성화된 메뉴를 로컬 스토리지에 저장
+        // $('.nav-link-act').click(function() {
+        //     $('.nav-link-act').removeClass('active');
+        //     $(this).addClass('active');
+        //     var href = $(this).attr('href');
+        //     localStorage.setItem('activeMenu', href);
+        // });
 
-        // 메뉴를 클릭할 때마다 active 클래스를 적용하고, 활성화된 메뉴를 로컬 스토리지에 저장
-        $('.nav-link-act').click(function() {
-            $('.nav-link-act').removeClass('active');
-            $(this).addClass('active');
-            var href = $(this).attr('href');
-            localStorage.setItem('activeMenu', href);
-        });
+        selectedMenuActive();
     });
 
+    function selectedMenuActive() {
+        let url_path = window.location.pathname;
+        let selected_menu = 'menu-' + url_path.split("/")[1];
+
+        $('.nav-link-act').removeClass('active');
+        $(`.${selected_menu}`).addClass('active');
+    }
 
 </script>
 </body>

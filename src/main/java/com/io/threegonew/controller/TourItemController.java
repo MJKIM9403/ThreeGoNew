@@ -1,5 +1,6 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.commons.SecurityUtils;
 import com.io.threegonew.domain.Bookmark;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
@@ -50,7 +51,7 @@ public class TourItemController {
     }
 
     @GetMapping("/cat2")
-    public String getCat2List(@RequestParam(required = false, value = "cat1") String cat1, Model model){
+    public String getCat2List(@RequestParam(value = "cat1") String cat1, Model model){
         if(!cat1.isEmpty()){
             model.addAttribute("cat2List", tourItemService.findCat2List(cat1));
             model.addAttribute("cat3List", new ArrayList<>());
@@ -62,7 +63,7 @@ public class TourItemController {
         return "tourinfo/city :: #category-middle";
     }
     @GetMapping("/cat3")
-    public String getCat3List(@RequestParam(required = false, value = "cat2") String cat2, Model model){
+    public String getCat3List(@RequestParam(value = "cat2") String cat2, Model model){
         if(!cat2.isEmpty()){
             model.addAttribute("cat3List", tourItemService.findCat3List(cat2));
         }else {
@@ -82,19 +83,15 @@ public class TourItemController {
     @GetMapping("/content/{contentid}")
     public String getContentInfo(@PathVariable(name = "contentid") String contentid, Model model){
         TourItemResponse tourItemResponse = tourItemService.findTourItemResponse(contentid);
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+
+        String userId = SecurityUtils.getCurrentUsername();
         boolean isBookmarkChecked = false;
 
-        if (principal.equals("anonymousUser")) {
-            userId = "anonymousUser";
-        }else {
-            UserDetails userDetails = (UserDetails)principal;
-            userId = userDetails.getUsername();
+        if (!userId.equals("anonymousUser")) {
             isBookmarkChecked = bookmarkService.existBookmark(userId, contentid);
         }
 
-        TourItemContentResponse tourItemContentResponse = tourItemContentService2.getContentInfo(tourItemResponse).block();
+        TourItemContentResponse tourItemContentResponse = tourItemContentService2.getContentInfo(tourItemResponse);
 
         model.addAttribute("response", tourItemContentResponse);
         model.addAttribute("userId", userId);
