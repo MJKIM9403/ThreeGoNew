@@ -1,7 +1,6 @@
 package com.io.threegonew.controller;
 
 import com.io.threegonew.commons.SecurityUtils;
-import com.io.threegonew.domain.Bookmark;
 import com.io.threegonew.domain.Cat2;
 import com.io.threegonew.domain.Cat3;
 import com.io.threegonew.dto.*;
@@ -10,14 +9,11 @@ import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemContentService2;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/tour")
@@ -36,7 +32,7 @@ public class TourItemController {
 
     @GetMapping("/city/{areaCode}")
     public String getSelectList(@PathVariable(name = "areaCode") Integer areaCode, Model model){
-        TourItemSelectRequest request = TourItemSelectRequest.builder().areaCode(String.valueOf(areaCode)).build();
+        TourItemSelectRequest request = TourItemSelectRequest.builder().area(String.valueOf(areaCode)).build();
         PageResponse pageResponse = tourItemService.findSelectedTourItemList(request);
         model.addAttribute("areaList", tourItemService.findAreaList());
         model.addAttribute("cat1List", tourItemService.findCat1List());

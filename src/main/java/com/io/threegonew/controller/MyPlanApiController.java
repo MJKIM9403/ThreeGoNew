@@ -64,8 +64,8 @@ public class    MyPlanApiController {
     @GetMapping("/planner/sigungu")
     public String getSigunguList(@ModelAttribute TourItemSelectRequest request, Model model) {
 
-        if(!request.getAreaCode().isEmpty()){
-            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getAreaCode())));
+        if(!request.getArea().isEmpty()){
+            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getArea())));
         }else {
             model.addAttribute("sigunguList", new ArrayList<>());
         }

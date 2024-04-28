@@ -19,10 +19,10 @@ public class TourItemSelectRequest {
     private String cat2;
     private String cat3;
 
-    private String areaCode;
-    private String sigunguCode;
+    private String area;
+    private String sigungu;
 
-    private String contentTypeId;
+    private String type;
 
     @Builder.Default
     @Min(value = 0)

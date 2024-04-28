@@ -109,11 +109,11 @@ public class TourItemService {
         }
         // 키워드 추가 끝
 
-        if(request.getAreaCode() != null && !request.getAreaCode().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalAreacode(request.getAreaCode()));
+        if(request.getArea() != null && !request.getArea().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalAreacode(request.getArea()));
         }
-        if(request.getSigunguCode() != null && !request.getSigunguCode().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalSigungucode(request.getSigunguCode()));
+        if(request.getSigungu() != null && !request.getSigungu().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalSigungucode(request.getSigungu()));
         }
         if(request.getCat1() != null && !request.getCat1().isEmpty()){
             spec = spec.and(TourItemSpecification.equalCat1(request.getCat1()));
@@ -124,8 +124,8 @@ public class TourItemService {
         if(request.getCat3() != null && !request.getCat3().isEmpty()){
             spec = spec.and(TourItemSpecification.equalCat3(request.getCat3()));
         }
-        if(request.getContentTypeId() != null && !request.getContentTypeId().isEmpty()){
-            spec = spec.and(TourItemSpecification.equalContenttypeid(request.getContentTypeId()));
+        if(request.getType() != null && !request.getType().isEmpty()){
+            spec = spec.and(TourItemSpecification.equalContenttypeid(request.getType()));
         }
 
         Page<TourItemResponse> page = tourItemRepository.findAll(spec, pageable)
