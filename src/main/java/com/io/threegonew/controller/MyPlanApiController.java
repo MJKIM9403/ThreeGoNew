@@ -49,7 +49,7 @@ public class    MyPlanApiController {
     @GetMapping("/planner/cat2")
     public String getCat2List(@ModelAttribute TourItemSelectRequest request, Model model) {
 
-        if(request.getCat1() != null){
+        if(!request.getCat1().isEmpty()){
             model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
             model.addAttribute("cat3List", new ArrayList<>());
         }else {
@@ -64,7 +64,7 @@ public class    MyPlanApiController {
     @GetMapping("/planner/sigungu")
     public String getSigunguList(@ModelAttribute TourItemSelectRequest request, Model model) {
 
-        if(request.getAreaCode() != null){
+        if(!request.getAreaCode().isEmpty()){
             model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getAreaCode())));
         }else {
             model.addAttribute("sigunguList", new ArrayList<>());
@@ -76,7 +76,7 @@ public class    MyPlanApiController {
     // cat2 선택 시 cat3 목록 조회하기
     @GetMapping("/planner/cat3")
     public String getCat3List(@ModelAttribute TourItemSelectRequest request, Model model){
-        if(request.getCat2() != null){
+        if(!request.getCat2().isEmpty()){
             model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
         }else {
             model.addAttribute("cat3List", new ArrayList<>());
