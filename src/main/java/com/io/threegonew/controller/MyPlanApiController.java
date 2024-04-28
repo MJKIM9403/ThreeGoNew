@@ -6,6 +6,7 @@ import com.io.threegonew.service.PlanService;
 import com.io.threegonew.service.PlannerService;
 import com.io.threegonew.service.TeamService;
 import com.io.threegonew.service.TourItemService;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,10 +48,11 @@ public class    MyPlanApiController {
 
     // cat1 선택시 cat2 목록 조회하기
     @GetMapping("/planner/cat2")
-    public String getCat2List(@ModelAttribute TourItemSelectRequest request, Model model) {
+    public String getCat2List(@RequestParam(required = false) String cat1,
+                              Model model) {
 
-        if(!request.getCat1().isEmpty()){
-            model.addAttribute("cat2List", tourItemService.findCat2List(request.getCat1()));
+        if(!StringUtils.isEmpty(cat1)){
+            model.addAttribute("cat2List", tourItemService.findCat2List(cat1));
             model.addAttribute("cat3List", new ArrayList<>());
         }else {
             model.addAttribute("cat2List", new ArrayList<>());
@@ -62,10 +64,11 @@ public class    MyPlanApiController {
 
     // areaCode 선택 시 sigungu 목록 조회하기
     @GetMapping("/planner/sigungu")
-    public String getSigunguList(@ModelAttribute TourItemSelectRequest request, Model model) {
+    public String getSigunguList(@RequestParam(required = false, value = "area") String areaCode,
+                                 Model model) {
 
-        if(!request.getArea().isEmpty()){
-            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(request.getArea())));
+        if(!StringUtils.isEmpty(areaCode)){
+            model.addAttribute("sigunguList", tourItemService.findSigunguList(Integer.valueOf(areaCode)));
         }else {
             model.addAttribute("sigunguList", new ArrayList<>());
         }
@@ -75,9 +78,10 @@ public class    MyPlanApiController {
 
     // cat2 선택 시 cat3 목록 조회하기
     @GetMapping("/planner/cat3")
-    public String getCat3List(@ModelAttribute TourItemSelectRequest request, Model model){
-        if(!request.getCat2().isEmpty()){
-            model.addAttribute("cat3List", tourItemService.findCat3List(request.getCat2()));
+    public String getCat3List(@RequestParam(required = false) String cat2,
+                              Model model){
+        if(!StringUtils.isEmpty(cat2)){
+            model.addAttribute("cat3List", tourItemService.findCat3List(cat2));
         }else {
             model.addAttribute("cat3List", new ArrayList<>());
         }
