@@ -39,7 +39,7 @@ public class TourItemContentService2 {
 
     private String homepage;
 
-    public Mono<TourItemContentResponse> getContentInfo(TourItemResponse tourItemResponse){
+    public TourItemContentResponse getContentInfo(TourItemResponse tourItemResponse){
         Mono<JSONObject> imagesResponse = getResponse(tourItemResponse, IMAGES);
         Mono<JSONObject> overviewResponse = getResponse(tourItemResponse, COMMON);
         Mono<JSONObject> detailResponse = getResponse(tourItemResponse, INFO);
@@ -56,7 +56,7 @@ public class TourItemContentService2 {
                     overviewResponseObj,
                     detailResponseObj,
                     moreResponseObj);
-        });
+        }).block();
     }
 
     private TourItemContentResponse combineContentResponse(TourItemResponse tourItemResponse,
