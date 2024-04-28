@@ -582,51 +582,26 @@
             }
             let keyword = $('.search-input').val();
 
-            if(tabType == 'TOTAL') {
-                $.ajax({
-                    url: '/api/planner/sigungu',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data: {
-                        page: 0,
-                        area: areaCode,
-                        keyword: keyword
-                    },
-                    success: function(data) {
-                        //$("html").scrollTop(0);
-                        $('#sigungu').replaceWith(data);
-                    },
-                    error: function(err) {
-                        console.log(err)
-                    },
-                    beforeSend: function (){
-                        $('input[type="radio"].sigunguSelect[value=""]').prop("checked", true);
-                    }
-                })
-            }
-
-            if(tabType == 'BOOKMARK') {
-                $.ajax({
-                    url : '/api/planner/bookmark/sigungu',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : {
-                        userId : [[${userId}]],
-                        page : 0,
-                        area : areaCode,
-                        keyword: keyword
-                    },
-                    success : function(data){
-                        $('#sigungu').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    },
-                    beforeSend: function (){
-                        $('input[type="radio"].sigunguSelect[value=""]').prop("checked", true);
-                    }
-                })
-            }
+            $.ajax({
+                url: '/api/planner/sigungu',
+                type: 'GET',
+                contentType : 'application/json; charset=UTF-8',
+                data: {
+                    page: 0,
+                    area: areaCode,
+                    keyword: keyword
+                },
+                success: function(data) {
+                    //$("html").scrollTop(0);
+                    $('#sigungu').replaceWith(data);
+                },
+                error: function(err) {
+                    console.log(err)
+                },
+                beforeSend: function (){
+                    $('input[type="radio"].sigunguSelect[value=""]').prop("checked", true);
+                }
+            })
         })
     }
 
@@ -637,52 +612,26 @@
             const cat1 = $('input[name=cat1]:checked').val() === '' ? null : $('input[name=cat1]:checked').val();
             let keyword = $('.search-input').val();
 
-            if(tabType == 'TOTAL') {
-                $.ajax({
-                    url : '/api/planner/cat2',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : {
-                        page : 0,
-                        area : $('input[name=area]:checked').val(),
-                        cat1 : cat1,
-                        keyword : keyword
-                    },
-                    success : function(data){
-                        $('#category-middle').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    },
-                    beforeSend: function (){
-                        $('input[type="radio"].cat2Select[value=""]').prop("checked", true);
-                    }
-                })
-            }
-
-            if(tabType == 'BOOKMARK') {
-                $.ajax({
-                    url : '/api/planner/bookmark/cat2',
-                    type: 'GET',
-                    contentType : 'application/json; charset=UTF-8',
-                    data : {
-                        userId : [[${userId}]],
-                        page : 0,
-                        cat1 : cat1,
-                        area : $('input[name=area]:checked').val(),
-                        keyword: keyword
-                    },
-                    success : function(data){
-                        $('#category-middle').replaceWith(data);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    },
-                    beforeSend: function (){
-                        $('input[type="radio"].cat2Select[value=""]').prop("checked", true);
-                    }
-                })
-            }
+            $.ajax({
+                url : '/api/planner/cat2',
+                type: 'GET',
+                contentType : 'application/json; charset=UTF-8',
+                data : {
+                    page : 0,
+                    area : $('input[name=area]:checked').val(),
+                    cat1 : cat1,
+                    keyword : keyword
+                },
+                success : function(data){
+                    $('#category-middle').replaceWith(data);
+                },
+                error : function (err){
+                    console.log(err)
+                },
+                beforeSend: function (){
+                    $('input[type="radio"].cat2Select[value=""]').prop("checked", true);
+                }
+            })
         })
 
         // 중분류 선택
@@ -691,54 +640,27 @@
             const cat2 = $('input[name=cat2]:checked').val() === '' ? null : $('input[name=cat2]:checked').val();
             let keyword = $('.search-input').val();
 
-            if(tabType == 'TOTAL') {
-                $.ajax({
-                    url: '/api/planner/cat3',
-                    type: 'GET',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: {
-                        page: 0,
-                        area: $('input[name=area]:checked').val(),
-                        cat1: cat1,
-                        cat2: cat2,
-                        keyword: keyword
-                    },
-                    success: function (data) {
-                        $('#category-row').replaceWith(data);
-                    },
-                    error: function (err) {
-                        console.log(err)
-                    },
-                    beforeSend: function (){
-                        $('input[type="radio"].cat3Select[value=""]').prop("checked", true);
-                    }
-                })
-            }
-
-            if(tabType == 'BOOKMARK') {
-                $.ajax({
-                    url: '/api/planner/bookmark/cat3',
-                    type: 'GET',
-                    contentType: 'application/json; charset=UTF-8',
-                    data: JSON.stringify({
-                        userId : [[${userId}]],
-                        page: 0,
-                        area: $('input[name=area]:checked').val(),
-                        cat1: cat1,
-                        cat2: cat2,
-                        keyword: keyword
-                    }),
-                    success: function (data) {
-                        $('#category-row').replaceWith(data);
-                    },
-                    error: function (err) {
-                        console.log(err)
-                    },
-                    beforeSend: function (){
-                        $('input[type="radio"].cat2Select[value=""]').prop("checked", true);
-                    }
-                })
-            }
+            $.ajax({
+                url: '/api/planner/cat3',
+                type: 'GET',
+                contentType: 'application/json; charset=UTF-8',
+                data: {
+                    page: 0,
+                    area: $('input[name=area]:checked').val(),
+                    cat1: cat1,
+                    cat2: cat2,
+                    keyword: keyword
+                },
+                success: function (data) {
+                    $('#category-row').replaceWith(data);
+                },
+                error: function (err) {
+                    console.log(err)
+                },
+                beforeSend: function (){
+                    $('input[type="radio"].cat3Select[value=""]').prop("checked", true);
+                }
+            })
         })
     }
 
