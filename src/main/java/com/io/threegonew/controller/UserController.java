@@ -42,7 +42,7 @@ public class UserController {
     @GetMapping("/search")
     @ResponseBody
     public ResponseEntity<UserInfoResponse> getUserForShare(@RequestParam String userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findByUserIdCaseSensitive(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             UserInfoResponse userInfo = UserInfoResponse.builder()

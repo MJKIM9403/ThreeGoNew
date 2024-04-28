@@ -26,9 +26,6 @@ public class TourItemBookmarkRequest {
 
     private String contentTypeId;
 
-    // plannerId 추가함
-    private Long plannerId;
-
     @Builder.Default
     @Min(value = 0)
     @Positive
