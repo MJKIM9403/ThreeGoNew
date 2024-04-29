@@ -223,11 +223,15 @@ public class    MyPlanApiController {
     /** 공유 관련 메서드 **/
     // 플랜 공유받았는지 확인하기
     @GetMapping("/planner/share/{plannerId}/{guestId}")
-    public ResponseEntity<Map<String, Boolean>> checkInvitation(@PathVariable Long plannerId, @PathVariable String guestId) {
-        boolean invited = teamService.isGuestAlreadyInvited(plannerId, guestId);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("invited", invited);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<?> checkInvitation(@PathVariable Long plannerId, @PathVariable String guestId) {
+        try {
+            boolean invited = teamService.isGuestAlreadyInvited(plannerId, guestId);
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("invited", invited);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "플래너 공유여부 확인에 실패했습니다.");
+        }
     }
 
     // 플래너 공유하기
@@ -257,10 +261,10 @@ public class    MyPlanApiController {
         }
     }
 
+    // 플랜 전체를 가져와서 보여주기
     /**
      * 조회 메서드
      */
-    // 플랜 전체를 가져와서 보여주기
     @GetMapping("/planner/{plannerId}")
     public ResponseEntity allShowPlan(@PathVariable Long plannerId, @ModelAttribute PlanRequest request) {
         try {
