@@ -1,7 +1,9 @@
 package com.io.threegonew.controller;
 
 import com.io.threegonew.domain.Planner;
+import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
+import com.io.threegonew.repository.UserRepository;
 import com.io.threegonew.service.PlanService;
 import com.io.threegonew.service.PlannerService;
 import com.io.threegonew.service.TeamService;
@@ -28,6 +30,7 @@ public class    MyPlanApiController {
     private final PlanService planService;
     private final PlannerService plannerService;
     private final TeamService teamService;
+    private final UserRepository userRepository;
 
     /** 타임리프 관련 메서드 **/
     // 내가 북마크한 관광지를 조회할 때
@@ -49,7 +52,7 @@ public class    MyPlanApiController {
 
     // cat1 선택시 cat2 목록 조회하기
     @GetMapping("/planner/cat2")
-    public String getCat2List(@RequestParam(required = false) String cat1,
+    public String getCat2List(@RequestParam(value = "cat1") String cat1,
                               Model model) {
 
         if(!StringUtils.isEmpty(cat1)){
@@ -65,7 +68,7 @@ public class    MyPlanApiController {
 
     // areaCode 선택 시 sigungu 목록 조회하기
     @GetMapping("/planner/sigungu")
-    public String getSigunguList(@RequestParam(required = false, value = "area") String areaCode,
+    public String getSigunguList(@RequestParam(value = "area") String areaCode,
                                  Model model) {
 
         if(!StringUtils.isEmpty(areaCode)){
@@ -79,7 +82,7 @@ public class    MyPlanApiController {
 
     // cat2 선택 시 cat3 목록 조회하기
     @GetMapping("/planner/cat3")
-    public String getCat3List(@RequestParam(required = false) String cat2,
+    public String getCat3List(@RequestParam(value = "cat2") String cat2,
                               Model model){
         if(!StringUtils.isEmpty(cat2)){
             model.addAttribute("cat3List", tourItemService.findCat3List(cat2));
@@ -255,18 +258,34 @@ public class    MyPlanApiController {
     public ResponseEntity<?> removeGuestFromPlanner(@PathVariable Long plannerId, @PathVariable String guestId) {
         try {
             teamService.removeGuestFromPlanner(plannerId, guestId);
-            return ResponseEntity.ok().body(Map.of("success", true));
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "플래너 게스트 삭제에 실패했습니다.");
         }
     }
+
+    // 공유 가능한 유저 찾기
+    @GetMapping("/planner/share/search")
+    public ResponseEntity<?> getUserForShare(@RequestParam String userId) {
+        Optional<User> userOptional = userRepository.findByUserIdCaseSensitive(userId);
+        if (userOptional.isPresent()) {
+            Map<String, String> response = new HashMap<>();
+            User user = userOptional.get();
+            response.put("id", user.getId());
+
+            return ResponseEntity.ok(response);
+        } else {
+            return ErrorResponse.createErrorResponse(HttpStatus.NOT_FOUND, "404", "해당하는 유저가 없습니다.");
+        }
+    }
+
 
     // 플랜 전체를 가져와서 보여주기
     /**
      * 조회 메서드
      */
     @GetMapping("/planner/{plannerId}")
-    public ResponseEntity allShowPlan(@PathVariable Long plannerId, @ModelAttribute PlanRequest request) {
+    public ResponseEntity allShowPlan(@ModelAttribute PlanRequest request) {
         try {
             List<PlanDTO<TourItemResponse>> planDTOs = planService.findByPlannerId(request);
             return ResponseEntity.ok().body(planDTOs);

@@ -34,27 +34,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserDetailService userDetailService;
-    private final UserRepository userRepository;
 
-
-    // 회원 조회
-    // /api/users/search?userId=
-    @GetMapping("/search")
-    @ResponseBody
-    public ResponseEntity<UserInfoResponse> getUserForShare(@RequestParam String userId) {
-        Optional<User> userOptional = userRepository.findByUserIdCaseSensitive(userId);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            UserInfoResponse userInfo = UserInfoResponse.builder()
-                    .id(user.getId())
-                    .name(user.getName())
-                    .build();
-
-            return ResponseEntity.ok(userInfo);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @PostMapping("/register")
     @ResponseBody

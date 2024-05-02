@@ -121,7 +121,7 @@
             flex-direction: column !important;
             align-items: center !important;
         }
-        input[name="plannerName"] {
+        input[name="name"] {
             width: 308px;
         }
     </style>
@@ -136,16 +136,16 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="get" action="/plan/city">
+            <form method="get" action="/plan">
             <div class="modal-body">
                 <div class="flex-row d-flex justify-content-center">
                     <div class="col-sm-9 col-12 px-0 mb-2">
                         <div class="input-daterange">
-                            <input id="plannerName2" name="plannerName" type="text" class="form-control" oninput="checkLength()" placeholder="여행 제목을 입력해주세요.">
+                            <input id="name2" name="name" type="text" class="form-control" oninput="checkLength()" placeholder="여행 제목을 입력해주세요.">
                             <input id="days2" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
 
-                            <input type="hidden" id="startDate2" name="startDate" class="form-control" placeholder="Arriving Date">
-                            <input type="hidden" id="endDate2" name="endDate" class="form-control" placeholder="Leaving Date">
+                            <input type="hidden" id="start2" name="start" class="form-control" placeholder="Arriving Date">
+                            <input type="hidden" id="end2" name="end" class="form-control" placeholder="Leaving Date">
                         </div>
                     </div>
                 </div>
@@ -272,14 +272,14 @@
         <div class="pt-5 pb-5">
 
             <h2 class="display-6 text-center pb-5">여행 정보를 입력해주세요.</h2>
-            <form method="get" action="/plan/city">
+            <form method="get" action="/plan">
                 <div class="flex-row d-flex justify-content-center">
                     <div class="input-daterange">
-                        <input id="plannerName" name="plannerName" type="text" class="form-control" oninput="checkLength()" placeholder="여행 제목을 입력해주세요.">
+                        <input id="name" name="name" type="text" class="form-control" oninput="checkLength()" placeholder="여행 제목을 입력해주세요.">
                         <input id="days" name="days" type="date" class="form-control" placeholder="여행 날짜를 선택해주세요.">
 
-                        <input type="hidden" id="startDate" name="startDate" class="form-control" placeholder="Arriving Date">
-                        <input type="hidden" id="endDate" name="endDate" class="form-control" placeholder="Leaving Date">
+                        <input type="hidden" id="start" name="start" class="form-control" placeholder="Arriving Date">
+                        <input type="hidden" id="end" name="end" class="form-control" placeholder="Leaving Date">
                     </div>
 
                     <div class="col-sm-3 col-12 ms-3">
@@ -328,14 +328,14 @@
 
                 let dateStr = $(this).find('input[name="days"]').val();
                 console.log(dateStr);
-                let plannerName = $(this).find('input[name="plannerName"]').val();
+                let plannerName = $(this).find('input[name="name"]').val();
                 if (dateStr) {
                     let dates = dateStr.split(' ~ '); // ' to '를 기준으로 문자열 분리
                     let startDate = dates[0]; // 시작 날짜
                     let endDate = dates.length > 1 ? dates[1] : startDate; // 종료 날짜가 없으면 시작 날짜 사용
 
-                    $(this).find('input[name="startDate"]').val(startDate); // 시작 날짜 설정
-                    $(this).find('input[name="endDate"]').val(endDate); // 종료 날짜 설정
+                    $(this).find('input[name="start"]').val(startDate); // 시작 날짜 설정
+                    $(this).find('input[name="end"]').val(endDate); // 종료 날짜 설정
                 }
 
 
@@ -352,7 +352,7 @@
         });
 
         function checkLength() {
-            $('input[name="plannerName"]').each(function() {
+            $('input[name="name"]').each(function() {
                 if ($(this).val().length > 20) {
                     alert('20자 이내로 입력해주세요');
                     $(this).val($(this).val().substring(0, 20));

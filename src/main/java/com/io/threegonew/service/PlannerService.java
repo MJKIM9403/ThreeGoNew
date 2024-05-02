@@ -30,19 +30,14 @@ public class PlannerService {
 
 
     // 날짜 간의 차이를 계산하는 메서드 추가
-    public long getDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
-        return ChronoUnit.DAYS.between(startDate, endDate) + 1;
+    public int getDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
+        return Math.toIntExact(ChronoUnit.DAYS.between(startDate, endDate) + 1);
     }
 
 
     // 특정 유저가 특정 플래너를 작성했는지 확인하는 메서드
     public boolean isUserPlannerOwner(String userId, Long plannerId) {
         return plannerRepository.existsByUserIdAndPlannerId(userId, plannerId);
-    }
-
-    // 특정 유저가 특정 플래너를 공유했는지 확인하는 메서드
-    public int isUserPlannerHost(Long plannerId, String userId) {
-        return plannerRepository.existsByPlannerIdAndLoginIdAndHost(plannerId, userId);
     }
 
     // 특정 유저가 특정 플래너를 공유받았는지 확인하는 메서드
@@ -54,6 +49,7 @@ public class PlannerService {
         return plannerRepository.findById(plannerId)
                 .orElseThrow(() -> new IllegalArgumentException("플래너 정보를 찾을 수 없습니다."));
     }
+
     public List<Planner> findAll() {
         return plannerRepository.findAll();
     }
@@ -81,6 +77,7 @@ public class PlannerService {
                 .endDate(planner.getEndDate())
                 .plannerDelete(planner.getPlannerDelete())
                 .isAfter(planner.getEndDate().compareTo(LocalDate.now()))
+                .daysBetween(getDaysBetweenDates(planner.getStartDate(), planner.getEndDate()))
                 .build();
     }
 

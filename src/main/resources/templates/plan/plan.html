@@ -232,7 +232,7 @@
 <script th:inline="javascript">
 
     // 날짜
-    let days = [[${daysBetween}]];
+    let days = [[${planner.daysBetween}]];
 
     // 인덱스
     let index;
@@ -279,9 +279,9 @@
     console.log(days);
 
 
-    var plannerName = [[${plannerName}]];
-    var startDate = [[${startDate}]];
-    var endDate = [[${endDate}]];
+    var plannerName = [[${planner.plannerName}]];
+    var startDate = [[${planner.startDate}]];
+    var endDate = [[${planner.endDate}]];
 
 
     /**
@@ -427,7 +427,7 @@
             contentType: 'application/json; charset=UTF-8',
             data: {
                 page: 0,
-                userId: [[${userId}]],
+                userId: [[${loginId}]],
             },
             success: function (data) {
                 $('#touritems').replaceWith(data);
@@ -475,7 +475,7 @@
                     type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
                     data: {
-                        userId: [[${userId}]],
+                        userId: [[${loginId}]],
                         page: 0,
                         cat1: $('input[name=cat1]:checked').val(),
                         cat2: $('input[name=cat2]:checked').val(),
@@ -544,7 +544,7 @@
                         type: 'GET',
                         contentType: 'application/json; charset=UTF-8',
                         data: {
-                            userId: [[${userId}]],
+                            userId: [[${loginId}]],
                             page: target.getAttribute('data-num'),
                             cat1: $('input[name=cat1]:checked').val(),
                             cat2: $('input[name=cat2]:checked').val(),
@@ -585,11 +585,8 @@
             $.ajax({
                 url: '/api/planner/sigungu',
                 type: 'GET',
-                contentType : 'application/json; charset=UTF-8',
                 data: {
-                    page: 0,
-                    area: areaCode,
-                    keyword: keyword
+                    area: areaCode
                 },
                 success: function(data) {
                     //$("html").scrollTop(0);
@@ -615,12 +612,8 @@
             $.ajax({
                 url : '/api/planner/cat2',
                 type: 'GET',
-                contentType : 'application/json; charset=UTF-8',
                 data : {
-                    page : 0,
-                    area : $('input[name=area]:checked').val(),
-                    cat1 : cat1,
-                    keyword : keyword
+                    cat1 : cat1
                 },
                 success : function(data){
                     $('#category-middle').replaceWith(data);
@@ -643,13 +636,8 @@
             $.ajax({
                 url: '/api/planner/cat3',
                 type: 'GET',
-                contentType: 'application/json; charset=UTF-8',
                 data: {
-                    page: 0,
-                    area: $('input[name=area]:checked').val(),
-                    cat1: cat1,
-                    cat2: cat2,
-                    keyword: keyword
+                    cat2: cat2
                 },
                 success: function (data) {
                     $('#category-row').replaceWith(data);
@@ -716,7 +704,7 @@
                     type: 'GET',
                     contentType: 'application/json; charset=UTF-8',
                     data: {
-                        userId : [[${userId}]],
+                        userId : [[${loginId}]],
                         page: 0,
                         cat1: cat1,
                         cat2: cat2,
@@ -1410,9 +1398,9 @@
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
 
                 <!-- 반복하여 탭 생성 -->
-                <th:block th:each="dayNumber : ${dayNumbers}">
+                <th:block th:each="i : ${#numbers.sequence(1, planner.daysBetween)}">
                     <li class="nav-item" role="presentation">
-                        <a href="#" class="day-nav nav-link py-3 border-bottom" aria-current="page"  title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Day" th:text="${'Day ' + dayNumber}">
+                        <a href="#" class="day-nav nav-link py-3 border-bottom" aria-current="page" th:data-day="${i}" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Day" th:text="'Day ' + ${i}">
                         </a>
                     </li>
                 </th:block>

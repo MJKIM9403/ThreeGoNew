@@ -3,7 +3,6 @@ package com.io.threegonew.service;
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.*;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
