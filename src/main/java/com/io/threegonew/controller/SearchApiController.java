@@ -16,50 +16,50 @@ public class SearchApiController {
     private final ReviewService reviewService;
 
     @GetMapping("/review/recommend")
-    public ResponseEntity<PageResponse<SimpleReviewResponse>> showRecommendReviewByKeyword(@ModelAttribute PageWithFromDateRequest request) {
+    public ResponseEntity showRecommendReviewByKeyword(@ModelAttribute PageWithFromDateRequest request) {
         try{
             PageResponse<SimpleReviewResponse> pageResponse = reviewService.getRecommendReviewByKeyword(request);
             return ResponseEntity.ok().body(pageResponse);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400" , "리뷰 검색에 실패하였습니다.");
         }
     }
 
     @GetMapping("/review/recent")
-    public ResponseEntity<PageResponse<SimpleReviewResponse>> showRecentReviewByKeyword(@ModelAttribute PageWithFromDateRequest request) {
+    public ResponseEntity showRecentReviewByKeyword(@ModelAttribute PageWithFromDateRequest request) {
         try{
             PageResponse<SimpleReviewResponse> pageResponse = reviewService.getRecentReviewByKeyword(request);
             return ResponseEntity.ok().body(pageResponse);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400" , "리뷰 검색에 실패하였습니다.");
         }
     }
 
     @GetMapping("/user/id")
-    public ResponseEntity<PageResponse<UserWithFollowStateResponse>> showUsersByStartOrContainUserId(@RequestParam(name = "keyword") String keyword,
-                                                                                                     @RequestParam(name = "page") int page)
+    public ResponseEntity showUsersByStartOrContainUserId(@RequestParam(name = "keyword") String keyword,
+                                                          @RequestParam(name = "page") int page)
     {
         try{
             PageResponse<UserWithFollowStateResponse> pageResponse = userService.getUserByStartOrContainUserId(keyword, page);
             return ResponseEntity.ok().body(pageResponse);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400" , "유저 검색에 실패하였습니다.");
         }
     }
 
     @GetMapping("/user/name")
-    public ResponseEntity<PageResponse<UserWithFollowStateResponse>> showUsersByStartOrContainUserName(@RequestParam(name = "keyword") String keyword,
-                                                                                                     @RequestParam(name = "page") int page)
+    public ResponseEntity showUsersByStartOrContainUserName(@RequestParam(name = "keyword") String keyword,
+                                                            @RequestParam(name = "page") int page)
     {
         try{
             PageResponse<UserWithFollowStateResponse> pageResponse = userService.getUserByStartOrContainUserName(keyword, page);
             return ResponseEntity.ok().body(pageResponse);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400" , "유저 검색에 실패하였습니다.");
         }
     }
 }

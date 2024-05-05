@@ -235,9 +235,9 @@ public class TourItemContentService2 {
                     }
 
                     String tel = "";
-                    if(!((String)itemMap.get("sponsor1tel")).isEmpty()) tel += "[주관] " + itemMap.get("sponsor1tel");
-                    if(!((String)itemMap.get("sponsor1tel")).isEmpty() && !(itemMap.get("sponsor2tel")).isEmpty()) tel += "<br/>";
-                    if(!((String)itemMap.get("sponsor2tel")).isEmpty()) tel += "[주최] " + itemMap.get("sponsor2tel");
+                    if(!(itemMap.get("sponsor1tel")).isEmpty()) tel += "[주관] " + itemMap.get("sponsor1tel");
+                    if(!(itemMap.get("sponsor1tel")).isEmpty() && !(itemMap.get("sponsor2tel")).isEmpty()) tel += "<br/>";
+                    if(!(itemMap.get("sponsor2tel")).isEmpty()) tel += "[주최] " + itemMap.get("sponsor2tel");
 
                     detailInfo.put("진행상태",state);
                     detailInfo.put("행사기간", period);
