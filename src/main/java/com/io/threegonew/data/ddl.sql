@@ -155,19 +155,6 @@ CREATE TABLE `REPLY`
     CONSTRAINT reply_pk PRIMARY KEY (re_num)
 );
 
--- 게시판 테이블 --
-create table `BOARD` (
-                              b_id int AUTO_INCREMENT PRIMARY KEY,
-                              u_id varchar(50) not null,
-                              u_name varchar(50) not null,
-                              b_title varchar(200) not null,
-                              b_content LONGTEXT not null,
-                              b_postdate datetime default sysdate() not null,
-                              b_ofile varchar(200),
-                              b_sfile varchar(30),
-                              b_visitcount int default 0 not NULL
-);
-
 -- 유저테이블 --
 CREATE TABLE `USERS` (
                          U_ID   varchar(40)      NOT NULL,
@@ -244,7 +231,6 @@ CREATE TABLE `T_C_TYPE` (
 -- maria db에서 한글입력이 가능하게 utf-8로 바꿔줍니다.
 alter table `LIKES` convert to CHARSET UTF8;
 alter table `REPLY` convert to CHARSET UTF8;
-alter table `BOARD` convert to CHARSET UTF8;
 alter table `USERS` convert to CHARSET UTF8;
 alter table `TOURITEM` convert to CHARSET UTF8;
 alter table `T_CAT1` convert to CHARSET UTF8;
