@@ -178,7 +178,7 @@ public class ReviewService {
     public PageResponse<SimpleReviewResponse> getRecommendReview(PageWithFromDateRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-        LocalDateTime fromDate = request.getFromDate();
+        LocalDateTime fromDate = request.getFromdate();
         LocalDateTime toDate = fromDate.minusHours(72);
 
         Page<SimpleReviewResponse> page = reviewRepository.findRecommendReviews(pageable, toDate, fromDate)
@@ -206,7 +206,7 @@ public class ReviewService {
             throw new AccessDeniedException("유저 정보를 찾을 수 없습니다.");
         }
 
-        Page<SimpleReviewResponse> page = reviewRepository.findFollowReview(pageable, loginUserId, request.getFromDate())
+        Page<SimpleReviewResponse> page = reviewRepository.findFollowReview(pageable, loginUserId, request.getFromdate())
                 .map(this::simpleReviewMapper);
 
         PageResponse<SimpleReviewResponse> pageResponse = PageResponse.<SimpleReviewResponse>withAll()
@@ -224,7 +224,7 @@ public class ReviewService {
     public PageResponse<SimpleReviewResponse> getRecommendReviewByKeyword(PageWithFromDateRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-        LocalDateTime fromDate = request.getFromDate();
+        LocalDateTime fromDate = request.getFromdate();
         LocalDateTime toDate = fromDate.minusHours(72);
         String keyword = "%" + request.getKeyword() + "%";
         Page<SimpleReviewResponse> page = reviewRepository.findRecommendReviewsByKeyword(pageable, keyword, toDate, fromDate)
@@ -245,7 +245,7 @@ public class ReviewService {
     public PageResponse<SimpleReviewResponse> getRecentReviewByKeyword(PageWithFromDateRequest request){
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
 
-        LocalDateTime fromDate = request.getFromDate();
+        LocalDateTime fromDate = request.getFromdate();
         String keyword = "%" + request.getKeyword() + "%";
         Page<SimpleReviewResponse> page = reviewRepository.findRecentReviewsByKeyword(pageable, keyword, fromDate)
                 .map(this::simpleReviewMapper);

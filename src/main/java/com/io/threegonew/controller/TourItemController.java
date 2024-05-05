@@ -9,6 +9,7 @@ import com.io.threegonew.service.TourItemContentService;
 import com.io.threegonew.service.TourItemContentService2;
 import com.io.threegonew.service.TourItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -94,6 +95,5 @@ public class TourItemController {
         model.addAttribute("isBookmarkChecked", isBookmarkChecked);
         return "tourinfo/content";
     }
-
 
 }

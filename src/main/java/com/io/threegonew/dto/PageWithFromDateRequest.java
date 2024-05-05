@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PageWithFromDateRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime fromDate;
+    private LocalDateTime fromdate;
 
     private String keyword;
 
