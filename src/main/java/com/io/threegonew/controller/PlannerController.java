@@ -67,6 +67,6 @@ public class PlannerController {
             model.addAttribute("sharedPlannerList", sharedPlannerList);
         }
 
-        return "plan/calendar";
+        return "plan/planner";
     }
 }

@@ -179,13 +179,16 @@
 <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=aDVWgep9DE8rL7yokAybK6jrQIiAk9Ln9jI9CTyf"></script>
 <script th:inline="javascript">
     // 로그인 된 나의 아이디
-    let myId = [[${userId}]];
+    let loginId = [[${loginId}]];
 
     // 플래너의 ID
-    let plannerId = [[${plannerId}]];
+    let plannerId = [[${planner.plannerId}]];
+
+    let startDateString = [[${planner.startDate}]].toString();
+    let endDateString = [[${planner.endDate}]].toString();
 
     // 날짜
-    let days = [[${daysBetween}]];
+    let days = [[${planner.daysBetween}]];
 
     // 인덱스
     let index;
@@ -237,8 +240,7 @@
     // flatpickr 인스턴스
     let fp;
 
-    let startDateString = [[${startDateString}]];
-    let endDateString = [[${endDateString}]];
+
 
     /**
      * 자동 실행 함수
@@ -268,10 +270,10 @@
      * 뷰 관련
      */
     function showPlannerInfo() {
-        let plannerName = [[${plannerName}]];
-        let startDate = [[${startLocalDate}]];
-        let endDate = [[${endLocalDate}]];
-        let daysBetween = [[${daysBetween}]];
+        let plannerName = [[${planner.plannerName}]];
+        let startDate = [[${planner.startDate}]];
+        let endDate = [[${planner.endDate}]];
+        let daysBetween = [[${planner.daysBetween}]];
 
         $('.name').html(plannerName);
         var daysTemplate = `
@@ -309,7 +311,7 @@
             $('#typedText').text(typedText);
 
             $.ajax({
-                url: "/api/users/search?userId=" + typedText,
+                url: "/api/planner/share/search?userId=" + typedText,
                 type: "GET",
                 success: function (result) {
                     console.log(result);
@@ -317,7 +319,7 @@
                     let button = "<button id='right-btn' class='btn btn-sm btn-outline-dark'>추가하기</button>";
                     if (result.id == typedText) {
                         // 나 자신은 추가할 수 없다
-                        if (result.id == myId) {
+                        if (result.id == loginId) {
                             alert("본인은 추가할 수 없습니다.");
                             $('#right-btn').remove();
                         } else {
@@ -411,9 +413,9 @@
     // 공유하기
     function share() {
         $('#share-btn').on('click', function () {
-            var plannerName = [[${plannerName}]];
-            var plannerId = [[${plannerId}]]; // Planner ID를 설정합니다.
-            var ownerId = [[${userId}]]; // Owner ID를 설정합니다.
+            var plannerName = [[${planner.plannerName}]];
+            var plannerId = [[${planner.plannerId}]]; // Planner ID를 설정합니다.
+            var ownerId = [[${loginId}]]; // Owner ID를 설정합니다.
             var userIds = [];
             $('#resultBox .user-btn').each(function () {
                 userIds.push($(this).text()); // 버튼의 텍스트(ID)를 배열에 추가
@@ -485,7 +487,7 @@
     }
 
     function hideEditNameModal() {
-        let plannerName = [[${plannerName}]]
+        let plannerName = [[${planner.plannerName}]]
         $('#nameEditModal').on('hidden.bs.modal', function () {
             // 모달 내용 초기화
             $('input[name=plannerName]').val(plannerName);
@@ -538,18 +540,12 @@
 
     // 날짜 datepicker 로드하기
     function loadDatePicker() {
-        let daysBetween = [[${daysBetween}]];
-        console.log("startDateString : " + startDateString);
-        console.log("endDateString : " + endDateString);
-
 
         let startDate = new Date(startDateString);
         let endDate = new Date(endDateString);
 
-
         console.log("startDate : " + startDate);
         console.log("endDate : " + endDate);
-
 
         fp = flatpickr("#days", {
             mode: "range",
@@ -689,7 +685,7 @@
                 }
             } else if(isGuest == true){
                 const deleteConfirm = "초대받은 여행에서 삭제하시겠습니까? 삭제하시면 더 이상 공유받을 수 없습니다.";
-                let guestId = [[${userId}]];
+                let guestId = [[${loginId}]];
                 if(confirm(deleteConfirm)) {
                     $.ajax({
                         url: `/api/planner/share/${plannerId}/${guestId}`,
@@ -722,10 +718,6 @@
         $.ajax({
             type: "GET",
             url: "/api/planner/" + plannerId,
-            contentType: 'application/json; charset=UTF-8',
-            data: {
-                "plannerId": plannerId
-            },
             success: function (response) {
                 // 응답으로 받은 계획을 표시
                 console.log(response);
@@ -1253,7 +1245,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <input id="plannerName" name="plannerName" type="text" class="form-control" oninput="checkLength()" th:placeholder="${plannerName}" th:value="${plannerName}">
+                <input id="plannerName" name="plannerName" type="text" class="form-control" oninput="checkLength()" th:placeholder="${planner.plannerName}" th:value="${planner.plannerName}">
             </div>
             <div class="modal-footer">
                 <button type="button" id="name-edit-confirm" class="btn btn-primary">수정</button>
@@ -1353,7 +1345,7 @@
         <div class="container-fluid mt-3">
             <div id="list">
                 <div id="day-btns">
-                    <th:block th:each="i : ${#numbers.sequence(1, daysBetween)}">
+                    <th:block th:each="i : ${#numbers.sequence(1, planner.daysBetween)}">
                         <button class="btn btn-secondary dayButton" th:data-day="${i}" th:text="'Day ' + ${i}">Day${i}</button>
                     </th:block>
                 </div>

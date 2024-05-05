@@ -1,14 +1,18 @@
 package com.io.threegonew.controller;
 
+import com.io.threegonew.commons.SecurityUtils;
 import com.io.threegonew.domain.Follow;
 import com.io.threegonew.domain.User;
+import com.io.threegonew.dto.ErrorResponse;
 import com.io.threegonew.dto.FollowDTO;
 import com.io.threegonew.dto.UserInfoResponse;
 import com.io.threegonew.service.FollowService;
 import com.io.threegonew.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,144 +29,101 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class FollowController {
-    private static final Logger log = LoggerFactory.getLogger(FollowController.class);
     private final UserService userService;
     private final FollowService followService;
 
 
-    @GetMapping("/api/userFollowCounts/{userId}")
-    public ResponseEntity<Map<String, Integer>> getUserFollowCounts(@PathVariable String userId) {
-        Map<String, Integer> followCounts;
-        followCounts = new HashMap<>();
-        int followerCount = followService.countFollower(userId);
-        int followingCount = followService.countFollowing(userId);
-        followCounts.put("followerCount", followerCount);
-        followCounts.put("followingCount", followingCount);
-        return ResponseEntity.ok(followCounts);
+    @GetMapping("/api/follow-count/{userId}")
+    public ResponseEntity<?> getUserFollowCounts(@PathVariable String userId) {
+        try {
+            Map<String, Integer> followCounts;
+            followCounts = new HashMap<>();
+            int followerCount = followService.countFollower(userId);
+            int followingCount = followService.countFollowing(userId);
+            followCounts.put("followerCount", followerCount);
+            followCounts.put("followingCount", followingCount);
+            return ResponseEntity.ok(followCounts);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "팔로잉, 팔로우 수를 조회할 수 없습니다.");
+        }
     }
 
     // 팔로우하기
-    @PostMapping("/api/follow/{friendName}")
-    public ResponseEntity follow(Authentication auth, @PathVariable("friendName") String friendName) {
-        // 로그인 된 유저
-        User toUser = userService.findUser(auth.getName());
-        // 가 팔로할 사람
-        User fromUser = userService.findUser(friendName);
-        followService.follow(toUser, fromUser);
-        return ResponseEntity.ok().build();
+    @PostMapping("/api/follow/{userId}")
+    public ResponseEntity<?> follow(@PathVariable("userId") String userId) {
+        try {
+            String loginUserId = SecurityUtils.getCurrentUsername();
+            if(loginUserId.equals("anonymousUser")) {
+                return ErrorResponse.createErrorResponse(HttpStatus.UNAUTHORIZED, "401", "로그인하지 않은 사용자입니다.");
+            } else {
+                // 로그인 된 유저
+                User toUser = userService.findUser(loginUserId);
+                // 가 팔로할 사람
+                User fromUser = userService.findUser(userId);
+
+                followService.follow(toUser, fromUser);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "팔로우 할 수 없습니다.");
+        }
     }
 
     // 언팔로우하기
-    @DeleteMapping("/api/unfollow/{friendName}")
-    public ResponseEntity<?> unfollow(Authentication auth, @PathVariable("friendName") String friendName) {
-        // 로그인 된 유저
-        User toUser = userService.findUser(auth.getName());
-        // 언팔할 사람
-        User fromUser = userService.findUser(friendName);
-        followService.unfollow(toUser, fromUser);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/api/unfollow/{userId}")
+    public ResponseEntity<?> unfollow(@PathVariable("userId") String userId) {
+        try {
+            String loginUserId = SecurityUtils.getCurrentUsername();
+            if(loginUserId.equals("anonymousUser")) {
+                return ErrorResponse.createErrorResponse(HttpStatus.UNAUTHORIZED, "401", "로그인하지 않은 사용자입니다.");
+            } else {
+                // 로그인 된 유저
+                User toUser = userService.findUser(loginUserId);
+                // 언팔할 사람
+                User fromUser = userService.findUser(userId);
+                followService.unfollow(toUser, fromUser);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "언팔로우 할 수 없습니다.");
+        }
     }
 
-    // 팔로우중인지 확인하기
-//    @GetMapping("/api/isfollowing/{friendName}")
-//    public ResponseEntity<Boolean> isFollowing(Authentication auth, @PathVariable("friendName") String friendName) {
-//        // 로그인 된 유저
-//        User toUser = userService.findUser(auth.getName());
-//        // 확인할 대상
-//        User fromUser = userService.findUser(friendName);
-//        boolean isFollowing = followService.isFollowing(toUser, fromUser);
-//        return ResponseEntity.ok(isFollowing);
-//    }
+    @GetMapping("/api/show/followinglist/{userId}")
+    public ResponseEntity<?> getFollowingsWithFollowState(@PathVariable("userId") String userId) {
 
-    // 유저의 팔로잉리스트를 뽑기
-//    @GetMapping("/api/show/followingList/{userId}")
-//    public ResponseEntity<List<FollowDTO>> getFollowings(@PathVariable("userId") String userId) {
-//        // 로그인 된 유저
-//        User loggedInUser = userService.findUser(userService.getCurrentUserId());
-//        // 대상 유저
-//        User user = userService.findUser(userId);
-//        List<FollowDTO> followings = followService.findFollowingsByFollower(user);
-//        return ResponseEntity.ok(followings);
-//    }
-//
-//    // 유저의 팔로워리스트를 뽑기
-//    @GetMapping("/api/show/followerList/{userId}")
-//    public ResponseEntity<List<FollowDTO>> getFollowers(@PathVariable("userId") String userId) {
-//        String loginUserId = userService.getCurrentUserId();
-//        // 로그인 된 유저
-//        User loggedInUser = userService.findUser(userService.getCurrentUserId());
-//        // 대상 유저
-//        User user = userService.findUser(userId);
-//        List<FollowDTO> followers = followService.findFollowersByFollowing(user);
-//        return ResponseEntity.ok(followers);
-//    }
-
-
-// 유저의 팔로잉리스트를 불러오고 팔로우 상태를 함께 반환
-//    @GetMapping("/api/show/followingList/{userId}")
-//    public ResponseEntity<List<FollowDTO>> getFollowingsWithFollowState(@PathVariable("userId") String userId) {
-//        User loggedInUser;
-//        // 로그인 된 유저
-//        try{
-//            String loginUserId = userService.getCurrentUserId();
-//            loggedInUser = userService.findUser(loginUserId);
-//        } catch (IllegalArgumentException e) {
-//            loggedInUser = User.builder()
-//                    .id("anonymousUser")
-//                    .build();
-//        }
-//
-//        // 대상 유저
-//        User user = userService.findUser(userId);
-//        List<FollowDTO> followings = followService.findFollowingsByFollowerWithFollowState(loggedInUser, user);
-//        return ResponseEntity.ok(followings);
-//    }
-//
-//    // 유저의 팔로워리스트를 불러오고 팔로우 상태를 함께 반환
-//    @GetMapping("/api/show/followerList/{userId}")
-//    public ResponseEntity<List<FollowDTO>> getFollowersWithFollowState(@PathVariable("userId") String userId) {
-//        User loggedInUser;
-//        // 로그인 된 유저
-//        try{
-//            String loginUserId = userService.getCurrentUserId();
-//            loggedInUser = userService.findUser(loginUserId);
-//        } catch (IllegalArgumentException e) {
-//            loggedInUser = User.builder()
-//                    .id("anonymousUser")
-//                    .build();
-//        }
-//        // 대상 유저
-//        User user = userService.findUser(userId);
-//        List<FollowDTO> followers = followService.findFollowersByFollowingWithFollowState(loggedInUser, user);
-//        return ResponseEntity.ok(followers);
-//    }
-
-    @GetMapping("/api/show/followingList/{userId}")
-    public ResponseEntity<List<FollowDTO>> getFollowingsWithFollowState(@PathVariable("userId") String userId) {
-        String loginUserId;
-        // 로그인 된 유저
         try{
-            loginUserId = userService.getCurrentUserId();
+            String loginUserId = SecurityUtils.getCurrentUsername();
+            if(loginUserId.equals("anonymousUser")) {
+                return ErrorResponse.createErrorResponse(HttpStatus.UNAUTHORIZED, "401", "로그인하지 않은 사용자입니다.");
+            } else {
+                List<FollowDTO> followings = followService.showFollowingListWithFollowState(loginUserId, userId);
+                return ResponseEntity.ok(followings);
+            }
         } catch (IllegalArgumentException e) {
-            loginUserId = "anonymousUser";
+            e.printStackTrace();
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "팔로잉리스트를 조회할 수 없습니다.");
         }
-        List<FollowDTO> followings = followService.showFollowingListWithFollowState(loginUserId, userId);
-        return ResponseEntity.ok(followings);
     }
 
     // 유저의 팔로워리스트를 불러오고 팔로우 상태를 함께 반환
-    @GetMapping("/api/show/followerList/{userId}")
-    public ResponseEntity<List<FollowDTO>> getFollowersWithFollowState(@PathVariable("userId") String userId) {
+    @GetMapping("/api/show/followerlist/{userId}")
+    public ResponseEntity<?> getFollowersWithFollowState(@PathVariable("userId") String userId) {
 
-        String loginUserId;
-        // 로그인 된 유저
         try{
-            loginUserId = userService.getCurrentUserId();
+            String loginUserId = SecurityUtils.getCurrentUsername();
+            if(loginUserId.equals("anonymousUser")) {
+                return ErrorResponse.createErrorResponse(HttpStatus.UNAUTHORIZED, "401", "로그인하지 않은 사용자입니다.");
+            } else {
+                List<FollowDTO> followers = followService.showFollowerListWithFollowState(loginUserId, userId);
+                return ResponseEntity.ok(followers);
+            }
         } catch (IllegalArgumentException e) {
-            loginUserId = "anonymousUser";
+            e.printStackTrace();
+            return ErrorResponse.createErrorResponse(HttpStatus.BAD_REQUEST, "400", "팔로잉리스트를 조회할 수 없습니다.");
         }
-        List<FollowDTO> followers = followService.showFollowerListWithFollowState(loginUserId, userId);
-        return ResponseEntity.ok(followers);
     }
-
 }

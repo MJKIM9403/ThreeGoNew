@@ -2544,7 +2544,7 @@
         let userId = [[${findUser.id}]];
 
         $.ajax({
-            url: '/api/userFollowCounts/' + userId,
+            url: '/api/follow-count/' + userId,
             type: 'GET',
             contentType: 'application/json; charset=UTF-8',
             success: function(response) {
@@ -2571,7 +2571,7 @@
         }
 
         $.ajax({
-            url: '/api/show/followerList/' + userId,
+            url: '/api/show/followerlist/' + userId,
             type: 'GET',
             contentType: 'application/json; charset=UTF-8',
             success: function(response) {
@@ -2636,7 +2636,7 @@
         }
 
         $.ajax({
-            url: '/api/show/followingList/' + userId,
+            url: '/api/show/followinglist/' + userId,
             type: 'GET',
             contentType: 'application/json; charset=UTF-8',
             success: function(response) {

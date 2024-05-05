@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -88,11 +89,22 @@ public class TeamService {
                         .filter(team -> team.getTeamLevel() == 0)
                         // p_del 값이 false인 플래너만 필터링
                         .filter(team -> Boolean.FALSE.equals(team.getPlanner().getPlannerDelete()))
-
-                        .map(team -> modelMapper.map(team.getPlanner(), PlannerResponse.class))
+                        .map((Team planner) -> plannerMapper(planner.getPlanner()))
                         .sorted(Comparator.comparing(PlannerResponse::getPlannerId).reversed()) // 최신 것부터 정렬
                         .collect(Collectors.toList());
         return sharedPlannerResponseList;
+    }
+
+    private PlannerResponse plannerMapper(Planner planner) {
+        return PlannerResponse.builder()
+                .plannerId(planner.getPlannerId())
+                .userId(planner.getUserId())
+                .plannerName(planner.getPlannerName())
+                .startDate(planner.getStartDate())
+                .endDate(planner.getEndDate())
+                .plannerDelete(planner.getPlannerDelete())
+                .isAfter(planner.getEndDate().compareTo(LocalDate.now()))
+                .build();
     }
 
     private TeamUserResponse teamMapper(Team team) {
@@ -180,29 +192,4 @@ public class TeamService {
             throw new RuntimeException("Guest not part of the planner");
         }
     }
-
-// 이전에 썼던거 밀고 다시 짭니다..
-//    @Transactional
-//    public void sharePlannerWithUser(Long plannerId, String userId) {
-//        Planner planner = plannerRepository.findByPlannerId(plannerId)
-//                .orElseThrow(()-> new IllegalArgumentException("Planner not found"));
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(()-> new IllegalArgumentException("User not found"));
-//
-//        Team team = new Team(planner, user);
-//        plannerShareRepository.save(team);
-//    }
-//
-//    @Transactional
-//    public void sharePlannerWithMultipleUsers(Long plannerId, List<String> userIds) {
-//        Planner planner = plannerRepository.findById(plannerId)
-//                .orElseThrow(() -> new IllegalArgumentException("Planner not found"));
-//
-//        userIds.forEach(userId -> {
-//            User user = userRepository.findById(userId)
-//                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
-//            Team team = new Team(planner, user);
-//            plannerShareRepository.save(team);
-//        });
-//    }
 }
