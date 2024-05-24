@@ -863,7 +863,7 @@
                     $('#review-book-info').addClass('d-flex').show();
                     $('#review-book-info').addClass('cursor-pointer')
                     $('#review-book-info').off().click(function (){
-                        savePage
+                        savePage();
                         location.href = `../book?bookid=${findReview.reviewBookId}`;
                     })
                     $('#review-book-title').text(findReview.reviewBookTitle);
@@ -2361,7 +2361,7 @@
                         $(".loader").hide()
                         $.each(reviewBookList, function (index, reviewBook){
                             let coverPath = reviewBook.coverFilePath == null ? '../assets/img/review_book_cover.jpg' : `/api/image/book/${reviewBook.coverFilePath}`;
-                            let tempHtml = `<div class="review-book-item" tabIndex="0">` +
+                            let tempHtml = `<div class="review-book-item" tabIndex="0" onclick="savePage()">` +
                                         `<a href="/book?bookid=${reviewBook.bookId}">` +
                                         `<img src="${coverPath}"/>` +
                                         `<p>${reviewBook.bookTitle}</p>` +
@@ -2479,6 +2479,7 @@
         let sessionPage = Number(session_myPageInfo.scrollPage);
         let scrollPosition = Number(session_myPageInfo.scrollPosition);
         changeTab(tabType)
+        sessionStorage.removeItem("myPageInfo");
         console.log(sessionPage);
         console.log(scrollPosition);
         for(let page = 0; page <= sessionPage; page++){
