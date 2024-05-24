@@ -18,6 +18,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.util.function.Tuple4;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
@@ -40,23 +42,24 @@ public class TourItemContentService2 {
     private String homepage;
 
     public TourItemContentResponse getContentInfo(TourItemResponse tourItemResponse){
-        Mono<JSONObject> imagesResponse = getResponse(tourItemResponse, IMAGES);
-        Mono<JSONObject> overviewResponse = getResponse(tourItemResponse, COMMON);
-        Mono<JSONObject> detailResponse = getResponse(tourItemResponse, INFO);
-        Mono<JSONObject> moreResponse = getResponse(tourItemResponse, COURSE);
+        Mono<JSONObject> imagesResponse = getResponse(tourItemResponse, IMAGES).subscribeOn(Schedulers.boundedElastic());
+        Mono<JSONObject> overviewResponse = getResponse(tourItemResponse, COMMON).subscribeOn(Schedulers.boundedElastic());
+        Mono<JSONObject> detailResponse = getResponse(tourItemResponse, INFO).subscribeOn(Schedulers.boundedElastic());
+        Mono<JSONObject> moreResponse = getResponse(tourItemResponse, COURSE).subscribeOn(Schedulers.boundedElastic());
 
-        return Mono.zip(imagesResponse, overviewResponse, detailResponse, moreResponse).map(tuple -> {
-            JSONObject imagesResponseObj = tuple.getT1();
-            JSONObject overviewResponseObj = tuple.getT2();
-            JSONObject detailResponseObj = tuple.getT3();
-            JSONObject moreResponseObj = tuple.getT4();
+        Tuple4<JSONObject, JSONObject, JSONObject, JSONObject> tuple =
+                Mono.zip(imagesResponse, overviewResponse, detailResponse, moreResponse).block();
 
-            return combineContentResponse(tourItemResponse,
-                    imagesResponseObj,
-                    overviewResponseObj,
-                    detailResponseObj,
-                    moreResponseObj);
-        }).block();
+        JSONObject imagesResponseObj = tuple.getT1();
+        JSONObject overviewResponseObj = tuple.getT2();
+        JSONObject detailResponseObj = tuple.getT3();
+        JSONObject moreResponseObj = tuple.getT4();
+
+        return combineContentResponse(tourItemResponse,
+                imagesResponseObj,
+                overviewResponseObj,
+                detailResponseObj,
+                moreResponseObj);
     }
 
     private TourItemContentResponse combineContentResponse(TourItemResponse tourItemResponse,
@@ -83,6 +86,7 @@ public class TourItemContentService2 {
     }
 
     private Mono<JSONObject> getResponse(TourItemResponse tourItemResponse, String path){
+        System.out.println(path + " :: start");
         DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
@@ -119,7 +123,8 @@ public class TourItemContentService2 {
 
         UriComponents uri = uriBuilder.build();
 
-        System.out.println(uri.toUriString());
+//        System.out.println(uri.toUriString());
+        System.out.println(path + " :: end");
 
         return webClient.get()
                .uri(uri.toUriString())
