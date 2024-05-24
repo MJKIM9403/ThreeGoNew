@@ -4,12 +4,13 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.io.threegonew.Key;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.beans.factory.annotation.Value;
 
 public class AesUtil {
 
-    private static String privateKey_256 = Key.AES_KEY;
+    @Value("${keys.aes.key}")
+    private static String privateKey_256;
 
 
     public static String aesCBCEncode(String plainText) throws Exception {

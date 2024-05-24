@@ -1,15 +1,16 @@
 package com.io.threegonew.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.io.threegonew.Key;
 import com.io.threegonew.domain.*;
 import com.io.threegonew.domain.pk.SigunguPk;
 import com.io.threegonew.repository.*;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,16 +23,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InsertData {
 
-    ObjectMapper objectMapper;
-    TourItemRepository tourItemRepository;
-    AreaRepository areaRepository;
-    Cat1Repository cat1Repository;
-    Cat2Repository cat2Repository;
-    Cat3Repository cat3Repository;
-    SigunguRepository sigunguRepository;
+    private final ObjectMapper objectMapper;
+    private final TourItemRepository tourItemRepository;
+    private final AreaRepository areaRepository;
+    private final Cat1Repository cat1Repository;
+    private final Cat2Repository cat2Repository;
+    private final Cat3Repository cat3Repository;
+    private final SigunguRepository sigunguRepository;
+
+    @Value("${keys.api.tour}")
+    private String TOUR_API_KEY;
 
 
     private String makeURI(String table, Map<String, Object> params){
@@ -65,7 +69,7 @@ public class InsertData {
             uriBuilder.queryParam("areaCode",params.get("Area"));
         }
 
-        uriBuilder.queryParam("serviceKey", Key.TOURAPI_KEY_1)
+        uriBuilder.queryParam("serviceKey", TOUR_API_KEY)
                 .queryParam("_type","json")
                 .build();
 

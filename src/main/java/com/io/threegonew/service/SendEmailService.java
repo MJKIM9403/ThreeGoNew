@@ -1,6 +1,5 @@
 package com.io.threegonew.service;
 
-import com.io.threegonew.Key;
 import com.io.threegonew.dto.MailDTO;
 import com.io.threegonew.commons.JavaMailSenderImpl;
 import com.io.threegonew.commons.VerificationCodeManager;
@@ -8,6 +7,7 @@ import com.io.threegonew.commons.TempPassword;
 import com.io.threegonew.commons.TempPasswordEmail;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.util.HashMap;
@@ -19,7 +19,9 @@ public class SendEmailService {
     private final VerificationCodeManager verificationCodeManager;
     private final UserService userService;
     private final JavaMailSenderImpl javaMailSenderImpl;
-    private static final String FROM_ADDRESS = Key.GMAIL;
+
+    @Value("${spring.mail.username}")
+    private String FROM_ADDRESS;
     // 유효시간 설정 (3분)
     private static final long EXPIRATION_TIME = 3 * 60 * 1000; // milliseconds
 

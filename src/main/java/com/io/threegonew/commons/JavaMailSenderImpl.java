@@ -1,6 +1,6 @@
 package com.io.threegonew.commons;
 
-import com.io.threegonew.Key;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Properties;
 
 public class JavaMailSenderImpl {
-    private final String user = Key.GMAIL;
-    private final String pwd = Key.GMAIL_PWD;
+    @Value("${spring.mail.username}")
+    private String user;
+    @Value("${spring.mail.password}")
+    private String pwd;
     private final Properties serverInfo;
 
     public JavaMailSenderImpl() {

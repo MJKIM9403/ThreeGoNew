@@ -1,17 +1,18 @@
 package com.io.threegonew.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.io.threegonew.Key;
+
 import com.io.threegonew.domain.TourItem;
 import com.io.threegonew.dto.MoreTourItemDTO;
 import com.io.threegonew.dto.TourItemContentResponse;
 import com.io.threegonew.dto.TourItemResponse;
 import com.io.threegonew.repository.TourItemRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -21,7 +22,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple4;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +38,9 @@ public class TourItemContentService2 {
     private final String IMAGES = "detailImage1"; // 이미지 정보 조회
     private final String INFO = "detailIntro1"; // 상세 정보 조회
     private final String COURSE = "detailInfo1";
+
+    @Value("${keys.api.tour}")
+    private String TOUR_API_KEY;
 
     private String homepage;
 
@@ -117,7 +120,7 @@ public class TourItemContentService2 {
         }
 
         uriBuilder.queryParam("contentId",tourItemResponse.getContentid())
-                .queryParam("serviceKey", Key.TOURAPI_KEY_1)
+                .queryParam("serviceKey", TOUR_API_KEY)
                 .queryParam("_type","json")
                 .build();
 
