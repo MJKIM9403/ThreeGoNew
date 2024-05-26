@@ -22,9 +22,12 @@ jobs:
         distribution: 'temurin'
 
     - uses: actions/checkout@v4
-    - run: touch ./src/main/resources/application.properties
-    - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-    - run: cat ./src/main/resources/application.properties
+    - name: make application.properties
+      run: mkdir ./src/main/resources |
+           touch ./src/main/resources/application.properties
+    - name: deliver application.properties
+      run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
