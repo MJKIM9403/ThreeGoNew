@@ -15,11 +15,14 @@ spring:
               - email
               - profile
   datasource:
-    url: jdbc:mariadb://localhost:3306/test
+#    url: jdbc:mariadb://localhost:3306/test
+    url: jdbc:mariadb://dulle-dulle-springboot.cp0g28euqyrh.ap-northeast-2.rds.amazonaws.com:3306/test
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:
-      username: root
-      password: bitc5600
+      username: admin
+      password: Bitc5600!
+  #      username: root
+#      password: bitc5600
   jpa:
     show-sql: true
     properties:

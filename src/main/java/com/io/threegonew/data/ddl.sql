@@ -23,7 +23,7 @@ CREATE TABLE `comment` (
                            `reg_date` datetime NOT NULL,
                            `mod_date` datetime NOT NULL,
                            PRIMARY KEY (`comment_id`)
-)
+);
 
 -- 좋아요 테이블 생성 --
 CREATE TABLE `likes` (
@@ -37,12 +37,14 @@ CREATE TABLE `likes` (
 
 
 -- 테이블 생성 --
-CREATE TABLE `TEAM` (
-                        t_id bigint(20) auto_increment NOT null PRIMARY KEY,
-                        p_id bigint(20) NOT NULL,
-                        u_id varchar(40) NOT null,
-                        team_level int not null
-);
+CREATE TABLE `team` (
+                        `t_id` bigint(20) NOT NULL AUTO_INCREMENT,
+                        `p_id` bigint(20) NOT NULL,
+                        `u_id` varchar(40) NOT NULL,
+                        `team_level` int(11) NOT NULL,
+                        `t_del` tinyint(1) NOT NULL DEFAULT 0,
+                        PRIMARY KEY (`t_id`)
+    );
 -- 팔로우 테이블 --
 CREATE TABLE follows (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
