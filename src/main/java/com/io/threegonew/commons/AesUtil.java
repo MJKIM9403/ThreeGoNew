@@ -6,12 +6,17 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AesUtil {
 
-    @Value("${keys.aes.key}")
     private static String privateKey_256;
 
+    @Value("${keys.aes.key}")
+    public void setPrivateKey_256(String privateKey_256) {
+        AesUtil.privateKey_256 = privateKey_256;
+    }
 
     public static String aesCBCEncode(String plainText) throws Exception {
 
