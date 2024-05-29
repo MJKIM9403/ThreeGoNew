@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 public class ImageController {
 
     @GetMapping("/review/{path}/{imagename}")
-    public ResponseEntity showReviewImage(@PathVariable String path, @PathVariable String imagename) {
+    public ResponseEntity<?> showReviewImage(@PathVariable String path, @PathVariable String imagename) {
         try{
             String absolutePath = "C://threeGo/images/";
             String fullPath = absolutePath + path + "/" + imagename;
@@ -37,7 +37,7 @@ public class ImageController {
     }
 
     @GetMapping("/book/{imagename}")
-    public ResponseEntity showBookImage(@PathVariable String imagename){
+    public ResponseEntity<?> showBookImage(@PathVariable String imagename){
         try{
             String absolutePath = "C://threeGo/bookcover/";
             String fullPath = absolutePath + "/" + imagename;
@@ -55,7 +55,7 @@ public class ImageController {
     }
 
     @GetMapping("/profile/{imagename}")
-    public ResponseEntity showProfileImage(@PathVariable String imagename) {
+    public ResponseEntity<?> showProfileImage(@PathVariable String imagename) {
         try{
             String absolutePath = "C://threeGo/profile/";
             String fullPath = absolutePath + "/" + imagename;

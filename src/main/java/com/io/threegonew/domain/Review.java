@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "review")
@@ -43,7 +43,8 @@ public class Review extends BaseTimeEntity {
     @OneToMany(
             fetch = FetchType.LAZY,
             mappedBy = "review",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+            orphanRemoval = true,
+            cascade = CascadeType.REMOVE
     )
     private List<ReviewPhoto> reviewPhotoList = new ArrayList<>();
 

@@ -77,10 +77,6 @@ public class FileHandler {
             user.updateProfileImg(oFileName, sFileName);
             File saveFile = new File(absolutePath + userProfilePath + sFileName);
             newProfileImg.transferTo(saveFile);
-
-            // 파일 권한 설정(쓰기, 읽기)
-            saveFile.setWritable(true);
-            saveFile.setReadable(true);
         }
     }
 
@@ -132,10 +128,6 @@ public class FileHandler {
             reviewBook.updateCover(oFileName, sFileName);
             File saveFile = new File(absolutePath + bookCoverPath + sFileName);
             newBookCover.transferTo(saveFile);
-
-            // 파일 권한 설정(쓰기, 읽기)
-            saveFile.setWritable(true);
-            saveFile.setReadable(true);
         }
     }
 
@@ -208,10 +200,6 @@ public class FileHandler {
                 // 업로드 한 파일 데이터를 지정한 파일에 저장
                 File saveFile = new File(absolutePath + reviewPhotoPath + path + "/" + sFileName);
                 multipartFile.transferTo(saveFile);
-
-                // 파일 권한 설정(쓰기, 읽기)
-                saveFile.setWritable(true);
-                saveFile.setReadable(true);
             }
         }
 

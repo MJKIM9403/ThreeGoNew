@@ -26,7 +26,6 @@ public class ReviewBookService {
     private final ReviewBookRepository reviewBookRepository;
     private final PlannerRepository plannerRepository;
     private final FileHandler fileHandler;
-    private final ModelMapper modelMapper;
 
     public ReviewBook createReviewBook(User user, Planner planner, AddReviewBookRequest request) throws IOException {
         ReviewBook reviewBook = ReviewBook.builder()
@@ -70,6 +69,7 @@ public class ReviewBookService {
             }
         }
 
+        fileHandler.deleteBookCover(reviewBook);
         reviewBookRepository.delete(reviewBook);
     }
 
