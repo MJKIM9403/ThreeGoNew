@@ -32,18 +32,29 @@
 ## 프로젝트 기능 소개
 
 ### 메인 화면(피드)
+<p>- 추천 리뷰 피드와 팔로우 리뷰 피드를 제공한다.</p>
+
 
 ### 회원가입 및 로그인
 <img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/03061ef3-4952-459b-b3e6-c9d461af2b7e"/>
-<br>- 회원가입 시 아이디 중복 검사와 비밀번호 확인, 이메일로 인증번호를 받아 인증하기를 거쳐야 가입이 가능하다.
+<p>- 회원가입 시 아이디 중복 검사와 비밀번호 확인, 이메일로 인증번호를 받아 인증하기를 거쳐야 가입이 가능하다.</p>
 
 ### 프로필 변경, 개인정보 수정
 <img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/3590fa51-1055-4c4c-b6f2-5aa90a40c0b9"/>
-<br>- 마이페이지에서 내 프로필을 변경하거나 개인정보를 수정할 수 있다.
+
+<img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/cde8cbf9-ac67-474e-b38a-2a60d8c88580"/>
+<p>- 마이페이지에서 내 프로필을 변경하거나 개인정보를 수정할 수 있다.</p>
 
 ### 여행 정보
 <img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/d83483ac-997b-44df-990a-6f9a9aa2a07e"/>
-<br>- 한국관광공사 API를 이용하여 여행 정보를 제공
+<p>- 한국관광공사 API를 이용하여 여행 정보를 제공한다.</p>
+&nbsp;
+<img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/d78ac3ed-f5dc-43ac-974d-c81c2bec9440"/>
+<p>- 지역, 카테고리, 키워드 등의 검색 옵션으로 관광지를 검색하여 목록을 조회할 수 있다.<br>
+- 관광지 상세페이지에서 동일 카테고리의 관광지들을 거리순으로 보여준다.
+</p>
+<img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/63343632-2c9b-4317-8325-51fc071db918"/>
+<p>- 북마크한 관광지는 마이페이지에서 확인 가능하다.</p>
 
 ### 여행 일정
 
