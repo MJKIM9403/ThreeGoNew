@@ -31,6 +31,22 @@
 
 ## 프로젝트 기능 소개
 
+### 메인 화면(피드)
+
+### 회원가입 및 로그인
+<img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/03061ef3-4952-459b-b3e6-c9d461af2b7e"/>
+<br>- 회원가입 시 아이디 중복 검사와 비밀번호 확인, 이메일로 인증번호를 받아 인증하기를 거쳐야 가입이 가능하다.
+
+### 프로필 변경, 개인정보 수정
+<img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/3590fa51-1055-4c4c-b6f2-5aa90a40c0b9"/>
+<br>- 마이페이지에서 내 프로필을 변경하거나 개인정보를 수정할 수 있다.
+
+### 여행 정보
+<img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/d83483ac-997b-44df-990a-6f9a9aa2a07e"/>
+<br>- 한국관광공사 API를 이용하여 여행 정보를 제공
+
+### 여행 일정
+
 
 ## 레퍼런스
 
