@@ -20,9 +20,13 @@
 - 라이브러리 / API : <img src="https://img.shields.io/badge/Library-Bootstrap-563D7C?style=flat&logo=bootstrap">&nbsp; <img src="https://img.shields.io/badge/Library-JQuery UI-0769AD?style=flat&logo=jquery&logoColor=white">&nbsp; <img src="https://img.shields.io/badge/Library-flatpickr-4A90D9?style=flat&logo=flatpickr&logoColor=white">&nbsp; <img src="https://img.shields.io/badge/API-국문_관광_정보-669DF6?style=flat">&nbsp; <img src="https://img.shields.io/badge/API-T_Map-red?style=flat">&nbsp;
   
 ## 프로젝트 ERD
-
+![DulleDulle-ERD](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/d7821149-964f-4756-8e61-ec1e84f31676)
 
 ## 프로젝트 기능 구조
+
+![DulleDulle-프로젝트 구조](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/8500ed0e-9995-4af8-9135-c8c2a0fd9fab)
+
+<img width="4896" alt="DulleDulle-FlowChart" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/0994417c-a361-4516-b06e-27b5a58f491a">
 
 
 ## 프로젝트 기능 소개
