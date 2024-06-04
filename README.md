@@ -110,6 +110,10 @@
 <p>- 리뷰와 유저를 검색 가능</p>
 
 
+## API 명세서
+- https://www.notion.so/sdueng01/API-6fcc53d6225b4377976096f88e44dd4a?pvs=4
+
+
 ## 레퍼런스
 UI
 - https://codepen.io/GeorgePark/pen/VXrwOP
