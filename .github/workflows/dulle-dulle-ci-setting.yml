@@ -66,6 +66,7 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot .
         docker push ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
 
+
   CD:
     needs: CI
     runs-on: ubuntu-latest
