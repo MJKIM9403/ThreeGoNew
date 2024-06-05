@@ -4,36 +4,9 @@ spring:
       enabled: true
       max-file-size: 20MB
       max-request-size: 100MB
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 105243604114-hj3rjnlk4r6um1tnidhdcdhhk0i0fkup.apps.googleusercontent.com
-            client-secret: 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
-            scope:
-              - email
-              - profile
-  datasource:
-#    url: jdbc:mariadb://localhost:3306/test
-    url: jdbc:mariadb://dulle-dulle-springboot.cp0g28euqyrh.ap-northeast-2.rds.amazonaws.com:3306/test
-    driver-class-name: org.mariadb.jdbc.Driver
-    hikari:
-      username: admin
-      password: Bitc5600!
-  #      username: root
-#      password: bitc5600
+
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: threeGo
-    password: nnpl vskg fkep zwqk
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
-      auth-code-expiration-millis: 60000
