@@ -28,16 +28,16 @@ jobs:
     - name: Gradle Caching
       uses: actions/cache@v3
       with:
-        path:
+        path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys:
+        restore-keys: |
             ${{ runner.os }}-gradle-
 
     # application.properties 파일 생성
     - name: Make application.properties
-      run: mkdir ./src/main/resources 
+      run: mkdir ./src/main/resources |
            touch ./src/main/resources/application.properties
 
     - name: Deliver application.properties
@@ -62,7 +62,7 @@ jobs:
 
     # Docker 이미지 생성 및 Push
     - name: Docker build & Push
-      run:
+      run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot .
         docker push ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
 
@@ -79,7 +79,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_EC2_KEY }}
           port: 22
-          script:
+          script: |
             sudo docker stop dulle-dulle-springboot
             sudo docker rm dulle-dulle-springboot
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
