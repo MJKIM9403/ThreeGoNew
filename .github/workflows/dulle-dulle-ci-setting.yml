@@ -80,6 +80,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           port: 8080
           script: |
-            sudo docker stop dulle-dulle-springboot
-            sudo docker rm dulle-dulle-springboot
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
+            sudo docker image prune -f
