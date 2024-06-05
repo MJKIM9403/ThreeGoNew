@@ -74,11 +74,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
 
-        &:hover {
-            background: rgb(77, 77, 77);
-            color: #fff;
-        }
+    .btn-upload:hover {
+        background: rgb(77, 77, 77);
+        color: #fff;
     }
 
     #uploadFile {
@@ -114,13 +114,14 @@
 <div class="d-flex flex-nowrap">
     <th:block th:replace="~{fragments/sidebar}"></th:block>
 
-    <div class="w3-content w3-container w3-margin-top container position-relative pb-5" style="margin: 0 auto;">
+    <div class="container position-relative pb-5" style="margin-left: 200px; padding: 0">
         <!--허전해서 이미지-->
-        <div class="w3-content w3-container container position-relative pb-3 headerImg"
+        <div class="container position-relative pb-3 headerImg"
              style="background-image: url('/assets/img/mainimg/daejeon2.jpg');
-         background-size: cover;
-         height: 15em;
-         margin-bottom: 3em;">
+             margin-left: 200px; padding: 0;
+             background-size: cover;
+             height: 15em;
+             margin-bottom: 3em;">
         </div>
 
         <div>
