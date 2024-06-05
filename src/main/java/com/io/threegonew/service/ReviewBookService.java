@@ -1,5 +1,7 @@
 package com.io.threegonew.service;
 
+import com.io.threegonew.commons.S3FileUploader;
+import com.io.threegonew.constant.FileType;
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.PlannerRepository;
@@ -25,7 +27,7 @@ public class ReviewBookService {
 
     private final ReviewBookRepository reviewBookRepository;
     private final PlannerRepository plannerRepository;
-    private final FileHandler fileHandler;
+    private final S3FileUploader s3FileUploader;
 
     public ReviewBook createReviewBook(User user, Planner planner, AddReviewBookRequest request) throws IOException {
         ReviewBook reviewBook = ReviewBook.builder()
@@ -36,7 +38,7 @@ public class ReviewBookService {
                                         .build();
 
         if(request.getCoverFile() != null){
-            fileHandler.updateBookCover(reviewBook, request.getCoverFile());
+            s3FileUploader.updateBookCover(reviewBook, request.getCoverFile());
         }
 
         return reviewBookRepository.save(reviewBook);
@@ -50,12 +52,12 @@ public class ReviewBookService {
                 () -> new IllegalArgumentException("플래너 정보를 찾을 수 없습니다."));
         reviewBook.update(reviewPlanner, request.getBookTitle(), request.getBookContent());
         if(request.getCoverFile() != null){
-            fileHandler.updateBookCover(reviewBook, request.getCoverFile());
+            s3FileUploader.updateBookCover(reviewBook, request.getCoverFile());
         }
     }
 
     @Transactional
-    public void deleteReviewBook(Long reviewBookId, String loginUserId) throws AccessDeniedException {
+    public void deleteReviewBook(Long reviewBookId, String loginUserId) throws AccessDeniedException, IOException {
         ReviewBook reviewBook = reviewBookRepository.findById(reviewBookId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰북 정보를 찾을 수 없습니다."));
 
@@ -65,12 +67,12 @@ public class ReviewBookService {
 
         for(Review review : reviewBook.getReviewList()){
             for(ReviewPhoto photo : review.getReviewPhotoList()){
-                fileHandler.deleteReviewPhoto(photo);
+                s3FileUploader.deleteImageFromS3(FileType.REVIEW, photo.getFilePath());
             }
         }
 
-        fileHandler.deleteBookCover(reviewBook);
         reviewBookRepository.delete(reviewBook);
+        s3FileUploader.deleteImageFromS3(FileType.REVIEW_BOOK, reviewBook.getCoverFilePath());
     }
 
     public ReviewBook findReviewBook(Long reviewBookId){

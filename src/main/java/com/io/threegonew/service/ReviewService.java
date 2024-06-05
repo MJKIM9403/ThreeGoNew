@@ -1,5 +1,7 @@
 package com.io.threegonew.service;
 
+import com.io.threegonew.commons.S3FileUploader;
+import com.io.threegonew.constant.FileType;
 import com.io.threegonew.domain.*;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.CommentRepository;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final FileHandler fileHandler;
+    private final S3FileUploader s3FileUploader;
     private final ReviewPhotoRepository reviewPhotoRepository;
     private final LikesRepository likesRepository;
     private final CommentRepository commentRepository;
@@ -44,7 +46,7 @@ public class ReviewService {
 
         Review savedReview = reviewRepository.save(review);
 
-        List<ReviewPhoto> photoList = fileHandler.parseReviewPhoto(savedReview, request.getPhotoList());
+        List<ReviewPhoto> photoList = s3FileUploader.parseReviewPhoto(savedReview, request.getPhotoList());
 
         if(!photoList.isEmpty()) {
             for(ReviewPhoto photo : photoList) {
@@ -70,11 +72,11 @@ public class ReviewService {
                         () -> new IllegalArgumentException("삭제할 사진 정보를 찾을 수 없습니다."));
                 copyPhotoList.remove(deletePhoto);
                 reviewPhotoRepository.delete(deletePhoto);
-                fileHandler.deleteReviewPhoto(deletePhoto);
+                s3FileUploader.deleteImageFromS3(FileType.REVIEW,deletePhoto.getFilePath());
             }
         }
 
-        List<ReviewPhoto> addPhotoList = fileHandler.parseReviewPhoto(review, request.getPhotoList());
+        List<ReviewPhoto> addPhotoList = s3FileUploader.parseReviewPhoto(review, request.getPhotoList());
 
         if(!addPhotoList.isEmpty()) {
             for(ReviewPhoto photo : addPhotoList) {
@@ -87,14 +89,14 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReview(Long reviewId){
+    public void deleteReview(Long reviewId) throws IOException{
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
 
         List<ReviewPhoto> reviewPhotoList = review.getReviewPhotoList();
 
         for(ReviewPhoto deletePhoto : reviewPhotoList){
-            fileHandler.deleteReviewPhoto(deletePhoto);
+            s3FileUploader.deleteImageFromS3(FileType.REVIEW,deletePhoto.getFilePath());
         }
 
         reviewRepository.delete(review);

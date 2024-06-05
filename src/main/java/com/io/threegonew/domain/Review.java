@@ -44,7 +44,7 @@ public class Review extends BaseTimeEntity {
             fetch = FetchType.LAZY,
             mappedBy = "review",
             orphanRemoval = true,
-            cascade = CascadeType.REMOVE
+            cascade = CascadeType.ALL
     )
     private List<ReviewPhoto> reviewPhotoList = new ArrayList<>();
 
@@ -76,6 +76,9 @@ public class Review extends BaseTimeEntity {
         this.tourItem = tourItem;
         this.tourItemTitle = tourItemTitle;
         this.reviewContent = reviewContent;
-        this.reviewPhotoList = reviewPhotoList;
+        if(!reviewPhotoList.isEmpty()){
+            this.reviewPhotoList.clear();
+            this.reviewPhotoList.addAll(reviewPhotoList);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.io.threegonew.service;
 
+import com.io.threegonew.commons.S3FileUploader;
 import com.io.threegonew.domain.User;
 import com.io.threegonew.dto.*;
 import com.io.threegonew.repository.UserRepository;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +32,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserDetailService userDetailService;
-    private final FileHandler fileHandler;
+    private final S3FileUploader s3FileUploader;
     private final ModelMapper modelMapper;
 
     public List<User> findAll() {
@@ -154,13 +156,13 @@ public class UserService {
 
     //    회원 수정 업데이트 처리.
     @Transactional
-    public void modifyUserProfile(UpdateUserProfileRequest request) throws Exception {
+    public void modifyUserProfile(UpdateUserProfileRequest request) throws IOException, IllegalArgumentException {
         // userId를 사용하여 사용자 정보를 조회합니다.
         User user = userRepository.findById(request.getUserId()).orElseThrow(() ->
                 new IllegalArgumentException("회원정보를 찾을 수 없습니다."));
         user.update(request.getName(), request.getAbout());
         if (request.getNewProfileImg() != null) {
-            fileHandler.updateUserProfile(user, request.getNewProfileImg());
+            s3FileUploader.updateUserProfile(user, request.getNewProfileImg());
         }
         sessionReset(user);
     }
