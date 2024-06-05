@@ -1,4 +1,4 @@
-name: Dulle Dulle CI
+name: Dulle-Dulle CI/CD
 
 # master 브랜치로 push, pull request가 발생하면 workflow를 실행
 on:
@@ -80,6 +80,6 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           port: 22
           script: |
-            sudo docker stop dulle-dulle-springboot
-            sudo docker rm dulle-dulle-springboot
+            sudo docker stop $(sudo docker ps -qa)
+            sudo docker rm $(sudo docker ps -qa)
             sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
