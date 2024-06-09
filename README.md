@@ -22,17 +22,21 @@
 ## 프로젝트 ERD
 ![DulleDulle-ERD](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/d7821149-964f-4756-8e61-ec1e84f31676)
 
-## 플로우차트
-<img width="4896" alt="DulleDulle-FlowChart" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/0994417c-a361-4516-b06e-27b5a58f491a">
-
 ## 프로젝트 구조
 GitHub Actions와 Docker를 활용하여 CI/CD 파이프라인을 구축하고 프로젝트를 배포했다. 
 
 ![DulleDulle-프로젝트 구조(배포)](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/3ff99a05-9429-41c8-a579-8d9353d1a0ed)
 
+<br/>
+
+### 플로우차트
+<img width="4896" alt="DulleDulle-FlowChart" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/0994417c-a361-4516-b06e-27b5a58f491a">
+
 ## API 명세서
 - [https://www.notion.so/sdueng01/API-6fcc53d6225b4377976096f88e44dd4a?pvs=4
 ](https://sdueng01.notion.site/API-6fcc53d6225b4377976096f88e44dd4a)
+
+<br/>
 
 ## 프로젝트 기능 소개
 
