@@ -22,12 +22,17 @@
 ## 프로젝트 ERD
 ![DulleDulle-ERD](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/d7821149-964f-4756-8e61-ec1e84f31676)
 
-## 프로젝트 기능 구조
-
-![DulleDulle-프로젝트 구조](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/8500ed0e-9995-4af8-9135-c8c2a0fd9fab)
-
+## 플로우차트
 <img width="4896" alt="DulleDulle-FlowChart" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/0994417c-a361-4516-b06e-27b5a58f491a">
 
+## 프로젝트 구조
+GitHub Actions와 Docker를 활용하여 CI/CD를 구축하고 프로젝트를 배포했다. 
+
+![DulleDulle-프로젝트 구조(배포)](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/3ff99a05-9429-41c8-a579-8d9353d1a0ed)
+
+## API 명세서
+- [https://www.notion.so/sdueng01/API-6fcc53d6225b4377976096f88e44dd4a?pvs=4
+](https://sdueng01.notion.site/API-6fcc53d6225b4377976096f88e44dd4a)
 
 ## 프로젝트 기능 소개
 
@@ -108,16 +113,6 @@
 
 <img width="640px" src="https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/6e160e40-c3e8-4466-8bbb-eef8b056e25b"/>
 <p>- 리뷰와 유저를 검색 가능</p>
-
-
-## API 명세서
-- https://www.notion.so/sdueng01/API-6fcc53d6225b4377976096f88e44dd4a?pvs=4
-
-## 배포
-GitHub Actions와 Docker를 활용하여 CI/CD를 구축하고 프로젝트를 배포했다. 
-
-### 배포 이후 프로젝트 구조
-![DulleDulle-프로젝트 구조(배포)](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/3ff99a05-9429-41c8-a579-8d9353d1a0ed)
 
 
 ## 레퍼런스
