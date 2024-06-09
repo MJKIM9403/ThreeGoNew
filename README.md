@@ -113,6 +113,12 @@
 ## API 명세서
 - https://www.notion.so/sdueng01/API-6fcc53d6225b4377976096f88e44dd4a?pvs=4
 
+## 배포
+GitHub Actions와 Docker를 활용하여 CI/CD를 구축하고 프로젝트를 배포했다. 
+
+### 배포 이후 프로젝트 구조
+![DulleDulle-프로젝트 구조(배포)](https://github.com/MJKIM9403/ThreeGoNew/assets/145132400/3ff99a05-9429-41c8-a579-8d9353d1a0ed)
+
 
 ## 레퍼런스
 UI
