@@ -8,8 +8,5 @@ ARG JAR_FILE=build/libs/*.jar
 # Docker Image 생성 시 JAR_FILE을 app.jar로 복사
 COPY ${JAR_FILE} app.jar
 
-# 타임존 설정(KTS)
-ENV TZ=Asia/Seoul
-
 # 실행 명령어
 ENTRYPOINT ["java", "-jar","-Duser.timezone=Asia/Seoul" ,"app.jar"]
