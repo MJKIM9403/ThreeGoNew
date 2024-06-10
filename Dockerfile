@@ -9,8 +9,7 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 
 # 타임존 설정(KTS)
-ENV TZ=Asia/Seoul
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN sudo ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 # 실행 명령어
 ENTRYPOINT ["java", "-jar", "app.jar"]
