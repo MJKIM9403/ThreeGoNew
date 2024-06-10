@@ -1,3 +1,4 @@
+# Github Actions에 표시되는 Workflow 이름
 name: Dulle-Dulle CI/CD
 
 # master 브랜치로 push, pull request가 발생하면 workflow를 실행
