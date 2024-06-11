@@ -45,10 +45,14 @@ jobs:
       run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
 
     # Gradle 설정 및 Build
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: clean bootJar
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Change gradlew permissions
+      run: chmod +x ./gradlew
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew clean build
 
     # Docker 로그인
     - name: Docker Login
