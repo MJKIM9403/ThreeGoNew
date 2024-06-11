@@ -25,16 +25,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-#    # 빌드 시간 향상을 위한 Gradle 캐싱
-#    - name: Gradle Caching
-#      uses: actions/cache@v4
-#      with:
-#        path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-#        restore-keys: |
-#            ${{ runner.os }}-gradle-
+    # 빌드 시간 향상을 위한 Gradle 캐싱
+    - name: Gradle Caching
+      uses: actions/cache@v4
+      with:
+        path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+            ${{ runner.os }}-gradle-
 
     # application.properties 파일 생성
     - name: Make application.properties
@@ -81,9 +81,11 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           port: 22
           script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
             sudo docker stop $(sudo docker ps -qa)
             sudo docker rm $(sudo docker ps -qa)
             sudo docker run -d -p 8080:8080 \
             -v /etc/localtime:/etc/localtime:ro \
             -e TZ=Asia/Seoul \
-            ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot:latest
+            ${{ secrets.DOCKER_USERNAME }}/dulle-dulle-springboot
+            sudo docker system prune -f
