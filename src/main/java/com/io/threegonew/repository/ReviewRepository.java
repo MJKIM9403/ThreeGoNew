@@ -36,13 +36,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     @Query(value = "SELECT DISTINCT r.* " +
                 "FROM review r " +
-                "INNER JOIN follows f " +
+                "LEFT JOIN follows f " +
                 "ON r.user_id = f.from_user_id " +
                 "WHERE (f.to_user_id = :userId OR r.user_id = :userId) AND r.reg_date <= :fromDate " +
                 "ORDER BY r.review_id DESC",
             countQuery = "SELECT count(DISTINCT r.review_id) " +
                     "FROM review r " +
-                    "INNER JOIN follows f " +
+                    "LEFT JOIN follows f " +
                     "ON r.user_id = f.from_user_id " +
                     "WHERE (f.to_user_id = :userId OR r.user_id = :userId) AND r.reg_date <= :fromDate ",
             nativeQuery = true)
