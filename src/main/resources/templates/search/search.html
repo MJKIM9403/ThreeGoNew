@@ -415,8 +415,7 @@
     let tabType = ""; // 화면에 보여줄 탭
     let back = false;
 
-    const time_offset = new Date().getTimezoneOffset() * 60000;
-    let fromDate = new Date(Date.now() - time_offset).toISOString();
+    let fromDate = new Date(Date.now()).toISOString();
 
     let keyword = null;
 
@@ -504,7 +503,7 @@
         back = false;
         simpleViewSwiper = [];
 
-        fromDate = new Date(Date.now() - time_offset).toISOString()
+        fromDate = new Date(Date.now()).toISOString()
 
         gallery.html("")
         // 옵저버 타겟 관측 시작
