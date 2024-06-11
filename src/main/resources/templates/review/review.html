@@ -897,7 +897,13 @@
     let tabType = "RECOMMEND"; // 화면에 보여줄 탭
     let back = false;
 
-    let fromDate = new Date(Date.now()).toISOString();
+    function getNowKoreanTime(){
+        const offset = 1000 * 60 * 60 * 9; // UTC to KTS Offset
+        const kts = new Date(Date.now() + offset);
+        return kts;
+    }
+
+    let fromDate = getNowKoreanTime().toISOString();
 
     $(document).ready(function (){
         /*무한스크롤 & 페이지 로드 설정*/
@@ -981,8 +987,7 @@
         back = false;
         simpleViewSwiper = [];
 
-        fromDate = new Date(Date.now()).toISOString()
-        console.log('fromdate: ' + fromDate)
+        fromDate = getNowKoreanTime().toISOString()
 
         gallery.html("")
         // 옵저버 타겟 관측 시작
