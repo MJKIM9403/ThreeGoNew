@@ -1884,6 +1884,10 @@
                 },
                 contentType : 'application/json; charset=UTF-8',
                 success : function (result) {
+                    $('#select-touritem-info').html(
+                        '<option value="hint" class="select-hint" disabled selected>관광지 정보를 선택해주세요.</option>' +
+                        '<option value="direct">직접 입력</option>'
+                    );
                     const planList = result.planList;
                     for(let plan of planList){
                         let template = `<option value=${plan.tourItem.contentid}>[${plan.day}일차] ${plan.tourItem.title}</option>`;
