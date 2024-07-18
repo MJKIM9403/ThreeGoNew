@@ -1393,7 +1393,7 @@
                 let regDate = (findReview.regDate === findReview.modDate) ? formatRegDate(findReview.regDate) : formatRegDate(findReview.modDate) + ' (수정됨)';
 
                 $('#writer-info').click(function (){
-                    savePage
+                    savePage();
                     location.href = `/mypage/${writer.id}`
                 })
                 $('#writer-name').text(writer.name);
@@ -1419,7 +1419,7 @@
                     $('#review-book-info').addClass('d-flex').show();
                     $('#review-book-info').addClass('cursor-pointer')
                     $('#review-book-info').off().click(function (){
-                        savePage
+                        savePage();
                         location.href = `../book?bookid=${findReview.reviewBookId}`;
                     })
                     $('#review-book-title').text(findReview.reviewBookTitle);
@@ -2008,7 +2008,7 @@
         if(tourItemId !== undefined){
             $('#touritem-wrap').css('cursor','pointer');
             $('#touritem-wrap').click(function (){
-                savePage
+                savePage();
                 location.href = `../tour/content/${tourItemId}`;
             })
             touritemInfoTimer = setTimeout(function () {

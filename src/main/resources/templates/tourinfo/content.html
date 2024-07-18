@@ -493,7 +493,7 @@
                                     </div>
                                     <!--이미지-->
                                     <div class="carousel-inner">
-                                        <th:block th:if="${response.imagesURL.size() > 1}"
+                                        <th:block th:if="${response.imagesURL.size() > 0}"
                                                   th:each="imgUrl, stat : ${response.imagesURL}">
                                             <div class="carousel-item" data-bs-interval="5000"
                                                  th:classappend="${stat.index == 0 ? 'active' : ''}">
@@ -502,10 +502,10 @@
                                         </th:block>
                                         <th:block th:if="${response.imagesURL.isEmpty()}">
                                             <div class="carousel-item active">
-                                                <img th:if="${!response.tourItemResponse.firstimage.isEmpty()}"
-                                                     th:src="${response.tourItemResponse.firstimage}">
-                                                <img th:unless="${!response.tourItemResponse.firstimage.isEmpty()}"
-                                                     src="../../assets/img/no_img.jpg">
+                                                <img th:if="${response.tourItemResponse.firstimage == null}"
+                                                     src="../../assets/img/no_img.jpg" class="d-block w-100">
+                                                <img th:unless="${response.tourItemResponse.firstimage == null}"
+                                                     th:src="${response.tourItemResponse.firstimage}" class="d-block w-100">
                                             </div>
                                         </th:block>
                                     </div>
